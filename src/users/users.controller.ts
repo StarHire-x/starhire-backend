@@ -24,7 +24,7 @@ export class UsersController {
       return this.usersService.findOne(id);
     } catch(error) {
       if (error instanceof NotFoundException) {
-        throw new HttpException(`User with ID ${id} not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(`User with id ${id} not found`, HttpStatus.NOT_FOUND);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }

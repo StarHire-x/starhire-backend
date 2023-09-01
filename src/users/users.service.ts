@@ -1,15 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepo } from './users.repo';
+import { QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepo: UsersRepo) {}
 
   async create(createUser: CreateUserDto) {
-    const { ...userDetail } = createUser;
-    return await this.usersRepo.createUser(userDetail);
+    try {
+      const { ...userDetail } = createUser;
+      return await this.usersRepo.createUser(userDetail);
+    } catch(err) {
+      throw new ConflictException("Inserting a duplicate entry into the database. Please check your data.");
+    }
   }
 
   async findAll() {

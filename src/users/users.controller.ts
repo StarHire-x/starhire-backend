@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, NotFoundException, HttpException, InternalServerErrorException, HttpStatus, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, NotFoundException, HttpException, InternalServerErrorException, HttpStatus, ParseIntPipe, Query, ConflictException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { QueryFailedError } from 'typeorm';
 
 @Controller('users')
 export class UsersController {
@@ -9,7 +10,15 @@ export class UsersController {
 
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    try {
+      return this.usersService.create(createUserDto);
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Get('/all')
@@ -24,7 +33,7 @@ export class UsersController {
       return this.usersService.findOne(id);
     } catch(error) {
       if (error instanceof NotFoundException) {
-        throw new HttpException(`User with id ${id} not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -38,7 +47,7 @@ export class UsersController {
       return this.usersService.findOne(id);
     } catch(error) {
       if (error instanceof NotFoundException) {
-        throw new HttpException(`User with ID ${id} not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -51,7 +60,7 @@ export class UsersController {
       return this.usersService.update(+id, updateEmployerDto);
     } catch(error) {
       if (error instanceof NotFoundException) {
-        throw new HttpException(`User with id ${id} not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }

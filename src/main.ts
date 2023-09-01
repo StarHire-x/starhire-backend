@@ -5,9 +5,15 @@ import * as cors from 'cors'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  //frontend client 1
+  //frontend admin
   app.use(cors({
     origin: 'http://localhost:3000', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  }));
+
+  //frontend client
+  app.use(cors({
+    origin: 'http://localhost:3001', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   }));
   

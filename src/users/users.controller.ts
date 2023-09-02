@@ -1,4 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, NotFoundException, HttpException, InternalServerErrorException, HttpStatus, ParseIntPipe, Query, ConflictException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+  NotFoundException,
+  HttpException,
+  InternalServerErrorException,
+  HttpStatus,
+  ParseIntPipe,
+  Query,
+  ConflictException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -26,12 +42,12 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // GET /users?id=1 
+  // GET /users?id=1
   @Get()
   getNinjas(@Query('id') id: number) {
     try {
       return this.usersService.findOne(id);
-    } catch(error) {
+    } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
@@ -45,7 +61,7 @@ export class UsersController {
   findOneUser(@Param('id', ParseIntPipe) id: number) {
     try {
       return this.usersService.findOne(id);
-    } catch(error) {
+    } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
@@ -55,10 +71,13 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateUser(@Param('id', ParseIntPipe) id: string, @Body() updateEmployerDto: UpdateUserDto) {
+  updateUser(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateEmployerDto: UpdateUserDto,
+  ) {
     try {
       return this.usersService.update(+id, updateEmployerDto);
-    } catch(error) {
+    } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
@@ -71,9 +90,12 @@ export class UsersController {
   removeUser(@Param('id', ParseIntPipe) id: string) {
     try {
       return this.usersService.remove(+id);
-    } catch(error) {
+    } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new HttpException(`User with ID ${id} not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          `User with ID ${id} not found`,
+          HttpStatus.NOT_FOUND,
+        );
       } else {
         throw new InternalServerErrorException('Internal server error');
       }

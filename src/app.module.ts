@@ -7,6 +7,7 @@ import { entityList } from './entityList';
 import { AdministratorModule } from './administrator/admin.module';
 import { EventListingModule } from './event-listing/event-listing.module';
 import { RecruiterModule } from './recruiter/recruiter.module';
+import { CorporateModule } from './corporate/corporate.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RecruiterModule } from './recruiter/recruiter.module';
     AdministratorModule,
     EventListingModule,
     RecruiterModule,
+    CorporateModule,
   ],
   controllers: [AppController],
   providers: [AppService],

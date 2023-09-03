@@ -5,3 +5,4 @@ import { Chat } from './entities/chat.entity';
 import { ChatMessage } from './entities/chatMessage.entity';
 
 export const entityList = [User, Document, JobApplication, Chat, ChatMessage];
+

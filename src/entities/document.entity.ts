@@ -4,7 +4,7 @@ import { JobApplication } from './jobApplication.entity';
 @Entity({ name: 'documents' })
 export class Document {
   @PrimaryGeneratedColumn()
-  id: number;
+  documentId: number;
 
   @Column()
   documentLink: string;
@@ -12,7 +12,11 @@ export class Document {
   @ManyToOne(
     () => JobApplication,
     (jobApplication) => jobApplication.documents,
-    { onDelete: 'SET NULL' },
+    { onDelete: 'CASCADE' },
   )
   jobApplication: JobApplication;
+
+  constructor(entity: Partial<Document>) {
+    Object.assign(this, entity);
+  }
 }

@@ -23,19 +23,19 @@ export class JobPreferenceRepo {
   }
 
   async createJobPreference(
-    administratorDetails: JobPreferenceDetailDto,
+    jobPreferenceDetails: JobPreferenceDetailDto,
   ): Promise<JobPreference> {
-    const newAdministrator = this.jobPreferenceRepository.create({
-      ...administratorDetails,
+    const newJobPreference = this.jobPreferenceRepository.create({
+      ...jobPreferenceDetails,
     });
-    return this.jobPreferenceRepository.save(newAdministrator);
+    return this.jobPreferenceRepository.save(newJobPreference);
   }
 
   async deleteJobPreference(jobPreferenceId: number): Promise<void> {
-    const administrator = await this.jobPreferenceRepository.findOneBy({
+    const jobPreference = await this.jobPreferenceRepository.findOneBy({
       jobPreferenceId: jobPreferenceId,
     });
-    await this.jobPreferenceRepository.remove(administrator);
+    await this.jobPreferenceRepository.remove(jobPreference);
   }
 
   async updateJobPreference(
@@ -46,10 +46,10 @@ export class JobPreferenceRepo {
       { jobPreferenceId },
       { ...userDetails },
     );
-    const updatedAdministrator: JobPreference =
+    const updatedJobPreference: JobPreference =
       await this.jobPreferenceRepository.findOneBy({
         jobPreferenceId: jobPreferenceId,
       });
-    return updatedAdministrator;
+    return updatedJobPreference;
   }
 }

@@ -6,10 +6,9 @@ import {
 import { CreateJobPreferenceDto } from './dto/create-job-preference.dto';
 import { UpdateJobPreferenceDto } from './dto/update-job-preference.dto';
 import { JobPreferenceRepo } from './job-preference.repo';
-import { QueryFailedError } from 'typeorm';
 
 @Injectable()
-export class AdministratorService {
+export class JobPreferenceService {
   constructor(private readonly jobPreferenceRepo: JobPreferenceRepo) {}
 
   async create(createJobPreference: CreateJobPreferenceDto) {
@@ -30,11 +29,11 @@ export class AdministratorService {
   }
 
   async findOne(id: number) {
-    const administrator = await this.jobPreferenceRepo.findOneJobPreference(id);
-    if (administrator === null) {
+    const jobPreference = await this.jobPreferenceRepo.findOneJobPreference(id);
+    if (jobPreference === null) {
       throw new NotFoundException(`User with ID ${id} not found`);
     } else {
-      return administrator;
+      return jobPreference;
     }
   }
 

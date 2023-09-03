@@ -6,50 +6,50 @@ import { JobSeekerDetailDto } from './dto/job-seeker-detail.dto';
 import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
 
 @Injectable()
-export class JobPreferenceRepo {
+export class JobSeekerRepo {
   constructor(
     @InjectRepository(JobSeeker)
-    private jobPreferenceRepository: Repository<JobSeeker>,
+    private jobSeekerRepository: Repository<JobSeeker>,
   ) {}
 
-  async findAllJobPreferences(): Promise<JobSeeker[]> {
-    return this.jobPreferenceRepository.find();
+  async findAllJobSeekers(): Promise<JobSeeker[]> {
+    return this.jobSeekerRepository.find();
   }
 
-  async findOneJobPreference(jobPreferenceId: number): Promise<JobSeeker> {
-    return await this.jobPreferenceRepository.findOneBy({
-      jobPreferenceId: jobPreferenceId,
+  async findOneJobSeeker(jobSeekerId: number): Promise<JobSeeker> {
+    return await this.jobSeekerRepository.findOneBy({
+      userId: jobSeekerId,
     });
   }
 
-  async createJobPreference(
-    jobPreferenceDetails: JobSeekerDetailDto,
+  async createJobSeeker(
+    jobSeekerDetails: JobSeekerDetailDto,
   ): Promise<JobSeeker> {
-    const newJobPreference = this.jobPreferenceRepository.create({
-      ...jobPreferenceDetails,
+    const newJobSeeker = this.jobSeekerRepository.create({
+      ...jobSeekerDetails,
     });
-    return this.jobPreferenceRepository.save(newJobPreference);
+    return this.jobSeekerRepository.save(newJobSeeker);
   }
 
-  async deleteJobPreference(jobPreferenceId: number): Promise<void> {
-    const jobPreference = await this.jobPreferenceRepository.findOneBy({
-      jobPreferenceId: jobPreferenceId,
+  async deleteJobSeeker(jobSeekerId: number): Promise<void> {
+    const jobSeeker = await this.jobSeekerRepository.findOneBy({
+      userId: jobSeekerId,
     });
-    await this.jobPreferenceRepository.remove(jobPreference);
+    await this.jobSeekerRepository.remove(jobSeeker);
   }
 
-  async updateJobPreference(
-    jobPreferenceId: number,
+  async updateJobSeeker(
+    jobSeekerId: number,
     userDetails: UpdateJobSeekerDto,
   ): Promise<JobSeeker> {
-    const updateResult = await this.jobPreferenceRepository.update(
-      { jobPreferenceId },
+    const updateResult = await this.jobSeekerRepository.update(
+      { userId: jobSeekerId },
       { ...userDetails },
     );
-    const updatedJobPreference: JobSeeker =
-      await this.jobPreferenceRepository.findOneBy({
-        jobPreferenceId: jobPreferenceId,
+    const updatedJobSeeker: JobSeeker =
+      await this.jobSeekerRepository.findOneBy({
+        userId: jobSeekerId,
       });
-    return updatedJobPreference;
+    return updatedJobSeeker;
   }
 }

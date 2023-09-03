@@ -31,28 +31,31 @@ export class JobPreferenceService {
   async findOne(id: number) {
     const jobPreference = await this.jobPreferenceRepo.findOneJobPreference(id);
     if (jobPreference === null) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`Job Preference with ID ${id} not found`);
     } else {
       return jobPreference;
     }
   }
 
-  async update(id: number, updateUser: UpdateJobPreferenceDto) {
-    const user = await this.jobPreferenceRepo.findOneJobPreference(id);
-    if (user === null) {
+  async update(id: number, updateJobPreference: UpdateJobPreferenceDto) {
+    const jobPreference = await this.jobPreferenceRepo.findOneJobPreference(id);
+    if (jobPreference === null) {
       throw new NotFoundException(
-        `User with ID ${id} not found, Update Unsuccessful`,
+        `Job Preference with ID ${id} not found, Update Unsuccessful`,
       );
     } else {
-      return await this.jobPreferenceRepo.updateJobPreference(id, updateUser);
+      return await this.jobPreferenceRepo.updateJobPreference(
+        id,
+        updateJobPreference,
+      );
     }
   }
 
   async remove(id: number) {
-    const user = await this.jobPreferenceRepo.findOneJobPreference(id);
-    if (user === null) {
+    const jobPreference = await this.jobPreferenceRepo.findOneJobPreference(id);
+    if (jobPreference === null) {
       throw new NotFoundException(
-        `User with ID ${id} not found, Delete Unsuccessful`,
+        `Job Preference with ID ${id} not found, Delete Unsuccessful`,
       );
     } else {
       return await this.jobPreferenceRepo.deleteJobPreference(id);

@@ -1,3 +1,3 @@
 import { JobSeekerDetailDto } from './job-seeker-detail.dto';
 
-export class CreateJobSeeker extends JobSeekerDetailDto {}
+export class CreateJobSeekerDto extends JobSeekerDetailDto {}

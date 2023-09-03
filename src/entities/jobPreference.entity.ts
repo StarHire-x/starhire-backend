@@ -5,19 +5,19 @@ export abstract class JobPreference {
   jobPreferenceId: number;
 
   @Column()
-  locationPreference: Number;
+  locationPreference: number;
 
   @Column()
-  salaryPreference: Number;
+  salaryPreference: number;
 
   @Column()
-  culturePreference: Number;
+  culturePreference: number;
 
   @Column()
-  diversityPreference: Number;
+  diversityPreference: number;
 
   @Column()
-  workLifeBalancePreference: Number;
+  workLifeBalancePreference: number;
 
   constructor(entity: Partial<JobPreference>) {
     Object.assign(this, entity);

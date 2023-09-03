@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { ForumPost } from './forumPost.entity';
 
 @Entity({ name: 'forumComments' })
 export class ForumComment {
@@ -13,4 +14,13 @@ export class ForumComment {
 
   @Column()
   isAnonymous: boolean;
+
+  @ManyToOne(() => ForumPost, (forumPost) => forumPost.forumComments, {
+    onDelete: 'CASCADE',
+  })
+  forumPost: ForumPost;
+
+  constructor(entity: Partial<ForumComment>) {
+    Object.assign(this, entity);
+  }
 }

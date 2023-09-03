@@ -6,7 +6,9 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
   ParseIntPipe,
 } from '@nestjs/common';
 import { ForumPostsService } from './forum-posts.service';
@@ -24,12 +26,28 @@ export class ForumPostsController {
 
   @Get()
   findAllForumPosts() {
-    return this.forumPostsService.findAll();
+    try {
+      return this.forumPostsService.findAll();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Get(':id')
   findOneForumPost(@Param('id', ParseIntPipe) id: string) {
-    return this.forumPostsService.findOne(+id);
+    try {
+      return this.forumPostsService.findOne(+id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Patch(':id')
@@ -42,6 +60,14 @@ export class ForumPostsController {
 
   @Delete(':id')
   removeForumPost(@Param('id', ParseIntPipe) id: string) {
-    return this.forumPostsService.remove(+id);
+    try {
+      return this.forumPostsService.remove(+id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 }

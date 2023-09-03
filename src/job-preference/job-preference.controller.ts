@@ -40,7 +40,7 @@ export class JobPreferenceController {
   //     return this.jobPreferenceService.findAll();
   //   }
 
-  // GET /users/:id
+  // GET /job-preference/:id
   @Get(':id')
   findOneJobPreference(@Param('id', ParseIntPipe) id: number) {
     try {
@@ -71,13 +71,13 @@ export class JobPreferenceController {
   }
 
   @Delete(':id')
-  removeUser(@Param('id', ParseIntPipe) id: string) {
+  removeJobPreference(@Param('id', ParseIntPipe) id: string) {
     try {
       return this.jobPreferenceService.remove(+id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(
-          `User with ID ${id} not found`,
+          `Job Preference with ID ${id} not found`,
           HttpStatus.NOT_FOUND,
         );
       } else {

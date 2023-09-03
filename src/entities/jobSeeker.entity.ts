@@ -3,11 +3,12 @@ import { Entity } from 'typeorm';
 import { User } from './user.entity';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
 import { IsEnum } from 'class-validator';
+import { Blob } from 'buffer';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
   @Column()
-  resumePdf: Blob;
+  resumePdf: Buffer;
 
   @Column()
   fullName: string;
@@ -19,7 +20,7 @@ export class JobSeeker extends User {
   highestEducationStatus: HighestEducationStatusEnum;
 
   @Column()
-  profilePicture: Blob;
+  profilePicture: Buffer;
 
   @Column()
   homeAddress: string;

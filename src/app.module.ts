@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
 import { AdministratorModule } from './administrator/admin.module';
+import { JobPreferenceModule } from './job-preference/job-preference.module';
+import { JobSeekerModule } from './job-seeker/job-seeker.module';
 import { EventListingModule } from './event-listing/event-listing.module';
 import { EventRegistrationModule } from './event-registration/event-registration.module';
 
@@ -22,6 +24,8 @@ import { EventRegistrationModule } from './event-registration/event-registration
     }),
     UsersModule,
     AdministratorModule,
+    JobPreferenceModule,
+    JobSeekerModule,
     EventListingModule,
     EventRegistrationModule,
   ],

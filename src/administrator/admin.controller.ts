@@ -88,7 +88,7 @@ export class AdministratorController {
   }
 
   @Delete(':id')
-  removeUser(@Param('id', ParseIntPipe) id: string) {
+  removeAdministrator(@Param('id', ParseIntPipe) id: string) {
     try {
       return this.administratorService.remove(+id);
     } catch (error) {

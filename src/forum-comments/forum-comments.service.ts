@@ -9,7 +9,7 @@ import { ForumComment } from 'src/entities/forumComment.entity';
 export class ForumCommentsService {
   constructor(
     @InjectRepository(ForumComment)
-    private readonly userRepository: Repository<ForumComment>,
+    private readonly forumCommentRepository: Repository<ForumComment>,
   ) {}
 
   create(createForumCommentDto: CreateForumCommentDto) {
@@ -17,7 +17,7 @@ export class ForumCommentsService {
   }
 
   findAll() {
-    return `This action returns all forumComments`;
+    return this.forumCommentRepository.find();
   }
 
   findOne(id: number) {

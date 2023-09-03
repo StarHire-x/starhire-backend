@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
 import { AdministratorModule } from './administrator/admin.module';
+import { EventListingModule } from './event-listing/event-listing.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AdministratorModule } from './administrator/admin.module';
     }),
     UsersModule,
     AdministratorModule,
+    EventListingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

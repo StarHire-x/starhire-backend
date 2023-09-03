@@ -8,6 +8,7 @@ import { AdministratorModule } from './administrator/admin.module';
 import { EventListingModule } from './event-listing/event-listing.module';
 import { RecruiterModule } from './recruiter/recruiter.module';
 import { CorporateModule } from './corporate/corporate.module';
+import { TicketModule } from './ticket/ticket.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CorporateModule } from './corporate/corporate.module';
     EventListingModule,
     RecruiterModule,
     CorporateModule,
+    TicketModule,
   ],
   controllers: [AppController],
   providers: [AppService],

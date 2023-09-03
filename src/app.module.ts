@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
 import { AdministratorModule } from './administrator/admin.module';
 import { JobPreferenceModule } from './job-preference/job-preference.module';
+import { JobSeekerModule } from './job-seeker/job-seeker.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JobPreferenceModule } from './job-preference/job-preference.module';
     UsersModule,
     AdministratorModule,
     JobPreferenceModule,
+    JobSeekerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

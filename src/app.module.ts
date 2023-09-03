@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
-import { ChatModule } from './chat/chat.module';
-import { ChatMessageModule } from './chat-message/chat-message.module';
+import { JobApplicationModule } from './job-application/job-application.module';
+import { DocumentModule } from './document/document.module';
 
 @Module({
   imports: [
@@ -15,13 +15,13 @@ import { ChatMessageModule } from './chat-message/chat-message.module';
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'starhire_backend_pair3',
+      database: 'starhire_backend_pair2',
       entities: entityList,
       synchronize: true,
     }),
     UsersModule,
-    ChatModule,
-    ChatMessageModule,
+    JobApplicationModule,
+    DocumentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

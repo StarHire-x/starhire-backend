@@ -6,7 +6,9 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
   ParseIntPipe,
 } from '@nestjs/common';
 import { ForumCommentsService } from './forum-comments.service';
@@ -19,17 +21,41 @@ export class ForumCommentsController {
 
   @Post()
   createForumComment(@Body() createForumCommentDto: CreateForumCommentDto) {
-    return this.forumCommentsService.create(createForumCommentDto);
+    try {
+      return this.forumCommentsService.create(createForumCommentDto);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Get()
   findAllForumComments() {
-    return this.forumCommentsService.findAll();
+    try {
+      return this.forumCommentsService.findAll();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Get(':id')
   findOneForumComment(@Param('id', ParseIntPipe) id: string) {
-    return this.forumCommentsService.findOne(+id);
+    try {
+      return this.forumCommentsService.findOne(+id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Patch(':id')
@@ -42,6 +68,14 @@ export class ForumCommentsController {
 
   @Delete(':id')
   removeForumComment(@Param('id', ParseIntPipe) id: string) {
-    return this.forumCommentsService.remove(+id);
+    try {
+      return this.forumCommentsService.remove(+id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 }

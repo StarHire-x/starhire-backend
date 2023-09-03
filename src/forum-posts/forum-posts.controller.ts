@@ -21,7 +21,15 @@ export class ForumPostsController {
 
   @Post()
   createForumPost(@Body() createForumPostDto: CreateForumPostDto) {
-    return this.forumPostsService.create(createForumPostDto);
+    try {
+      return this.forumPostsService.create(createForumPostDto);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Get()

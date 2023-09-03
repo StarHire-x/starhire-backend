@@ -10,6 +10,9 @@ import { ChatModule } from './chat/chat.module';
 import { ChatMessageModule } from './chat-message/chat-message.module';
 import { ForumPostsModule } from './forum-posts/forum-posts.module';
 import { ForumCommentsModule } from './forum-comments/forum-comments.module';
+import { CommissionModule } from './commission/commission.module';
+import { InvoiceModule } from './invoice/invoice.module';
+import { JobListingModule } from './job-listing/job-listing.module';
 
 @Module({
   imports: [
@@ -30,6 +33,9 @@ import { ForumCommentsModule } from './forum-comments/forum-comments.module';
     ChatMessageModule,
     ForumPostsModule,
     ForumCommentsModule,
+    CommissionModule,
+    InvoiceModule,
+    JobListingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,16 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, HttpException, HttpStatus, InternalServerErrorException } from '@nestjs/common';
-import { JobApplicationService } from './job-application.service';
-import { CreateJobApplicationDto } from './dto/create-job-application.dto';
-import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+  Put,
+} from '@nestjs/common';
+import { CommissionService } from './commission.service';
+import { CreateCommissionDto } from './dto/create-commission.dto';
+import { UpdateCommissionDto } from './dto/update-commission.dto';
 
-@Controller('job-application')
-export class JobApplicationController {
-  constructor(private readonly jobApplicationService: JobApplicationService) {}
+@Controller('commission')
+export class CommissionController {
+  constructor(private readonly commissionService: CommissionService) {}
 
   @Post()
-  create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
+  create(@Body() createCommissionDto: CreateCommissionDto) {
     try {
-      return this.jobApplicationService.create(createJobApplicationDto);
+      return this.commissionService.create(createCommissionDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -23,7 +34,7 @@ export class JobApplicationController {
   @Get()
   findAll() {
     try {
-      return this.jobApplicationService.findAll();
+      return this.commissionService.findAll();
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -36,7 +47,7 @@ export class JobApplicationController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     try {
-      return this.jobApplicationService.findOne(+id);
+      return this.commissionService.findOne(+id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -47,9 +58,12 @@ export class JobApplicationController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateJobApplicationDto: UpdateJobApplicationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCommissionDto: UpdateCommissionDto,
+  ) {
     try {
-      return this.jobApplicationService.update(+id, updateJobApplicationDto);
+      return this.commissionService.update(+id, updateCommissionDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -62,7 +76,7 @@ export class JobApplicationController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {
-      return this.jobApplicationService.remove(+id);
+      return this.commissionService.remove(+id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

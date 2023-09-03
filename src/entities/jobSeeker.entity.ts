@@ -2,13 +2,14 @@ import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm';
 import { User } from './user.entity';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { Blob } from 'buffer';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
   @Column()
-  resumePdf: Buffer;
+  @IsOptional()
+  resumePdf!: Buffer | null;
 
   @Column()
   fullName: string;
@@ -20,7 +21,8 @@ export class JobSeeker extends User {
   highestEducationStatus: HighestEducationStatusEnum;
 
   @Column()
-  profilePicture: Buffer;
+  @IsOptional()
+  profilePicture!: Buffer | null;
 
   @Column()
   homeAddress: string;

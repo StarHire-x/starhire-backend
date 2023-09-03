@@ -2,6 +2,7 @@ import { IsEnum } from 'class-validator';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Document } from './document.entity';
+import { JobListing } from './job-listing.entity';
 
 @Entity({ name: 'jobApplications' })
 export class JobApplication {
@@ -28,4 +29,9 @@ export class JobApplication {
   constructor(entity: Partial<JobApplication>) {
     Object.assign(this, entity);
   }
+
+  @OneToMany(() => JobListing, (jobListing) => jobListing.jobApplication, {
+    cascade: true,
+  })
+  jobListings: JobListing[];
 }

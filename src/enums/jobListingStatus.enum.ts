@@ -1,6 +1,6 @@
-enum jobListingStatuEnum {
+enum JobListingStatusEnum {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
 }
 
-export default jobListingStatuEnum;
+export default JobListingStatusEnum;

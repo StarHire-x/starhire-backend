@@ -1,6 +1,7 @@
 import { IsEnum } from 'class-validator';
-import jobListingStatuEnum from 'src/enums/jobListingStatus.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import JobListingStatuEnum from 'src/enums/jobListingStatus.enum';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { JobApplication } from './jobApplication.entity';
 
 @Entity({ name: 'jobListings' })
 export class JobListing {
@@ -25,8 +26,15 @@ export class JobListing {
   @Column()
   jobStartDate: Date;
 
-  @IsEnum(jobListingStatuEnum)
-  jobListingStatus: jobListingStatuEnum;
+  @IsEnum(JobListingStatuEnum)
+  jobListingStatus: JobListingStatuEnum;
+
+  @ManyToOne(
+    () => JobApplication,
+    (jobApplication) => jobApplication.jobListings,
+    { onDelete: 'CASCADE' },
+  )
+  jobApplication: JobApplication;
 
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);

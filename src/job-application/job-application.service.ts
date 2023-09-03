@@ -6,6 +6,7 @@ import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Repository } from 'typeorm';
 import { Document } from 'src/entities/document.entity';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
+import { JobListing } from 'src/entities/job-listing.entity';
 
 @Injectable()
 export class JobApplicationService {
@@ -14,26 +15,40 @@ export class JobApplicationService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
+  // If u use multiple entity or such, rmb to update on the module.ts 
   async create(createJobApplicationDto: CreateJobApplicationDto) {
     try {
-      const { documents, ...dtoWithoutDocuments } = createJobApplicationDto;
+      // This is to filter out the external relationships in the dto object
+      const { documents, jobListings, ...dtoExcludeRelationship } =
+        createJobApplicationDto;
 
+      // Creating JobApplication without the external relationship with other entites esp one to many
       const jobApplication = new JobApplication({
-        ...dtoWithoutDocuments,
+        ...dtoExcludeRelationship,
       });
 
-      // Enum not working :(
+      // Enum not working :( Pls help here 
       jobApplication.jobApplicationStatus = JobApplicationStatusEnum.SUBMITTED;
 
+      // Creating the Classes for external relationship with other entities (OneToMany) 
       if (createJobApplicationDto.documents.length > 0) {
         const createDocuments = createJobApplicationDto.documents.map(
           (createDocumentDto) => new Document(createDocumentDto),
         );
-
         jobApplication.documents = createDocuments;
       }
 
-      await this.jobApplicationRepository.save(jobApplication);
+      // Creating the Classes for external relationship with other entities (OneToMany) 
+      if (createJobApplicationDto.jobListings.length > 0) {
+        const createJobListings = createJobApplicationDto.jobListings.map(
+          (createJobListingDto) => {
+            return new JobListing(createJobListingDto);
+          },
+        );
+        jobApplication.jobListings = createJobListings;
+      }
+
+      return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
       throw new HttpException(
         'Failed to create new job application',
@@ -43,14 +58,15 @@ export class JobApplicationService {
   }
 
   async findAll() {
-    return this.jobApplicationRepository.find();
+    return await this.jobApplicationRepository.find();
   }
 
   async findOne(id: number) {
     try {
-      return this.jobApplicationRepository.findOne({
+      // For this part, u want the relationship with other entities to show, at most 1 level, no need too detail
+      return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
-        relations: { documents: true },
+        relations: { documents: true, jobListings: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -66,17 +82,29 @@ export class JobApplicationService {
         jobApplicationId: id,
       });
 
-      const { documents, ...dtoWithoutDocuments } = updateJobApplicationDto;
+      // This is to filter out the external relationships in the dto object
+      const { documents, jobListings, ...dtoExcludeRelationship } =
+        updateJobApplicationDto;
 
-      Object.assign(jobApplication, dtoWithoutDocuments);
+      Object.assign(jobApplication, dtoExcludeRelationship);
 
+      // Same thing, u also update the entities with relationship as such
       if (documents) {
         const updatedDocuments = updateJobApplicationDto.documents.map(
           (createDocumentDto) => new Document(createDocumentDto),
         );
         jobApplication.documents = updatedDocuments;
       }
-      await this.jobApplicationRepository.save(jobApplication);
+
+      if (jobListings && jobListings.length > 0) {
+        const updatedDocuments = updateJobApplicationDto.jobListings.map(
+          (createJobListingDto) => {
+            return new JobListing(createJobListingDto);
+          },
+        );
+        jobApplication.jobListings = updatedDocuments;
+      }
+      return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
       throw new HttpException(
         'Failed to update job application',
@@ -87,7 +115,7 @@ export class JobApplicationService {
 
   async remove(id: number) {
     try {
-      await this.jobApplicationRepository.delete({ jobApplicationId: id });
+      return await this.jobApplicationRepository.delete({ jobApplicationId: id });
     } catch (err) {
       throw new HttpException(
         'Failed to delete job application',

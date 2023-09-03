@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
 import { AdministratorModule } from './administrator/admin.module';
 import { EventListingModule } from './event-listing/event-listing.module';
+import { EventRegistrationModule } from './event-registration/event-registration.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EventListingModule } from './event-listing/event-listing.module';
     UsersModule,
     AdministratorModule,
     EventListingModule,
+    EventRegistrationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

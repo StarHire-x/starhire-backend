@@ -15,19 +15,19 @@ import {
   Query,
   ConflictException,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AdministratorService } from './admin.service';
+import { CreateAdministratorDto } from './dto/create-admin.dto';
+import { UpdateAdministratorDto } from './dto/update-admin.dto';
 import { QueryFailedError } from 'typeorm';
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@Controller('administrators')
+export class AdministratorController {
+  constructor(private readonly administratorService: AdministratorService) {}
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
+  createAdministrator(@Body() createAdministratorDto: CreateAdministratorDto) {
     try {
-      return this.usersService.create(createUserDto);
+      return this.administratorService.create(createAdministratorDto);
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -38,16 +38,16 @@ export class UsersController {
   }
 
   @Get('/all')
-  findAllUsers() {
+  findAllAdministrator() {
     console.log('got here');
-    return this.usersService.findAll();
+    return this.administratorService.findAll();
   }
 
   // GET /users?id=1
   @Get()
   getNinjas(@Query('id') id: number) {
     try {
-      return this.usersService.findOne(id);
+      return this.administratorService.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -59,9 +59,9 @@ export class UsersController {
 
   // GET /users/:id
   @Get(':id')
-  findOneUser(@Param('id', ParseIntPipe) id: number) {
+  findOneAdministrator(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.usersService.findOne(id);
+      return this.administratorService.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -72,12 +72,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateUser(
+  updateAdministrator(
     @Param('id', ParseIntPipe) id: string,
-    @Body() updateEmployerDto: UpdateUserDto,
+    @Body() updateEmployerDto: UpdateAdministratorDto,
   ) {
     try {
-      return this.usersService.update(+id, updateEmployerDto);
+      return this.administratorService.update(+id, updateEmployerDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -90,7 +90,7 @@ export class UsersController {
   @Delete(':id')
   removeUser(@Param('id', ParseIntPipe) id: string) {
     try {
-      return this.usersService.remove(+id);
+      return this.administratorService.remove(+id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(

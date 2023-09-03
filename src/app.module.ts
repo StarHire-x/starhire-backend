@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
+import { AdministratorModule } from './administrator/admin.module';
 
 @Module({
   imports: [
@@ -13,11 +14,12 @@ import { entityList } from './entityList';
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'starhire_backend_pair3',
+      database: 'starhire_backend_pair1',
       entities: entityList,
       synchronize: true,
     }),
     UsersModule,
+    AdministratorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

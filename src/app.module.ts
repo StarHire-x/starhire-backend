@@ -7,6 +7,8 @@ import { entityList } from './entityList';
 import { AdministratorModule } from './administrator/admin.module';
 import { JobPreferenceModule } from './job-preference/job-preference.module';
 import { JobSeekerModule } from './job-seeker/job-seeker.module';
+import { EventListingModule } from './event-listing/event-listing.module';
+import { EventRegistrationModule } from './event-registration/event-registration.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { JobSeekerModule } from './job-seeker/job-seeker.module';
     AdministratorModule,
     JobPreferenceModule,
     JobSeekerModule,
+    EventListingModule,
+    EventRegistrationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,30 +4,29 @@ import {
   Post,
   Body,
   Patch,
+  Put,
   Param,
   Delete,
-  Put,
-  NotFoundException,
-  HttpException,
+  ConflictException,
   InternalServerErrorException,
+  HttpException,
+  NotFoundException,
   HttpStatus,
   ParseIntPipe,
   Query,
-  ConflictException,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { QueryFailedError } from 'typeorm';
+import { EventListingService } from './event-listing.service';
+import { CreateEventListingDto } from './dto/create-event-listing.dto';
+import { UpdateEventListingDto } from './dto/update-event-listing.dto';
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@Controller('event-listing')
+export class EventListingController {
+  constructor(private readonly eventListingService: EventListingService) {}
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createEventListingDto: CreateEventListingDto) {
     try {
-      return this.usersService.create(createUserDto);
+      return this.eventListingService.create(createEventListingDto);
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -38,15 +37,15 @@ export class UsersController {
   }
 
   @Get('/all')
-  findAllUsers() {
-    return this.usersService.findAll();
+  findAllEventListings() {
+    return this.eventListingService.findAll();
   }
 
-  // GET /users?id=1
+  // GET /event-listing?id=1
   @Get()
   getNinjas(@Query('id') id: number) {
     try {
-      return this.usersService.findOne(id);
+      return this.eventListingService.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -56,11 +55,11 @@ export class UsersController {
     }
   }
 
-  // GET /users/:id
+  // GET /event-listing/:id
   @Get(':id')
-  findOneUser(@Param('id', ParseIntPipe) id: number) {
+  findOneEventListing(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.usersService.findOne(id);
+      return this.eventListingService.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -71,12 +70,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateUser(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() updateEmployerDto: UpdateUserDto,
+  updateEventListing(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEventListingDto: UpdateEventListingDto,
   ) {
     try {
-      return this.usersService.update(+id, updateEmployerDto);
+      return this.eventListingService.update(+id, updateEventListingDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -87,13 +86,13 @@ export class UsersController {
   }
 
   @Delete(':id')
-  removeUser(@Param('id', ParseIntPipe) id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.usersService.remove(+id);
+      return this.eventListingService.remove(+id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(
-          `User with ID ${id} not found`,
+          `Event Listing with ID ${id}`,
           HttpStatus.NOT_FOUND,
         );
       } else {

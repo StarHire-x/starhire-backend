@@ -4,30 +4,31 @@ import {
   Post,
   Body,
   Patch,
+  Put,
+  Query,
   Param,
   Delete,
-  Put,
-  NotFoundException,
+  ConflictException,
   HttpException,
   InternalServerErrorException,
+  NotFoundException,
   HttpStatus,
-  ParseIntPipe,
-  Query,
-  ConflictException,
+  ParseIntPipe
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { QueryFailedError } from 'typeorm';
+import { EventRegistrationService } from './event-registration.service';
+import { CreateEventRegistrationDto } from './dto/create-event-registration.dto';
+import { UpdateEventRegistrationDto } from './dto/update-event-registration.dto';
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@Controller('event-registration')
+export class EventRegistrationController {
+  constructor(
+    private readonly eventRegistrationService: EventRegistrationService,
+  ) {}
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createEventRegistrationDto: CreateEventRegistrationDto) {
     try {
-      return this.usersService.create(createUserDto);
+      return this.eventRegistrationService.create(createEventRegistrationDto);
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -38,15 +39,15 @@ export class UsersController {
   }
 
   @Get('/all')
-  findAllUsers() {
-    return this.usersService.findAll();
+  findAllEventRegistrations() {
+    return this.eventRegistrationService.findAll();
   }
 
-  // GET /users?id=1
+  // GET /event-registration?id=1
   @Get()
   getNinjas(@Query('id') id: number) {
     try {
-      return this.usersService.findOne(id);
+      return this.eventRegistrationService.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -56,11 +57,11 @@ export class UsersController {
     }
   }
 
-  // GET /users/:id
+  // GET /event-registration/:id
   @Get(':id')
-  findOneUser(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: number) {
     try {
-      return this.usersService.findOne(id);
+      return this.eventRegistrationService.findOne(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -71,12 +72,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateUser(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() updateEmployerDto: UpdateUserDto,
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEventRegistrationDto: UpdateEventRegistrationDto,
   ) {
     try {
-      return this.usersService.update(+id, updateEmployerDto);
+      return this.eventRegistrationService.update(+id, updateEventRegistrationDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -87,13 +88,13 @@ export class UsersController {
   }
 
   @Delete(':id')
-  removeUser(@Param('id', ParseIntPipe) id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.usersService.remove(+id);
+      return this.eventRegistrationService.remove(+id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(
-          `User with ID ${id} not found`,
+          `Event Registration with ID ${id}`,
           HttpStatus.NOT_FOUND,
         );
       } else {

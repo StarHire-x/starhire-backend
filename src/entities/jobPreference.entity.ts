@@ -1,6 +1,8 @@
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity } from 'typeorm';
 
-export abstract class JobPreference {
+@Entity({ name: 'jobPreferences' })
+export class JobPreference {
   @PrimaryGeneratedColumn()
   jobPreferenceId: number;
 

@@ -3,6 +3,7 @@ import { Document } from './entities/document.entity';
 import { JobApplication } from './entities/jobApplication.entity';
 import { ForumPost } from './entities/forumPost.entity';
 import { ForumComment } from './entities/forumComment.entity';
+import { JobListing } from './entities/job-listing.entity';
 
 export const entityList = [
   User,
@@ -10,4 +11,5 @@ export const entityList = [
   JobApplication,
   ForumPost,
   ForumComment,
+  JobListing,
 ];

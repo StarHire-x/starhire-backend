@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
 import { JobApplicationModule } from './job-application/job-application.module';
 import { DocumentModule } from './document/document.module';
+import { ChatModule } from './chat/chat.module';
+import { ChatMessageModule } from './chat-message/chat-message.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { DocumentModule } from './document/document.module';
     UsersModule,
     JobApplicationModule,
     DocumentModule,
+    ChatModule,
+    ChatMessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

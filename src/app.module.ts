@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { entityList } from './entityList';
+import { ChatModule } from './chat/chat.module';
+import { ChatMessageModule } from './chat-message/chat-message.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { entityList } from './entityList';
       synchronize: true,
     }),
     UsersModule,
+    ChatModule,
+    ChatMessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

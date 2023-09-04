@@ -19,7 +19,7 @@ export class JobApplicationService {
   async create(createJobApplicationDto: CreateJobApplicationDto) {
     try {
       // This is to filter out the external relationships in the dto object
-      const { documents, jobListings, ...dtoExcludeRelationship } =
+      const { documents, ...dtoExcludeRelationship } =
         createJobApplicationDto;
 
       // Creating JobApplication without the external relationship with other entites esp one to many
@@ -37,16 +37,6 @@ export class JobApplicationService {
           (createDocumentDto) => new Document(createDocumentDto),
         );
         jobApplication.documents = createDocuments;
-      }
-
-      // Creating the Classes for external relationship with other entities (OneToMany)
-      if (createJobApplicationDto.jobListings.length > 0) {
-        const createJobListings = createJobApplicationDto.jobListings.map(
-          (createJobListingDto) => {
-            return new JobListing(createJobListingDto);
-          },
-        );
-        jobApplication.jobListings = createJobListings;
       }
 
       return await this.jobApplicationRepository.save(jobApplication);
@@ -67,7 +57,7 @@ export class JobApplicationService {
       // For this part, u want the relationship with other entities to show, at most 1 level, no need too detail
       return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
-        relations: { documents: true, jobListings: true },
+        relations: { documents: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -84,7 +74,7 @@ export class JobApplicationService {
       });
 
       // This is to filter out the external relationships in the dto object
-      const { documents, jobListings, ...dtoExcludeRelationship } =
+      const { documents, ...dtoExcludeRelationship } =
         updateJobApplicationDto;
 
       Object.assign(jobApplication, dtoExcludeRelationship);
@@ -94,21 +84,13 @@ export class JobApplicationService {
       );
 
       // Same thing, u also update the entities with relationship as such
-      if (documents) {
+      if (documents && documents.length > 0) {
         const updatedDocuments = updateJobApplicationDto.documents.map(
           (createDocumentDto) => new Document(createDocumentDto),
         );
         jobApplication.documents = updatedDocuments;
       }
 
-      if (jobListings && jobListings.length > 0) {
-        const updatedDocuments = updateJobApplicationDto.jobListings.map(
-          (createJobListingDto) => {
-            return new JobListing(createJobListingDto);
-          },
-        );
-        jobApplication.jobListings = updatedDocuments;
-      }
       return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
       throw new HttpException(

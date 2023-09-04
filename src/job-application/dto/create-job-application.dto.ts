@@ -9,5 +9,4 @@ export class CreateJobApplicationDto {
   availableEndDate: Date;
   documents: CreateDocumentDto[];
   submissionDate: Date;
-  jobListings: CreateJobListingDto[];
 }

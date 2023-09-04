@@ -48,7 +48,7 @@ export class EventListingService {
 
   async findOne(id: number) {
     try {
-      // For this part, we want the relationship with other entities to shoe, at most 1 level, no need to be too detail
+      // For this part, we want the relationship with other entities to show, at most 1 level, no need to be too detail
       return await this.eventListingRepository.findOne({
         where: {eventListingId: id },
         relations: {eventRegistrations: true},

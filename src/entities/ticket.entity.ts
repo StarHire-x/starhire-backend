@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { IsEnum } from 'class-validator';
 import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import { Administrator } from './administrator.entity';
 
 @Entity({ name: 'tickets' })
 export class Ticket {
@@ -22,6 +23,13 @@ export class Ticket {
   @Column()
   @IsEnum(TicketCategoryEnum)
   ticketCategory: TicketCategoryEnum;
+
+  @ManyToOne(
+    () => Administrator,
+    (administrator) => administrator.tickets,
+    {  onDelete: 'CASCADE' },
+  )
+  administrator: Administrator;
 
   constructor(entity: Partial<Ticket>) {
     Object.assign(this, entity);

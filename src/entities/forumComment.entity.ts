@@ -10,7 +10,7 @@ export class ForumComment {
   createdAt: Date;
 
   @Column()
-  forumPostMessage: string;
+  forumCommentMessage: string;
 
   @Column()
   isAnonymous: boolean;

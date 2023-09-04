@@ -1,8 +1,14 @@
 import { IsEnum } from 'class-validator';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Document } from './document.entity';
-import { JobListing } from './job-listing.entity';
+import { JobListing } from './jobListing.entity';
 
 @Entity({ name: 'jobApplications' })
 export class JobApplication {

@@ -4,7 +4,8 @@ import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { JobListing } from 'src/entities/job-listing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';;
+import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';import { JobApplication } from 'src/entities/jobApplication.entity';
+;
 
 @Injectable()
 export class JobListingService {
@@ -15,11 +16,26 @@ export class JobListingService {
 
   async create(createJobListingDto: CreateJobListingDto) {
     try {
-      const jobListing = new JobListing(createJobListingDto);
+      const { jobApplications, ...dtoExcludeRelationship } =
+        createJobListingDto;
 
-      jobListing.jobListingStatus = this.mapJsonToEnum(createJobListingDto.jobListingStatus);
+      const jobListing = new JobListing(dtoExcludeRelationship);
 
-      console.log(jobListing);
+      jobListing.jobListingStatus = this.mapJsonToEnum(
+        createJobListingDto.jobListingStatus,
+      );
+
+      // Creating the Classes for external relationship with other entities (OneToMany)
+      if (createJobListingDto.jobApplications.length > 0) {
+        const createJobApplications = createJobListingDto.jobApplications.map(
+          (createJobApplicationDto) => {
+            const { documents, ...dtoExcludeRelationship } =
+              createJobApplicationDto;
+            return new JobApplication(dtoExcludeRelationship);
+          },
+        );
+        jobListing.jobApplications = createJobApplications;
+      }
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {
       throw new HttpException(
@@ -37,7 +53,7 @@ export class JobListingService {
     try {
       return await this.jobListingRepository.findOne({
         where: { jobListingId: id },
-        relations: { jobApplication: true },
+        relations: { jobApplications: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -52,11 +68,24 @@ export class JobListingService {
       const jobListing = await this.jobListingRepository.findOneBy({
         jobListingId: id,
       });
-      Object.assign(jobListing, updateJobListingDto);
 
+       const { jobApplications, ...dtoExcludeRelationship } = updateJobListingDto;
+      Object.assign(jobListing, dtoExcludeRelationship);
+      
       jobListing.jobListingStatus = this.mapJsonToEnum(
         updateJobListingDto.jobListingStatus,
       );
+
+      if (jobApplications && jobApplications.length > 0) {
+        const updatedJobApplication = updateJobListingDto.jobApplications.map(
+          (createJobApplicationDto) => {
+            const { documents, ...dtoExcludeRelationship } =
+              createJobApplicationDto;
+            return new JobApplication(dtoExcludeRelationship);
+          },
+        );
+        jobListing.jobApplications = updatedJobApplication;
+      }
 
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {

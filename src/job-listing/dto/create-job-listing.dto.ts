@@ -1,5 +1,5 @@
-import { JobApplication } from "src/entities/jobApplication.entity";
 import JobListingStatusEnum from "src/enums/jobListingStatus.enum";
+import { CreateJobApplicationDto } from "src/job-application/dto/create-job-application.dto";
 
 export class CreateJobListingDto {
     jobListingId: number;
@@ -10,4 +10,5 @@ export class CreateJobListingDto {
     averageSalary: number;
     jobStartDate: Date;
     jobListingStatus: JobListingStatusEnum;
+    jobApplications: CreateJobApplicationDto[];
 }

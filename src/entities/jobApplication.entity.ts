@@ -9,7 +9,7 @@ export class JobApplication {
   @PrimaryGeneratedColumn()
   jobApplicationId: number;
 
-  @IsEnum(JobApplicationStatusEnum)
+  @Column()
   jobApplicationStatus: JobApplicationStatusEnum;
 
   @Column()

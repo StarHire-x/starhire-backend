@@ -26,7 +26,7 @@ export class JobListing {
   @Column()
   jobStartDate: Date;
 
-  @IsEnum(JobListingStatuEnum)
+  @Column()
   jobListingStatus: JobListingStatuEnum;
 
   @ManyToOne(

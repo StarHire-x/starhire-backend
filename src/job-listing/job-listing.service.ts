@@ -16,9 +16,10 @@ export class JobListingService {
   async create(createJobListingDto: CreateJobListingDto) {
     try {
       const jobListing = new JobListing(createJobListingDto);
-      
-      jobListing.jobListingStatus = JobListingStatusEnum.ACTIVE;
 
+      jobListing.jobListingStatus = this.mapJsonToEnum(createJobListingDto.jobListingStatus);
+
+      console.log(jobListing);
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {
       throw new HttpException(
@@ -53,6 +54,10 @@ export class JobListingService {
       });
       Object.assign(jobListing, updateJobListingDto);
 
+      jobListing.jobListingStatus = this.mapJsonToEnum(
+        updateJobListingDto.jobListingStatus,
+      );
+
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {
       throw new HttpException(
@@ -70,6 +75,15 @@ export class JobListingService {
         'Failed to delete job listing',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  mapJsonToEnum(status: string): JobListingStatusEnum {
+    switch (status) {
+      case 'Inactive':
+        return JobListingStatusEnum.INACTIVE;
+      default:
+        return JobListingStatusEnum.ACTIVE;
     }
   }
 }

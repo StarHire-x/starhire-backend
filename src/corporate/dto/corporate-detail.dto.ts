@@ -1,5 +1,6 @@
 import UserStatusEnum from "src/enums/userStatus.enum";
 import NotificationModeEnum from "src/enums/notificationMode.enum";
+import { EventListing } from "src/entities/eventListing.entity";
 
 export class CorporateDetailDto {
   userName: string;
@@ -13,4 +14,5 @@ export class CorporateDetailDto {
   companyRegistrationId: number;
   corporatePicture: string;
   companyAddress: string;
+  eventListings: EventListing[];
 }

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateEventListingDto } from './dto/create-event-listing.dto';
 import { UpdateEventListingDto } from './dto/update-event-listing.dto';
 import { Repository } from 'typeorm';

@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
 import { EventRegistration } from './eventRegistration.entity';
+import { Corporate } from './corporate.entity';
 
 @Entity({name: 'eventListings'})
 export class EventListing {
@@ -25,6 +26,13 @@ export class EventListing {
         cascade: true,
       })
       eventRegistrations: EventRegistration[];
+
+    @ManyToOne(
+        () => Corporate,
+        (corporate) => corporate.eventListings,
+        { onDelete: 'CASCADE'},
+    )
+    corporate: Corporate;
 
     constructor(entity: Partial<EventListing>) {
         Object.assign(this, entity);

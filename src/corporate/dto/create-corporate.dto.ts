@@ -1,15 +1,7 @@
-import UserStatusEnum from "src/enums/userStatus.enum";
-import NotificationModeEnum from "src/enums/notificationMode.enum";
 import { EventListing } from "src/entities/eventListing.entity";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
 
-export class CreateCorporateDto {
-  userName: string;
-  email: string;
-  password: string;
-  contactNo: string;
-  status: UserStatusEnum;
-  notificationMode: NotificationModeEnum;
-  createdAt: Date;
+export class CreateCorporateDto extends CreateUserDto {
   companyName: string;
   companyRegistrationId: number;
   corporatePicture: string;

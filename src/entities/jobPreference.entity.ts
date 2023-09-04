@@ -1,5 +1,6 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm';
+import { JobSeeker } from './jobSeeker.entity';
 
 @Entity({ name: 'jobPreferences' })
 export class JobPreference {
@@ -20,6 +21,9 @@ export class JobPreference {
 
   @Column()
   workLifeBalancePreference: number;
+
+  @OneToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobPreference)
+  jobSeeker: JobSeeker;
 
   constructor(entity: Partial<JobPreference>) {
     Object.assign(this, entity);

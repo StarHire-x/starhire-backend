@@ -1,7 +1,8 @@
 import { IsEnum } from 'class-validator';
 import ForumCategoryEnum from 'src/enums/forumCategory.enum';
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
 import { ForumComment } from './forumComment.entity';
+import { JobSeeker } from './jobSeeker.entity';
 
 @Entity({ name: 'forumPosts' })
 export class ForumPost {
@@ -27,6 +28,11 @@ export class ForumPost {
     cascade: true,
   })
   forumComments: ForumComment[];
+
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
+    onDelete: 'CASCADE',
+  })
+  jobSeeker: JobSeeker;
 
   constructor(entity: Partial<ForumPost>) {
     Object.assign(this, entity);

@@ -1,50 +1,128 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersRepo } from './users.repo';
-import { QueryFailedError } from 'typeorm';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/entities/user.entity';
+import UserRoleEnum from 'src/enums/userRole.enum';
+import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
+import { CorporateService } from 'src/corporate/corporate.service';
+import { AdministratorService } from 'src/administrator/admin.service';
+import { RecruiterService } from 'src/recruiter/recruiter.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepo: UsersRepo) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private jobSeekerService: JobSeekerService,
+    private corporateService: CorporateService,
+    private adminService: AdministratorService,
+    private recruiterService: RecruiterService,
+  ) {}
 
-  async create(createUser: CreateUserDto) {
+  async create(createUserDto: any) {
     try {
-      const { ...userDetail } = createUser;
-      return await this.usersRepo.createUser(userDetail);
-    } catch(err) {
-      throw new ConflictException("Inserting a duplicate entry into the database. Please check your data.");
+      const { confirmPassword, ...dtoExcludeRelationship } = createUserDto;
+      
+      if(createUserDto.password !== createUserDto.confirmPassword) {
+        throw new HttpException('Password are different', HttpStatus.BAD_REQUEST,)
+      }
+
+      if(createUserDto.role === "Job Seeker") {
+        return await this.jobSeekerService.create(dtoExcludeRelationship);
+      } else if(createUserDto.role === "Administrator") {
+        await this.corporateService.create(dtoExcludeRelationship);
+      } else if(createUserDto.role === "Corporate") {
+        return await this.adminService.create(dtoExcludeRelationship);
+      } else if(createUserDto.role === "Recruiter") {
+        return await this.recruiterService.create(dtoExcludeRelationship);
+      }
+      
+    } catch (err) {
+      throw new HttpException(
+        'Failed to create new job application',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
   async findAll() {
-    return await this.usersRepo.findAllUsers();
+    return await this.userRepository.find();
   }
 
   async findOne(id: number) {
-    const user = await this.usersRepo.findOneUser(id);
-    if(user === null) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    } else {
-      return user;
+    try {
+      return await this.userRepository.findOne({
+        where: { userId : id },
+        relations: {},
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job application',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  async update(id: number, updateUser: UpdateUserDto) {
-    const user = await this.usersRepo.findOneUser(id);
-    if (user === null) {
-      throw new NotFoundException(`User with ID ${id} not found, Update Unsuccessful`);
-    } else {
-      return await this.usersRepo.updateUser(id, updateUser);
+  async update(id: number, updateUserDto: any) {
+    try {
+      const { confirmPassword, ...dtoExcludeRelationship } = updateUserDto;
+
+      if (updateUserDto.password !== updateUserDto.confirmPassword) {
+        throw new HttpException(
+          'Password are different',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (updateUserDto.role === 'Job Seeker') {
+        return await this.jobSeekerService.update(id, dtoExcludeRelationship);
+      } else if (updateUserDto.role === 'Administrator') {
+        await this.corporateService.update(id, dtoExcludeRelationship);
+      } else if (updateUserDto.role === 'Corporate') {
+        return await this.adminService.update(id, dtoExcludeRelationship);
+      } else if (updateUserDto.role === 'Recruiter') {
+        return await this.recruiterService.update(id, dtoExcludeRelationship);
+      }
+
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update particulars',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  async remove(id: number) {
-    const user = await this.usersRepo.findOneUser(id);
-    if (user === null) {
-      throw new NotFoundException(`User with ID ${id} not found, Delete Unsuccessful`);
-    } else {
-      return await this.usersRepo.deleteUser(id);
+  async remove(id: number, role: string) {
+    try {
+      if (role === 'Job Seeker') {
+        return await this.jobSeekerService.remove(id);
+      } else if (role === 'Administrator') {
+        await this.corporateService.remove(id);
+      } else if (role === 'Corporate') {
+        return await this.adminService.remove(id);
+      } else if (role === 'Recruiter') {
+        return await this.recruiterService.remove(id);
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to delete job application',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  mapJsonToEnum(status: string): UserRoleEnum {
+    switch (status) {
+      case 'Job Seeker':
+        return UserRoleEnum.JOBSEEKER;
+      case 'Corporate':
+        return UserRoleEnum.CORPORATE;
+      case 'Recruiter':
+        return UserRoleEnum.RECRUITER;
+      case 'Administrator':
+        return UserRoleEnum.ADMINISTRATOR;
     }
   }
 }

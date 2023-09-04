@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Document } from './document.entity';
 import { JobListing } from './jobListing.entity';
+import { JobSeeker } from './jobSeeker.entity';
 
 @Entity({ name: 'jobApplications' })
 export class JobApplication {
@@ -36,6 +37,11 @@ export class JobApplication {
     onDelete: 'CASCADE',
   })
   jobListing: JobListing;
+
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
+    onDelete: 'CASCADE',
+  })
+  jobSeeker: JobSeeker;
 
   constructor(entity: Partial<JobApplication>) {
     Object.assign(this, entity);

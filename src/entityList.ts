@@ -12,6 +12,8 @@ import { EventRegistration } from './entities/eventRegistration.entity';
 import { Recruiter } from './entities/recruiter.entity';
 import { Corporate } from './entities/corporate.entity';
 import { Ticket } from './entities/ticket.entity';
+import { Chat } from './entities/chat.entity';
+import { ChatMessage } from './entities/chatMessage.entity';
 
 export const entityList = [
   User,
@@ -28,4 +30,6 @@ export const entityList = [
   EventListing,
   EventRegistration,
   Ticket,
+  Chat,
+  ChatMessage
 ];

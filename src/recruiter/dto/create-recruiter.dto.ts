@@ -1,14 +1,6 @@
-import UserStatusEnum from "src/enums/userStatus.enum";
-import NotificationModeEnum from "src/enums/notificationMode.enum";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
 
-export class CreateRecruiterDto {
-  userName: string;
-  email: string;
-  password: string;
-  contactNo: string;
-  status: UserStatusEnum;
-  notificationMode: NotificationModeEnum;
-  createdAt: Date;
+export class CreateRecruiterDto extends CreateUserDto {
   fullName: string;
   profilePictureUrl: string;
 }

@@ -87,9 +87,12 @@ export class UsersController {
   }
 
   @Delete(':id')
-  removeUser(@Param('id', ParseIntPipe) id: string) {
+  removeUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('role') role: string,
+  ) {
     try {
-      return this.usersService.remove(+id);
+      return this.usersService.remove(+id, role);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(

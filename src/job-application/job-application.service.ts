@@ -6,7 +6,6 @@ import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Repository } from 'typeorm';
 import { Document } from 'src/entities/document.entity';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
-import { JobListing } from 'src/entities/jobListing.entity';
 
 @Injectable()
 export class JobApplicationService {

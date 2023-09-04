@@ -8,7 +8,7 @@ export class ForumPost {
   @PrimaryGeneratedColumn()
   forumPostId: number;
 
-  @IsEnum(ForumCategoryEnum)
+  @Column()
   forumCategoryEnum: ForumCategoryEnum;
 
   @Column()

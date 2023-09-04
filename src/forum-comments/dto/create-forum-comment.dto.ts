@@ -1,4 +1,6 @@
 export class CreateForumCommentDto {
-  forumPostMessage: string;
+  forumCommentId: number;
+  createdAt: Date;
+  forumCommentMessage: string;
   isAnonymous: boolean;
 }

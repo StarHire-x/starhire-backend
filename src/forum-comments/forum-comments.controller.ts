@@ -63,7 +63,15 @@ export class ForumCommentsController {
     @Param('id', ParseIntPipe) id: string,
     @Body() updateForumCommentDto: UpdateForumCommentDto,
   ) {
-    return this.forumCommentsService.update(+id, updateForumCommentDto);
+    try {
+      return this.forumCommentsService.update(+id, updateForumCommentDto);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Delete(':id')

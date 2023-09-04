@@ -9,7 +9,7 @@ export class ForumPost {
   forumPostId: number;
 
   @Column()
-  forumCategoryEnum: ForumCategoryEnum;
+  forumCategory: ForumCategoryEnum;
 
   @Column()
   forumPostTitle: string;

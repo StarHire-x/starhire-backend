@@ -4,6 +4,7 @@ import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ForumPost } from 'src/entities/forumPost.entity';
+import ForumCategoryEnum from 'src/enums/forumCategory.enum';
 
 @Injectable()
 export class ForumPostsService {
@@ -13,7 +14,22 @@ export class ForumPostsService {
   ) {}
 
   async create(createForumPostDto: CreateForumPostDto) {
-    return 'This action adds a new forumPost';
+    try {
+      const { forumComments, ...dtoExcludeRelationship } = createForumPostDto;
+
+      const forumPost = new ForumPost(dtoExcludeRelationship);
+
+      forumPost.forumCategory = this.mapJsonToEnum(
+        createForumPostDto.forumCategory,
+      );
+
+      return await this.forumPostRepository.save(forumPost);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to create new forum post',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findAll() {
@@ -22,7 +38,7 @@ export class ForumPostsService {
 
   async findOne(id: number) {
     try {
-      return this.forumPostRepository.findOne({
+      return await this.forumPostRepository.findOne({
         where: { forumPostId: id },
         relations: { forumComments: true },
       });
@@ -35,17 +51,50 @@ export class ForumPostsService {
   }
 
   async update(id: number, updateForumPostDto: UpdateForumPostDto) {
-    return `This action updates a #${id} forumPost`;
+    try {
+      const forumPost = await this.forumPostRepository.findOneBy({
+        forumPostId: id,
+      });
+
+      const { forumComments, ...dtoExcludeRelationship } = updateForumPostDto;
+      Object.assign(forumPost, dtoExcludeRelationship);
+
+      forumPost.forumCategory = this.mapJsonToEnum(
+        updateForumPostDto.forumCategory,
+      );
+
+      return await this.forumPostRepository.save(forumPost);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update forum post',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async remove(id: number) {
     try {
-      await this.forumPostRepository.delete({ forumPostId: id });
+      return await this.forumPostRepository.delete({ forumPostId: id });
     } catch (err) {
       throw new HttpException(
         'Failed to delete forum post',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  mapJsonToEnum(status: string): ForumCategoryEnum {
+    switch (status) {
+      case 'Job':
+        return ForumCategoryEnum.JOB;
+      case 'Event':
+        return ForumCategoryEnum.EVENT;
+      case 'Career':
+        return ForumCategoryEnum.CAREER;
+      case 'Confession':
+        return ForumCategoryEnum.CONFESSION;
+      case 'Misc':
+        return ForumCategoryEnum.MISC;
     }
   }
 }

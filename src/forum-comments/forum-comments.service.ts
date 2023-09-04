@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
 import { UpdateForumCommentDto } from './dto/update-forum-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,23 +12,60 @@ export class ForumCommentsService {
     private readonly forumCommentRepository: Repository<ForumComment>,
   ) {}
 
-  create(createForumCommentDto: CreateForumCommentDto) {
-    return 'This action adds a new forumComment';
+  async create(createForumCommentDto: CreateForumCommentDto) {
+    try {
+      const forumComment = new ForumComment({});
+      return await this.forumCommentRepository.save(forumComment);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to create new forum comment',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  findAll() {
-    return this.forumCommentRepository.find();
+  async findAll() {
+    return await this.forumCommentRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} forumComment`;
+  async findOne(id: number) {
+    try {
+      return await this.forumCommentRepository.findOne({
+        where: { forumCommentId: id },
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find forum comment',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  update(id: number, updateForumCommentDto: UpdateForumCommentDto) {
-    return `This action updates a #${id} forumComment`;
+  async update(id: number, updateForumCommentDto: UpdateForumCommentDto) {
+    try {
+      const forumComment = await this.forumCommentRepository.findOneBy({
+        forumCommentId: id,
+      });
+
+      return await this.forumCommentRepository.save(forumComment);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update forum comment',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} forumComment`;
+  async remove(id: number) {
+    try {
+      return await this.forumCommentRepository.delete({
+        forumCommentId: id,
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to delete forum comment',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

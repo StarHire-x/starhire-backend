@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, HttpException, HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JobApplicationService } from './job-application.service';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
@@ -47,7 +59,10 @@ export class JobApplicationController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateJobApplicationDto: UpdateJobApplicationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateJobApplicationDto: UpdateJobApplicationDto,
+  ) {
     try {
       return this.jobApplicationService.update(+id, updateJobApplicationDto);
     } catch (error) {

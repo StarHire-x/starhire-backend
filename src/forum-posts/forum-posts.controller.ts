@@ -63,7 +63,15 @@ export class ForumPostsController {
     @Param('id', ParseIntPipe) id: string,
     @Body() updateForumPostDto: UpdateForumPostDto,
   ) {
-    return this.forumPostsService.update(+id, updateForumPostDto);
+    try {
+      return this.forumPostsService.update(+id, updateForumPostDto);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Delete(':id')

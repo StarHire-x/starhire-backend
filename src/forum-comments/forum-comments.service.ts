@@ -14,7 +14,10 @@ export class ForumCommentsService {
 
   async create(createForumCommentDto: CreateForumCommentDto) {
     try {
-      const forumComment = new ForumComment({});
+      const forumComment = new ForumComment({
+        ...createForumCommentDto,
+      });
+
       return await this.forumCommentRepository.save(forumComment);
     } catch (err) {
       throw new HttpException(
@@ -32,6 +35,7 @@ export class ForumCommentsService {
     try {
       return await this.forumCommentRepository.findOne({
         where: { forumCommentId: id },
+        relations: {},
       });
     } catch (err) {
       throw new HttpException(
@@ -47,6 +51,7 @@ export class ForumCommentsService {
         forumCommentId: id,
       });
 
+      Object.assign(forumComment, updateForumCommentDto);
       return await this.forumCommentRepository.save(forumComment);
     } catch (err) {
       throw new HttpException(

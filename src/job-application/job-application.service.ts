@@ -15,7 +15,7 @@ export class JobApplicationService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
-  // If u use multiple entity or such, rmb to update on the module.ts 
+  // If u use multiple entity or such, rmb to update on the module.ts
   async create(createJobApplicationDto: CreateJobApplicationDto) {
     try {
       // This is to filter out the external relationships in the dto object
@@ -27,10 +27,11 @@ export class JobApplicationService {
         ...dtoExcludeRelationship,
       });
 
-      // Enum not working :( Pls help here 
-      jobApplication.jobApplicationStatus = JobApplicationStatusEnum.SUBMITTED;
+      jobApplication.jobApplicationStatus = this.mapJsonToEnum(
+        dtoExcludeRelationship.jobApplicationStatus,
+      );
 
-      // Creating the Classes for external relationship with other entities (OneToMany) 
+      // Creating the Classes for external relationship with other entities (OneToMany)
       if (createJobApplicationDto.documents.length > 0) {
         const createDocuments = createJobApplicationDto.documents.map(
           (createDocumentDto) => new Document(createDocumentDto),
@@ -38,7 +39,7 @@ export class JobApplicationService {
         jobApplication.documents = createDocuments;
       }
 
-      // Creating the Classes for external relationship with other entities (OneToMany) 
+      // Creating the Classes for external relationship with other entities (OneToMany)
       if (createJobApplicationDto.jobListings.length > 0) {
         const createJobListings = createJobApplicationDto.jobListings.map(
           (createJobListingDto) => {
@@ -88,6 +89,10 @@ export class JobApplicationService {
 
       Object.assign(jobApplication, dtoExcludeRelationship);
 
+      jobApplication.jobApplicationStatus = this.mapJsonToEnum(
+        dtoExcludeRelationship.jobApplicationStatus,
+      );
+
       // Same thing, u also update the entities with relationship as such
       if (documents) {
         const updatedDocuments = updateJobApplicationDto.documents.map(
@@ -115,12 +120,29 @@ export class JobApplicationService {
 
   async remove(id: number) {
     try {
-      return await this.jobApplicationRepository.delete({ jobApplicationId: id });
+      return await this.jobApplicationRepository.delete({
+        jobApplicationId: id,
+      });
     } catch (err) {
       throw new HttpException(
         'Failed to delete job application',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  mapJsonToEnum(status: string): JobApplicationStatusEnum {
+    switch (status) {
+      case 'Withdraw':
+        return JobApplicationStatusEnum.WITHDRAWN;
+      case 'Submitted':
+        return JobApplicationStatusEnum.SUBMITTED;
+      case 'Approved':
+        return JobApplicationStatusEnum.ACCEPTED;
+      case 'Rejected':
+        return JobApplicationStatusEnum.REJECTED;
+      default:
+        return JobApplicationStatusEnum.PENDING;
     }
   }
 }

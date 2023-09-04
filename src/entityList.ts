@@ -3,7 +3,7 @@ import { Document } from './entities/document.entity';
 import { JobApplication } from './entities/jobApplication.entity';
 import { ForumPost } from './entities/forumPost.entity';
 import { ForumComment } from './entities/forumComment.entity';
-import { JobListing } from './entities/job-listing.entity';
+import { JobListing } from './entities/jobListing.entity';
 import { Administrator } from './entities/administrator.entity';
 import { JobPreference } from './entities/jobPreference.entity';
 import { JobSeeker } from './entities/jobSeeker.entity';
@@ -26,6 +26,6 @@ export const entityList = [
   ForumPost,
   ForumComment,
   EventListing,
-  EventRegistration,  
+  EventRegistration,
   Ticket,
 ];

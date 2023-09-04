@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { EventRegistration } from './eventRegistration.entity';
 
 @Entity({name: 'eventListings'})
 export class EventListing {
@@ -19,6 +20,11 @@ export class EventListing {
 
     @Column()
     image: string;
+
+    @OneToMany(() => EventRegistration, (eventRegistration) => eventRegistration.eventListing, {
+        cascade: true,
+      })
+      eventRegistrations: EventRegistration[];
 
     constructor(entity: Partial<EventListing>) {
         Object.assign(this, entity);

@@ -1,23 +1,52 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { IsEnum } from "class-validator";
+import UserStatusEnum from "src/enums/userStatus.enum";
+import NotificationModeEnum from "src/enums/notificationMode.enum";
 
-@Entity({name: 'users'})
-export class User {
-
+export abstract class User {
     @PrimaryGeneratedColumn()
-    id: number;
+    userId: number;
 
     @Column({ unique: true })
-    name: string;
-
-    @Column({ unique: true })
-    email: string;
+    userName: string;
 
     @Column()
     password: string;
 
-    @Column({ nullable: true })
+    @Column({ unique: true })
+    email: string;
+
+    @Column({ unique: true })
+    contactNo: string;
+
+    @IsEnum(UserStatusEnum)
+    status: UserStatusEnum;
+
+    @IsEnum(NotificationModeEnum)
+    notificationMode: NotificationModeEnum;
+    
+    @Column()
     createdAt: Date;
 
-    @Column({ nullable: true })
-    authStrategy: string;
+    constructor(entity: Partial<User>) {
+        Object.assign(this, entity);
+    }
+    
+    // @PrimaryGeneratedColumn()
+    // id: number;
+
+    // @Column({ unique: true })
+    // name: string;
+
+    // @Column({ unique: true })
+    // email: string;
+
+    // @Column()
+    // password: string;
+
+    // @Column({ nullable: true })
+    // createdAt: Date;
+
+    // @Column({ nullable: true })
+    // authStrategy: string;
 }

@@ -13,6 +13,14 @@ import { ForumCommentsModule } from './forum-comments/forum-comments.module';
 import { CommissionModule } from './commission/commission.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { JobListingModule } from './job-listing/job-listing.module';
+import { AdministratorModule } from './administrator/admin.module';
+import { JobPreferenceModule } from './job-preference/job-preference.module';
+import { JobSeekerModule } from './job-seeker/job-seeker.module';
+import { EventListingModule } from './event-listing/event-listing.module';
+import { EventRegistrationModule } from './event-registration/event-registration.module';
+import { RecruiterModule } from './recruiter/recruiter.module';
+import { CorporateModule } from './corporate/corporate.module';
+import { TicketModule } from './ticket/ticket.module';
 
 @Module({
   imports: [
@@ -36,6 +44,14 @@ import { JobListingModule } from './job-listing/job-listing.module';
     CommissionModule,
     InvoiceModule,
     JobListingModule,
+    AdministratorModule,
+    JobPreferenceModule,
+    JobSeekerModule,
+    EventListingModule,
+    EventRegistrationModule,
+    RecruiterModule,
+    CorporateModule,
+    TicketModule,
   ],
   controllers: [AppController],
   providers: [AppService],

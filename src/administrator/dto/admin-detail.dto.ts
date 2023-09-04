@@ -1,7 +1,7 @@
 import UserStatusEnum from "src/enums/userStatus.enum";
 import NotificationModeEnum from "src/enums/notificationMode.enum";
 
-export class UserDetailDto {
+export class AdministratorDetailDto {
   userName: string;
   email: string;
   password: string;

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../entities/user.entity";
+import {User} from "../entities/user.entity";
 import { Repository } from "typeorm";
 import { UserDetailDto } from "./dto/user-detail.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -19,7 +19,7 @@ export class UsersRepo {
     }
 
     async findOneUser(userId: number): Promise<User> {
-        return await this.userRepository.findOneBy( { id: userId });
+        return await this.userRepository.findOneBy( { userId: userId });
     }
 
     async createUser(userDetails: UserDetailDto): Promise<User> {
@@ -31,13 +31,13 @@ export class UsersRepo {
     }
 
     async deleteUser(userId: number): Promise<void> {
-        const user = await this.userRepository.findOneBy( { id: userId } );
+        const user = await this.userRepository.findOneBy( { userId: userId } );
         await this.userRepository.remove(user);
     }
 
-    async updateUser(id: number, userDetails: UpdateUserDto): Promise<User> {
-        const updateResult = await this.userRepository.update({ id }, { ...userDetails });
-        const updatedUser: User = await this.userRepository.findOneBy( { id: id });
+    async updateUser(userId: number, userDetails: UpdateUserDto): Promise<User> {
+        const updateResult = await this.userRepository.update({ userId }, { ...userDetails });
+        const updatedUser: User = await this.userRepository.findOneBy( { userId: userId });
         return updatedUser;
     }
 }

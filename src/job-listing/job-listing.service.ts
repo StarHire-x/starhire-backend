@@ -1,12 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
-import { JobListing } from 'src/entities/job-listing.entity';
+import { JobListing } from 'src/entities/jobListing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';import { JobApplication } from 'src/entities/jobApplication.entity';
-;
-
+import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 @Injectable()
 export class JobListingService {
   constructor(
@@ -69,9 +68,10 @@ export class JobListingService {
         jobListingId: id,
       });
 
-       const { jobApplications, ...dtoExcludeRelationship } = updateJobListingDto;
+      const { jobApplications, ...dtoExcludeRelationship } =
+        updateJobListingDto;
       Object.assign(jobListing, dtoExcludeRelationship);
-      
+
       jobListing.jobListingStatus = this.mapJsonToEnum(
         updateJobListingDto.jobListingStatus,
       );

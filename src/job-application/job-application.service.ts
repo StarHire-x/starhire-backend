@@ -6,7 +6,7 @@ import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Repository } from 'typeorm';
 import { Document } from 'src/entities/document.entity';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
-import { JobListing } from 'src/entities/job-listing.entity';
+import { JobListing } from 'src/entities/jobListing.entity';
 
 @Injectable()
 export class JobApplicationService {
@@ -19,8 +19,7 @@ export class JobApplicationService {
   async create(createJobApplicationDto: CreateJobApplicationDto) {
     try {
       // This is to filter out the external relationships in the dto object
-      const { documents, ...dtoExcludeRelationship } =
-        createJobApplicationDto;
+      const { documents, ...dtoExcludeRelationship } = createJobApplicationDto;
 
       // Creating JobApplication without the external relationship with other entites esp one to many
       const jobApplication = new JobApplication({
@@ -74,8 +73,7 @@ export class JobApplicationService {
       });
 
       // This is to filter out the external relationships in the dto object
-      const { documents, ...dtoExcludeRelationship } =
-        updateJobApplicationDto;
+      const { documents, ...dtoExcludeRelationship } = updateJobApplicationDto;
 
       Object.assign(jobApplication, dtoExcludeRelationship);
 

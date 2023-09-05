@@ -21,7 +21,7 @@ export class UsersService {
     private recruiterService: RecruiterService,
   ) {}
 
-  async create(createUserDto: any) {
+  async create(createUserDto: CreateUserDto) {
     try {
       const { confirmPassword, ...dtoExcludeRelationship } = createUserDto;
       
@@ -29,6 +29,7 @@ export class UsersService {
         throw new HttpException('Password are different', HttpStatus.BAD_REQUEST,)
       }
 
+      // Should change to enum
       if(createUserDto.role === "Job Seeker") {
         return await this.jobSeekerService.create(dtoExcludeRelationship);
       } else if(createUserDto.role === "Administrator") {
@@ -47,10 +48,13 @@ export class UsersService {
     }
   }
 
+  // Shoudl return all the users (Job Seekers, company, etc)
+  // Maybe return just id field, name , role
   async findAll() {
     return await this.userRepository.find();
   }
 
+  // Needs to accept another argument called role, and invoke the method of the corresponding repository
   async findOne(id: number) {
     try {
       return await this.userRepository.findOne({
@@ -65,6 +69,7 @@ export class UsersService {
     }
   }
 
+  // Pass in the role, invoke update method of the corresponding repository
   async update(id: number, updateUserDto: any) {
     try {
       const { confirmPassword, ...dtoExcludeRelationship } = updateUserDto;

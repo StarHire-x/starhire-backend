@@ -19,12 +19,10 @@ export class JobListingController {
   constructor(private readonly jobListingService: JobListingService) {}
 
   @Post()
-  create(
-    @Body() corporateId: number,
-    createJobListingDto: CreateJobListingDto,
-  ) {
+  // Note: Ensure dto contains a field for the Id of the parent entity parentId
+  create(@Body() createJobListingDto: CreateJobListingDto) {
     try {
-      return this.jobListingService.create(corporateId, createJobListingDto);
+      return this.jobListingService.create(createJobListingDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -48,9 +46,10 @@ export class JobListingController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  // Ensure that id provided is a number
+  findOne(@Param('id') id: number) {
     try {
-      return this.jobListingService.findOne(+id);
+      return this.jobListingService.findOne(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -62,11 +61,11 @@ export class JobListingController {
 
   @Put(':id')
   update(
-    @Param('id') id: string,
+    @Param('id') id: number, // Ensure that id provided is a number
     @Body() updateJobListingDto: UpdateJobListingDto,
   ) {
     try {
-      return this.jobListingService.update(+id, updateJobListingDto);
+      return this.jobListingService.update(id, updateJobListingDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -77,9 +76,10 @@ export class JobListingController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  // Ensure that id provided is a number
+  remove(@Param('id') id: number) {
     try {
-      return this.jobListingService.remove(+id);
+      return this.jobListingService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

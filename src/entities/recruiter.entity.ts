@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { User } from './user.entity';
+import { Commission } from './commission.entity';
 
 @Entity({ name: 'recruiters' })
 export class Recruiter extends User {
@@ -12,4 +13,9 @@ export class Recruiter extends User {
 
   @Column()
   profilePictureUrl: string;
+
+  @OneToMany(() => Commission, (commission) => commission.recruiter, {
+    nullable: true,
+  })
+  commissions: Commission[];
 }

@@ -2,6 +2,7 @@ import { IsEnum } from 'class-validator';
 import JobListingStatuEnum from 'src/enums/jobListingStatus.enum';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { JobApplication } from './jobApplication.entity';
+import { Corporate } from './corporate.entity';
 
 @Entity({ name: 'jobListings' })
 export class JobListing {
@@ -33,6 +34,11 @@ export class JobListing {
     cascade: true,
   })
   jobApplications: JobApplication[];
+
+  @ManyToOne(() => Corporate, (corporate) => corporate.jobListings, {
+    onDelete: 'CASCADE'
+  })
+  corporate: Corporate;
 
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);

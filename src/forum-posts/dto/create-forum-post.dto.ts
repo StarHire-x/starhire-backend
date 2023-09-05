@@ -1,5 +1,5 @@
 import ForumCategoryEnum from 'src/enums/forumCategory.enum';
-import { CreateForumCommentDto } from 'src/forum-comments/dto/create-forum-comment.dto';
+import { CreateJobSeekerDto } from 'src/job-seeker/dto/create-job-seeker.dto';
 
 export class CreateForumPostDto {
   forumPostId: number;
@@ -8,5 +8,5 @@ export class CreateForumPostDto {
   createdAt: Date;
   forumPostMessage: string;
   isAnonymous: boolean;
-  forumComments: CreateForumCommentDto[];
+  jobSeeker: CreateJobSeekerDto;
 }

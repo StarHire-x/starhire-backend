@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateForumPostDto } from './dto/create-forum-post.dto';
 import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,30 +6,36 @@ import { Repository } from 'typeorm';
 import { ForumPost } from 'src/entities/forumPost.entity';
 import { ForumComment } from 'src/entities/forumComment.entity';
 import ForumCategoryEnum from 'src/enums/forumCategory.enum';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
 
 @Injectable()
 export class ForumPostsService {
   constructor(
     @InjectRepository(ForumPost)
     private readonly forumPostRepository: Repository<ForumPost>,
+    @InjectRepository(JobSeeker)
+    private readonly jobSeekerRepository: Repository<JobSeeker>,
   ) {}
 
-  async create(createForumPostDto: CreateForumPostDto) {
+  async create(jobSeekerId: number, createForumPostDto: CreateForumPostDto) {
     try {
-      const { forumComments, ...dtoExcludeRelationship } = createForumPostDto;
+      const findJobSeeker = await this.jobSeekerRepository.findOneBy({
+        userId: jobSeekerId,
+      });
+      if (!findJobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+      
+      const { jobSeeker, ...dtoExcludeRelationship } = createForumPostDto;
 
-      const forumPost = new ForumPost(dtoExcludeRelationship);
+      const forumPost = new ForumPost({
+        ...dtoExcludeRelationship,
+        jobSeeker: findJobSeeker,
+      });
 
       forumPost.forumCategory = this.mapJsonToEnum(
         createForumPostDto.forumCategory,
       );
-
-      if (createForumPostDto.forumComments.length > 0) {
-        const createForumComments = createForumPostDto.forumComments.map(
-          (createForumCommentDto) => new ForumComment(createForumCommentDto),
-        );
-        forumPost.forumComments = createForumComments;
-      }
 
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
@@ -64,20 +70,17 @@ export class ForumPostsService {
         forumPostId: id,
       });
 
-      const { forumComments, ...dtoExcludeRelationship } = updateForumPostDto;
+      if (!forumPost) {
+        throw new NotFoundException('Forum Post Id provided is not valid');
+      }
+
+      const { jobSeeker, ...dtoExcludeRelationship } = updateForumPostDto;
 
       Object.assign(forumPost, dtoExcludeRelationship);
 
       forumPost.forumCategory = this.mapJsonToEnum(
         updateForumPostDto.forumCategory,
       );
-
-      if (forumComments && forumComments.length > 0) {
-        const updatedForumComments = updateForumPostDto.forumComments.map(
-          (createForumCommentDto) => new ForumComment(createForumCommentDto),
-        );
-        forumPost.forumComments = updatedForumComments;
-      }
 
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {

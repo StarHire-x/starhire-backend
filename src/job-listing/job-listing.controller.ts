@@ -19,6 +19,7 @@ export class JobListingController {
   constructor(private readonly jobListingService: JobListingService) {}
 
   @Post()
+  // Note: Ensure dto contains a field for the Id of the parent entity parentId
   create(@Body() createJobListingDto: CreateJobListingDto) {
     try {
       return this.jobListingService.create(createJobListingDto);

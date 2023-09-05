@@ -51,10 +51,12 @@ export class JobListingService {
     }
   }
 
+  // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     return await this.jobListingRepository.find();
   }
 
+  // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
   async findOne(id: number) {
     try {
       return await this.jobListingRepository.findOne({
@@ -69,6 +71,7 @@ export class JobListingService {
     }
   }
 
+  // Note: Since jobListingId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateJobListingDto: UpdateJobListingDto) {
     try {
       // Ensure valid job listing Id is provided
@@ -96,7 +99,7 @@ export class JobListingService {
     }
   }
 
-  // Note: Associated job listings will be removed as well, since cascade is set to true
+  // Note: Associated child entities will be removed as well, since cascade is set to true in the entity class
   async remove(id: number) {
     try {
       return await this.jobListingRepository.delete({ jobListingId: id });

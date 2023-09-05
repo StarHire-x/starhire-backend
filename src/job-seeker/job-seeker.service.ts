@@ -62,9 +62,14 @@ export class JobSeekerService {
 
   async update(id: number, updateJobSeeker: UpdateJobSeekerDto) {
     try {
+
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: id,
       });
+
+      if(!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid')
+      }
 
       const { confirmPassword, ...updateJobSeekerDto } = updateJobSeeker;
       const {
@@ -75,54 +80,10 @@ export class JobSeekerService {
         chats,
         ...dtoExcludeRelationship
       } = updateJobSeekerDto;
+      
       Object.assign(jobSeeker, dtoExcludeRelationship);
 
       jobSeeker.highestEducationStatus = this.mapJsonToEnum(updateJobSeekerDto.highestEducationStatus);
-
-      if (forumComments && forumComments.length > 0) {
-        const updatedForumComments = forumComments.map(
-          (createForumCommentsDto) => {
-            const { ...dtoExcludeRelationship } =
-              createForumCommentsDto;
-            return new ForumComment(dtoExcludeRelationship);
-          },
-        );
-        jobSeeker.forumComments = updatedForumComments;
-      }
-
-      if (jobPreference) {
-        const { ...dtoExcludeRelationship } = jobPreference;
-        const updatedJobPrederence = new JobPreference(dtoExcludeRelationship);
-        jobSeeker.jobPreference = updatedJobPrederence;
-      }
-
-      if (jobApplications && jobApplications.length > 0) {
-        const updatedJobApplication = jobApplications.map(
-          (createJobApplicationDto) => {
-            const { documents, ...dtoExcludeRelationship } = createJobApplicationDto;
-            return new JobApplication(dtoExcludeRelationship);
-          },
-        );
-        jobSeeker.jobApplications = updatedJobApplication;
-      }
-
-      if (forumPosts && forumPosts.length > 0) {
-        const updatedForumPosts = forumPosts.map(
-          (createForumPostsDto) => {
-            const { forumComments, ...dtoExcludeRelationship } = createForumPostsDto;
-            return new ForumPost(dtoExcludeRelationship);
-          },
-        );
-        jobSeeker.forumPosts = updatedForumPosts;
-      }
-
-      if (chats && chats.length > 0) {
-        const updatedChats = chats.map((createChatsDto) => {
-          const { chatMessages, ...dtoExcludeRelationship } = createChatsDto;
-          return new Chat(dtoExcludeRelationship);
-        });
-        jobSeeker.chats = updatedChats;
-      }
 
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {

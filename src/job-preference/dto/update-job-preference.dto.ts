@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { JobPreferenceDetailDto } from './job-preference-detail.dto';
+import { CreateJobPreferenceDto } from './create-job-preference.dto';
 
-export class UpdateJobPreferenceDto extends JobPreferenceDetailDto {}
+export class UpdateJobPreferenceDto extends CreateJobPreferenceDto {}

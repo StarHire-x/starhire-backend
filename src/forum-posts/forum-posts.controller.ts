@@ -10,6 +10,7 @@ import {
   HttpStatus,
   InternalServerErrorException,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ForumPostsService } from './forum-posts.service';
 import { CreateForumPostDto } from './dto/create-forum-post.dto';
@@ -22,7 +23,8 @@ export class ForumPostsController {
   @Post()
   createForumPost(@Body() createForumPostDto: CreateForumPostDto) {
     try {
-      return this.forumPostsService.create(createForumPostDto);
+      const { jobSeeker, ...createForumPost } = createForumPostDto;
+      return this.forumPostsService.create(jobSeeker.userId, createForumPostDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -58,7 +60,7 @@ export class ForumPostsController {
     }
   }
 
-  @Patch(':id')
+  @Put(':id')
   updateForumPost(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateForumPostDto: UpdateForumPostDto,

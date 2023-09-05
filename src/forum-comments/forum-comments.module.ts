@@ -3,9 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ForumCommentsController } from './forum-comments.controller';
 import { ForumCommentsService } from './forum-comments.service';
 import { ForumComment } from '../entities/forumComment.entity';
+import { ForumPost } from 'src/entities/forumPost.entity';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ForumComment])],
+  imports: [TypeOrmModule.forFeature([ForumComment, ForumPost, JobSeeker])],
   controllers: [ForumCommentsController],
   providers: [ForumCommentsService],
 })

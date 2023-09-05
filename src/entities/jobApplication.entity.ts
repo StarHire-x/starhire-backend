@@ -1,15 +1,16 @@
-import { IsEnum } from 'class-validator';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 import {
   Column,
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Document } from './document.entity';
 import { JobListing } from './jobListing.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { Commission } from './commission.entity';
 
 @Entity({ name: 'jobApplications' })
 export class JobApplication {
@@ -42,6 +43,11 @@ export class JobApplication {
     onDelete: 'CASCADE',
   })
   jobSeeker: JobSeeker;
+
+  @OneToOne(() => Commission, (commission) => commission.jobApplication, {
+    nullable: true,
+  })
+  commission: Commission;
 
   constructor(entity: Partial<JobApplication>) {
     Object.assign(this, entity);

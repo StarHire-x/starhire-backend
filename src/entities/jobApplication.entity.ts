@@ -38,7 +38,7 @@ export class JobApplication {
   })
   jobListing: JobListing;
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobApplications, {
     onDelete: 'CASCADE',
   })
   jobSeeker: JobSeeker;

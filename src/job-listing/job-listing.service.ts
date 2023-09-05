@@ -24,20 +24,22 @@ export class JobListingService {
   async create(createJobListingDto: CreateJobListingDto) {
     try {
       // Ensure valid corporate Id is provided
+      const { corporateId, ...dtoExcludingParentId } = createJobListingDto;
+
       const corporate = await this.corporateRepository.findOne({
-        where: { userId: createJobListingDto.corporateId },
+        where: { userId: corporateId },
       });
       if (!corporate) {
         throw new NotFoundException('Corporate Id provided is not valid');
       }
 
       // Ensure jobListingStatus field is a valid enum
-      createJobListingDto.jobListingStatus = this.mapJsonToEnum(
+      const mappedStatus = this.mapJsonToEnum(
         createJobListingDto.jobListingStatus,
       );
+      createJobListingDto.jobListingStatus = mappedStatus;
 
       // Create the job listing, establishing relationship to parent (corporate entity)
-      const { corporateId, ...dtoExcludingParentId } = createJobListingDto;
       const jobListing = new JobListing({
         ...dtoExcludingParentId,
         corporate,
@@ -99,7 +101,7 @@ export class JobListingService {
     }
   }
 
-  // Note: Associated child entities will be removed as well, since cascade is set to true in the entity class
+  // Note: Associated child entities(job Applications) will be removed as well, since cascade is set to true in the entity class
   async remove(id: number) {
     try {
       return await this.jobListingRepository.delete({ jobListingId: id });

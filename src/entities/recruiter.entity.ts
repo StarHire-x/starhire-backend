@@ -15,7 +15,7 @@ export class Recruiter extends User {
   profilePictureUrl: string;
 
   @OneToMany(() => Commission, (commission) => commission.recruiter, {
-    nullable: true,
+    cascade: true,
   })
   commissions: Commission[];
 }

@@ -4,22 +4,29 @@ import { UpdateDocumentDto } from './dto/update-document.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
 import { Repository } from 'typeorm';
+import { JobApplicationService } from 'src/job-application/job-application.service';
 
 @Injectable()
 export class DocumentService {
   constructor(
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
+    private jobApplicationService: JobApplicationService,
   ) {}
 
-  async create(createDocumentDto: CreateDocumentDto) {
+  async create(id: number, createDocumentDto: CreateDocumentDto) {
     try {
 
+      const jobApplication = await this.jobApplicationService.findOne(id);
+
       const document = new Document({
-        ...createDocumentDto
+        ...createDocumentDto,
+        jobApplication: jobApplication
       });
 
-      return await this.documentRepository.save(document);
+      await this.documentRepository.save(document);
+
+      return await this.findOne(document.documentId);
     } catch (err) {
       throw new HttpException(
         'Failed to create new document',
@@ -37,7 +44,7 @@ export class DocumentService {
       // For this part, u want the relationship with other entities to show, at most 1 level, no need too detail
       return await this.documentRepository.findOne({
         where: { documentId: id },
-        relations: {},
+        relations: { jobApplication: true },
       });
     } catch (err) {
       throw new HttpException(

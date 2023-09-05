@@ -21,7 +21,7 @@ export class UsersService {
     private recruiterService: RecruiterService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: any) {
     try {
       const { confirmPassword, ...dtoExcludeRelationship } = createUserDto;
       

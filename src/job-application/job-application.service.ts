@@ -30,12 +30,15 @@ export class JobApplicationService {
       );
 
       // Creating the Classes for external relationship with other entities (OneToMany)
-      if (createJobApplicationDto.documents.length > 0) {
-        const createDocuments = createJobApplicationDto.documents.map(
-          (createDocumentDto) => new Document(createDocumentDto),
-        );
-        jobApplication.documents = createDocuments;
-      }
+      // if (documents.length > 0) {
+      //   const createDocuments = documents.map(
+      //     (createDocumentDto) => {
+      //       const { jobApplication , ...dtoExcludeRelationship } = createDocumentDto;
+      //       return new Document(dtoExcludeRelationship);
+      //     }
+      //   );
+      //   jobApplication.documents = createDocuments;
+      // }
 
       return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
@@ -82,8 +85,11 @@ export class JobApplicationService {
 
       // Same thing, u also update the entities with relationship as such
       if (documents && documents.length > 0) {
-        const updatedDocuments = updateJobApplicationDto.documents.map(
-          (createDocumentDto) => new Document(createDocumentDto),
+        const updatedDocuments = documents.map(
+          (createDocumentDto) => {
+            const {jobApplication, ...dtoExcludeRelationship} = createDocumentDto;
+            return new Document(dtoExcludeRelationship);
+          },
         );
         jobApplication.documents = updatedDocuments;
       }

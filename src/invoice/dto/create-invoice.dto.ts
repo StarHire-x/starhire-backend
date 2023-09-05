@@ -5,5 +5,4 @@ export class CreateInvoiceDto {
   billingAddress: string;
   totalAmount: number;
   paid: boolean;
-  comissions:
 }

@@ -19,9 +19,12 @@ export class JobListingController {
   constructor(private readonly jobListingService: JobListingService) {}
 
   @Post()
-  create(@Body() createJobListingDto: CreateJobListingDto) {
+  create(
+    @Body() corporateId: number,
+    createJobListingDto: CreateJobListingDto,
+  ) {
     try {
-      return this.jobListingService.create(createJobListingDto);
+      return this.jobListingService.create(corporateId, createJobListingDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

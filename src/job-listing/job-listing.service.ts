@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { JobListing } from 'src/entities/jobListing.entity';
@@ -6,26 +11,42 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Corporate } from 'src/entities/corporate.entity';
 @Injectable()
 export class JobListingService {
   constructor(
     @InjectRepository(JobListing)
     private readonly jobListingRepository: Repository<JobListing>,
+    @InjectRepository(Corporate)
+    private readonly corporateRepository: Repository<Corporate>,
   ) {}
 
-  async create(createJobListingDto: CreateJobListingDto) {
+  async create(corporateId: number, createJobListingDto: CreateJobListingDto) {
     try {
-      const { jobApplications, ...dtoExcludeRelationship } =
-        createJobListingDto;
+      // Ensure valid corporate Id is provided
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: corporateId },
+      });
+      if (!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
+      }
 
-      const jobListing = new JobListing(dtoExcludeRelationship);
-
-      jobListing.jobListingStatus = this.mapJsonToEnum(
+      // Ensure jobListingStatus field is a valid enum
+      createJobListingDto.jobListingStatus = this.mapJsonToEnum(
         createJobListingDto.jobListingStatus,
       );
 
-      // Creating the Classes for external relationship with other entities (OneToMany)
-      if (createJobListingDto.jobApplications.length > 0) {
+      // Create the job listing
+      // Parent (corporate) relationship is established
+      const { jobApplications, ...dtoExcludingJobApplications } =
+        createJobListingDto;
+      const jobListing = new JobListing({
+        ...dtoExcludingJobApplications,
+        corporate,
+      });
+
+      // Establish jobApplications (child) relationship, if it is provided
+      if (jobApplications.length > 0) {
         const createJobApplications = createJobListingDto.jobApplications.map(
           (createJobApplicationDto) => {
             const { documents, ...dtoExcludeRelationship } =
@@ -33,7 +54,6 @@ export class JobListingService {
             return new JobApplication(dtoExcludeRelationship);
           },
         );
-        jobListing.jobApplications = createJobApplications;
       }
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {
@@ -52,7 +72,7 @@ export class JobListingService {
     try {
       return await this.jobListingRepository.findOne({
         where: { jobListingId: id },
-        relations: { jobApplications: true },
+        relations: { corporate: true, jobApplications: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -64,19 +84,27 @@ export class JobListingService {
 
   async update(id: number, updateJobListingDto: UpdateJobListingDto) {
     try {
+      // Ensure valid job listing Id is provided
       const jobListing = await this.jobListingRepository.findOneBy({
         jobListingId: id,
       });
+      if (!jobListing) {
+        throw new NotFoundException('Job Listing Id provided is not valid');
+      }
 
-      const { jobApplications, ...dtoExcludeRelationship } =
-        updateJobListingDto;
-      Object.assign(jobListing, dtoExcludeRelationship);
+      // Ensure jobListingStatus is to be updated, ensure it is a valid enum
+      if (updateJobListingDto.jobListingStatus) {
+        updateJobListingDto.jobListingStatus = this.mapJsonToEnum(
+          updateJobListingDto.jobListingStatus,
+        );
+      }
 
-      jobListing.jobListingStatus = this.mapJsonToEnum(
-        updateJobListingDto.jobListingStatus,
-      );
+      Object.assign(jobListing, updateJobListingDto);
 
-      if (jobApplications && jobApplications.length > 0) {
+      if (
+        updateJobListingDto.jobApplications &&
+        updateJobListingDto.jobApplications.length > 0
+      ) {
         const updatedJobApplication = updateJobListingDto.jobApplications.map(
           (createJobApplicationDto) => {
             const { documents, ...dtoExcludeRelationship } =

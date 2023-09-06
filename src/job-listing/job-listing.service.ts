@@ -92,7 +92,7 @@ export class JobListingService {
         const mappedStatus = this.mapJsonToEnum(
           updateJobListingDto.jobListingStatus,
         );
-        jobListing.jobListingStatus = mappedStatus;
+        updateJobListingDto.jobListingStatus = mappedStatus;
       }
       Object.assign(jobListing, dtoExcludeRelationship);
       return await this.jobListingRepository.save(jobListing);

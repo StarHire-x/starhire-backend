@@ -8,5 +8,5 @@ export class CreateForumPostDto {
   createdAt: Date;
   forumPostMessage: string;
   isAnonymous: boolean;
-  jobSeeker: CreateJobSeekerDto;
+  jobSeekerId: number;
 }

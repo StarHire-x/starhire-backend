@@ -23,8 +23,7 @@ export class ForumPostsController {
   @Post()
   createForumPost(@Body() createForumPostDto: CreateForumPostDto) {
     try {
-      const { jobSeeker, ...createForumPost } = createForumPostDto;
-      return this.forumPostsService.create(jobSeeker.userId, createForumPostDto);
+      return this.forumPostsService.create(createForumPostDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

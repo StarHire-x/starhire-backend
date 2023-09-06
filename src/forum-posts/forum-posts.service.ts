@@ -17,20 +17,20 @@ export class ForumPostsService {
     private readonly jobSeekerRepository: Repository<JobSeeker>,
   ) {}
 
-  async create(jobSeekerId: number, createForumPostDto: CreateForumPostDto) {
+  async create(createForumPostDto: CreateForumPostDto) {
     try {
-      const findJobSeeker = await this.jobSeekerRepository.findOneBy({
+
+      const { jobSeekerId, ...dtoExcludeRelationship } = createForumPostDto;
+      const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
       });
-      if (!findJobSeeker) {
+      if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
       
-      const { jobSeeker, ...dtoExcludeRelationship } = createForumPostDto;
-
       const forumPost = new ForumPost({
         ...dtoExcludeRelationship,
-        jobSeeker: findJobSeeker,
+        jobSeeker: jobSeeker,
       });
 
       forumPost.forumCategory = this.mapJsonToEnum(
@@ -74,7 +74,7 @@ export class ForumPostsService {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      const { jobSeeker, ...dtoExcludeRelationship } = updateForumPostDto;
+      const { jobSeekerId, ...dtoExcludeRelationship } = updateForumPostDto;
 
       Object.assign(forumPost, dtoExcludeRelationship);
 

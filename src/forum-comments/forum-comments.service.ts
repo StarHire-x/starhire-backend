@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
 import { UpdateForumCommentDto } from './dto/update-forum-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,33 +23,28 @@ export class ForumCommentsService {
     private readonly forumPostRepository: Repository<ForumPost>,
   ) {}
 
-  async create(
-    jobSeekerId: number,
-    forumPostId: number,
-    createForumCommentDto: CreateForumCommentDto,
-  ) {
+  async create(createForumCommentDto: CreateForumCommentDto) {
     try {
-      const findJobSeeker = await this.jobSeekerRepository.findOneBy({
+      const { jobSeekerId, forumPostId, ...dtoExcludeRelationship } =
+        createForumCommentDto;
+      const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
       });
-      if (!findJobSeeker) {
+      if (jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
 
-      const findForumPost = await this.forumPostRepository.findOneBy({
+      const forumPost = await this.forumPostRepository.findOneBy({
         forumPostId: forumPostId,
       });
-      if (!findForumPost) {
+      if (!forumPost) {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      const { jobSeeker, forumPost, ...dtoExcludeRelationship } =
-        createForumCommentDto;
-
       const forumComment = new ForumComment({
         ...dtoExcludeRelationship,
-        jobSeeker: findJobSeeker,
-        forumPost: findForumPost,
+        jobSeeker: jobSeeker,
+        forumPost: forumPost,
       });
 
       return await this.forumCommentRepository.save(forumComment);
@@ -83,9 +83,8 @@ export class ForumCommentsService {
       if (!forumComment) {
         throw new NotFoundException('Forum comment Id provided is not valid');
       }
-       const { jobSeeker, forumPost, ...dtoExcludeRelationship } =
-         updateForumCommentDto;
-      Object.assign(forumComment, dtoExcludeRelationship);
+
+      Object.assign(forumComment, updateForumCommentDto);
       return await this.forumCommentRepository.save(forumComment);
     } catch (err) {
       throw new HttpException(

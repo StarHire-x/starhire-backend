@@ -1,11 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateChatMessageDto } from './dto/create-chat-message.dto';
 import { UpdateChatMessageDto } from './dto/update-chat-message.dto';
+import { ChatMessage } from 'src/entities/chatMessage.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Chat } from 'src/entities/chat.entity';
 
 @Injectable()
 export class ChatMessageService {
-  create(createChatMessageDto: CreateChatMessageDto) {
-    return 'This action adds a new chatMessage';
+  constructor(
+    @InjectRepository(ChatMessage)
+    private readonly chatMessageRepository: Repository<ChatMessage>,
+
+    @InjectRepository(Chat)
+    private readonly chatRepository: Repository<Chat>,
+  ) {}
+
+  async create(createChatMessageDto: CreateChatMessageDto): Promise<any> {
+    try {
+      // Ensure valid chat Id is provided
+      const { chatId, ...dtoExcludingParentId } = createChatMessageDto;
+
+      const chat = await this.chatRepository.findOne({
+        where: { chatId: chatId },
+      });
+      if (!chat) {
+        throw new NotFoundException('Chat Id provided is not valid');
+      }
+
+      const chatMessage = new ChatMessage({
+        ...dtoExcludingParentId,
+        chat,
+      });
+
+      return await this.chatMessageRepository.save(chatMessage);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to create new chat Message!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   findAll() {

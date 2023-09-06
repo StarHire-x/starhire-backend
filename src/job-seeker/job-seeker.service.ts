@@ -45,11 +45,11 @@ export class JobSeekerService {
       return await this.jobSeekerRepository.findOne({
         where: { userId: id },
         relations: {
-          forumComments: true,
-          jobPreference: true,
-          jobApplications: true,
-          forumPosts: true,
-          chats: true,
+          // forumComments: true,
+          // jobPreference: true,
+          // jobApplications: true,
+          // forumPosts: true,
+          //chats: true,
         },
       });
     } catch (err) {
@@ -60,7 +60,7 @@ export class JobSeekerService {
     }
   }
 
-  async update(id: number, updateJobSeeker: UpdateJobSeekerDto) {
+  async update(id: number, updateJobSeeker: any) {
     try {
 
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
@@ -84,6 +84,12 @@ export class JobSeekerService {
       Object.assign(jobSeeker, dtoExcludeRelationship);
 
       jobSeeker.highestEducationStatus = this.mapJsonToEnum(updateJobSeekerDto.highestEducationStatus);
+
+      // if(jobPreference) {
+      //   const { jobSeekerId, ...dtoExcludeRelationship } = jobPreference;
+      //   const updatedJobPreference = new JobPreference(dtoExcludeRelationship);
+      //   jobSeeker.jobPreference = updatedJobPreference;
+      // }
 
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {

@@ -10,8 +10,7 @@ export class DocumentController {
   @Post()
   create(@Body() createDocumentDto: CreateDocumentDto) {
     try {
-      const { jobApplication, ...createDocument } = createDocumentDto;
-      return this.documentService.create(jobApplication.jobApplicationId, createDocumentDto);
+      return this.documentService.create(createDocumentDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

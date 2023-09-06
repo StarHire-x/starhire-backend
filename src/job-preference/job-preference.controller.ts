@@ -25,8 +25,8 @@ export class JobPreferenceController {
   @Post()
   create(@Body() createJobPreferenceDto: CreateJobPreferenceDto) {
     try {
-      const { jobSeeker, ...createJobPreference } = createJobPreferenceDto;
-      return this.jobPreferenceService.create(jobSeeker.userId, createJobPreferenceDto);
+      console.log(createJobPreferenceDto);
+      return this.jobPreferenceService.create(createJobPreferenceDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -36,10 +36,10 @@ export class JobPreferenceController {
     }
   }
 
-  //   @Get('/all')
-  //   findAllJobPreferences() {
-  //     return this.jobPreferenceService.findAll();
-  //   }
+  @Get('/all')
+  findAllJobPreferences() {
+    return this.jobPreferenceService.findAll();
+  }
 
   // GET /job-preference/:id
   @Get(':id')

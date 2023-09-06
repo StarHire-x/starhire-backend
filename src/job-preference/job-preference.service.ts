@@ -20,23 +20,29 @@ export class JobPreferenceService {
     private readonly jobPreferenceRepository: Repository<JobPreference>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    private jobSeekerService: JobSeekerService,
   ) {}
 
-  async create(
-    jobSeekerId: number,
-    createJobPreference: CreateJobPreferenceDto,
-  ) {
+  async create(createJobPreference: CreateJobPreferenceDto) {
     try {
-      const { jobSeeker, ...dtoExcludeRelationship } = createJobPreference;
-      const findJobSeeker = await this.jobSeekerRepository.findOneBy({ userId: jobSeekerId });
+      const { jobSeekerId, ...dtoExcludeRelationship } = createJobPreference;
+      const findJobSeeker = await this.jobSeekerRepository.findOneBy({
+        userId: jobSeekerId,
+      });
+
       if (!findJobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
+
+      // Create a new JobPreference entity
       const jobPreference = new JobPreference({
         ...dtoExcludeRelationship,
         jobSeeker: findJobSeeker,
       });
-      return await this.jobPreferenceRepository.save(jobPreference);
+
+      await this.jobPreferenceRepository.save(jobPreference);
+
+      return jobPreference;
     } catch (err) {
       throw new HttpException(
         'Failed to create new job preference',
@@ -69,7 +75,7 @@ export class JobPreferenceService {
     if (!jobListing) {
       throw new NotFoundException('Job Listing Id provided is not valid');
     }
-    const { jobSeeker, ...dtoExcludeRelationship } = updateJobPreference;
+    const { jobSeekerId, ...dtoExcludeRelationship } = updateJobPreference;
     Object.assign(jobListing, dtoExcludeRelationship);
     return await this.jobPreferenceRepository.save(jobListing);
   }

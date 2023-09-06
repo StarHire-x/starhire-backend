@@ -1,4 +1,4 @@
-import { Column, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm';
 import { JobSeeker } from './jobSeeker.entity';
 
@@ -23,6 +23,7 @@ export class JobPreference {
   workLifeBalancePreference: number;
 
   @OneToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobPreference)
+  @JoinColumn()
   jobSeeker: JobSeeker;
 
   constructor(entity: Partial<JobPreference>) {

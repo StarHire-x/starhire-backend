@@ -7,7 +7,6 @@ export class CreateUserDto {
   userName: string;
   email: string;
   password: string;
-  confirmPassword: string;
   contactNo: string;
   status: UserStatusEnum;
   notificationMode: NotificationModeEnum;

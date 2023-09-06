@@ -23,23 +23,16 @@ export class UsersService {
 
   async create(createUserDto: any) {
     try {
-      const { confirmPassword, ...dtoExcludeRelationship } = createUserDto;
-      
-      if(createUserDto.password !== createUserDto.confirmPassword) {
-        throw new HttpException('Password are different', HttpStatus.BAD_REQUEST,)
-      }
-
       // Should change to enum
       if(createUserDto.role === "Job Seeker") {
-        return await this.jobSeekerService.create(dtoExcludeRelationship);
+        return await this.jobSeekerService.create(createUserDto);
       } else if(createUserDto.role === "Administrator") {
-        await this.corporateService.create(dtoExcludeRelationship);
+        return await this.corporateService.create(createUserDto);
       } else if(createUserDto.role === "Corporate") {
-        return await this.adminService.create(dtoExcludeRelationship);
+        return await this.adminService.create(createUserDto);
       } else if(createUserDto.role === "Recruiter") {
-        return await this.recruiterService.create(dtoExcludeRelationship);
+        return await this.recruiterService.create(createUserDto);
       }
-      
     } catch (err) {
       throw new HttpException(
         'Failed to create new job application',

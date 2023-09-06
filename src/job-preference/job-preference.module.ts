@@ -9,6 +9,6 @@ import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
 @Module({
   imports: [TypeOrmModule.forFeature([JobPreference, JobSeeker])],
   controllers: [JobPreferenceController],
-  providers: [JobPreferenceService],
+  providers: [JobPreferenceService, JobSeekerService],
 })
 export class JobPreferenceModule {}

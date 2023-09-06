@@ -20,7 +20,7 @@ export class Recruiter extends User {
     (jobApplication) => jobApplication.recruiter,
     { nullable: true },
   )
-  jobApplications: JobApplication[] = [];
+  jobApplications: JobApplication[];
 
   @OneToMany(() => Commission, (commission) => commission.recruiter, {
     cascade: true,

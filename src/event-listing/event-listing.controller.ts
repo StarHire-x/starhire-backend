@@ -28,7 +28,7 @@ export class EventListingController {
     try {
       return this.eventListingService.create(createEventListingDto);
     } catch (error) {
-      if (error instanceof ConflictException) {
+      if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
@@ -38,17 +38,11 @@ export class EventListingController {
 
   @Get('/all')
   findAllEventListings() {
-    return this.eventListingService.findAll();
-  }
-
-  // GET /event-listing?id=1
-  @Get()
-  getNinjas(@Query('id') id: number) {
     try {
-      return this.eventListingService.findOne(id);
+      return this.eventListingService.findAll();
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -61,8 +55,8 @@ export class EventListingController {
     try {
       return this.eventListingService.findOne(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -71,14 +65,14 @@ export class EventListingController {
 
   @Put(':id')
   updateEventListing(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: number,
     @Body() updateEventListingDto: UpdateEventListingDto,
   ) {
     try {
-      return this.eventListingService.update(+id, updateEventListingDto);
+      return this.eventListingService.update(id, updateEventListingDto);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -86,14 +80,14 @@ export class EventListingController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: number) {
     try {
-      return this.eventListingService.remove(+id);
+      return this.eventListingService.remove(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof HttpException) {
         throw new HttpException(
-          `Event Listing with ID ${id}`,
-          HttpStatus.NOT_FOUND,
+          error.message,
+          HttpStatus.CONFLICT,
         );
       } else {
         throw new InternalServerErrorException('Internal server error');

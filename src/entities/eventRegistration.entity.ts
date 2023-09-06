@@ -9,11 +9,7 @@ export class EventRegistration {
   @Column()
   isActive: boolean;
 
-  @ManyToOne(
-    () => EventListing,
-    (eventListing) => eventListing.eventRegistrations,
-    { onDelete: 'CASCADE' },
-  )
+  @ManyToOne(() => EventListing, (eventListing) => eventListing.eventRegistrations)
   eventListing: EventListing;
 
   constructor(entity: Partial<EventRegistration>) {

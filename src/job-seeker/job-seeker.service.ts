@@ -45,11 +45,12 @@ export class JobSeekerService {
       return await this.jobSeekerRepository.findOne({
         where: { userId: id },
         relations: {
-          // forumComments: true,
-          // jobPreference: true,
-          // jobApplications: true,
-          // forumPosts: true,
-          //chats: true,
+          forumComments: true,
+          jobPreference: true,
+          jobApplications: true,
+          forumPosts: true,
+          chats: true,
+          // reviews: true,
         },
       });
     } catch (err) {
@@ -60,36 +61,21 @@ export class JobSeekerService {
     }
   }
 
-  async update(id: number, updateJobSeeker: any) {
+  async update(id: number, updatedJobSeeker: UpdateJobSeekerDto) {
     try {
-
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: id,
       });
 
-      if(!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid')
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
       }
 
-      const { confirmPassword, ...updateJobSeekerDto } = updateJobSeeker;
-      const {
-        forumComments,
-        jobPreference,
-        jobApplications,
-        forumPosts,
-        chats,
-        ...dtoExcludeRelationship
-      } = updateJobSeekerDto;
-      
-      Object.assign(jobSeeker, dtoExcludeRelationship);
+      Object.assign(jobSeeker, updatedJobSeeker);
 
-      jobSeeker.highestEducationStatus = this.mapJsonToEnum(updateJobSeekerDto.highestEducationStatus);
-
-      // if(jobPreference) {
-      //   const { jobSeekerId, ...dtoExcludeRelationship } = jobPreference;
-      //   const updatedJobPreference = new JobPreference(dtoExcludeRelationship);
-      //   jobSeeker.jobPreference = updatedJobPreference;
-      // }
+      jobSeeker.highestEducationStatus = this.mapJsonToEnum(
+        updatedJobSeeker.highestEducationStatus,
+      );
 
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {
@@ -115,9 +101,9 @@ export class JobSeekerService {
 
   mapJsonToEnum(status: string): HighestEducationStatusEnum {
     switch (status) {
-      case 'No School':
+      case 'No_School':
         return HighestEducationStatusEnum.NO_SCHOOL;
-      case 'High School':
+      case 'High_School':
         return HighestEducationStatusEnum.HIGH_SCHOOL;
       case 'Bachelor':
         return HighestEducationStatusEnum.BACHELOR;

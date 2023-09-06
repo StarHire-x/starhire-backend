@@ -41,7 +41,7 @@ export class JobSeekerController {
 
   // GET /job-seeker/:id
   @Get(':id')
-  findOneJobSeeker(@Param('id', ParseIntPipe) id: number) {
+  findOneJobSeeker(@Param('id') id: number) {
     try {
       return this.jobSeekerService.findOne(id);
     } catch (error) {
@@ -55,11 +55,11 @@ export class JobSeekerController {
 
   @Put(':id')
   updateJobSeeker(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() updateEmployerDto: UpdateJobSeekerDto,
+    @Param('id') id: number,
+    @Body() updatedJobSeeker: UpdateJobSeekerDto,
   ) {
     try {
-      return this.jobSeekerService.update(+id, updateEmployerDto);
+      return this.jobSeekerService.update(id, updatedJobSeeker);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -70,9 +70,9 @@ export class JobSeekerController {
   }
 
   @Delete(':id')
-  removeJobSeeker(@Param('id', ParseIntPipe) id: string) {
+  removeJobSeeker(@Param('id') id: number) {
     try {
-      return this.jobSeekerService.remove(+id);
+      return this.jobSeekerService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(

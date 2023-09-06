@@ -43,10 +43,25 @@ export class UsersController {
   }
 
   // GET /users?id=1
+  /*
   @Get()
   getUser(@Query('email') email: string, @Query('role') role: string) {
     try {
       return this.usersService.findOneEmail(email, role);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+  */
+
+  @Get()
+  getUser(@Query('email') email: string) {
+    try {
+      return this.usersService.findOneEmail(email);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);

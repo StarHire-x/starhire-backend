@@ -36,6 +36,34 @@ export class JobSeekerService {
     }
   }
 
+  //Added code to handle different request
+  async findByEmail(email: string) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { email },
+      });
+
+      if (jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker found',
+          data: jobSeeker,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job seeker not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /*
   async findByEmail(email: string) {
     try {
       return await this.jobSeekerRepository.findOne({
@@ -47,6 +75,7 @@ export class JobSeekerService {
       );
     }
   }
+  */
 
   async findAll() {
     return await this.jobSeekerRepository.find();
@@ -74,13 +103,12 @@ export class JobSeekerService {
 
   async update(id: number, updateJobSeeker: any) {
     try {
-
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: id,
       });
 
-      if(!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid')
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
       }
 
       const { confirmPassword, ...updateJobSeekerDto } = updateJobSeeker;
@@ -92,10 +120,12 @@ export class JobSeekerService {
         chats,
         ...dtoExcludeRelationship
       } = updateJobSeekerDto;
-      
+
       Object.assign(jobSeeker, dtoExcludeRelationship);
 
-      jobSeeker.highestEducationStatus = this.mapJsonToEnum(updateJobSeekerDto.highestEducationStatus);
+      jobSeeker.highestEducationStatus = this.mapJsonToEnum(
+        updateJobSeekerDto.highestEducationStatus,
+      );
 
       // if(jobPreference) {
       //   const { jobSeekerId, ...dtoExcludeRelationship } = jobPreference;

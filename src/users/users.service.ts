@@ -1,4 +1,10 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
@@ -24,13 +30,13 @@ export class UsersService {
   async create(createUserDto: any) {
     try {
       // Should change to enum
-      if(createUserDto.role === "Job_Seeker") {
+      if (createUserDto.role === 'Job_Seeker') {
         return await this.jobSeekerService.create(createUserDto);
-      } else if(createUserDto.role === "Administrator") {
+      } else if (createUserDto.role === 'Administrator') {
         return await this.corporateService.create(createUserDto);
-      } else if(createUserDto.role === "Corporate") {
+      } else if (createUserDto.role === 'Corporate') {
         return await this.adminService.create(createUserDto);
-      } else if(createUserDto.role === "Recruiter") {
+      } else if (createUserDto.role === 'Recruiter') {
         return await this.recruiterService.create(createUserDto);
       }
     } catch (err) {
@@ -47,6 +53,18 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
+  async findOneEmail(email: string) {
+    try {
+      return await this.jobSeekerService.findByEmail(email);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job application',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /*
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
   async findOneEmail(email: string, role: string) {
     try {
@@ -70,6 +88,7 @@ export class UsersService {
       );
     }
   }
+  */
 
   // Pass in the role, invoke update method of the corresponding repository
   async update(id: number, updateUserDto: any) {
@@ -92,7 +111,6 @@ export class UsersService {
       } else if (updateUserDto.role === 'Recruiter') {
         return await this.recruiterService.update(id, dtoExcludeRelationship);
       }
-
     } catch (err) {
       throw new HttpException(
         'Failed to update particulars',

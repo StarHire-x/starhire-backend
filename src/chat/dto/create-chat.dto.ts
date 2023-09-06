@@ -3,4 +3,5 @@ import { CreateChatMessageDto } from 'src/chat-message/dto/create-chat-message.d
 export class CreateChatDto {
   lastUpdatedAt: Date;
   chatMessages: CreateChatMessageDto[];
+  userId: number;
 }

@@ -9,7 +9,9 @@ export class EventRegistration {
   @Column()
   isActive: boolean;
 
-  @ManyToOne(() => EventListing, (eventListing) => eventListing.eventRegistrations)
+  @ManyToOne(() => EventListing, (eventListing) => eventListing.eventRegistrations, {
+    nullable: false,
+  })
   eventListing: EventListing;
 
   constructor(entity: Partial<EventRegistration>) {

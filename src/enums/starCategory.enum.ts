@@ -1,9 +1,8 @@
 enum StarCategoryEnum {
-  ONE_STAR = 'one_star',
-  TWO_STAR = 'two_star',
-  THREE_STAR = 'three_star',
-  FOUR_STAR = 'four_star',
-  FIVE_STAR = 'five_star',
+  ONE_STAR = '1-star',
+  TWO_STAR = '2-star',
+  THREE_STAR = '3-star',
+  FOUR_STAR = '4-star',
+  FIVE_STAR = '5-star',
 }
-
 export default StarCategoryEnum;

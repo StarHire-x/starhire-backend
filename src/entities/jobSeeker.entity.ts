@@ -9,6 +9,7 @@ import { JobApplication } from './jobApplication.entity';
 import { ForumPost } from './forumPost.entity';
 import { Chat } from './chat.entity';
 import { JobPreference } from './jobPreference.entity';
+import { Ticket } from './ticket.entity';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -61,6 +62,11 @@ export class JobSeeker extends User {
     nullable: true,
   })
   jobPreference: JobPreference;
+
+  @OneToMany(() => Ticket, (ticket) => ticket.jobSeeker, {
+    cascade: true,
+  })
+  tickets: Ticket[];
 
   constructor(entity: Partial<JobSeeker>) {
     super(entity);

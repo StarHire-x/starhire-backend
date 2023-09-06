@@ -2,6 +2,8 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Commission } from './commission.entity';
 import { JobApplication } from './jobApplication.entity';
+import { Chat } from './chat.entity';
+import { Ticket } from './ticket.entity';
 
 @Entity({ name: 'recruiters' })
 export class Recruiter extends User {
@@ -26,4 +28,14 @@ export class Recruiter extends User {
     cascade: true,
   })
   commissions: Commission[];
+
+  @OneToMany(() => Chat, (chat) => chat.recruiter, {
+    cascade: true,
+  })
+  chats: Chat[];
+
+  @OneToMany(() => Ticket, (ticket) => ticket.recruiter, {
+    cascade: true,
+  })
+  tickets: Ticket[];
 }

@@ -1,6 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 import { ChatMessage } from './chatMessage.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { Corporate } from './corporate.entity';
+import { Recruiter } from './recruiter.entity';
 
 @Entity()
 export class Chat {
@@ -13,10 +21,14 @@ export class Chat {
   @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.chat) // Establish one-to-many relationship
   chatMessages: ChatMessage[];
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats)
   jobSeeker: JobSeeker;
+
+  @ManyToOne(() => Corporate, (corporate) => corporate.chats)
+  corporate: Corporate;
+
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.chats)
+  recruiter: Recruiter;
 
   constructor(entity: Partial<Chat>) {
     Object.assign(this, entity);

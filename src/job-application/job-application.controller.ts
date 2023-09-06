@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
@@ -20,6 +19,7 @@ export class JobApplicationController {
   constructor(private readonly jobApplicationService: JobApplicationService) {}
 
   @Post()
+  // Ensure dto contains the id field for the following parent entities: Job Listing, Job Seeker & Recruiter
   create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
     try {
       return this.jobApplicationService.create(createJobApplicationDto);
@@ -46,9 +46,10 @@ export class JobApplicationController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  // Ensure that id provided is a number
+  findOne(@Param('id') id: number) {
     try {
-      return this.jobApplicationService.findOne(+id);
+      return this.jobApplicationService.findOne(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -60,11 +61,11 @@ export class JobApplicationController {
 
   @Put(':id')
   update(
-    @Param('id') id: string,
+    @Param('id') id: number, // Ensure that id provided is a number
     @Body() updateJobApplicationDto: UpdateJobApplicationDto,
   ) {
     try {
-      return this.jobApplicationService.update(+id, updateJobApplicationDto);
+      return this.jobApplicationService.update(id, updateJobApplicationDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -75,9 +76,10 @@ export class JobApplicationController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  // Ensure that id provided is a number
+  remove(@Param('id') id: number) {
     try {
-      return this.jobApplicationService.remove(+id);
+      return this.jobApplicationService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

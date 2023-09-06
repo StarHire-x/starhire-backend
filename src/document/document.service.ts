@@ -1,27 +1,32 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
 import { Repository } from 'typeorm';
-import { JobApplicationService } from 'src/job-application/job-application.service';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 
 @Injectable()
 export class DocumentService {
   constructor(
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
-    private jobApplicationService: JobApplicationService,
+    @InjectRepository(JobApplication)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
-  async create(id: number, createDocumentDto: CreateDocumentDto) {
+  async create(createDocumentDto: CreateDocumentDto) {
     try {
+      const { jobApplicationId , ...dtoExcludingParentId } = createDocumentDto;
 
-      const jobApplication = await this.jobApplicationService.findOne(id);
+      const jobApplication = await this.jobApplicationRepository.findOneBy({ jobApplicationId: jobApplicationId });
+      if (!jobApplication) {
+        throw new NotFoundException('Job Application Id provided is not valid');
+      }
 
       const document = new Document({
         ...createDocumentDto,
-        jobApplication: jobApplication
+        jobApplication: jobApplication,
       });
 
       await this.documentRepository.save(document);
@@ -60,9 +65,14 @@ export class DocumentService {
         documentId: id,
       });
 
-      Object.assign(document, updateDocumentDto);
-      return await this.documentRepository.save(document);
+      if (!document) {
+        throw new NotFoundException('Document Id provided is not valid');
+      }
 
+      const { jobApplicationId, ...dtoExcludingParentId } = updateDocumentDto;
+
+      Object.assign(document, dtoExcludingParentId);
+      return await this.documentRepository.save(document);
     } catch (err) {
       throw new HttpException(
         'Failed to update document',

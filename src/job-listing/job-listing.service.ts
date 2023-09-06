@@ -10,20 +10,22 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Corporate } from 'src/entities/corporate.entity';
 @Injectable()
 export class JobListingService {
   constructor(
     @InjectRepository(JobListing)
     private readonly jobListingRepository: Repository<JobListing>,
+    // Parent Entity
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
   ) {}
 
-  async create(corporateId: number, createJobListingDto: CreateJobListingDto) {
+  async create(createJobListingDto: CreateJobListingDto) {
     try {
       // Ensure valid corporate Id is provided
+      const { corporateId, ...dtoExcludingParentId } = createJobListingDto;
+
       const corporate = await this.corporateRepository.findOne({
         where: { userId: corporateId },
       });
@@ -32,29 +34,16 @@ export class JobListingService {
       }
 
       // Ensure jobListingStatus field is a valid enum
-      createJobListingDto.jobListingStatus = this.mapJsonToEnum(
+      const mappedStatus = this.mapJsonToEnum(
         createJobListingDto.jobListingStatus,
       );
+      createJobListingDto.jobListingStatus = mappedStatus;
 
-      // Create the job listing
-      // Parent (corporate) relationship is established
-      const { jobApplications, ...dtoExcludingJobApplications } =
-        createJobListingDto;
+      // Create the job listing, establishing relationship to parent (corporate entity)
       const jobListing = new JobListing({
-        ...dtoExcludingJobApplications,
+        ...dtoExcludingParentId,
         corporate,
       });
-
-      // Establish jobApplications (child) relationship, if it is provided
-      if (jobApplications.length > 0) {
-        const createJobApplications = createJobListingDto.jobApplications.map(
-          (createJobApplicationDto) => {
-            const { documents, ...dtoExcludeRelationship } =
-              createJobApplicationDto;
-            return new JobApplication(dtoExcludeRelationship);
-          },
-        );
-      }
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {
       throw new HttpException(
@@ -64,10 +53,12 @@ export class JobListingService {
     }
   }
 
+  // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     return await this.jobListingRepository.find();
   }
 
+  // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
   async findOne(id: number) {
     try {
       return await this.jobListingRepository.findOne({
@@ -82,6 +73,7 @@ export class JobListingService {
     }
   }
 
+  // Note: Since jobListingId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateJobListingDto: UpdateJobListingDto) {
     try {
       // Ensure valid job listing Id is provided
@@ -92,29 +84,17 @@ export class JobListingService {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
 
-      // Ensure jobListingStatus is to be updated, ensure it is a valid enum
+      //Take out the parentId, we don't want to change the parent
+      const { corporateId, ...dtoExcludeRelationship } = updateJobListingDto;
+
+      // If jobListingStatus is to be updated, ensure it is a valid enum
       if (updateJobListingDto.jobListingStatus) {
-        updateJobListingDto.jobListingStatus = this.mapJsonToEnum(
+        const mappedStatus = this.mapJsonToEnum(
           updateJobListingDto.jobListingStatus,
         );
+        jobListing.jobListingStatus = mappedStatus;
       }
-
-      Object.assign(jobListing, updateJobListingDto);
-
-      if (
-        updateJobListingDto.jobApplications &&
-        updateJobListingDto.jobApplications.length > 0
-      ) {
-        const updatedJobApplication = updateJobListingDto.jobApplications.map(
-          (createJobApplicationDto) => {
-            const { documents, ...dtoExcludeRelationship } =
-              createJobApplicationDto;
-            return new JobApplication(dtoExcludeRelationship);
-          },
-        );
-        jobListing.jobApplications = updatedJobApplication;
-      }
-
+      Object.assign(jobListing, dtoExcludeRelationship);
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {
       throw new HttpException(
@@ -124,6 +104,7 @@ export class JobListingService {
     }
   }
 
+  // Note: Associated child entities(job Applications) will be removed as well, since cascade is set to true in the entity class
   async remove(id: number) {
     try {
       return await this.jobListingRepository.delete({ jobListingId: id });

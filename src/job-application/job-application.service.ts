@@ -1,44 +1,70 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Repository } from 'typeorm';
-import { Document } from 'src/entities/document.entity';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
+import { JobListing } from 'src/entities/jobListing.entity';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Recruiter } from 'src/entities/recruiter.entity';
 
 @Injectable()
 export class JobApplicationService {
   constructor(
     @InjectRepository(JobApplication)
     private readonly jobApplicationRepository: Repository<JobApplication>,
+    // Inject parent repositories
+    @InjectRepository(JobListing)
+    private readonly jobListingRepository: Repository<JobListing>,
+    @InjectRepository(JobSeeker)
+    private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(Recruiter)
+    private readonly recruiterRepository: Repository<Recruiter>,
   ) {}
 
-  // If u use multiple entity or such, rmb to update on the module.ts
   async create(createJobApplicationDto: CreateJobApplicationDto) {
     try {
-      // This is to filter out the external relationships in the dto object
-      const { documents, ...dtoExcludeRelationship } = createJobApplicationDto;
-
-      // Creating JobApplication without the external relationship with other entites esp one to many
-      const jobApplication = new JobApplication({
-        ...dtoExcludeRelationship,
+      const { jobListingId, jobSeekerId, recruiterId, ...dtoExcludingParents } =
+        createJobApplicationDto;
+      // Ensure valid Parent Ids are provided
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
       });
+      if (!jobListing) {
+        throw new NotFoundException('Job Listing Id provided is not valid');
+      }
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+      });
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId: recruiterId },
+      });
+      if (!recruiter) {
+        throw new NotFoundException('Recruiter Id provided is not valid');
+      }
 
-      jobApplication.jobApplicationStatus = this.mapJsonToEnum(
-        dtoExcludeRelationship.jobApplicationStatus,
+      // Ensure jobApplicationStatus field is a valid enum
+      const mappedStatus = this.mapJsonToEnum(
+        createJobApplicationDto.jobApplicationStatus,
       );
+      createJobApplicationDto.jobApplicationStatus = mappedStatus;
 
-      // Creating the Classes for external relationship with other entities (OneToMany)
-      // if (documents.length > 0) {
-      //   const createDocuments = documents.map(
-      //     (createDocumentDto) => {
-      //       const { jobApplication , ...dtoExcludeRelationship } = createDocumentDto;
-      //       return new Document(dtoExcludeRelationship);
-      //     }
-      //   );
-      //   jobApplication.documents = createDocuments;
-      // }
+      // Create the job Application, establishing relationships to parents
+      const jobApplication = new JobApplication({
+        ...dtoExcludingParents,
+        jobListing,
+        jobSeeker,
+        recruiter,
+      });
 
       return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
@@ -49,13 +75,14 @@ export class JobApplicationService {
     }
   }
 
+  // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     return await this.jobApplicationRepository.find();
   }
 
+  // Only the child entity (document) is eagerly loaded
   async findOne(id: number) {
     try {
-      // For this part, u want the relationship with other entities to show, at most 1 level, no need too detail
       return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
         relations: { documents: true },
@@ -68,32 +95,26 @@ export class JobApplicationService {
     }
   }
 
+  // Note: Since jobApplicationId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateJobApplicationDto: UpdateJobApplicationDto) {
     try {
+      // Ensure valid Job Application Id is provided
       const jobApplication = await this.jobApplicationRepository.findOneBy({
         jobApplicationId: id,
       });
 
-      // This is to filter out the external relationships in the dto object
-      const { documents, ...dtoExcludeRelationship } = updateJobApplicationDto;
-
-      Object.assign(jobApplication, dtoExcludeRelationship);
-
-      jobApplication.jobApplicationStatus = this.mapJsonToEnum(
-        dtoExcludeRelationship.jobApplicationStatus,
-      );
-
-      // Same thing, u also update the entities with relationship as such
-      if (documents && documents.length > 0) {
-        const updatedDocuments = documents.map(
-          (createDocumentDto) => {
-            const {jobApplication, ...dtoExcludeRelationship} = createDocumentDto;
-            return new Document(dtoExcludeRelationship);
-          },
-        );
-        jobApplication.documents = updatedDocuments;
+      if (!jobApplication) {
+        throw new NotFoundException('Job Application Id provided is invalid');
       }
 
+      // If jobApplicationStatus is to be updated, ensure it is a valid enum
+      if (updateJobApplicationDto.jobApplicationStatus) {
+        const mappedStatus = this.mapJsonToEnum(
+          updateJobApplicationDto.jobApplicationStatus,
+        );
+        updateJobApplicationDto.jobApplicationStatus = mappedStatus;
+      }
+      Object.assign(jobApplication, updateJobApplicationDto);
       return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
       throw new HttpException(
@@ -103,6 +124,7 @@ export class JobApplicationService {
     }
   }
 
+  // Note: Associated child entities (Documents) will be removed as well, since cascade is set to true in the entity class
   async remove(id: number) {
     try {
       return await this.jobApplicationRepository.delete({

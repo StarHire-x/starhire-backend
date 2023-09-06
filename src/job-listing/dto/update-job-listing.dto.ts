@@ -1,4 +1,14 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateJobListingDto } from './create-job-listing.dto';
+import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 
-export class UpdateJobListingDto extends PartialType(CreateJobListingDto) {}
+class UpdateDto {
+  title: string;
+  description: string;
+  jobLocation: string;
+  listingDate: Date;
+  averageSalary: number;
+  jobStartDate: Date;
+  jobListingStatus: JobListingStatusEnum;
+}
+
+export class UpdateJobListingDto extends PartialType(UpdateDto) {}

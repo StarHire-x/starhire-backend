@@ -10,6 +10,7 @@ import {
   HttpStatus,
   InternalServerErrorException,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ForumCommentsService } from './forum-comments.service';
 import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
@@ -46,9 +47,9 @@ export class ForumCommentsController {
   }
 
   @Get(':id')
-  findOneForumComment(@Param('id', ParseIntPipe) id: string) {
+  findOneForumComment(@Param('id') id: number) {
     try {
-      return this.forumCommentsService.findOne(+id);
+      return this.forumCommentsService.findOne(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -58,7 +59,8 @@ export class ForumCommentsController {
     }
   }
 
-  @Patch(':id')
+  // Change to PUT
+  @Put(':id')
   updateForumComment(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateForumCommentDto: UpdateForumCommentDto,

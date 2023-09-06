@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
 import { UpdateForumCommentDto } from './dto/update-forum-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,9 +23,7 @@ export class ForumCommentsService {
     private readonly forumPostRepository: Repository<ForumPost>,
   ) {}
 
-  async create(
-  createForumCommentDto: CreateForumCommentDto,
-  ) {
+  async create(createForumCommentDto: CreateForumCommentDto) {
     try {
       const { jobSeekerId, forumPostId, ...dtoExcludeRelationship } =
         createForumCommentDto;
@@ -80,9 +83,8 @@ export class ForumCommentsService {
       if (!forumComment) {
         throw new NotFoundException('Forum comment Id provided is not valid');
       }
-      const { jobSeekerId, forumPostId, ...dtoExcludeRelationship } =
-        updateForumCommentDto;
-      Object.assign(forumComment, dtoExcludeRelationship);
+
+      Object.assign(forumComment, updateForumCommentDto);
       return await this.forumCommentRepository.save(forumComment);
     } catch (err) {
       throw new HttpException(

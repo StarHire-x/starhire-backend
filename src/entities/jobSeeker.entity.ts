@@ -59,6 +59,7 @@ export class JobSeeker extends User {
 
   @OneToOne(() => JobPreference, {
     cascade: true,
+    nullable: true,
   })
   jobPreference: JobPreference;
 

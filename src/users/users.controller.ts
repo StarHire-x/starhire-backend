@@ -44,9 +44,9 @@ export class UsersController {
 
   // GET /users?id=1
   @Get()
-  getNinjas(@Query('id') id: number) {
+  getUser(@Query('email') email: string, @Query('role') role: string) {
     try {
-      return this.usersService.findOne(id);
+      return this.usersService.findOneEmail(email, role);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -57,18 +57,18 @@ export class UsersController {
   }
 
   // GET /users/:id
-  @Get(':id')
-  findOneUser(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return this.usersService.findOne(id);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-      } else {
-        throw new InternalServerErrorException('Internal server error');
-      }
-    }
-  }
+  // @Get(':id')
+  // findOneUser(@Param('id', ParseIntPipe) id: number) {
+  //   try {
+  //     return this.usersService.findOne(id);
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
 
   @Put(':id')
   updateUser(

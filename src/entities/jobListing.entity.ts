@@ -1,5 +1,4 @@
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import { Corporate } from 'src/entities/corporate.entity';
 import {
   Column,
   Entity,
@@ -51,10 +50,6 @@ export class JobListing {
   )
   jobApplications: JobApplication[];
 
-  @ManyToOne(() => Corporate, (corporate) => corporate.jobListings, {
-    onDelete: 'CASCADE'
-  })
-  corporate: Corporate;
 
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);

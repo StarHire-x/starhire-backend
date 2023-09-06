@@ -1,21 +1,50 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
 import { UpdateForumCommentDto } from './dto/update-forum-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ForumComment } from 'src/entities/forumComment.entity';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { ForumPost } from 'src/entities/forumPost.entity';
 
 @Injectable()
 export class ForumCommentsService {
   constructor(
     @InjectRepository(ForumComment)
     private readonly forumCommentRepository: Repository<ForumComment>,
+    @InjectRepository(JobSeeker)
+    private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(ForumPost)
+    private readonly forumPostRepository: Repository<ForumPost>,
   ) {}
 
   async create(createForumCommentDto: CreateForumCommentDto) {
     try {
+      const { jobSeekerId, forumPostId, ...dtoExcludeRelationship } =
+        createForumCommentDto;
+      const jobSeeker = await this.jobSeekerRepository.findOneBy({
+        userId: jobSeekerId,
+      });
+      if (jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+
+      const forumPost = await this.forumPostRepository.findOneBy({
+        forumPostId: forumPostId,
+      });
+      if (!forumPost) {
+        throw new NotFoundException('Forum Post Id provided is not valid');
+      }
+
       const forumComment = new ForumComment({
-        ...createForumCommentDto,
+        ...dtoExcludeRelationship,
+        jobSeeker: jobSeeker,
+        forumPost: forumPost,
       });
 
       return await this.forumCommentRepository.save(forumComment);
@@ -50,6 +79,10 @@ export class ForumCommentsService {
       const forumComment = await this.forumCommentRepository.findOneBy({
         forumCommentId: id,
       });
+
+      if (!forumComment) {
+        throw new NotFoundException('Forum comment Id provided is not valid');
+      }
 
       Object.assign(forumComment, updateForumCommentDto);
       return await this.forumCommentRepository.save(forumComment);

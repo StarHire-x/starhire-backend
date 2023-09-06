@@ -1,4 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateForumCommentDto } from './create-forum-comment.dto';
-
-export class UpdateForumCommentDto extends PartialType(CreateForumCommentDto) {}
+export class UpdateForumCommentDto {
+  forumCommentMessage: string;
+  isAnonymous: boolean;
+}
+// Extend partial type

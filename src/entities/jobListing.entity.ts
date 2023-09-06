@@ -1,6 +1,12 @@
-import { IsEnum } from 'class-validator';
-import JobListingStatuEnum from 'src/enums/jobListingStatus.enum';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import { Corporate } from 'src/entities/corporate.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { JobApplication } from './jobApplication.entity';
 import { Corporate } from './corporate.entity';
 
@@ -28,11 +34,21 @@ export class JobListing {
   jobStartDate: Date;
 
   @Column()
-  jobListingStatus: JobListingStatuEnum;
+  jobListingStatus: JobListingStatusEnum;
 
-  @OneToMany(() => JobApplication, (jobApplication) => jobApplication.jobListing, {
-    cascade: true,
+  @ManyToOne(() => Corporate, (corporate) => corporate.jobListings, {
+    nullable: false,
   })
+  corporate: Corporate;
+
+  @OneToMany(
+    () => JobApplication,
+    (jobApplication) => jobApplication.jobListing,
+    {
+      cascade: true,
+      nullable: true,
+    },
+  )
   jobApplications: JobApplication[];
 
   @ManyToOne(() => Corporate, (corporate) => corporate.jobListings, {

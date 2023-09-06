@@ -9,6 +9,7 @@ export class Administrator extends User {
     cascade: true,
   })
   tickets: Ticket[];
+  
   constructor(entity: Partial<User>) {
     super(entity);
   }

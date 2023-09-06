@@ -10,6 +10,7 @@ import {
   HttpStatus,
   InternalServerErrorException,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ForumPostsService } from './forum-posts.service';
 import { CreateForumPostDto } from './dto/create-forum-post.dto';
@@ -58,7 +59,7 @@ export class ForumPostsController {
     }
   }
 
-  @Patch(':id')
+  @Put(':id')
   updateForumPost(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateForumPostDto: UpdateForumPostDto,

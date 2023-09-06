@@ -1,22 +1,20 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
-import { EventListing } from "./eventListing.entity";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { EventListing } from './eventListing.entity';
 
-@Entity({name: "eventRegistrations"})
+@Entity({ name: 'eventRegistrations' })
 export class EventRegistration {
-    @PrimaryGeneratedColumn()
-    eventRegistrationId: number;
+  @PrimaryGeneratedColumn()
+  eventRegistrationId: number;
 
-    @Column()
-    isActive: boolean;
+  @Column()
+  isActive: boolean;
 
-    @ManyToOne(
-        () => EventListing,
-        (eventListing) => eventListing.eventRegistrations,
-        { onDelete: 'CASCADE' },
-      )
-      eventListing: EventListing;
+  @ManyToOne(() => EventListing, (eventListing) => eventListing.eventRegistrations, {
+    nullable: false,
+  })
+  eventListing: EventListing;
 
-    constructor(entity: Partial<EventRegistration>) {
-        Object.assign(this, entity);
-    }
+  constructor(entity: Partial<EventRegistration>) {
+    Object.assign(this, entity);
+  }
 }

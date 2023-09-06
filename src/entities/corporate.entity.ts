@@ -30,6 +30,4 @@ export class Corporate extends User {
     cascade: true,
   })
   jobListings: JobListing[];
-
-
 }

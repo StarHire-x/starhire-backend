@@ -34,10 +34,10 @@ export class JobSeekerController {
     }
   }
 
-  //   @Get('/all')
-  //   findAllJobSeeker() {
-  //     return this.jobSeekerService.findAll();
-  //   }
+  @Get()
+  findAllJobSeeker() {
+    return this.jobSeekerService.findAll();
+  }
 
   // GET /job-seeker/:id
   @Get(':id')

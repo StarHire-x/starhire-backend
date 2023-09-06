@@ -30,7 +30,7 @@ export class EventRegistrationController {
     try {
       return this.eventRegistrationService.create(createEventRegistrationDto);
     } catch (error) {
-      if (error instanceof ConflictException) {
+      if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
@@ -40,17 +40,11 @@ export class EventRegistrationController {
 
   @Get('/all')
   findAllEventRegistrations() {
-    return this.eventRegistrationService.findAll();
-  }
-
-  // GET /event-registration?id=1
-  @Get()
-  getNinjas(@Query('id') id: number) {
     try {
-      return this.eventRegistrationService.findOne(id);
+      return this.eventRegistrationService.findAll();
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -63,8 +57,8 @@ export class EventRegistrationController {
     try {
       return this.eventRegistrationService.findOne(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -73,14 +67,14 @@ export class EventRegistrationController {
 
   @Put(':id')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: number,
     @Body() updateEventRegistrationDto: UpdateEventRegistrationDto,
   ) {
     try {
-      return this.eventRegistrationService.update(+id, updateEventRegistrationDto);
+      return this.eventRegistrationService.update(id, updateEventRegistrationDto);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -88,15 +82,12 @@ export class EventRegistrationController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: number) {
     try {
-      return this.eventRegistrationService.remove(+id);
+      return this.eventRegistrationService.remove(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(
-          `Event Registration with ID ${id}`,
-          HttpStatus.NOT_FOUND,
-        );
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }

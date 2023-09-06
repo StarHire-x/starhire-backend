@@ -56,8 +56,9 @@ export class JobSeeker extends User {
   })
   chats: Chat[];
 
-  @OneToOne(() => JobPreference,  {
+  @OneToOne(() => JobPreference, {
     cascade: true,
+    nullable: true,
   })
   jobPreference: JobPreference;
 

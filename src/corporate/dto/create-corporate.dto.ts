@@ -1,5 +1,5 @@
-import { EventListing } from "src/entities/eventListing.entity";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { EventListing } from 'src/entities/eventListing.entity';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 export class CreateCorporateDto extends CreateUserDto {
   companyName: string;

@@ -23,11 +23,12 @@ export class JobPreferenceController {
   constructor(private readonly jobPreferenceService: JobPreferenceService) {}
 
   @Post()
-  createJobPreference(@Body() createJobPreferenceDto: CreateJobPreferenceDto) {
+  create(@Body() createJobPreferenceDto: CreateJobPreferenceDto) {
     try {
-      return this.jobPreferenceService.create(createJobPreferenceDto);
+      const { jobSeeker, ...createJobPreference } = createJobPreferenceDto;
+      return this.jobPreferenceService.create(jobSeeker.userId, createJobPreferenceDto);
     } catch (error) {
-      if (error instanceof ConflictException) {
+      if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
@@ -42,11 +43,11 @@ export class JobPreferenceController {
 
   // GET /job-preference/:id
   @Get(':id')
-  findOneJobPreference(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     try {
       return this.jobPreferenceService.findOne(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
         throw new InternalServerErrorException('Internal server error');
@@ -55,7 +56,7 @@ export class JobPreferenceController {
   }
 
   @Put(':id')
-  updateJobPreference(
+  update(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateEmployerDto: UpdateJobPreferenceDto,
   ) {
@@ -71,7 +72,7 @@ export class JobPreferenceController {
   }
 
   @Delete(':id')
-  removeJobPreference(@Param('id', ParseIntPipe) id: string) {
+  remove(@Param('id', ParseIntPipe) id: string) {
     try {
       return this.jobPreferenceService.remove(+id);
     } catch (error) {

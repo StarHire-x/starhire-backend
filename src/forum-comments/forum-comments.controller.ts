@@ -22,7 +22,8 @@ export class ForumCommentsController {
   @Post()
   createForumComment(@Body() createForumCommentDto: CreateForumCommentDto) {
     try {
-      return this.forumCommentsService.create(createForumCommentDto);
+      const { jobSeeker, forumPost, ...createForumComment } = createForumCommentDto;
+      return this.forumCommentsService.create(jobSeeker.userId, forumPost.forumPostId, createForumCommentDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

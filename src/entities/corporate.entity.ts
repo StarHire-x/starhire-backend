@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { EventListing } from './eventListing.entity';
+import { JobListing } from './jobListing.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -24,4 +25,9 @@ export class Corporate extends User {
     cascade: true,
   })
   eventListings: EventListing[];
+
+  @OneToMany(() => JobListing, (jobListing) => jobListing.corporate, {
+    cascade: true,
+  })
+  jobListings: JobListing[];
 }

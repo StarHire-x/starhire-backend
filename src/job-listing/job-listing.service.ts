@@ -85,7 +85,7 @@ export class JobListingService {
       }
 
       //Take out the parentId, we don't want to change the parent
-      const { corporateId, ...dtoExcludeRelationship } = updateJobListingDto;
+      const { ...dtoExcludeRelationship } = updateJobListingDto;
 
       // If jobListingStatus is to be updated, ensure it is a valid enum
       if (updateJobListingDto.jobListingStatus) {

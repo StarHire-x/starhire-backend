@@ -58,9 +58,14 @@ export class JobSeeker extends User {
 
   @OneToOne(() => JobPreference, {
     cascade: true,
-    nullable: true,
+    nullable: true, // one-to-one optional
   })
   jobPreference: JobPreference;
+
+  // @OneToMany(() => Review, (review) => review.jobSeeker, {
+  //   cascade: true,
+  // })
+  // reviews: Review[];
 
   constructor(entity: Partial<JobSeeker>) {
     super(entity);

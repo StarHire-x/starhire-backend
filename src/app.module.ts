@@ -21,6 +21,7 @@ import { EventRegistrationModule } from './event-registration/event-registration
 import { RecruiterModule } from './recruiter/recruiter.module';
 import { CorporateModule } from './corporate/corporate.module';
 import { TicketModule } from './ticket/ticket.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { TicketModule } from './ticket/ticket.module';
     RecruiterModule,
     CorporateModule,
     TicketModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

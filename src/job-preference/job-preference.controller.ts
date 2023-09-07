@@ -11,8 +11,6 @@ import {
   HttpException,
   InternalServerErrorException,
   HttpStatus,
-  ParseIntPipe,
-  ConflictException,
 } from '@nestjs/common';
 import { JobPreferenceService } from './job-preference.service';
 import { CreateJobPreferenceDto } from './dto/create-job-preference.dto';
@@ -25,7 +23,6 @@ export class JobPreferenceController {
   @Post()
   create(@Body() createJobPreferenceDto: CreateJobPreferenceDto) {
     try {
-      console.log(createJobPreferenceDto);
       return this.jobPreferenceService.create(createJobPreferenceDto);
     } catch (error) {
       if (error instanceof HttpException) {
@@ -43,7 +40,7 @@ export class JobPreferenceController {
 
   // GET /job-preference/:id
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: number) {
     try {
       return this.jobPreferenceService.findOne(id);
     } catch (error) {
@@ -57,11 +54,11 @@ export class JobPreferenceController {
 
   @Put(':id')
   update(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: number,
     @Body() updateEmployerDto: UpdateJobPreferenceDto,
   ) {
     try {
-      return this.jobPreferenceService.update(+id, updateEmployerDto);
+      return this.jobPreferenceService.update(id, updateEmployerDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -72,9 +69,9 @@ export class JobPreferenceController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string) {
+  remove(@Param('id') id: number) {
     try {
-      return this.jobPreferenceService.remove(+id);
+      return this.jobPreferenceService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(

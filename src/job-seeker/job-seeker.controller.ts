@@ -10,7 +10,6 @@ import {
   HttpException,
   InternalServerErrorException,
   HttpStatus,
-  ParseIntPipe,
   ConflictException,
 } from '@nestjs/common';
 import { JobSeekerService } from './job-seeker.service';

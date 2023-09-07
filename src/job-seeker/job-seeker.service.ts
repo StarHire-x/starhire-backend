@@ -11,11 +11,6 @@ import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
-import { ForumComment } from 'src/entities/forumComment.entity';
-import { JobPreference } from 'src/entities/jobPreference.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { ForumPost } from 'src/entities/forumPost.entity';
-import { Chat } from 'src/entities/chat.entity';
 import UserStatusEnum from 'src/enums/userStatus.enum';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
@@ -50,10 +45,7 @@ export class JobSeekerService {
       }
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {
-      throw new HttpException(
-        'Failed to create new job seeker',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -63,22 +55,20 @@ export class JobSeekerService {
 
   async findOne(id: number) {
     try {
-      return await this.jobSeekerRepository.findOne({
+      const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId: id },
         relations: {
           forumComments: true,
-          // jobPreference: true,
+          jobPreference: true,
           jobApplications: true,
           forumPosts: true,
           chats: true,
           // reviews: true,
         },
       });
+      return jobSeeker;
     } catch (err) {
-      throw new HttpException(
-        'Failed to find job seeker',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 

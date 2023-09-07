@@ -33,21 +33,23 @@ export class JobPreferenceService {
       if (!findJobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
+      if (findJobSeeker.jobPreference != null) {
+        throw new ConflictException('Job Seeker already has a Job Preference!');
+      }
 
       // Create a new JobPreference entity
       const jobPreference = new JobPreference({
         ...dtoExcludeRelationship,
         jobSeeker: findJobSeeker,
       });
-
       await this.jobPreferenceRepository.save(jobPreference);
+
+      findJobSeeker.jobPreference = jobPreference;
+      await this.jobSeekerRepository.save(findJobSeeker);
 
       return jobPreference;
     } catch (err) {
-      throw new HttpException(
-        'Failed to create new job preference',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -57,10 +59,12 @@ export class JobPreferenceService {
 
   async findOne(id: number) {
     try {
-      return await this.jobPreferenceRepository.findOne({
+      const jobPreference = await this.jobPreferenceRepository.findOne({
         where: { jobPreferenceId: id },
         relations: { jobSeeker: true },
       });
+
+      return jobPreference;
     } catch (err) {
       throw new HttpException(
         'Failed to find job preference',
@@ -71,29 +75,23 @@ export class JobPreferenceService {
 
   async update(id: number, updateJobPreference: UpdateJobPreferenceDto) {
     // Ensure valid job listing Id is provided
-    const jobListing = await this.findOne(id);
-    if (!jobListing) {
-      throw new NotFoundException('Job Listing Id provided is not valid');
+    const jobPreference = await this.findOne(id);
+    if (!jobPreference) {
+      throw new NotFoundException('Job Preference Id provided is not valid');
     }
     const { jobSeekerId, ...dtoExcludeRelationship } = updateJobPreference;
-    Object.assign(jobListing, dtoExcludeRelationship);
-    return await this.jobPreferenceRepository.save(jobListing);
+    Object.assign(jobPreference, dtoExcludeRelationship);
+    return await this.jobPreferenceRepository.save(jobPreference);
   }
   catch(err) {
-    throw new HttpException(
-      'Failed to update job preference',
-      HttpStatus.BAD_REQUEST,
-    );
+    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
   }
 
   async remove(id: number) {
     try {
       return await this.jobPreferenceRepository.delete({ jobPreferenceId: id });
     } catch (err) {
-      throw new HttpException(
-        'Failed to delete job preference',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

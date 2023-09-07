@@ -43,10 +43,6 @@ export class JobPreferenceService {
         jobSeeker: findJobSeeker,
       });
       await this.jobPreferenceRepository.save(jobPreference);
-
-      findJobSeeker.jobPreference = jobPreference;
-      await this.jobSeekerRepository.save(findJobSeeker);
-
       return jobPreference;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
@@ -70,6 +66,24 @@ export class JobPreferenceService {
         'Failed to find job preference',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  async findByJobSeekerId(jobSeekerId: number) {
+    try {
+      const findJobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: { jobPreference: true },
+      });
+      if (!findJobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      } else if (findJobSeeker.jobPreference == null) {
+        throw new NotFoundException('Job Seeker has no Job Preference!');
+      }
+
+      return findJobSeeker.jobPreference;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 

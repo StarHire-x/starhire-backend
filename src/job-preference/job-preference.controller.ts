@@ -52,6 +52,19 @@ export class JobPreferenceController {
     }
   }
 
+  @Get('/job-seeker/:id')
+  findByJobSeekerId(@Param('id') id: number) {
+    try {
+      return this.jobPreferenceService.findByJobSeekerId(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Put(':id')
   update(
     @Param('id') id: number,

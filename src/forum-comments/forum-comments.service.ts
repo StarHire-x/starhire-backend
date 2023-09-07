@@ -25,12 +25,14 @@ export class ForumCommentsService {
 
   async create(createForumCommentDto: CreateForumCommentDto) {
     try {
-      const { jobSeekerId, forumPostId, ...dtoExcludeRelationship } =
+      // Ensure valid job seeker id and valid forum post id are provided
+      const { jobSeekerId, forumPostId, ...dtoExcludingParentId } =
         createForumCommentDto;
+
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
       });
-      if (jobSeeker) {
+      if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
 
@@ -41,10 +43,11 @@ export class ForumCommentsService {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
+      // Create the forum comment, establishing relationships to parents
       const forumComment = new ForumComment({
-        ...dtoExcludeRelationship,
-        jobSeeker: jobSeeker,
-        forumPost: forumPost,
+        ...dtoExcludingParentId,
+        jobSeeker,
+        forumPost,
       });
 
       return await this.forumCommentRepository.save(forumComment);
@@ -62,9 +65,10 @@ export class ForumCommentsService {
 
   async findOne(id: number) {
     try {
+      // I want to know which job seeker posted the comment and which forum post the comment belongs to
       return await this.forumCommentRepository.findOne({
         where: { forumCommentId: id },
-        relations: {},
+        relations: { jobSeeker: true, forumPost: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -74,14 +78,16 @@ export class ForumCommentsService {
     }
   }
 
+  // Note: Since forumCommentId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateForumCommentDto: UpdateForumCommentDto) {
     try {
+      // Ensure valid Forum Comment Id is provided
       const forumComment = await this.forumCommentRepository.findOneBy({
         forumCommentId: id,
       });
 
       if (!forumComment) {
-        throw new NotFoundException('Forum comment Id provided is not valid');
+        throw new NotFoundException('Forum comment Id provided is invalid');
       }
 
       Object.assign(forumComment, updateForumCommentDto);

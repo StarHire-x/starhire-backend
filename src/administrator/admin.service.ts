@@ -1,4 +1,9 @@
-import { Injectable, HttpException, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  NotFoundException,
+  HttpStatus,
+} from '@nestjs/common';
 import { CreateAdministratorDto } from './dto/create-admin.dto';
 import { UpdateAdministratorDto } from './dto/update-admin.dto';
 import { Repository } from 'typeorm';
@@ -9,13 +14,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class AdministratorService {
   constructor(
     @InjectRepository(Administrator)
-    private readonly administratorRepository: Repository<Administrator>
-    ) {}
+    private readonly administratorRepository: Repository<Administrator>,
+  ) {}
 
   async create(createAdministratorDto: CreateAdministratorDto) {
     try {
       return await this.administratorRepository.save(createAdministratorDto);
-
     } catch (error) {
       throw new HttpException(
         'Failed to create new administrator',
@@ -31,14 +35,24 @@ export class AdministratorService {
   async findOne(id: number) {
     try {
       return await this.administratorRepository.findOne({
-        where:{ userId: id },
-        relations: {tickets: true}, 
+        where: { userId: id },
+        relations: { tickets: true },
       });
     } catch (error) {
       throw new HttpException(
         'Failed to find administrator',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      return await this.administratorRepository.findOne({
+        where: { email },
+      });
+    } catch (err) {
+      throw new HttpException('Failed to find admin', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -54,7 +68,6 @@ export class AdministratorService {
 
       Object.assign(administrator, updateAdministratorDto);
       return await this.administratorRepository.save(administrator);
-
     } catch (error) {
       throw new HttpException(
         'Failed to update administrator',

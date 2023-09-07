@@ -27,7 +27,9 @@ export class UsersController {
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
     try {
+      console.log(createUserDto);
       return this.usersService.create(createUserDto);
+        // You can also return an HTTP 404 Not Found response if the job seeker is not found
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -42,11 +44,29 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // GET /users?id=1
+  // GET /users?id=1&?
+  /*
   @Get()
-  getNinjas(@Query('id') id: number) {
+  getUser(@Query('email') email: string, @Query('role') role: string) {
     try {
-      return this.usersService.findOne(id);
+      console.log("You reached this endpoint");
+      console.log(email)
+      console.log(role);
+      return this.usersService.findOneEmail(email, role);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+  */
+
+  @Get()
+  getUser(@Query('email') email: string) {
+    try {
+      return this.usersService.findOneEmail(email);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -57,18 +77,18 @@ export class UsersController {
   }
 
   // GET /users/:id
-  @Get(':id')
-  findOneUser(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return this.usersService.findOne(id);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-      } else {
-        throw new InternalServerErrorException('Internal server error');
-      }
-    }
-  }
+  // @Get(':id')
+  // findOneUser(@Param('id', ParseIntPipe) id: number) {
+  //   try {
+  //     return this.usersService.findOne(id);
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
 
   @Put(':id')
   updateUser(

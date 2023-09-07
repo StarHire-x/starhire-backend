@@ -4,6 +4,7 @@ import { EventListing } from './eventListing.entity';
 import { JobListing } from './jobListing.entity';
 import { Chat } from './chat.entity';
 import { Ticket } from './ticket.entity';
+import { Review } from './review.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -44,4 +45,6 @@ export class Corporate extends User {
   tickets: Ticket[];
 
   // TODO: Relationship with Review entity
+  @OneToMany(() => Review, (review) => review.corporate)
+  reviews: Review[];
 }

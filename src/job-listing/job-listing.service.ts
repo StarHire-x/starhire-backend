@@ -67,7 +67,7 @@ export class JobListingService {
       });
     } catch (err) {
       throw new HttpException(
-        'Failed to find job application',
+        'Failed to find job Listing',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -84,9 +84,12 @@ export class JobListingService {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
 
+<<<<<<< HEAD
       //Take out the parentId, we don't want to change the parent
       const { ...dtoExcludeRelationship } = updateJobListingDto;
 
+=======
+>>>>>>> main
       // If jobListingStatus is to be updated, ensure it is a valid enum
       if (updateJobListingDto.jobListingStatus) {
         const mappedStatus = this.mapJsonToEnum(
@@ -94,7 +97,7 @@ export class JobListingService {
         );
         updateJobListingDto.jobListingStatus = mappedStatus;
       }
-      Object.assign(jobListing, dtoExcludeRelationship);
+      Object.assign(jobListing, updateJobListingDto);
       return await this.jobListingRepository.save(jobListing);
     } catch (err) {
       throw new HttpException(

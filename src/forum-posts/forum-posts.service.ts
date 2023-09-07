@@ -1,10 +1,14 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateForumPostDto } from './dto/create-forum-post.dto';
 import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ForumPost } from 'src/entities/forumPost.entity';
-import { ForumComment } from 'src/entities/forumComment.entity';
 import ForumCategoryEnum from 'src/enums/forumCategory.enum';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 
@@ -13,30 +17,32 @@ export class ForumPostsService {
   constructor(
     @InjectRepository(ForumPost)
     private readonly forumPostRepository: Repository<ForumPost>,
+    // Parent Entity
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
   ) {}
 
   async create(createForumPostDto: CreateForumPostDto) {
     try {
+      // Ensure valid job seeker id is provided
+      const { jobSeekerId, ...dtoExcludingParentId } = createForumPostDto;
 
-      const { jobSeekerId, ...dtoExcludeRelationship } = createForumPostDto;
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
       });
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
-      
+
+      // Ensure forumCategory field is a valid enum
+      const mappedStatus = this.mapJsonToEnum(createForumPostDto.forumCategory);
+      createForumPostDto.forumCategory = mappedStatus;
+
+      // Create the forum post, establishing relationship to parent (job seeker entity)
       const forumPost = new ForumPost({
-        ...dtoExcludeRelationship,
-        jobSeeker: jobSeeker,
+        ...dtoExcludingParentId,
+        jobSeeker,
       });
-
-      forumPost.forumCategory = this.mapJsonToEnum(
-        createForumPostDto.forumCategory,
-      );
-
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(
@@ -46,15 +52,17 @@ export class ForumPostsService {
     }
   }
 
+  // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     return this.forumPostRepository.find();
   }
 
+  // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
   async findOne(id: number) {
     try {
       return await this.forumPostRepository.findOne({
         where: { forumPostId: id },
-        relations: { forumComments: true },
+        relations: { jobSeeker: true, forumComments: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -64,24 +72,25 @@ export class ForumPostsService {
     }
   }
 
+  // Note: Since forumPostId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateForumPostDto: UpdateForumPostDto) {
     try {
+      // Ensure valid forum post Id is provided
       const forumPost = await this.forumPostRepository.findOneBy({
         forumPostId: id,
       });
-
       if (!forumPost) {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      const { jobSeekerId, ...dtoExcludeRelationship } = updateForumPostDto;
-
-      Object.assign(forumPost, dtoExcludeRelationship);
-
-      forumPost.forumCategory = this.mapJsonToEnum(
-        updateForumPostDto.forumCategory,
-      );
-
+      // If forumCategory is to be updated, ensure it is a valid enum
+      if (updateForumPostDto.forumCategory) {
+        const mappedStatus = this.mapJsonToEnum(
+          updateForumPostDto.forumCategory,
+        );
+        updateForumPostDto.forumCategory = mappedStatus;
+      }
+      Object.assign(forumPost, updateForumPostDto);
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(
@@ -91,6 +100,7 @@ export class ForumPostsService {
     }
   }
 
+  // Note: Associated child entities(forum comments) will be removed as well, since cascade is set to true in the entity class
   async remove(id: number) {
     try {
       return await this.forumPostRepository.delete({ forumPostId: id });

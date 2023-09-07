@@ -7,7 +7,7 @@ export class ForumComment {
   @PrimaryGeneratedColumn()
   forumCommentId: number;
 
-  @Column({ nullable: true })
+  @Column()
   createdAt: Date;
 
   @Column()
@@ -16,10 +16,14 @@ export class ForumComment {
   @Column()
   isAnonymous: boolean;
 
-  @ManyToOne(() => ForumPost, (forumPost) => forumPost.forumComments, {})
+  @ManyToOne(() => ForumPost, (forumPost) => forumPost.forumComments, {
+    nullable: false,
+  })
   forumPost: ForumPost;
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {})
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
+    nullable: false,
+  })
   jobSeeker: JobSeeker;
 
   constructor(entity: Partial<ForumComment>) {

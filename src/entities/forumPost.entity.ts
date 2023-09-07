@@ -1,4 +1,3 @@
-import { IsEnum } from 'class-validator';
 import ForumCategoryEnum from '../enums/forumCategory.enum';
 import {
   Column,
@@ -16,12 +15,9 @@ export class ForumPost {
   forumPostId: number;
 
   @Column()
-  forumCategory: ForumCategoryEnum;
-
-  @Column()
   forumPostTitle: string;
 
-  @Column({ nullable: true })
+  @Column()
   createdAt: Date;
 
   @Column()
@@ -30,13 +26,17 @@ export class ForumPost {
   @Column()
   isAnonymous: boolean;
 
+  @Column()
+  forumCategory: ForumCategoryEnum;
+
   @OneToMany(() => ForumComment, (forumComment) => forumComment.forumPost, {
     cascade: true,
+    nullable: true,
   })
   forumComments: ForumComment[];
 
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
-    onDelete: 'CASCADE',
+    nullable: true,
   })
   jobSeeker: JobSeeker;
 

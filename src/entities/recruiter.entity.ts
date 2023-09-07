@@ -23,7 +23,7 @@ export class Recruiter extends User {
   jobApplications: JobApplication[];
 
   @OneToMany(() => Commission, (commission) => commission.recruiter, {
-    cascade: true,
+    nullable: true,
   })
   commissions: Commission[];
 }

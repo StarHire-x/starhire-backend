@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEnum } from 'class-validator';
 import UserStatusEnum from 'src/enums/userStatus.enum';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
@@ -20,8 +20,11 @@ export abstract class User {
   @Column({ unique: true })
   contactNo: string;
 
-  @Column()
-  @IsEnum(UserStatusEnum)
+  @Column({
+    type: 'enum',
+    enum: UserStatusEnum,
+    default: UserStatusEnum.ACTIVE,
+  })
   status: UserStatusEnum;
 
   @Column()
@@ -32,7 +35,7 @@ export abstract class User {
   @IsEnum(UserRoleEnum)
   role: UserRoleEnum;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
   constructor(entity: Partial<User>) {

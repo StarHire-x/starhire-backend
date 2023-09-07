@@ -67,7 +67,7 @@ export class JobListingService {
       });
     } catch (err) {
       throw new HttpException(
-        'Failed to find job application',
+        'Failed to find job Listing',
         HttpStatus.BAD_REQUEST,
       );
     }

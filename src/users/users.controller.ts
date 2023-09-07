@@ -27,6 +27,7 @@ export class UsersController {
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
     try {
+      console.log(createUserDto);
       return this.usersService.create(createUserDto);
         // You can also return an HTTP 404 Not Found response if the job seeker is not found
     } catch (error) {
@@ -43,11 +44,13 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // GET /users?id=1
-  /*
+  // GET /users?id=1&?
   @Get()
   getUser(@Query('email') email: string, @Query('role') role: string) {
     try {
+      console.log("You reached this endpoint");
+      console.log(email)
+      console.log(role);
       return this.usersService.findOneEmail(email, role);
     } catch (error) {
       if (error instanceof NotFoundException) {

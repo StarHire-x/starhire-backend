@@ -21,7 +21,9 @@ export class Invoice {
   @Column()
   paid: boolean;
 
-  @OneToMany(() => Commission, (commission) => commission.invoice)
+  @OneToMany(() => Commission, (commission) => commission.invoice, {
+    nullable: false,
+  })
   commissions: Commission[];
 
   constructor(entity: Partial<Invoice>) {

@@ -45,9 +45,9 @@ export class InvoiceController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     try {
-      return this.invoiceService.findOne(+id);
+      return this.invoiceService.findOne(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -58,9 +58,9 @@ export class InvoiceController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateInvoiceDto: UpdateInvoiceDto) {
+  update(@Param('id') id: number, @Body() updateInvoiceDto: UpdateInvoiceDto) {
     try {
-      return this.invoiceService.update(+id, updateInvoiceDto);
+      return this.invoiceService.update(id, updateInvoiceDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -71,9 +71,9 @@ export class InvoiceController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     try {
-      return this.invoiceService.remove(+id);
+      return this.invoiceService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

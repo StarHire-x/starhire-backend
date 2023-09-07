@@ -1,27 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventRegistrationDto } from './dto/create-event-registration.dto';
 import { UpdateEventRegistrationDto } from './dto/update-event-registration.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventRegistration } from 'src/entities/eventRegistration.entity';
 import { Repository } from 'typeorm';
+import { EventListing } from 'src/entities/eventListing.entity';
 
 @Injectable()
 export class EventRegistrationService {
   constructor(
     @InjectRepository(EventRegistration)
-    private readonly eventRegistrationRepository: Repository<EventRegistration>) 
-    {}
+    private readonly eventRegistrationRepository: Repository<EventRegistration>,
+    // Inject parent repositories
+    @InjectRepository(EventListing)
+    private readonly eventListingRepository: Repository<EventListing>,
+    ){}
 
   async create(createEventRegistrationDto: CreateEventRegistrationDto) {
     try {
-      const { ...eventRegistrationDetails } = createEventRegistrationDto;
+      const { eventListingId, ...dtoExcludingParents } = createEventRegistrationDto;
 
+      //Ensure valid Parent Ids are provided
+      const eventListing = await this.eventListingRepository.findOne({
+        where: { eventListingId: eventListingId },
+      });
+
+      if (!eventListing) {
+        throw new NotFoundException("Event Listing Id provided is not valid");
+      }
+
+      // Create the event registration, establishing relationships to parents
       const eventRegistration = new EventRegistration({
-        ...eventRegistrationDetails,
+        ...dtoExcludingParents,
+        eventListing,
       });
 
       return await this.eventRegistrationRepository.save(eventRegistration);
+
     } catch (error) {
       throw new HttpException(
         'Failed to create new event registration',
@@ -49,15 +65,17 @@ export class EventRegistrationService {
 
   async update(id: number, updateEventRegistrationDto: UpdateEventRegistrationDto) {
     try {
+      // Ensure valid event regsitration id can be found
       const eventRegistration = await this.eventRegistrationRepository.findOneBy({
         eventRegistrationId: id,
       });
 
-      const { ...eventRegistrationDetails } = updateEventRegistrationDto;
-
-      Object.assign(eventRegistration, eventRegistrationDetails);
-
+      if (!eventRegistration) {
+        throw new NotFoundException('Event Registration Id provided is invalid');
+      }
+      Object.assign(eventRegistration, updateEventRegistrationDto);
       return await this.eventRegistrationRepository.save(eventRegistration);
+
     } catch (error) {
       throw new HttpException(
         'Failed to update event registration',

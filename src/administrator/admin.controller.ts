@@ -29,7 +29,7 @@ export class AdministratorController {
     try {
       return this.administratorService.create(createAdministratorDto);
     } catch (error) {
-      if (error instanceof ConflictException) {
+      if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
@@ -39,18 +39,11 @@ export class AdministratorController {
 
   @Get('/all')
   findAllAdministrator() {
-    console.log('got here');
-    return this.administratorService.findAll();
-  }
-
-  // GET /users?id=1
-  @Get()
-  getNinjas(@Query('id') id: number) {
-    try {
-      return this.administratorService.findOne(id);
+    try { 
+      return this.administratorService.findAll();
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -59,12 +52,12 @@ export class AdministratorController {
 
   // GET /users/:id
   @Get(':id')
-  findOneAdministrator(@Param('id', ParseIntPipe) id: number) {
+  findOneAdministrator(@Param('id') id: number) {
     try {
       return this.administratorService.findOne(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -73,14 +66,14 @@ export class AdministratorController {
 
   @Put(':id')
   updateAdministrator(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() updateEmployerDto: UpdateAdministratorDto,
+    @Param('id') id: number,
+    @Body() updateAdministratorDto: UpdateAdministratorDto,
   ) {
     try {
-      return this.administratorService.update(+id, updateEmployerDto);
+      return this.administratorService.update(id, updateAdministratorDto);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
@@ -88,14 +81,14 @@ export class AdministratorController {
   }
 
   @Delete(':id')
-  removeAdministrator(@Param('id', ParseIntPipe) id: string) {
+  removeAdministrator(@Param('id') id:  number) {
     try {
-      return this.administratorService.remove(+id);
+      return this.administratorService.remove(id);
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof HttpException) {
         throw new HttpException(
-          `User with ID ${id} not found`,
-          HttpStatus.NOT_FOUND,
+          error.message,
+          HttpStatus.CONFLICT,
         );
       } else {
         throw new InternalServerErrorException('Internal server error');

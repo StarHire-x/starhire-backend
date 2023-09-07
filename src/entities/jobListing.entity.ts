@@ -1,5 +1,4 @@
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import { Corporate } from 'src/entities/corporate.entity';
 import {
   Column,
   Entity,
@@ -8,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { JobApplication } from './jobApplication.entity';
+import { Corporate } from './corporate.entity';
 
 @Entity({ name: 'jobListings' })
 export class JobListing {
@@ -49,6 +49,7 @@ export class JobListing {
     },
   )
   jobApplications: JobApplication[];
+
 
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);

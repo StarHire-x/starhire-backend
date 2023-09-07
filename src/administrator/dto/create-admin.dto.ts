@@ -4,5 +4,4 @@ import { CreateTicketDto } from "src/ticket/dto/create-ticket.dto";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 
 export class CreateAdministratorDto extends CreateUserDto {
-  tickets: CreateTicketDto[];
 }

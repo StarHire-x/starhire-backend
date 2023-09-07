@@ -84,12 +84,6 @@ export class JobListingService {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
 
-<<<<<<< HEAD
-      //Take out the parentId, we don't want to change the parent
-      const { ...dtoExcludeRelationship } = updateJobListingDto;
-
-=======
->>>>>>> main
       // If jobListingStatus is to be updated, ensure it is a valid enum
       if (updateJobListingDto.jobListingStatus) {
         const mappedStatus = this.mapJsonToEnum(

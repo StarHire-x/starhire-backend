@@ -35,8 +35,8 @@ export class ForumPost {
   })
   forumComments: ForumComment[];
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
-    nullable: true,
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.forumPosts, {
+    nullable: false,
   })
   jobSeeker: JobSeeker;
 

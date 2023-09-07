@@ -64,9 +64,8 @@ export class UsersService {
     }
   }
 
-  /*
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
-  async findOneEmail(email: string, role: string) {
+  async findByEmail(email: string, role: string) {
     try {
       if(role === "Job_Seeker") {
         return await this.jobSeekerService.findByEmail(email);
@@ -85,7 +84,7 @@ export class UsersService {
       );
     }
   }
-  */
+
 
   // Pass in the role, invoke update method of the corresponding repository
   async update(id: number, updateUserDto: any) {

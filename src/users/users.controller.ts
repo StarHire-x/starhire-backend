@@ -45,14 +45,15 @@ export class UsersController {
   }
 
   // GET /users?id=1&?
-  /*
   @Get()
-  getUser(@Query('email') email: string, @Query('role') role: string) {
+  async getUserByEmailandRole(@Query('email') email: string, @Query('role') role: string) {
     try {
       console.log("You reached this endpoint");
       console.log(email)
       console.log(role);
-      return this.usersService.findOneEmail(email, role);
+      const result = await this.usersService.findByEmail(email, role);
+      console.log("🚀 ~ file: users.controller.ts:55 ~ UsersController ~ getUserByEmailandRole ~ result:", result)
+      return result
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -61,20 +62,20 @@ export class UsersController {
       }
     }
   }
-  */
+  
 
-  @Get()
-  getUser(@Query('email') email: string) {
-    try {
-      return this.usersService.findOneEmail(email);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-      } else {
-        throw new InternalServerErrorException('Internal server error');
-      }
-    }
-  }
+  // @Get()
+  // getUser(@Query('email') email: string) {
+  //   try {
+  //     return this.usersService.findOneEmail(email);
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
 
   // GET /users/:id
   // @Get(':id')

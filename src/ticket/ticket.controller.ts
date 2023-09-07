@@ -28,7 +28,7 @@ export class TicketController {
     try {
       return this.ticketService.create(createTicketDto);
     } catch (error) {
-      if (error instanceof ConflictException) {
+      if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
@@ -38,7 +38,15 @@ export class TicketController {
 
   @Get('/all')
   findAllTickets() {
-    return this.ticketService.findAll();
+    try {
+      return this.ticketService.findAll();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   // GET /ticket?id=1
@@ -71,11 +79,11 @@ export class TicketController {
 
   @Put(':id')
   updateTicket(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() updateTicketDto: UpdateTicketDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatedTicket: UpdateTicketDto,
   ) {
     try {
-      return this.ticketService.update(+id, updateTicketDto);
+      return this.ticketService.update(id, updatedTicket);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -86,9 +94,9 @@ export class TicketController {
   }
 
   @Delete(':id')
-  removeTicket(@Param('id', ParseIntPipe) id: string) {
+  removeTicket(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.ticketService.remove(+id);
+      return this.ticketService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(
@@ -101,9 +109,3 @@ export class TicketController {
     }
   }
 }
-
-
-
-
-
-

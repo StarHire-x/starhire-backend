@@ -1,4 +1,10 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
@@ -24,22 +30,24 @@ export class UsersService {
   async create(createUserDto: any) {
     try {
       const { confirmPassword, ...dtoExcludeRelationship } = createUserDto;
-      
-      if(createUserDto.password !== createUserDto.confirmPassword) {
-        throw new HttpException('Password are different', HttpStatus.BAD_REQUEST,)
+
+      if (createUserDto.password !== createUserDto.confirmPassword) {
+        throw new HttpException(
+          'Password are different',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       // Should change to enum
-      if(createUserDto.role === "Job Seeker") {
+      if (createUserDto.role === 'Job_Seeker') {
         return await this.jobSeekerService.create(dtoExcludeRelationship);
-      } else if(createUserDto.role === "Administrator") {
+      } else if (createUserDto.role === 'Administrator') {
         await this.corporateService.create(dtoExcludeRelationship);
-      } else if(createUserDto.role === "Corporate") {
+      } else if (createUserDto.role === 'Corporate') {
         return await this.adminService.create(dtoExcludeRelationship);
-      } else if(createUserDto.role === "Recruiter") {
+      } else if (createUserDto.role === 'Recruiter') {
         return await this.recruiterService.create(dtoExcludeRelationship);
       }
-      
     } catch (err) {
       throw new HttpException(
         'Failed to create new job application',
@@ -58,7 +66,7 @@ export class UsersService {
   async findOne(id: number) {
     try {
       return await this.userRepository.findOne({
-        where: { userId : id },
+        where: { userId: id },
         relations: {},
       });
     } catch (err) {
@@ -81,7 +89,7 @@ export class UsersService {
         );
       }
 
-      if (updateUserDto.role === 'Job Seeker') {
+      if (updateUserDto.role === 'Job_Seeker') {
         return await this.jobSeekerService.update(id, dtoExcludeRelationship);
       } else if (updateUserDto.role === 'Administrator') {
         await this.corporateService.update(id, dtoExcludeRelationship);
@@ -90,7 +98,6 @@ export class UsersService {
       } else if (updateUserDto.role === 'Recruiter') {
         return await this.recruiterService.update(id, dtoExcludeRelationship);
       }
-
     } catch (err) {
       throw new HttpException(
         'Failed to update particulars',
@@ -120,7 +127,7 @@ export class UsersService {
 
   mapJsonToEnum(status: string): UserRoleEnum {
     switch (status) {
-      case 'Job Seeker':
+      case 'Job_Seeker':
         return UserRoleEnum.JOBSEEKER;
       case 'Corporate':
         return UserRoleEnum.CORPORATE;

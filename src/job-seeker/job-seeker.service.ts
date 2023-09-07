@@ -11,11 +11,9 @@ import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
-import { ForumComment } from 'src/entities/forumComment.entity';
-import { JobPreference } from 'src/entities/jobPreference.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { ForumPost } from 'src/entities/forumPost.entity';
-import { Chat } from 'src/entities/chat.entity';
+import UserStatusEnum from 'src/enums/userStatus.enum';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import UserRoleEnum from 'src/enums/userRole.enum';
 
 @Injectable()
 export class JobSeekerService {
@@ -27,12 +25,27 @@ export class JobSeekerService {
   async create(createJobSeekerDto: CreateJobSeekerDto) {
     try {
       const jobSeeker = new JobSeeker({ ...createJobSeekerDto });
+
+      // Convert all ENUM values
+      if (jobSeeker.status) {
+        jobSeeker.status = this.mapStatusToEnum(jobSeeker.status);
+      }
+      if (jobSeeker.notificationMode) {
+        jobSeeker.notificationMode = this.mapNotificationToEnum(
+          jobSeeker.notificationMode,
+        );
+      }
+      if (jobSeeker.role) {
+        jobSeeker.role = this.mapRoleToEnum(jobSeeker.role);
+      }
+      if (jobSeeker.highestEducationStatus) {
+        jobSeeker.highestEducationStatus = this.mapEducationToEnum(
+          jobSeeker.highestEducationStatus,
+        );
+      }
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {
-      throw new HttpException(
-        'Failed to create new job seeker',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -42,61 +55,42 @@ export class JobSeekerService {
 
   async findOne(id: number) {
     try {
-      return await this.jobSeekerRepository.findOne({
+      const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId: id },
         relations: {
-          // forumComments: true,
-          // jobPreference: true,
-          // jobApplications: true,
-          // forumPosts: true,
-          //chats: true,
+          forumComments: true,
+          jobPreference: true,
+          jobApplications: true,
+          forumPosts: true,
+          chats: true,
+          // reviews: true,
         },
       });
+      return jobSeeker;
     } catch (err) {
-      throw new HttpException(
-        'Failed to find job application',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async update(id: number, updateJobSeeker: any) {
+  async update(id: number, updatedJobSeeker: UpdateJobSeekerDto) {
     try {
-
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: id,
       });
 
-      if(!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid')
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
       }
 
-      const { confirmPassword, ...updateJobSeekerDto } = updateJobSeeker;
-      const {
-        forumComments,
-        jobPreference,
-        jobApplications,
-        forumPosts,
-        chats,
-        ...dtoExcludeRelationship
-      } = updateJobSeekerDto;
-      
-      Object.assign(jobSeeker, dtoExcludeRelationship);
+      Object.assign(jobSeeker, updatedJobSeeker);
 
-      jobSeeker.highestEducationStatus = this.mapJsonToEnum(updateJobSeekerDto.highestEducationStatus);
-
-      // if(jobPreference) {
-      //   const { jobSeekerId, ...dtoExcludeRelationship } = jobPreference;
-      //   const updatedJobPreference = new JobPreference(dtoExcludeRelationship);
-      //   jobSeeker.jobPreference = updatedJobPreference;
-      // }
+      jobSeeker.highestEducationStatus = this.mapEducationToEnum(
+        updatedJobSeeker.highestEducationStatus,
+      );
 
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {
-      throw new HttpException(
-        'Failed to update job seeker',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -113,11 +107,11 @@ export class JobSeekerService {
     }
   }
 
-  mapJsonToEnum(status: string): HighestEducationStatusEnum {
+  mapEducationToEnum(status: string): HighestEducationStatusEnum {
     switch (status) {
-      case 'No School':
+      case 'No_School':
         return HighestEducationStatusEnum.NO_SCHOOL;
-      case 'High School':
+      case 'High_School':
         return HighestEducationStatusEnum.HIGH_SCHOOL;
       case 'Bachelor':
         return HighestEducationStatusEnum.BACHELOR;
@@ -125,6 +119,34 @@ export class JobSeekerService {
         return HighestEducationStatusEnum.MASTER;
       case 'Doctorate':
         return HighestEducationStatusEnum.DOCTORATE;
+    }
+  }
+  mapNotificationToEnum(status: string): NotificationModeEnum {
+    switch (status) {
+      case 'Sms':
+        return NotificationModeEnum.SMS;
+      default:
+        return NotificationModeEnum.EMAIL;
+    }
+  }
+  mapStatusToEnum(status: string): UserStatusEnum {
+    switch (status) {
+      case 'Inactive':
+        return UserStatusEnum.INACTIVE;
+      default:
+        return UserStatusEnum.ACTIVE;
+    }
+  }
+  mapRoleToEnum(status: string): UserRoleEnum {
+    switch (status) {
+      case 'Recruiter':
+        return UserRoleEnum.RECRUITER;
+      case 'Corporate':
+        return UserRoleEnum.CORPORATE;
+      case 'Administrator':
+        return UserRoleEnum.ADMINISTRATOR;
+      default:
+        return UserRoleEnum.JOBSEEKER;
     }
   }
 }

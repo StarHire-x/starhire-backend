@@ -1,4 +1,4 @@
-import { Column, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, OneToMany, OneToOne } from 'typeorm';
 import { Entity } from 'typeorm';
 import { User } from './user.entity';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
@@ -56,11 +56,16 @@ export class JobSeeker extends User {
   })
   chats: Chat[];
 
-  @OneToOne(() => JobPreference, {
+  @OneToOne(() => JobPreference, (preference) => preference.jobSeeker, {
     cascade: true,
-    nullable: true,
+    nullable: true, // one-to-one optional
   })
   jobPreference: JobPreference;
+
+  // @OneToMany(() => Review, (review) => review.jobSeeker, {
+  //   cascade: true,
+  // })
+  // reviews: Review[];
 
   constructor(entity: Partial<JobSeeker>) {
     super(entity);

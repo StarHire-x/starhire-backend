@@ -36,6 +36,18 @@ export class JobSeekerService {
     }
   }
 
+  async findByEmail(email: string) {
+    try {
+      return await this.jobSeekerRepository.findOne({
+        where: { email }});
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findAll() {
     return await this.jobSeekerRepository.find();
   }
@@ -54,7 +66,7 @@ export class JobSeekerService {
       });
     } catch (err) {
       throw new HttpException(
-        'Failed to find job application',
+        'Failed to find job seeker',
         HttpStatus.BAD_REQUEST,
       );
     }

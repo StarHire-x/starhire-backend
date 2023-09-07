@@ -1,5 +1,5 @@
 enum UserRoleEnum {
-  JOBSEEKER = 'Job Seeker',
+  JOBSEEKER = 'Job_Seeker',
   RECRUITER = 'Recruiter',
   CORPORATE = 'Corporate',
   ADMINISTRATOR = 'Administrator'

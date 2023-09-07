@@ -24,12 +24,12 @@ export class UsersService {
   async create(createUserDto: any) {
     try {
       // Should change to enum
-      if(createUserDto.role === "Job Seeker") {
+      if(createUserDto.role === "Job_Seeker") {
         return await this.jobSeekerService.create(createUserDto);
       } else if(createUserDto.role === "Administrator") {
-        return await this.corporateService.create(createUserDto);
-      } else if(createUserDto.role === "Corporate") {
         return await this.adminService.create(createUserDto);
+      } else if(createUserDto.role === "Corporate") {
+        return await this.corporateService.create(createUserDto);
       } else if(createUserDto.role === "Recruiter") {
         return await this.recruiterService.create(createUserDto);
       }
@@ -48,12 +48,18 @@ export class UsersService {
   }
 
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
-  async findOne(id: number) {
+  async findOneEmail(email: string, role: string) {
     try {
-      return await this.userRepository.findOne({
-        where: { userId : id },
-        relations: {},
-      });
+      if(role === "Job_Seeker") {
+        return await this.jobSeekerService.findByEmail(email);
+      } else if(role === "Recruiter") {
+        return await this.recruiterService.findByEmail(email);
+      } else if(role === "Corporate") {
+        return await this.corporateService.findByEmail(email);
+      } else if(role === "Administrator") {
+        console.log("You hit admin end point")
+        return await this.adminService.findByEmail(email);
+      }
     } catch (err) {
       throw new HttpException(
         'Failed to find job application',
@@ -74,7 +80,7 @@ export class UsersService {
         );
       }
 
-      if (updateUserDto.role === 'Job Seeker') {
+      if (updateUserDto.role === 'Job_Seeker') {
         return await this.jobSeekerService.update(id, dtoExcludeRelationship);
       } else if (updateUserDto.role === 'Administrator') {
         await this.corporateService.update(id, dtoExcludeRelationship);
@@ -94,7 +100,7 @@ export class UsersService {
 
   async remove(id: number, role: string) {
     try {
-      if (role === 'Job Seeker') {
+      if (role === 'Job_Seeker') {
         return await this.jobSeekerService.remove(id);
       } else if (role === 'Administrator') {
         await this.corporateService.remove(id);
@@ -113,7 +119,7 @@ export class UsersService {
 
   mapJsonToEnum(status: string): UserRoleEnum {
     switch (status) {
-      case 'Job Seeker':
+      case 'Job_Seeker':
         return UserRoleEnum.JOBSEEKER;
       case 'Corporate':
         return UserRoleEnum.CORPORATE;

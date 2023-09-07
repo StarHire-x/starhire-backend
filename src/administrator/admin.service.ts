@@ -10,27 +10,28 @@ import { Ticket } from 'src/entities/ticket.entity';
 export class AdministratorService {
   constructor(
     @InjectRepository(Administrator)
-    private readonly administratorRepository: Repository<Administrator>
-    ) {}
+    private readonly administratorRepository: Repository<Administrator>,
+  ) {}
 
   async create(createAdministratorDto: CreateAdministratorDto) {
     try {
+      console.log("Admin class");
+      console.log(createAdministratorDto);
       // This is to filter out the external relationship in the dto object.
-      const { tickets, ...dtoExcludeRelationship } = 
-      createAdministratorDto;
+      const { tickets, ...dtoExcludeRelationship } = createAdministratorDto;
 
       // Creating administrator without the external relationship with other entities.
       const administrator = new Administrator({
-        ...dtoExcludeRelationship
+        ...dtoExcludeRelationship,
       });
 
       // Creating the classes for external relationship with other entities (OneToMany)
-      if (createAdministratorDto.tickets.length > 0) {
-        const createTickets = createAdministratorDto.tickets.map(
-          (createTicketDto) => new Ticket(createTicketDto),
-        );
-        administrator.tickets = createTickets;
-      }
+      // if (createAdministratorDto.tickets.length > 0) {
+      //   const createTickets = createAdministratorDto.tickets.map(
+      //     (createTicketDto) => new Ticket(createTicketDto),
+      //   );
+      //   administrator.tickets = createTickets;
+      // }
       return await this.administratorRepository.save(administrator);
     } catch (error) {
       throw new HttpException(
@@ -48,12 +49,25 @@ export class AdministratorService {
     try {
       // For this part, we want the relationship with other entities to show, at most 1 level, no need to be too detail
       return await this.administratorRepository.findOne({
-        where:{userId: id },
-        relations: {tickets: true}, 
+        where: { userId: id },
+        relations: { tickets: true },
       });
     } catch (error) {
       throw new HttpException(
         'Failed to find administrator',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      return await this.administratorRepository.findOne({
+        where: { email },
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find admin',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -66,8 +80,7 @@ export class AdministratorService {
       });
 
       // This is to filter out the external relationships in the dto object
-      const { tickets, ...dtoExcludeRelationship } = 
-      updateAdministratorDto;
+      const { tickets, ...dtoExcludeRelationship } = updateAdministratorDto;
 
       Object.assign(administrator, dtoExcludeRelationship);
 

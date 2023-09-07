@@ -32,11 +32,11 @@ export class UsersService {
       // Should change to enum
       if (createUserDto.role === 'Job_Seeker') {
         return await this.jobSeekerService.create(createUserDto);
-      } else if(createUserDto.role === "Administrator") {
+      } else if (createUserDto.role === 'Administrator') {
         return await this.adminService.create(createUserDto);
-      } else if(createUserDto.role === "Corporate") {
+      } else if (createUserDto.role === 'Corporate') {
         return await this.corporateService.create(createUserDto);
-      } else if(createUserDto.role === "Recruiter") {
+      } else if (createUserDto.role === 'Recruiter') {
         return await this.recruiterService.create(createUserDto);
       }
     } catch (err) {

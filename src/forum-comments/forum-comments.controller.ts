@@ -3,14 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
-  ParseIntPipe,
-  Put,
 } from '@nestjs/common';
 import { ForumCommentsService } from './forum-comments.service';
 import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
@@ -21,6 +19,7 @@ export class ForumCommentsController {
   constructor(private readonly forumCommentsService: ForumCommentsService) {}
 
   @Post()
+  // Ensure dto contains the id field for the following parent entities: Job Seeker & ForumPost
   createForumComment(@Body() createForumCommentDto: CreateForumCommentDto) {
     try {
       return this.forumCommentsService.create(createForumCommentDto);
@@ -47,6 +46,7 @@ export class ForumCommentsController {
   }
 
   @Get(':id')
+  // Ensure that id provided is a number
   findOneForumComment(@Param('id') id: number) {
     try {
       return this.forumCommentsService.findOne(id);
@@ -59,14 +59,14 @@ export class ForumCommentsController {
     }
   }
 
-  // Change to PUT
   @Put(':id')
+  // Ensure that id provided is a number
   updateForumComment(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: number,
     @Body() updateForumCommentDto: UpdateForumCommentDto,
   ) {
     try {
-      return this.forumCommentsService.update(+id, updateForumCommentDto);
+      return this.forumCommentsService.update(id, updateForumCommentDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -77,9 +77,10 @@ export class ForumCommentsController {
   }
 
   @Delete(':id')
-  removeForumComment(@Param('id', ParseIntPipe) id: string) {
+  // Ensure that id provided is a number
+  removeForumComment(@Param('id') id: number) {
     try {
-      return this.forumCommentsService.remove(+id);
+      return this.forumCommentsService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

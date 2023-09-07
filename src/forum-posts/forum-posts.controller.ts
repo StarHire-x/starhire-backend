@@ -3,14 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
-  ParseIntPipe,
-  Put,
 } from '@nestjs/common';
 import { ForumPostsService } from './forum-posts.service';
 import { CreateForumPostDto } from './dto/create-forum-post.dto';
@@ -21,6 +19,7 @@ export class ForumPostsController {
   constructor(private readonly forumPostsService: ForumPostsService) {}
 
   @Post()
+  // Ensure dto contains the id field for Job Seeker
   createForumPost(@Body() createForumPostDto: CreateForumPostDto) {
     try {
       return this.forumPostsService.create(createForumPostDto);
@@ -47,9 +46,10 @@ export class ForumPostsController {
   }
 
   @Get(':id')
-  findOneForumPost(@Param('id', ParseIntPipe) id: string) {
+  // Ensure that id provided is a number
+  findOneForumPost(@Param('id') id: number) {
     try {
-      return this.forumPostsService.findOne(+id);
+      return this.forumPostsService.findOne(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -60,12 +60,13 @@ export class ForumPostsController {
   }
 
   @Put(':id')
+  // Ensure that id provided is a number
   updateForumPost(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: number,
     @Body() updateForumPostDto: UpdateForumPostDto,
   ) {
     try {
-      return this.forumPostsService.update(+id, updateForumPostDto);
+      return this.forumPostsService.update(id, updateForumPostDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -76,9 +77,10 @@ export class ForumPostsController {
   }
 
   @Delete(':id')
-  removeForumPost(@Param('id', ParseIntPipe) id: string) {
+  // Ensure that id provided is a number
+  removeForumPost(@Param('id') id: number) {
     try {
-      return this.forumPostsService.remove(+id);
+      return this.forumPostsService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

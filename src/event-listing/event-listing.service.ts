@@ -1,38 +1,39 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, NotFoundException, HttpStatus } from '@nestjs/common';
 import { CreateEventListingDto } from './dto/create-event-listing.dto';
 import { UpdateEventListingDto } from './dto/update-event-listing.dto';
 import { Repository } from 'typeorm';
 import { EventListing } from 'src/entities/eventListing.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventRegistration } from 'src/entities/eventRegistration.entity';
+import { Corporate } from 'src/entities/corporate.entity';
 
 @Injectable()
 export class EventListingService {
   constructor(
     @InjectRepository(EventListing)
     private readonly eventListingRepository: Repository<EventListing>,
+    // Parent Entity
+    @InjectRepository(Corporate)
+    private readonly corporateRepository: Repository<Corporate>,
   ) {}
 
   async create(createEventListingDto: CreateEventListingDto) {
     try {
-
-      // This is to filter out the external relationship in the dto object.
-      const { eventRegistrations, ...dtoExcludeRelationship } =
-      createEventListingDto;
-
-      // Creating EventListing without the external relationship with other entities.
-      const eventListing = new EventListing({
-        ...dtoExcludeRelationship,
+      // Ensure valid corporate Id is provided
+      const { corporateId, ...dtoExcludingParentId } = createEventListingDto;
+     
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: corporateId },
       });
 
-      // Creating the classes for external relationship with other entities (OneToMany)
-      if (createEventListingDto.eventRegistrations.length > 0) {
-        const createEventRegistrations = createEventListingDto.eventRegistrations.map(
-          (createEventRegistrationDto) => new EventRegistration(createEventRegistrationDto),
-        );
-        eventListing.eventRegistrations = createEventRegistrations;
+      if (!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
       }
 
+      const eventListing = new EventListing({
+        ...dtoExcludingParentId,
+        corporate,
+      });
       return await this.eventListingRepository.save(eventListing);
     } catch (err) {
       throw new HttpException(
@@ -51,7 +52,7 @@ export class EventListingService {
       // For this part, we want the relationship with other entities to show, at most 1 level, no need to be too detail
       return await this.eventListingRepository.findOne({
         where: {eventListingId: id },
-        relations: {eventRegistrations: true},
+        relations: {corporate: true, eventRegistrations: true},
       });
     } catch (error) {
       throw new HttpException(
@@ -67,21 +68,13 @@ export class EventListingService {
         eventListingId: id,
       });
 
-      // This is to filter out the external relationships in the dto object
-      const { eventRegistrations, ...dtoExcludeRelationship } = 
-      updateEventListingDto;
+      if (!eventListing) {
+        throw new NotFoundException("Event Listing Id provided is not valid");
+      }
 
-      Object.assign(eventListing, dtoExcludeRelationship);
+      Object.assign(eventListing, updateEventListingDto);
+      return await this.eventListingRepository.save(eventListing);
 
-       // Same thing, u also update the entities with relationship as such
-       if (eventRegistrations && eventRegistrations.length > 0) {
-        const updatedEventListing = updateEventListingDto.eventRegistrations.map(
-          (createEventRegistrationDto) => {
-            return new EventRegistration(createEventRegistrationDto);
-          },
-        );
-        return await this.eventListingRepository.save(eventListing);
-       }
     } catch (error) {
       throw new HttpException(
         'Failed to update event listing',

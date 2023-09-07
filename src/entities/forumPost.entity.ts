@@ -1,6 +1,11 @@
-import { IsEnum } from 'class-validator';
-import ForumCategoryEnum from 'src/enums/forumCategory.enum';
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
+import ForumCategoryEnum from '../enums/forumCategory.enum';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 import { ForumComment } from './forumComment.entity';
 import { JobSeeker } from './jobSeeker.entity';
 
@@ -10,12 +15,9 @@ export class ForumPost {
   forumPostId: number;
 
   @Column()
-  forumCategory: ForumCategoryEnum;
-
-  @Column()
   forumPostTitle: string;
 
-  @Column({ nullable: true })
+  @Column()
   createdAt: Date;
 
   @Column()
@@ -24,13 +26,17 @@ export class ForumPost {
   @Column()
   isAnonymous: boolean;
 
+  @Column()
+  forumCategory: ForumCategoryEnum;
+
   @OneToMany(() => ForumComment, (forumComment) => forumComment.forumPost, {
     cascade: true,
+    nullable: true,
   })
   forumComments: ForumComment[];
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
-    onDelete: 'CASCADE',
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.forumPosts, {
+    nullable: false,
   })
   jobSeeker: JobSeeker;
 

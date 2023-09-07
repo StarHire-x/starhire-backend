@@ -1,14 +1,14 @@
-import { Column, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, OneToMany, OneToOne } from 'typeorm';
 import { Entity } from 'typeorm';
 import { User } from './user.entity';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
 import { IsEnum, IsOptional } from 'class-validator';
-import { Blob } from 'buffer';
 import { ForumComment } from './forumComment.entity';
 import { JobApplication } from './jobApplication.entity';
 import { ForumPost } from './forumPost.entity';
 import { Chat } from './chat.entity';
 import { JobPreference } from './jobPreference.entity';
+import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
 
 @Entity({ name: 'jobSeekers' })
@@ -57,13 +57,20 @@ export class JobSeeker extends User {
   })
   chats: Chat[];
 
-  @OneToOne(() => JobPreference, {
+  @OneToOne(() => JobPreference, (preference) => preference.jobSeeker, {
     cascade: true,
-    nullable: true,
+    nullable: true, // one-to-one optional
   })
   jobPreference: JobPreference;
 
-  @OneToMany(() => Review, (review) => review.jobSeeker)
+  @OneToMany(() => Ticket, (ticket) => ticket.jobSeeker, {
+    cascade: true,
+  })
+  tickets: Ticket[];
+
+  @OneToMany(() => Review, (review) => review.jobSeeker, {
+    cascade: true,
+  })
   reviews: Review[];
 
   constructor(entity: Partial<JobSeeker>) {

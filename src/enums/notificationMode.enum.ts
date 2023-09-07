@@ -1,6 +1,6 @@
 enum NotificationModeEnum {
-  EMAIL = "EMAIL",
-  SMS = "SMS"
+  EMAIL = 'Email',
+  SMS = 'Sms',
 }
 
 export default NotificationModeEnum;

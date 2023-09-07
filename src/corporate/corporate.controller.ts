@@ -70,11 +70,11 @@ export class CorporateController {
 
   @Put(':id')
   updateCorporate(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() updateCorporateDto: UpdateCorporateDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatedCorporate: UpdateCorporateDto,
   ) {
     try {
-      return this.corporateService.update(+id, updateCorporateDto);
+      return this.corporateService.update(id, updatedCorporate);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -85,13 +85,13 @@ export class CorporateController {
   }
 
   @Delete(':id')
-  removeCorporate(@Param('id', ParseIntPipe) id: string) {
+  removeCorporate(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.corporateService.remove(+id);
+      return this.corporateService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(
-          `User with ID ${id} not found`,
+          `Corporate User with ID ${id} not found`,
           HttpStatus.NOT_FOUND,
         );
       } else {

@@ -45,6 +45,7 @@ export class UsersController {
   }
 
   // GET /users?id=1&?
+  /*
   @Get()
   getUser(@Query('email') email: string, @Query('role') role: string) {
     try {

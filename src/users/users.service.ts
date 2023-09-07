@@ -70,9 +70,9 @@ export class UsersService {
       if(role === "Job_Seeker") {
         return await this.jobSeekerService.findByEmail(email);
       } else if(role === "Recruiter") {
-        return await this.recruiterService.findByEmail(email);
+        //return await this.recruiterService.findByEmail(email);
       } else if(role === "Corporate") {
-        return await this.corporateService.findByEmail(email);
+        //return await this.corporateService.findByEmail(email);
       } else if(role === "Administrator") {
         console.log("You hit admin end point")
         return await this.adminService.findByEmail(email);

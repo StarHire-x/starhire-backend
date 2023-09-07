@@ -22,6 +22,8 @@ import { RecruiterModule } from './recruiter/recruiter.module';
 import { CorporateModule } from './corporate/corporate.module';
 import { TicketModule } from './ticket/ticket.module';
 import { ReviewModule } from './review/review.module';
+import { UploadModule } from './upload/upload.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -31,7 +33,7 @@ import { ReviewModule } from './review/review.module';
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'starhire_backend_pair1',
+      database: 'starhire_backend_pair2',
       entities: entityList,
       synchronize: true,
     }),
@@ -54,6 +56,8 @@ import { ReviewModule } from './review/review.module';
     CorporateModule,
     TicketModule,
     ReviewModule,
+    UploadModule,
+    ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
   providers: [AppService],

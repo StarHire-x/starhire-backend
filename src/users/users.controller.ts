@@ -28,6 +28,7 @@ export class UsersController {
   createUser(@Body() createUserDto: CreateUserDto) {
     try {
       return this.usersService.create(createUserDto);
+        // You can also return an HTTP 404 Not Found response if the job seeker is not found
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

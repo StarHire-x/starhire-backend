@@ -3,7 +3,7 @@ import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
 import { UpdateForumCommentDto } from './dto/update-forum-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ForumComment } from 'src/entities/forumComment.entity';
+import { ForumComment } from '../entities/forumComment.entity';
 
 @Injectable()
 export class ForumCommentsService {

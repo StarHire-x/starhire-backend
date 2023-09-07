@@ -3,9 +3,9 @@ import { CreateForumPostDto } from './dto/create-forum-post.dto';
 import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ForumPost } from 'src/entities/forumPost.entity';
-import { ForumComment } from 'src/entities/forumComment.entity';
-import ForumCategoryEnum from 'src/enums/forumCategory.enum';
+import { ForumPost } from '../entities/forumPost.entity';
+import { ForumComment } from '../entities/forumComment.entity';
+import ForumCategoryEnum from '../enums/forumCategory.enum';
 
 @Injectable()
 export class ForumPostsService {

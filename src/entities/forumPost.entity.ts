@@ -1,6 +1,12 @@
 import { IsEnum } from 'class-validator';
-import ForumCategoryEnum from 'src/enums/forumCategory.enum';
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
+import ForumCategoryEnum from '../enums/forumCategory.enum';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 import { ForumComment } from './forumComment.entity';
 import { JobSeeker } from './jobSeeker.entity';
 

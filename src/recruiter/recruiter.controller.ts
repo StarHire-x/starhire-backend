@@ -71,11 +71,11 @@ export class RecruiterController {
 
   @Put(':id')
   updateRecruiter(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() updateRecruiterDto: UpdateRecruiterDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatedRecruiter: UpdateRecruiterDto,
   ) {
     try {
-      return this.recruiterService.update(+id, updateRecruiterDto);
+      return this.recruiterService.update(id, updatedRecruiter);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -86,13 +86,13 @@ export class RecruiterController {
   }
 
   @Delete(':id')
-  removeRecruiter(@Param('id', ParseIntPipe) id: string) {
+  removeRecruiter(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.recruiterService.remove(+id);
+      return this.recruiterService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(
-          `User with ID ${id} not found`,
+          `Recruiter User with ID ${id} not found`,
           HttpStatus.NOT_FOUND,
         );
       } else {

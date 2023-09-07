@@ -33,12 +33,13 @@ export class EventListing {
     (eventRegistration) => eventRegistration.eventListing,
     {
       cascade: true,
+      nullable: true,
     },
   )
   eventRegistrations: EventRegistration[];
 
   @ManyToOne(() => Corporate, (corporate) => corporate.eventListings, {
-    onDelete: 'CASCADE',
+    nullable: false,
   })
   corporate: Corporate;
 

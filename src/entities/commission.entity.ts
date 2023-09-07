@@ -26,7 +26,6 @@ export class Commission {
   invoice: Invoice;
 
   @OneToOne(() => JobApplication, { nullable: false })
-  @JoinColumn()
   jobApplication: JobApplication;
 
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.commissions)

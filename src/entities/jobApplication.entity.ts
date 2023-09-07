@@ -2,6 +2,7 @@ import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -45,6 +46,7 @@ export class JobApplication {
   @OneToOne(() => Commission, (commission) => commission.jobApplication, {
     nullable: true,
   })
+  @JoinColumn()
   commission: Commission;
 
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobApplications)

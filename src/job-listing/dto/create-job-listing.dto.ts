@@ -1,7 +1,6 @@
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 
 export class CreateJobListingDto {
-  corporateId: number; // Parent relationship
   title: string;
   jobLocation: string;
   description: string;
@@ -9,4 +8,5 @@ export class CreateJobListingDto {
   averageSalary: number;
   jobStartDate: Date;
   jobListingStatus: JobListingStatusEnum;
+  corporateId: number; // Parent relationship
 }

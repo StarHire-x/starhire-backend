@@ -21,4 +21,8 @@ export class ChatMessage {
 
   @ManyToOne(() => Chat, (chat) => chat.chatMessages) // Establish many-to-one relationship
   chat: Chat;
+
+  constructor(entity: Partial<ChatMessage>) {
+    Object.assign(this, entity);
+  }
 }

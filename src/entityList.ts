@@ -14,6 +14,9 @@ import { Corporate } from './entities/corporate.entity';
 import { Ticket } from './entities/ticket.entity';
 import { Chat } from './entities/chat.entity';
 import { ChatMessage } from './entities/chatMessage.entity';
+import { Commission } from './entities/commission.entity';
+import { Invoice } from './entities/invoice.entity';
+import { Review } from './entities/review.entity';
 
 export const entityList = [
   User,
@@ -31,5 +34,8 @@ export const entityList = [
   EventRegistration,
   Ticket,
   Chat,
-  ChatMessage
+  ChatMessage,
+  Commission,
+  Invoice,
+  Review,
 ];

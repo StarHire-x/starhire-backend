@@ -45,9 +45,9 @@ export class CommissionController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     try {
-      return this.commissionService.findOne(+id);
+      return this.commissionService.findOne(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -59,11 +59,11 @@ export class CommissionController {
 
   @Put(':id')
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateCommissionDto: UpdateCommissionDto,
   ) {
     try {
-      return this.commissionService.update(+id, updateCommissionDto);
+      return this.commissionService.update(id, updateCommissionDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -74,9 +74,9 @@ export class CommissionController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     try {
-      return this.commissionService.remove(+id);
+      return this.commissionService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

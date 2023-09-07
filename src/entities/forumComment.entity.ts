@@ -16,14 +16,10 @@ export class ForumComment {
   @Column()
   isAnonymous: boolean;
 
-  @ManyToOne(() => ForumPost, (forumPost) => forumPost.forumComments, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => ForumPost, (forumPost) => forumPost.forumComments, {})
   forumPost: ForumPost;
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {})
   jobSeeker: JobSeeker;
 
   constructor(entity: Partial<ForumComment>) {

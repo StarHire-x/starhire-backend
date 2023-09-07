@@ -1,15 +1,18 @@
-import { IsEnum } from 'class-validator';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Document } from './document.entity';
 import { JobListing } from './jobListing.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { Commission } from './commission.entity';
+import { Recruiter } from './recruiter.entity';
 
 @Entity({ name: 'jobApplications' })
 export class JobApplication {
@@ -25,23 +28,29 @@ export class JobApplication {
   @Column({ nullable: true })
   availableEndDate: Date;
 
-  @OneToMany(() => Document, (document) => document.jobApplication, {
-    cascade: true,
-  })
-  documents: Document[];
-
   @Column({ nullable: true })
   submissionDate: Date;
 
-  @ManyToOne(() => JobListing, (jobListing) => jobListing.jobApplications, {
-    onDelete: 'CASCADE',
+  @OneToMany(() => Document, (document) => document.jobApplication, {
+    cascade: true,
+    nullable: true,
   })
+  documents: Document[];
+
+  @ManyToOne(() => JobListing, (jobListing) => jobListing.jobApplications)
   jobListing: JobListing;
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobApplications)
   jobSeeker: JobSeeker;
+
+  @OneToOne(() => Commission, (commission) => commission.jobApplication, {
+    nullable: true,
+  })
+  @JoinColumn()
+  commission: Commission;
+
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobApplications)
+  recruiter: Recruiter;
 
   constructor(entity: Partial<JobApplication>) {
     Object.assign(this, entity);

@@ -1,4 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateJobApplicationDto } from './create-job-application.dto';
+import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 
-export class UpdateJobApplicationDto extends PartialType(CreateJobApplicationDto) {}
+class UpdateDto {
+  jobApplicationStatus: JobApplicationStatusEnum;
+  availableStartDate: Date;
+  availableEndDate: Date;
+  submissionDate: Date;
+  documents: Document[];
+}
+
+export class UpdateJobApplicationDto extends PartialType(UpdateDto) {}

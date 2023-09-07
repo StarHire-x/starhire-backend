@@ -1,25 +1,37 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
 import { Repository } from 'typeorm';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 
 @Injectable()
 export class DocumentService {
   constructor(
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
+    @InjectRepository(JobApplication)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
   async create(createDocumentDto: CreateDocumentDto) {
     try {
+      const { jobApplicationId , ...dtoExcludingParentId } = createDocumentDto;
+
+      const jobApplication = await this.jobApplicationRepository.findOneBy({ jobApplicationId: jobApplicationId });
+      if (!jobApplication) {
+        throw new NotFoundException('Job Application Id provided is not valid');
+      }
 
       const document = new Document({
-        ...createDocumentDto
+        ...createDocumentDto,
+        jobApplication: jobApplication,
       });
 
-      return await this.documentRepository.save(document);
+      await this.documentRepository.save(document);
+
+      return await this.findOne(document.documentId);
     } catch (err) {
       throw new HttpException(
         'Failed to create new document',
@@ -37,7 +49,7 @@ export class DocumentService {
       // For this part, u want the relationship with other entities to show, at most 1 level, no need too detail
       return await this.documentRepository.findOne({
         where: { documentId: id },
-        relations: {},
+        relations: { jobApplication: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -53,9 +65,14 @@ export class DocumentService {
         documentId: id,
       });
 
-      Object.assign(document, updateDocumentDto);
-      return await this.documentRepository.save(document);
+      if (!document) {
+        throw new NotFoundException('Document Id provided is not valid');
+      }
 
+      const { jobApplicationId, ...dtoExcludingParentId } = updateDocumentDto;
+
+      Object.assign(document, dtoExcludingParentId);
+      return await this.documentRepository.save(document);
     } catch (err) {
       throw new HttpException(
         'Failed to update document',

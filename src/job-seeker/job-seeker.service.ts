@@ -36,6 +36,47 @@ export class JobSeekerService {
     }
   }
 
+  //Added code to handle different request
+  async findByEmail(email: string) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { email },
+      });
+
+      if (jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker found',
+          data: jobSeeker,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job seeker not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  /*
+  async findByEmail(email: string) {
+    try {
+      return await this.jobSeekerRepository.findOne({
+        where: { email }});
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+  */
+
   async findAll() {
     return await this.jobSeekerRepository.find();
   }
@@ -45,26 +86,30 @@ export class JobSeekerService {
       return await this.jobSeekerRepository.findOne({
         where: { userId: id },
         relations: {
-          forumComments: true,
-          jobPreference: true,
-          jobApplications: true,
-          forumPosts: true,
-          chats: true,
+          // forumComments: true,
+          // jobPreference: true,
+          // jobApplications: true,
+          // forumPosts: true,
+          //chats: true,
         },
       });
     } catch (err) {
       throw new HttpException(
-        'Failed to find job application',
+        'Failed to find job seeker',
         HttpStatus.BAD_REQUEST,
       );
     }
   }
 
-  async update(id: number, updateJobSeeker: UpdateJobSeekerDto) {
+  async update(id: number, updateJobSeeker: any) {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: id,
       });
+
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
 
       const { confirmPassword, ...updateJobSeekerDto } = updateJobSeeker;
       const {
@@ -75,54 +120,18 @@ export class JobSeekerService {
         chats,
         ...dtoExcludeRelationship
       } = updateJobSeekerDto;
+
       Object.assign(jobSeeker, dtoExcludeRelationship);
 
-      jobSeeker.highestEducationStatus = this.mapJsonToEnum(updateJobSeekerDto.highestEducationStatus);
+      jobSeeker.highestEducationStatus = this.mapJsonToEnum(
+        updateJobSeekerDto.highestEducationStatus,
+      );
 
-      if (forumComments && forumComments.length > 0) {
-        const updatedForumComments = forumComments.map(
-          (createForumCommentsDto) => {
-            const { ...dtoExcludeRelationship } =
-              createForumCommentsDto;
-            return new ForumComment(dtoExcludeRelationship);
-          },
-        );
-        jobSeeker.forumComments = updatedForumComments;
-      }
-
-      if (jobPreference) {
-        const { ...dtoExcludeRelationship } = jobPreference;
-        const updatedJobPrederence = new JobPreference(dtoExcludeRelationship);
-        jobSeeker.jobPreference = updatedJobPrederence;
-      }
-
-      if (jobApplications && jobApplications.length > 0) {
-        const updatedJobApplication = jobApplications.map(
-          (createJobApplicationDto) => {
-            const { documents, ...dtoExcludeRelationship } = createJobApplicationDto;
-            return new JobApplication(dtoExcludeRelationship);
-          },
-        );
-        jobSeeker.jobApplications = updatedJobApplication;
-      }
-
-      if (forumPosts && forumPosts.length > 0) {
-        const updatedForumPosts = forumPosts.map(
-          (createForumPostsDto) => {
-            const { forumComments, ...dtoExcludeRelationship } = createForumPostsDto;
-            return new ForumPost(dtoExcludeRelationship);
-          },
-        );
-        jobSeeker.forumPosts = updatedForumPosts;
-      }
-
-      if (chats && chats.length > 0) {
-        const updatedChats = chats.map((createChatsDto) => {
-          const { chatMessages, ...dtoExcludeRelationship } = createChatsDto;
-          return new Chat(dtoExcludeRelationship);
-        });
-        jobSeeker.chats = updatedChats;
-      }
+      // if(jobPreference) {
+      //   const { jobSeekerId, ...dtoExcludeRelationship } = jobPreference;
+      //   const updatedJobPreference = new JobPreference(dtoExcludeRelationship);
+      //   jobSeeker.jobPreference = updatedJobPreference;
+      // }
 
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {

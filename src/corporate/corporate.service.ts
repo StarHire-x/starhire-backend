@@ -2,6 +2,8 @@ import { CreateCorporateDto } from './dto/create-corporate.dto';
 import { UpdateCorporateDto } from './dto/update-corporate.dto';
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,24 +19,37 @@ export class CorporateService {
   ) {}
 
   async create(createCorporateDto: CreateCorporateDto) {
-    
+    try {
+      const corporate = new Corporate({ ...createCorporateDto });
+      return await this.corporateRepository.save(corporate);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to create new corporate',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  async findAll() {
-    
+  async findAll() {}
+
+  async findOne(id: number) {}
+
+  async findByEmail(email: string) {
+    try {
+      return await this.corporateRepository.findOne({
+        where: { email },
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find corporate',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  async findOne(id: number) {
-    
-  }
+  async update(id: number, updateCorporateDto: UpdateCorporateDto) {}
 
-  async update(id: number, updateCorporateDto: UpdateCorporateDto) {
-    
-  }
-
-  async remove(id: number) {
-    
-  }
+  async remove(id: number) {}
 }
 
 

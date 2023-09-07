@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Commission } from './commission.entity';
 
 @Entity({ name: 'invoices' })
 export class Invoice {
@@ -19,6 +20,11 @@ export class Invoice {
 
   @Column()
   paid: boolean;
+
+  @OneToMany(() => Commission, (commission) => commission.invoice, {
+    nullable: false,
+  })
+  commissions: Commission[];
 
   constructor(entity: Partial<Invoice>) {
     Object.assign(this, entity);

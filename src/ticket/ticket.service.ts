@@ -14,7 +14,7 @@ import { Administrator } from 'src/entities/administrator.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { Corporate } from 'src/entities/corporate.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import { mapTicketCategoryToEnum } from 'src/common/mapStringToEnum';
 
 @Injectable()
 export class TicketService {
@@ -42,21 +42,29 @@ export class TicketService {
         ...ticketWithoutParentId
       } = createTicketDto;
 
-      const administrator = adminId && await this.adminRepository.findOne({
-        where: { userId: adminId },
-      });
+      const administrator =
+        adminId &&
+        (await this.adminRepository.findOne({
+          where: { userId: adminId },
+        }));
 
-      const recruiter = recruiterId && await this.recruiterRepository.findOne({
-        where: { userId: recruiterId },
-      });
+      const recruiter =
+        recruiterId &&
+        (await this.recruiterRepository.findOne({
+          where: { userId: recruiterId },
+        }));
 
-      const corporate = corporateId && await this.corporateRepository.findOne({
-        where: { userId: corporateId },
-      });
+      const corporate =
+        corporateId &&
+        (await this.corporateRepository.findOne({
+          where: { userId: corporateId },
+        }));
 
-      const jobSeeker = jobSeekerId && await this.jobSeekerRepository.findOne({
-        where: { userId: jobSeekerId },
-      });
+      const jobSeeker =
+        jobSeekerId &&
+        (await this.jobSeekerRepository.findOne({
+          where: { userId: jobSeekerId },
+        }));
 
       // Ensure 1 of the 3 normal type users is provided
       // Admin ID can be null upon ticket creation until an Admin picks up the ticket
@@ -73,7 +81,7 @@ export class TicketService {
       });
 
       if (ticket.ticketCategory) {
-        ticket.ticketCategory = this.mapTicketCategoryToEnum(ticket.ticketCategory);
+        ticket.ticketCategory = mapTicketCategoryToEnum(ticket.ticketCategory);
       }
 
       return await this.ticketRepository.save(ticket);
@@ -117,13 +125,17 @@ export class TicketService {
       }
 
       if (updatedTicketDto.ticketCategory) {
-        updatedTicketDto.ticketCategory = this.mapTicketCategoryToEnum(updatedTicketDto.ticketCategory);
+        updatedTicketDto.ticketCategory = mapTicketCategoryToEnum(
+          updatedTicketDto.ticketCategory,
+        );
       }
 
       // Handle condition when admin picks up an ticket
-      const administrator = updatedTicketDto.adminId && await this.adminRepository.findOne({
-        where: { userId: updatedTicketDto.adminId },
-      });
+      const administrator =
+        updatedTicketDto.adminId &&
+        (await this.adminRepository.findOne({
+          where: { userId: updatedTicketDto.adminId },
+        }));
 
       if (administrator) {
         updatedTicketDto.adminId = administrator.userId;
@@ -151,20 +163,4 @@ export class TicketService {
       );
     }
   }
-
-  mapTicketCategoryToEnum(status: string): TicketCategoryEnum {
-    switch(status.toLowerCase()) {
-      case 'event':
-        return TicketCategoryEnum.EVENT;
-      case 'joblisting':
-        return TicketCategoryEnum.JOBLISTING;
-      case 'chat':
-        return TicketCategoryEnum.CHAT;
-      case 'website':
-        return TicketCategoryEnum.WEBSITE;
-      default:
-        return null;
-    }
-  }
-
 }

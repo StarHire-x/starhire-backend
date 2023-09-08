@@ -10,9 +10,11 @@ import {
 } from '@nestjs/common';
 import { QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserStatusEnum from 'src/enums/userStatus.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
+import {
+  mapNotificationModeToEnum,
+  mapUserRoleToEnum,
+  mapUserStatusToEnum,
+} from 'src/common/mapStringToEnum';
 
 @Injectable()
 export class RecruiterService {
@@ -27,15 +29,15 @@ export class RecruiterService {
 
       // Convert all ENUM values
       if (recruiter.status) {
-        recruiter.status = this.mapStatusToEnum(recruiter.status);
+        recruiter.status = mapUserStatusToEnum(recruiter.status);
       }
       if (recruiter.notificationMode) {
-        recruiter.notificationMode = this.mapNotificationToEnum(
+        recruiter.notificationMode = mapNotificationModeToEnum(
           recruiter.notificationMode,
         );
       }
       if (recruiter.role) {
-        recruiter.role = this.mapRoleToEnum(recruiter.role);
+        recruiter.role = mapUserRoleToEnum(recruiter.role);
       }
       return await this.recruiterRepository.save(recruiter);
     } catch (err) {
@@ -90,35 +92,6 @@ export class RecruiterService {
         'Failed to delete a recruiter',
         HttpStatus.BAD_REQUEST,
       );
-    }
-  }
-
-  mapNotificationToEnum(status: string): NotificationModeEnum {
-    switch (status.toLowerCase()) {
-      case 'sms':
-        return NotificationModeEnum.SMS;
-      default:
-        return NotificationModeEnum.EMAIL;
-    }
-  }
-  mapStatusToEnum(status: string): UserStatusEnum {
-    switch (status.toLowerCase()) {
-      case 'inactive':
-        return UserStatusEnum.INACTIVE;
-      default:
-        return UserStatusEnum.ACTIVE;
-    }
-  }
-  mapRoleToEnum(status: string): UserRoleEnum {
-    switch (status.toLowerCase()) {
-      case 'recruiter':
-        return UserRoleEnum.RECRUITER;
-      case 'corporate':
-        return UserRoleEnum.CORPORATE;
-      case 'administrator':
-        return UserRoleEnum.ADMINISTRATOR;
-      default:
-        return UserRoleEnum.JOBSEEKER;
     }
   }
 }

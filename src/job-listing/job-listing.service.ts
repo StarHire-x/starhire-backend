@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 import { Corporate } from 'src/entities/corporate.entity';
+import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
 @Injectable()
 export class JobListingService {
   constructor(
@@ -34,7 +35,7 @@ export class JobListingService {
       }
 
       // Ensure jobListingStatus field is a valid enum
-      const mappedStatus = this.mapJsonToEnum(
+      const mappedStatus = mapJobListingStatusToEnum(
         createJobListingDto.jobListingStatus,
       );
       createJobListingDto.jobListingStatus = mappedStatus;
@@ -86,7 +87,7 @@ export class JobListingService {
 
       // If jobListingStatus is to be updated, ensure it is a valid enum
       if (updateJobListingDto.jobListingStatus) {
-        const mappedStatus = this.mapJsonToEnum(
+        const mappedStatus = mapJobListingStatusToEnum(
           updateJobListingDto.jobListingStatus,
         );
         updateJobListingDto.jobListingStatus = mappedStatus;
@@ -110,15 +111,6 @@ export class JobListingService {
         'Failed to delete job listing',
         HttpStatus.BAD_REQUEST,
       );
-    }
-  }
-
-  mapJsonToEnum(status: string): JobListingStatusEnum {
-    switch (status) {
-      case 'Inactive':
-        return JobListingStatusEnum.INACTIVE;
-      default:
-        return JobListingStatusEnum.ACTIVE;
     }
   }
 }

@@ -5,12 +5,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
-import UserRoleEnum from 'src/enums/userRole.enum';
 import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
 import { CorporateService } from 'src/corporate/corporate.service';
 import { AdministratorService } from 'src/administrator/admin.service';
@@ -132,19 +129,6 @@ export class UsersService {
         'Failed to delete job application',
         HttpStatus.BAD_REQUEST,
       );
-    }
-  }
-
-  mapJsonToEnum(status: string): UserRoleEnum {
-    switch (status) {
-      case 'Job_Seeker':
-        return UserRoleEnum.JOBSEEKER;
-      case 'Corporate':
-        return UserRoleEnum.CORPORATE;
-      case 'Recruiter':
-        return UserRoleEnum.RECRUITER;
-      case 'Administrator':
-        return UserRoleEnum.ADMINISTRATOR;
     }
   }
 }

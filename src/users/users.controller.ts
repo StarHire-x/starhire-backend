@@ -29,7 +29,7 @@ export class UsersController {
     try {
       console.log(createUserDto);
       return this.usersService.create(createUserDto);
-        // You can also return an HTTP 404 Not Found response if the job seeker is not found
+      // You can also return an HTTP 404 Not Found response if the job seeker is not found
     } catch (error) {
       if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -46,14 +46,23 @@ export class UsersController {
 
   // GET /users?id=1&?
   @Get()
-  async getUserByEmailandRole(@Query('email') email: string, @Query('role') role: string) {
+  async getUserByEmailandRole(
+    @Query('email') email: string,
+    @Query('role') role: string,
+  ) {
     try {
-      console.log("You reached this endpoint");
-      console.log(email)
+      console.log('You reached this endpoint');
+      console.log(email);
       console.log(role);
       const result = await this.usersService.findByEmail(email, role);
-      console.log("🚀 ~ file: users.controller.ts:55 ~ UsersController ~ getUserByEmailandRole ~ result:", result)
-      return result
+      console.log(
+        '🚀 ~ file: users.controller.ts:55 ~ UsersController ~ getUserByEmailandRole ~ result:',
+        result,
+      );
+      if (!result) {
+        throw new NotFoundException('User is not found');
+      }
+      return result;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -62,7 +71,6 @@ export class UsersController {
       }
     }
   }
-  
 
   // @Get()
   // getUser(@Query('email') email: string) {

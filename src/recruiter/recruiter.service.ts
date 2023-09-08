@@ -47,6 +47,33 @@ export class RecruiterService {
     return await this.recruiterRepository.find();
   }
 
+  //Added code to handle different request
+  async findByEmail(email: string) {
+    try {
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { email },
+      });
+
+      if (recruiter) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Recruiter found',
+          data: recruiter,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Recruiter not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     try {
       const recruiter = await this.recruiterRepository.findOne({

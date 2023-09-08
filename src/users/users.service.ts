@@ -67,14 +67,14 @@ export class UsersService {
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
   async findByEmail(email: string, role: string) {
     try {
-      if(role === "Job_Seeker") {
+      if (role === 'Job_Seeker') {
         return await this.jobSeekerService.findByEmail(email);
-      } else if(role === "Recruiter") {
-        //return await this.recruiterService.findByEmail(email);
-      } else if(role === "Corporate") {
-        //return await this.corporateService.findByEmail(email);
-      } else if(role === "Administrator") {
-        console.log("You hit admin end point")
+      } else if (role === 'Recruiter') {
+        return await this.recruiterService.findByEmail(email);
+      } else if (role === 'Corporate') {
+        return await this.corporateService.findByEmail(email);
+      } else if (role === 'Administrator') {
+        console.log('You hit admin end point');
         return await this.adminService.findByEmail(email);
       }
     } catch (err) {
@@ -84,7 +84,6 @@ export class UsersService {
       );
     }
   }
-
 
   // Pass in the role, invoke update method of the corresponding repository
   async update(id: number, updateUserDto: any) {

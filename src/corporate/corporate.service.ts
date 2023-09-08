@@ -68,6 +68,33 @@ export class CorporateService {
     }
   }
 
+  //Added code to handle different request
+  async findByEmail(email: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { email },
+      });
+
+      if (corporate) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate found',
+          data: corporate,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Corporate not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find corporate',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async update(id: number, updatedCorporate: UpdateCorporateDto) {
     try {
       const corporate = await this.corporateRepository.findOneBy({

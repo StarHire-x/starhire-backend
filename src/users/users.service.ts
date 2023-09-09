@@ -47,7 +47,7 @@ export class UsersService {
     }
   }
 
-  // Shoudl return all the users (Job Seekers, company, etc)
+  // Shoudld return all the users (Job Seekers, company, etc)
   // Maybe return just id field, name , role
   async findAll() {
     try {
@@ -140,23 +140,14 @@ export class UsersService {
   // Pass in the role, invoke update method of the corresponding repository
   async update(id: number, updateUserDto: any) {
     try {
-      const { confirmPassword, ...dtoExcludeRelationship } = updateUserDto;
-
-      if (updateUserDto.password !== updateUserDto.confirmPassword) {
-        throw new HttpException(
-          'Password are different',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
       if (updateUserDto.role === 'Job_Seeker') {
-        return await this.jobSeekerService.update(id, dtoExcludeRelationship);
+        return await this.jobSeekerService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Administrator') {
-        await this.corporateService.update(id, dtoExcludeRelationship);
+        await this.corporateService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Corporate') {
-        return await this.adminService.update(id, dtoExcludeRelationship);
+        return await this.adminService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Recruiter') {
-        return await this.recruiterService.update(id, dtoExcludeRelationship);
+        return await this.recruiterService.update(id, updateUserDto);
       }
     } catch (err) {
       throw new HttpException(

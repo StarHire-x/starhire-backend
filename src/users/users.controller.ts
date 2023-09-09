@@ -39,10 +39,10 @@ export class UsersController {
     }
   }
 
-  @Get()
+  @Get('/all')
   async findAllUsers() {
     try {
-      console.log("START")
+      console.log("START");
       const result = await this.usersService.findAll();
       console.log(result);
       return result;
@@ -56,7 +56,7 @@ export class UsersController {
   }
 
   // GET /users?id=1&?
-  @Get()
+  @Get('/login')
   async getUserByEmailandRole(
     @Query('email') email: string,
     @Query('role') role: string,

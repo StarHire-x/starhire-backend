@@ -9,10 +9,10 @@ import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Repository } from 'typeorm';
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 import { JobListing } from 'src/entities/jobListing.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
+import { mapJobApplicationStatusToEnum } from 'src/common/mapStringToEnum';
 
 @Injectable()
 export class JobApplicationService {
@@ -53,7 +53,7 @@ export class JobApplicationService {
       }
 
       // Ensure jobApplicationStatus field is a valid enum
-      const mappedStatus = this.mapJsonToEnum(
+      const mappedStatus = mapJobApplicationStatusToEnum(
         createJobApplicationDto.jobApplicationStatus,
       );
       createJobApplicationDto.jobApplicationStatus = mappedStatus;
@@ -109,7 +109,7 @@ export class JobApplicationService {
 
       // If jobApplicationStatus is to be updated, ensure it is a valid enum
       if (updateJobApplicationDto.jobApplicationStatus) {
-        const mappedStatus = this.mapJsonToEnum(
+        const mappedStatus = mapJobApplicationStatusToEnum(
           updateJobApplicationDto.jobApplicationStatus,
         );
         updateJobApplicationDto.jobApplicationStatus = mappedStatus;
@@ -135,21 +135,6 @@ export class JobApplicationService {
         'Failed to delete job application',
         HttpStatus.BAD_REQUEST,
       );
-    }
-  }
-
-  mapJsonToEnum(status: string): JobApplicationStatusEnum {
-    switch (status) {
-      case 'Withdraw':
-        return JobApplicationStatusEnum.WITHDRAWN;
-      case 'Submitted':
-        return JobApplicationStatusEnum.SUBMITTED;
-      case 'Approved':
-        return JobApplicationStatusEnum.ACCEPTED;
-      case 'Rejected':
-        return JobApplicationStatusEnum.REJECTED;
-      default:
-        return JobApplicationStatusEnum.PENDING;
     }
   }
 }

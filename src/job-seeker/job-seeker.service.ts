@@ -10,10 +10,12 @@ import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
-import UserStatusEnum from 'src/enums/userStatus.enum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
+import {
+  mapEducationStatusToEnum,
+  mapNotificationModeToEnum,
+  mapUserRoleToEnum,
+  mapUserStatusToEnum,
+} from 'src/common/mapStringToEnum';
 
 @Injectable()
 export class JobSeekerService {
@@ -28,18 +30,18 @@ export class JobSeekerService {
 
       // Convert all ENUM values
       if (jobSeeker.status) {
-        jobSeeker.status = this.mapStatusToEnum(jobSeeker.status);
+        jobSeeker.status = mapUserStatusToEnum(jobSeeker.status);
       }
       if (jobSeeker.notificationMode) {
-        jobSeeker.notificationMode = this.mapNotificationToEnum(
+        jobSeeker.notificationMode = mapNotificationModeToEnum(
           jobSeeker.notificationMode,
         );
       }
       if (jobSeeker.role) {
-        jobSeeker.role = this.mapRoleToEnum(jobSeeker.role);
+        jobSeeker.role = mapUserRoleToEnum(jobSeeker.role);
       }
       if (jobSeeker.highestEducationStatus) {
-        jobSeeker.highestEducationStatus = this.mapEducationToEnum(
+        jobSeeker.highestEducationStatus = mapEducationStatusToEnum(
           jobSeeker.highestEducationStatus,
         );
       }
@@ -122,7 +124,7 @@ export class JobSeekerService {
 
       Object.assign(jobSeeker, updatedJobSeeker);
 
-      jobSeeker.highestEducationStatus = this.mapEducationToEnum(
+      jobSeeker.highestEducationStatus = mapEducationStatusToEnum(
         updatedJobSeeker.highestEducationStatus,
       );
 
@@ -166,49 +168,6 @@ export class JobSeekerService {
         'Failed to delete job seeker',
         HttpStatus.BAD_REQUEST,
       );
-    }
-  }
-
-  mapEducationToEnum(status: string): HighestEducationStatusEnum {
-    switch (status) {
-      case 'No_School':
-        return HighestEducationStatusEnum.NO_SCHOOL;
-      case 'High_School':
-        return HighestEducationStatusEnum.HIGH_SCHOOL;
-      case 'Bachelor':
-        return HighestEducationStatusEnum.BACHELOR;
-      case 'Master':
-        return HighestEducationStatusEnum.MASTER;
-      case 'Doctorate':
-        return HighestEducationStatusEnum.DOCTORATE;
-    }
-  }
-  mapNotificationToEnum(status: string): NotificationModeEnum {
-    switch (status) {
-      case 'Sms':
-        return NotificationModeEnum.SMS;
-      default:
-        return NotificationModeEnum.EMAIL;
-    }
-  }
-  mapStatusToEnum(status: string): UserStatusEnum {
-    switch (status) {
-      case 'Inactive':
-        return UserStatusEnum.INACTIVE;
-      default:
-        return UserStatusEnum.ACTIVE;
-    }
-  }
-  mapRoleToEnum(status: string): UserRoleEnum {
-    switch (status) {
-      case 'Recruiter':
-        return UserRoleEnum.RECRUITER;
-      case 'Corporate':
-        return UserRoleEnum.CORPORATE;
-      case 'Administrator':
-        return UserRoleEnum.ADMINISTRATOR;
-      default:
-        return UserRoleEnum.JOBSEEKER;
     }
   }
 }

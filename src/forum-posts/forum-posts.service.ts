@@ -9,8 +9,8 @@ import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ForumPost } from 'src/entities/forumPost.entity';
-import ForumCategoryEnum from 'src/enums/forumCategory.enum';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { mapForumCategoryToEnum } from 'src/common/mapStringToEnum';
 
 @Injectable()
 export class ForumPostsService {
@@ -35,7 +35,9 @@ export class ForumPostsService {
       }
 
       // Ensure forumCategory field is a valid enum
-      const mappedStatus = this.mapJsonToEnum(createForumPostDto.forumCategory);
+      const mappedStatus = mapForumCategoryToEnum(
+        createForumPostDto.forumCategory,
+      );
       createForumPostDto.forumCategory = mappedStatus;
 
       // Create the forum post, establishing relationship to parent (job seeker entity)
@@ -85,7 +87,7 @@ export class ForumPostsService {
 
       // If forumCategory is to be updated, ensure it is a valid enum
       if (updateForumPostDto.forumCategory) {
-        const mappedStatus = this.mapJsonToEnum(
+        const mappedStatus = mapForumCategoryToEnum(
           updateForumPostDto.forumCategory,
         );
         updateForumPostDto.forumCategory = mappedStatus;
@@ -109,21 +111,6 @@ export class ForumPostsService {
         'Failed to delete forum post',
         HttpStatus.BAD_REQUEST,
       );
-    }
-  }
-
-  mapJsonToEnum(status: string): ForumCategoryEnum {
-    switch (status) {
-      case 'Job':
-        return ForumCategoryEnum.JOB;
-      case 'Event':
-        return ForumCategoryEnum.EVENT;
-      case 'Career':
-        return ForumCategoryEnum.CAREER;
-      case 'Confession':
-        return ForumCategoryEnum.CONFESSION;
-      case 'Misc':
-        return ForumCategoryEnum.MISC;
     }
   }
 }

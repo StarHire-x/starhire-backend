@@ -46,7 +46,55 @@ export class RecruiterService {
   }
 
   async findAll() {
-    return await this.recruiterRepository.find();
+    try {
+      const recruiters = await this.recruiterRepository.find();
+      if (recruiters.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Recruiter found',
+          data: recruiters,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Recrutier not found',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find recruiter',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  //Added code to handle different request
+  async findByEmail(email: string) {
+    try {
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { email },
+      });
+
+      if (recruiter) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Recruiter found',
+          data: recruiter,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Recrutier not found',
+          data: [],
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find recruiter',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: number) {

@@ -29,7 +29,27 @@ export class AdministratorService {
   }
 
   async findAll() {
-    return await this.administratorRepository.find();
+    try {
+      const admins = await this.administratorRepository.find();
+      if (admins.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Admin found',
+          data: admins,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Admin not found',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find admin',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: number) {
@@ -48,11 +68,29 @@ export class AdministratorService {
 
   async findByEmail(email: string) {
     try {
-      return await this.administratorRepository.findOne({
+      const admin = await this.administratorRepository.findOne({
         where: { email },
       });
+
+      if (admin) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Admin found',
+          data: admin,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Admin not found',
+          data: [],
+        };
+      }
     } catch (err) {
-      throw new HttpException('Failed to find admin', HttpStatus.BAD_REQUEST);
+      console.error('Failed to find admin by email', err); // This logs the error for debugging.
+      throw new HttpException(
+        'An error occurred while trying to find the admin',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

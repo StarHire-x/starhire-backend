@@ -46,7 +46,27 @@ export class CorporateService {
   }
 
   async findAll() {
-    return await this.corporateRepository.find();
+    try {
+      const corporates = await this.corporateRepository.find();
+      if (corporates.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate found',
+          data: corporates,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Corporate not found',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find corporate',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: number) {
@@ -64,6 +84,33 @@ export class CorporateService {
       return corporate;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  //Added code to handle different request
+  async findByEmail(email: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { email },
+      });
+
+      if (corporate) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate found',
+          data: corporate,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Corporate not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find corporate',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

@@ -36,9 +36,20 @@ export class RecruiterController {
     }
   }
 
-  @Get('/all')
-  findAllRecruiters() {
-    return this.recruiterService.findAll();
+  @Get()
+  async findAllRecruiters() {
+    try {
+      const result = await this.recruiterService.findAll();
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+    
   }
 
   // GET /recruiter?id=1

@@ -39,9 +39,20 @@ export class UsersController {
     }
   }
 
-  @Get('/all')
-  findAllUsers() {
-    return this.usersService.findAll();
+  @Get()
+  async findAllUsers() {
+    try {
+      console.log("START")
+      const result = await this.usersService.findAll();
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    } 
   }
 
   // GET /users?id=1&?
@@ -51,20 +62,11 @@ export class UsersController {
     @Query('role') role: string,
   ) {
     try {
-      console.log('You reached this endpoint');
-      console.log(email);
-      console.log(role);
       const result = await this.usersService.findByEmail(email, role);
-      console.log(
-        '🚀 ~ file: users.controller.ts:55 ~ UsersController ~ getUserByEmailandRole ~ result:',
-        result,
-      );
-      if (!result) {
-        throw new NotFoundException('User is not found');
-      }
+      console.log(result);
       return result;
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
         throw new InternalServerErrorException('Internal server error');

@@ -90,10 +90,6 @@ export class JobSeekerService {
   }
   */
 
-  async findAll() {
-    return await this.jobSeekerRepository.find();
-  }
-
   async findOne(id: number) {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOne({
@@ -133,6 +129,30 @@ export class JobSeekerService {
       return await this.jobSeekerRepository.save(jobSeeker);
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findAll() {
+    try {
+      const jobSeekers = await this.jobSeekerRepository.find();
+      if (jobSeekers.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker found',
+          data: jobSeekers,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job seeker not found',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

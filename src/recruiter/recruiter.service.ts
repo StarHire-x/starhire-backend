@@ -44,7 +44,27 @@ export class RecruiterService {
   }
 
   async findAll() {
-    return await this.recruiterRepository.find();
+    try {
+      const recruiters = await this.recruiterRepository.find();
+      if (recruiters.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Recruiter found',
+          data: recruiters,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Recrutier not found',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find recruiter',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   //Added code to handle different request
@@ -63,12 +83,13 @@ export class RecruiterService {
       } else {
         return {
           statusCode: HttpStatus.NOT_FOUND,
-          message: 'Recruiter not found',
+          message: 'Recrutier not found',
+          data: [],
         };
       }
     } catch (err) {
       throw new HttpException(
-        'Failed to find job seeker',
+        'Failed to find recruiter',
         HttpStatus.BAD_REQUEST,
       );
     }

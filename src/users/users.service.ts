@@ -35,12 +35,15 @@ export class UsersService {
         return await this.corporateService.create(createUserDto);
       } else if (createUserDto.role === 'Recruiter') {
         return await this.recruiterService.create(createUserDto);
+      } else {
+        // Handle the case where none of the roles match
+        throw new HttpException(
+          'Invalid role specified',
+          HttpStatus.BAD_REQUEST,
+        );
       }
     } catch (err) {
-      throw new HttpException(
-        'Failed to create new job application',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw err;
     }
   }
 

@@ -39,9 +39,26 @@ export class RecruiterService {
       if (recruiter.role) {
         recruiter.role = mapUserRoleToEnum(recruiter.role);
       }
-      return await this.recruiterRepository.save(recruiter);
+      
+      await this.recruiterRepository.save(recruiter);
+      
+      if (recruiter) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Recruiter created',
+          data: recruiter,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Recruiter failed to be created',
+        };
+      }
     } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Failed to create recruiter',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

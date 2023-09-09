@@ -39,9 +39,24 @@ export class CorporateService {
       if (corporate.role) {
         corporate.role = mapUserRoleToEnum(corporate.role);
       }
-      return await this.corporateRepository.save(corporate);
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      await this.corporateRepository.save(corporate);
+      if (corporate) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate created',
+          data: corporate,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Corporate not created',
+        };
+      }
+    } catch (error) {
+      throw new HttpException(
+        'Failed to create new corporate',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

@@ -45,9 +45,24 @@ export class JobSeekerService {
           jobSeeker.highestEducationStatus,
         );
       }
-      return await this.jobSeekerRepository.save(jobSeeker);
+      await this.jobSeekerRepository.save(jobSeeker);
+      if (jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker created',
+          data: jobSeeker,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job seeker failed to be created',
+        };
+      }
     } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Failed to create job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

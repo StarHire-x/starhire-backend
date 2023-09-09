@@ -12,6 +12,8 @@ import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
 import { CorporateService } from 'src/corporate/corporate.service';
 import { AdministratorService } from 'src/administrator/admin.service';
 import { RecruiterService } from 'src/recruiter/recruiter.service';
+import UserRoleEnum from 'src/enums/userRole.enum';
+import { mapUserRoleToEnum } from 'src/common/mapStringToEnum';
 
 @Injectable()
 export class UsersService {
@@ -26,14 +28,14 @@ export class UsersService {
 
   async create(createUserDto: any) {
     try {
-      // Should change to enum
-      if (createUserDto.role === 'Job_Seeker') {
+      createUserDto.role = mapUserRoleToEnum(createUserDto.role);
+      if (createUserDto.role === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.create(createUserDto);
-      } else if (createUserDto.role === 'Administrator') {
+      } else if (createUserDto.role === UserRoleEnum.ADMINISTRATOR) {
         return await this.adminService.create(createUserDto);
-      } else if (createUserDto.role === 'Corporate') {
+      } else if (createUserDto.role === UserRoleEnum.CORPORATE) {
         return await this.corporateService.create(createUserDto);
-      } else if (createUserDto.role === 'Recruiter') {
+      } else if (createUserDto.role === UserRoleEnum.RECRUITER) {
         return await this.recruiterService.create(createUserDto);
       }
     } catch (err) {
@@ -48,52 +50,62 @@ export class UsersService {
   // Maybe return just id field, name , role
   async findAll() {
     try {
-        const [
-          jobSeekersResponse,
-          recruitersResponse,
-          corporatesResponse,
-          adminsResponse,
-        ] = await Promise.all([
-          this.jobSeekerService.findAll(),
-          this.recruiterService.findAll(),
-          this.corporateService.findAll(),
-          this.adminService.findAll(),
-        ]);
+      const [
+        jobSeekersResponse,
+        recruitersResponse,
+        corporatesResponse,
+        adminsResponse,
+      ] = await Promise.all([
+        this.jobSeekerService.findAll(),
+        this.recruiterService.findAll(),
+        this.corporateService.findAll(),
+        this.adminService.findAll(),
+      ]);
 
-        // Assuming each response has a `data` property that you're interested in.
-        const jobSeekers = jobSeekersResponse.data;
-        console.log("🚀 ~ file: users.service.ts:68 ~ UsersService ~ findAll ~ jobSeekers:", jobSeekers)
-        const recruiters = recruitersResponse.data;
-        console.log("🚀 ~ file: users.service.ts:70 ~ UsersService ~ findAll ~ recruiters:", recruiters)
-        const corporates = corporatesResponse.data;
-        console.log("🚀 ~ file: users.service.ts:72 ~ UsersService ~ findAll ~ corporates:", corporates)
-        const admins = adminsResponse.data;
-        console.log("🚀 ~ file: users.service.ts:74 ~ UsersService ~ findAll ~ admins:", admins)
+      // Assuming each response has a `data` property that you're interested in.
+      const jobSeekers = jobSeekersResponse.data;
+      console.log(
+        '🚀 ~ file: users.service.ts:68 ~ UsersService ~ findAll ~ jobSeekers:',
+        jobSeekers,
+      );
+      const recruiters = recruitersResponse.data;
+      console.log(
+        '🚀 ~ file: users.service.ts:70 ~ UsersService ~ findAll ~ recruiters:',
+        recruiters,
+      );
+      const corporates = corporatesResponse.data;
+      console.log(
+        '🚀 ~ file: users.service.ts:72 ~ UsersService ~ findAll ~ corporates:',
+        corporates,
+      );
+      const admins = adminsResponse.data;
+      console.log(
+        '🚀 ~ file: users.service.ts:74 ~ UsersService ~ findAll ~ admins:',
+        admins,
+      );
 
-        const mergedData = [
-          ...jobSeekers,
-          ...recruiters,
-          ...corporates,
-          ...admins,
-        ];
+      const mergedData = [
+        ...jobSeekers,
+        ...recruiters,
+        ...corporates,
+        ...admins,
+      ];
 
-        console.log(mergedData);
+      console.log(mergedData);
 
-        if(mergedData.length > 0) {
-          return {
-            statusCode: HttpStatus.OK,
-            message: 'User data retrieved',
-            data: mergedData,
-          };
-        } else {
-          return {
-            statusCode: HttpStatus.NOT_FOUND,
-            message: 'User data not retrived',
-            data: [],
-          };
-        }
-
-
+      if (mergedData.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'User data retrieved',
+          data: mergedData,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'User data not retrived',
+          data: [],
+        };
+      }
     } catch (err) {
       throw err;
     }
@@ -113,14 +125,15 @@ export class UsersService {
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
   async findByEmail(email: string, role: string) {
     try {
-      if (role === 'Job_Seeker') {
+      role = mapUserRoleToEnum(role);
+      if (role === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.findByEmail(email);
-      } else if (role === 'Recruiter') {
+      } else if (role === UserRoleEnum.RECRUITER) {
         return await this.recruiterService.findByEmail(email);
-      } else if (role === 'Corporate') {
+      } else if (role === UserRoleEnum.CORPORATE) {
         return await this.corporateService.findByEmail(email);
-      } else if (role === 'Administrator') {
-        console.log('You hit admin end point');
+      } else if (role === UserRoleEnum.ADMINISTRATOR) {
+        //console.log('You hit admin end point');
         return await this.adminService.findByEmail(email);
       } else {
         // Handle the case where none of the roles match
@@ -130,7 +143,7 @@ export class UsersService {
         );
       }
     } catch (err) {
-      throw err; 
+      throw err;
     }
   }
 

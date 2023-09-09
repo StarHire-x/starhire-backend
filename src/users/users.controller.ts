@@ -39,7 +39,7 @@ export class UsersController {
     }
   }
 
-  @Get()
+  @Get('/all')
   async findAllUsers() {
     try {
       console.log("START");

@@ -138,14 +138,29 @@ export class RecruiterService {
       });
 
       if (!recruiter) {
-        throw new NotFoundException('Recruiter User Id provided is not valid');
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Recruiter id not found',
+          data: [],
+        };
       }
 
       Object.assign(recruiter, updatedRecruiter);
 
-      return await this.recruiterRepository.save(recruiter);
+      await this.recruiterRepository.save(recruiter);
+
+      if (recruiter) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Recruiter updated',
+          data: recruiter,
+        };
+      } 
     } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Failed to update recruiter',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,21 +22,21 @@ export class DocumentService {
 
   async create(createDocumentDto: CreateDocumentDto) {
     try {
-      const { jobApplicationId , ...dtoExcludingParentId } = createDocumentDto;
+      const { jobApplicationId, ...dtoExcludingParentId } = createDocumentDto;
 
-      const jobApplication = await this.jobApplicationRepository.findOneBy({ jobApplicationId: jobApplicationId });
+      const jobApplication = await this.jobApplicationRepository.findOneBy({
+        jobApplicationId: jobApplicationId,
+      });
       if (!jobApplication) {
         throw new NotFoundException('Job Application Id provided is not valid');
       }
 
       const document = new Document({
-        ...createDocumentDto,
+        ...dtoExcludingParentId,
         jobApplication: jobApplication,
       });
 
-      await this.documentRepository.save(document);
-
-      return await this.findOne(document.documentId);
+      return await this.documentRepository.save(document);
     } catch (err) {
       throw new HttpException(
         'Failed to create new document',
@@ -46,7 +51,7 @@ export class DocumentService {
 
   async findOne(id: number) {
     try {
-      // For this part, u want the relationship with other entities to show, at most 1 level, no need too detail
+      // Returns jobApplication (parent) entity as well
       return await this.documentRepository.findOne({
         where: { documentId: id },
         relations: { jobApplication: true },
@@ -69,9 +74,7 @@ export class DocumentService {
         throw new NotFoundException('Document Id provided is not valid');
       }
 
-      const { jobApplicationId, ...dtoExcludingParentId } = updateDocumentDto;
-
-      Object.assign(document, dtoExcludingParentId);
+      Object.assign(document, updateDocumentDto);
       return await this.documentRepository.save(document);
     } catch (err) {
       throw new HttpException(

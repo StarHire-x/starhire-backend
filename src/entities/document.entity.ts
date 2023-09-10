@@ -12,7 +12,7 @@ export class Document {
   @ManyToOne(
     () => JobApplication,
     (jobApplication) => jobApplication.documents,
-    { onDelete: 'CASCADE' },
+    { nullable: false },
   )
   jobApplication: JobApplication;
 

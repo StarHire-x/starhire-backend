@@ -18,16 +18,25 @@ export class Chat {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   lastUpdatedAt: Date;
 
-  @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.chat) // Establish one-to-many relationship
+  @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.chat)// Establish one-to-many relationship
   chatMessages: ChatMessage[];
 
-  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats)
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.chats, {
+    nullable: true,
+    eager: true
+  })
   jobSeeker: JobSeeker;
 
-  @ManyToOne(() => Corporate, (corporate) => corporate.chats)
+  @ManyToOne(() => Corporate, (corporate) => corporate.chats, {
+    nullable: true,
+    eager: true
+  })
   corporate: Corporate;
 
-  @ManyToOne(() => Recruiter, (recruiter) => recruiter.chats)
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.chats, {
+    nullable: true,
+    eager: true
+  })
   recruiter: Recruiter;
 
   constructor(entity: Partial<Chat>) {

@@ -33,7 +33,7 @@ import { ConfigModule } from '@nestjs/config';
       port: 3306,
       username: 'admin',
       password: 'password',
-      database: 'starhire_backend_pair2',
+      database: 'starhire_backend_pair1',
       entities: entityList,
       synchronize: true,
     }),

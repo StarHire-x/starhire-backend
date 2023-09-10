@@ -21,7 +21,7 @@ export class ChatMessageService {
     private readonly chatRepository: Repository<Chat>,
   ) {}
 
-  async create(createChatMessageDto: CreateChatMessageDto): Promise<any> {
+  async createMessage(createChatMessageDto: CreateChatMessageDto): Promise<any> {
     try {
       // Ensure valid chat Id is provided
       const { chatId, ...dtoExcludingParentId } = createChatMessageDto;
@@ -37,7 +37,7 @@ export class ChatMessageService {
         ...dtoExcludingParentId,
         chat,
       });
-
+      
       return await this.chatMessageRepository.save(chatMessage);
     } catch (err) {
       throw new HttpException(
@@ -47,8 +47,8 @@ export class ChatMessageService {
     }
   }
 
-  findAll() {
-    return `This action returns all chatMessage`;
+  async findAll() {
+    return await this.chatMessageRepository.find();
   }
 
   findOne(id: number) {

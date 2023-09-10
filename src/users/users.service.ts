@@ -142,9 +142,9 @@ export class UsersService {
       if (updateUserDto.role === 'Job_Seeker') {
         return await this.jobSeekerService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Administrator') {
-        await this.corporateService.update(id, updateUserDto);
+        await this.adminService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Corporate') {
-        return await this.adminService.update(id, updateUserDto);
+        return await this.corporateService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Recruiter') {
         return await this.recruiterService.update(id, updateUserDto);
       }

@@ -15,9 +15,7 @@ import { CreateChatMessageDto } from 'src/chat-message/dto/create-chat-message.d
     origin: '*',
   },
 })
-export class ChatMessageGateWay
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class ChatMessageGateWay implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(private chatMessageService: ChatMessageService) {}
 
   @WebSocketServer() server: Server;

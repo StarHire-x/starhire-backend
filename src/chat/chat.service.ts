@@ -37,6 +37,13 @@ export class ChatService {
           where: { userId: recruiterId },
         });
 
+        const chatFound = await this.chatRepository.findOne({
+          where: {
+            recruiter: { userId: recruiterId },
+            jobSeeker: { userId: jobSeekerId },
+          },
+        });
+
         // const chatFound = await this.chatRepository.findOne({
         //   where: { recruiter: recruiter,
         //   corporate: corporate},
@@ -46,17 +53,17 @@ export class ChatService {
         // if (chatFound) {
         //   throw new NotFoundException('Chat already exists');
         // }
-        let chatFound = [];
+        // let chatFound = [];
         
-        const allChats = await this.chatRepository.find({
-          relations: {corporate: true, recruiter: true},
-        });
+        // const allChats = await this.chatRepository.find({
+        //   relations: {corporate: true, recruiter: true},
+        // });
         
-        if (allChats) {
-          chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.corporate.userId === corporateId);
-        }
+        // if (allChats) {
+        //   chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.corporate.userId === corporateId);
+        // }
 
-        if (chatFound.length > 0) {
+        if (chatFound) {
           throw new NotFoundException('Chat already exists');
         }
 
@@ -84,6 +91,13 @@ export class ChatService {
           where: { userId: recruiterId },
         });
 
+        const chatFound = await this.chatRepository.findOne({
+          where: {
+            recruiter: { userId: recruiterId },
+            jobSeeker: { userId: jobSeekerId },
+          },
+        });
+      
         // const chatFound = await this.chatRepository.findOne({
         //   where: { recruiter: recruiter,
         //   jobSeeker: jobSeeker},
@@ -92,17 +106,17 @@ export class ChatService {
         // if (chatFound) {
         //   throw new NotFoundException('Chat already exists');
         // }
-        let chatFound = [];
+        // let chatFound = [];
         
-        const allChats = await this.chatRepository.find({
-          relations: {jobSeeker: true, recruiter: true},
-        });
+        // const allChats = await this.chatRepository.find({
+        //   relations: {jobSeeker: true, recruiter: true},
+        // });
         
-        if (allChats) {
-          chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.jobSeeker.userId === jobSeekerId);
-        }
+        // if (allChats) {
+        //   chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.jobSeeker.userId === jobSeekerId);
+        // }
 
-        if (chatFound.length > 0) {
+        if (chatFound) {
           throw new NotFoundException('Chat already exists');
         }
 

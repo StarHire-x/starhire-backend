@@ -26,8 +26,8 @@ export class ChatController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.chatService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.chatService.findOne(id);
   }
 
   @Patch(':id')
@@ -36,7 +36,7 @@ export class ChatController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chatService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.chatService.remove(id);
   }
 }

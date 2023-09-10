@@ -39,8 +39,8 @@ export class ChatService {
 
         const chatFound = await this.chatRepository.findOne({
           where: {
+            corporate: { userId: corporateId },
             recruiter: { userId: recruiterId },
-            jobSeeker: { userId: jobSeekerId },
           },
         });
 
@@ -93,8 +93,8 @@ export class ChatService {
 
         const chatFound = await this.chatRepository.findOne({
           where: {
-            recruiter: { userId: recruiterId },
             jobSeeker: { userId: jobSeekerId },
+            recruiter: { userId: recruiterId },
           },
         });
       
@@ -126,8 +126,8 @@ export class ChatService {
         
         const chat = new Chat({
           ...dtoExcludingParentId,
-          recruiter,
-          jobSeeker
+          jobSeeker,
+          recruiter
         });
         return await this.chatRepository.save(chat);
       } else {

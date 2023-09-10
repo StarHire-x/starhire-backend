@@ -136,7 +136,6 @@ export class UsersService {
       } else if (role === UserRoleEnum.CORPORATE) {
         return await this.corporateService.findByEmail(email);
       } else if (role === UserRoleEnum.ADMINISTRATOR) {
-        //console.log('You hit admin end point');
         return await this.adminService.findByEmail(email);
       } else {
         // Handle the case where none of the roles match

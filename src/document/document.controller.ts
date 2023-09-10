@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, InternalServerErrorException, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+  Put,
+} from '@nestjs/common';
 import { DocumentService } from './document.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
@@ -18,7 +29,6 @@ export class DocumentController {
         throw new InternalServerErrorException('Internal server error');
       }
     }
-    
   }
 
   @Get()
@@ -35,9 +45,9 @@ export class DocumentController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: string) {
+  findOne(@Param('id') id: number) {
     try {
-      return this.documentService.findOne(+id);
+      return this.documentService.findOne(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -47,10 +57,13 @@ export class DocumentController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
+  @Put(':id')
+  update(
+    @Param('id') id: number,
+    @Body() updateDocumentDto: UpdateDocumentDto,
+  ) {
     try {
-      return this.documentService.update(+id, updateDocumentDto);
+      return this.documentService.update(id, updateDocumentDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -61,9 +74,9 @@ export class DocumentController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string) {
+  remove(@Param('id') id: number) {
     try {
-      return this.documentService.remove(+id);
+      return this.documentService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

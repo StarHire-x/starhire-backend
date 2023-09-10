@@ -15,7 +15,9 @@ import { CreateChatMessageDto } from 'src/chat-message/dto/create-chat-message.d
     origin: '*',
   },
 })
-export class ChatMessageGateWay implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class ChatMessageGateWay
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(private chatMessageService: ChatMessageService) {}
 
   @WebSocketServer() server: Server;
@@ -25,8 +27,9 @@ export class ChatMessageGateWay implements OnGatewayInit, OnGatewayConnection, O
     client: Socket,
     payload: CreateChatMessageDto,
   ): Promise<void> {
+    console.log(payload);
+    this.server.emit(`${payload.chatId}`, payload);
     await this.chatMessageService.createMessage(payload);
-    this.server.emit('recMessage', payload);
   }
 
   afterInit(server: Server) {

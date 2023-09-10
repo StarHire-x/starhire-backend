@@ -21,7 +21,9 @@ export class ChatMessageService {
     private readonly chatRepository: Repository<Chat>,
   ) {}
 
-  async createMessage(createChatMessageDto: CreateChatMessageDto): Promise<any> {
+  async createMessage(
+    createChatMessageDto: CreateChatMessageDto,
+  ): Promise<any> {
     try {
       // Ensure valid chat Id is provided
       const { chatId, ...dtoExcludingParentId } = createChatMessageDto;
@@ -37,13 +39,10 @@ export class ChatMessageService {
         ...dtoExcludingParentId,
         chat,
       });
-      
+
       return await this.chatMessageRepository.save(chatMessage);
     } catch (err) {
-      throw new HttpException(
-        'Failed to create new chat Message!',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 

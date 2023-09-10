@@ -1,4 +1,9 @@
-import { Injectable, HttpException, NotFoundException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  NotFoundException,
+  HttpStatus,
+} from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,16 +24,15 @@ export class ChatService {
     private readonly recruiterRepository: Repository<Recruiter>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
-  
   ) {}
 
   async create(createChatDto: CreateChatDto): Promise<Chat> {
     try {
-      const {corporateId, jobSeekerId, recruiterId, ...dtoExcludingParentId} = createChatDto;
-      
-      // 1st Combination for a chat to happen - Recruiter & Corporate
-      if ((corporateId != null && recruiterId != null)) {
+      const { corporateId, jobSeekerId, recruiterId, ...dtoExcludingParentId } =
+        createChatDto;
 
+      // 1st Combination for a chat to happen - Recruiter & Corporate
+      if (corporateId != null && recruiterId != null) {
         const corporate = await this.corporateRepository.findOne({
           where: { userId: corporateId },
         });
@@ -49,16 +53,16 @@ export class ChatService {
         //   corporate: corporate},
         //   relations: {corporate: true, recruiter: true},
         // });
-        
+
         // if (chatFound) {
         //   throw new NotFoundException('Chat already exists');
         // }
         // let chatFound = [];
-        
+
         // const allChats = await this.chatRepository.find({
         //   relations: {corporate: true, recruiter: true},
         // });
-        
+
         // if (allChats) {
         //   chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.corporate.userId === corporateId);
         // }
@@ -80,9 +84,9 @@ export class ChatService {
           recruiter,
         });
         return await this.chatRepository.save(chat);
-      
-      // 2nd Combination for a chat to happen  - Job Seeker & Recruiter
-      } else if ((jobSeekerId != null && recruiterId != null)) {
+
+        // 2nd Combination for a chat to happen  - Job Seeker & Recruiter
+      } else if (jobSeekerId != null && recruiterId != null) {
         const jobSeeker = await this.jobSeekerRepository.findOne({
           where: { userId: jobSeekerId },
         });
@@ -97,7 +101,7 @@ export class ChatService {
             recruiter: { userId: recruiterId },
           },
         });
-      
+
         // const chatFound = await this.chatRepository.findOne({
         //   where: { recruiter: recruiter,
         //   jobSeeker: jobSeeker},
@@ -107,11 +111,11 @@ export class ChatService {
         //   throw new NotFoundException('Chat already exists');
         // }
         // let chatFound = [];
-        
+
         // const allChats = await this.chatRepository.find({
         //   relations: {jobSeeker: true, recruiter: true},
         // });
-        
+
         // if (allChats) {
         //   chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.jobSeeker.userId === jobSeekerId);
         // }
@@ -123,21 +127,18 @@ export class ChatService {
         if (!jobSeeker || !recruiter) {
           throw new NotFoundException('Id provided is not valid');
         }
-        
+
         const chat = new Chat({
           ...dtoExcludingParentId,
           jobSeeker,
-          recruiter
+          recruiter,
         });
         return await this.chatRepository.save(chat);
       } else {
         throw new NotFoundException('Id provided not sufficient');
       }
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -147,6 +148,30 @@ export class ChatService {
 
   async findOne(id: number) {
     return `This action returns a chat`;
+  }
+
+  async findUserChats(userId: number) {
+    try {
+      const allChats = await this.chatRepository.find({
+        where: [
+          {
+            recruiter: { userId: userId },
+          },
+          {
+            jobSeeker: { userId: userId },
+          },
+          {
+            corporate: { userId: userId },
+          },
+        ],
+      });
+      return allChats;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to delete chat message',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   update(id: number, updateChatDto: UpdateChatDto) {

@@ -30,6 +30,11 @@ export class ChatController {
     return this.chatService.findOne(id);
   }
 
+  @Get('/user-chats/:id')
+  findUserChats(@Param('id') userId: number) {
+    return this.chatService.findUserChats(userId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateChatDto: UpdateChatDto) {
     return this.chatService.update(+id, updateChatDto);

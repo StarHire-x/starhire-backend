@@ -27,7 +27,6 @@ export class ChatMessageGateWay
     client: Socket,
     payload: CreateChatMessageDto,
   ): Promise<void> {
-    console.log(payload);
     this.server.emit(`${payload.chatId}`, payload);
     await this.chatMessageService.createMessage(payload);
   }

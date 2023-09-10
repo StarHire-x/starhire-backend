@@ -164,6 +164,9 @@ export class ChatService {
             corporate: { userId: userId },
           },
         ],
+        relations: {
+          chatMessages: true,
+        },
       });
       return allChats;
     } catch (error) {

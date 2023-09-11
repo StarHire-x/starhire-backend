@@ -147,7 +147,7 @@ export class ChatService {
   }
 
   async findOne(id: number) {
-    return `This action returns a chat`;
+    return `This action returns a chat hello`;
   }
 
   async findUserChats(userId: number) {
@@ -164,14 +164,33 @@ export class ChatService {
             corporate: { userId: userId },
           },
         ],
-        relations: {
-          chatMessages: true,
-        },
+        // relations: {
+        //   chatMessages: false,
+        // },
       });
       return allChats;
     } catch (error) {
       throw new HttpException(
         'Failed to delete chat message',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findChatMessagesByChatId(chatId: number) {
+    try {
+      const currentChat = await this.chatRepository.findOne({
+        where: {
+          chatId: chatId
+        },
+        relations: {
+          chatMessages: true,
+        },
+      });
+      return currentChat;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to get chat messages by chat Id',
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -26,8 +26,8 @@ export class ChatController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.chatService.findOne(id);
+  findOne(@Param('id') chatId: number) {
+    return this.chatService.findChatMessagesByChatId(chatId);
   }
 
   @Get('/user-chats/:id')

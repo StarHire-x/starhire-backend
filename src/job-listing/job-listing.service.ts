@@ -56,7 +56,9 @@ export class JobListingService {
 
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
-    const t = await this.jobListingRepository.find();
+    const t = await this.jobListingRepository.find({
+      relations: { corporate: true, jobApplications: true },
+    });
     console.log(t);
     return t;
   }

@@ -66,10 +66,12 @@ export class JobListingService {
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
   async findOne(id: number) {
     try {
-      return await this.jobListingRepository.findOne({
+      const t = await this.jobListingRepository.findOne({
         where: { jobListingId: id },
         relations: { corporate: true, jobApplications: true },
       });
+      console.log(t);
+      return t;
     } catch (err) {
       throw new HttpException(
         'Failed to find job Listing',

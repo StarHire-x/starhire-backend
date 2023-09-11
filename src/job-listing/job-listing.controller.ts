@@ -20,7 +20,7 @@ export class JobListingController {
 
   @Post()
   // Note: Ensure dto contains a field for the Id of the parent entity parentId
-  create(@Body() createJobListingDto: CreateJobListingDto) {
+  createJobListing(@Body() createJobListingDto: CreateJobListingDto) {
     try {
       return this.jobListingService.create(createJobListingDto);
     } catch (error) {
@@ -33,7 +33,7 @@ export class JobListingController {
   }
 
   @Get()
-  findAll() {
+  findAllJobListings() {
     try {
       return this.jobListingService.findAll();
     } catch (error) {
@@ -60,7 +60,7 @@ export class JobListingController {
   }
 
   @Put(':id')
-  update(
+  updateJobListing(
     @Param('id') id: number, // Ensure that id provided is a number
     @Body() updateJobListingDto: UpdateJobListingDto,
   ) {
@@ -77,7 +77,7 @@ export class JobListingController {
 
   @Delete(':id')
   // Ensure that id provided is a number
-  remove(@Param('id') id: number) {
+  removeJobListing(@Param('id') id: number) {
     try {
       return this.jobListingService.remove(id);
     } catch (error) {

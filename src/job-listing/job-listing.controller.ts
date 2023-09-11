@@ -9,10 +9,12 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
+  Req,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
+import { JobListing } from 'src/entities/jobListing.entity';
 
 @Controller('job-listing')
 export class JobListingController {
@@ -43,6 +45,13 @@ export class JobListingController {
         throw new InternalServerErrorException('Internal server error');
       }
     }
+  }
+
+  @Get()
+  async findAllJobListingsByCorporate(@Req() req): Promise<JobListing[]> {
+    // This assumes that you've authenticated and attached the corporate's ID to the request object
+    const corporateId = req.user.id;
+    return this.jobListingService.findAllByCorporate(corporateId);
   }
 
   @Get(':id')

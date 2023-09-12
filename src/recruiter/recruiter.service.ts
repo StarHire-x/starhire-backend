@@ -103,7 +103,6 @@ export class RecruiterService {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'Recrutier not found',
-          data: [],
         };
       }
     } catch (err) {

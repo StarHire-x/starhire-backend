@@ -136,14 +136,29 @@ export class CorporateService {
       });
 
       if (!corporate) {
-        throw new NotFoundException('Corporate User Id provided is not valid');
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Corporate id not found',
+          data: [],
+        };
       }
 
       Object.assign(corporate, updatedCorporate);
 
-      return await this.corporateRepository.save(corporate);
+      await this.corporateRepository.save(corporate);
+
+      if (corporate) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate updated',
+          data: corporate,
+        };
+      }
     } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Failed to update corporate',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

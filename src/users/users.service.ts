@@ -136,7 +136,6 @@ export class UsersService {
       } else if (role === UserRoleEnum.CORPORATE) {
         return await this.corporateService.findByEmail(email);
       } else if (role === UserRoleEnum.ADMINISTRATOR) {
-        //console.log('You hit admin end point');
         return await this.adminService.findByEmail(email);
       } else {
         // Handle the case where none of the roles match
@@ -156,9 +155,9 @@ export class UsersService {
       if (updateUserDto.role === 'Job_Seeker') {
         return await this.jobSeekerService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Administrator') {
-        await this.corporateService.update(id, updateUserDto);
+        await this.adminService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Corporate') {
-        return await this.adminService.update(id, updateUserDto);
+        return await this.corporateService.update(id, updateUserDto);
       } else if (updateUserDto.role === 'Recruiter') {
         return await this.recruiterService.update(id, updateUserDto);
       }

@@ -9,10 +9,6 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
-  Req,
-  Query,
-  UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
@@ -50,11 +46,27 @@ export class JobListingController {
     }
   }
 
-  @Get()
-  async findAllJobListingsByCorporate(@Req() request): Promise<JobListing[]> {
-    // Assuming the user ID is stored in the request object after authentication
-    const userId = request.user.id;
-    return this.jobListingService.findAllByCorporate(userId);
+  @Get('/corporate/:userId')
+  async findAllJobListingsByCorporate(
+    @Param('userId') userId: string,
+  ): Promise<JobListing[]> {
+    try {
+      const numericUserId = parseInt(userId, 10); // Convert string userId to a number.
+
+      if (isNaN(numericUserId)) {
+        // Check if the conversion was successful.
+        throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+      }
+      const result =
+        await this.jobListingService.findAllByCorporate(numericUserId);
+      return result;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Get(':id')

@@ -67,20 +67,16 @@ export class JobListingService {
     // Find the corporate using the provided user ID
     const corporate = await this.corporateRepository.findOne({
       where: { userId: id },
-      relations: {
-        jobListings: true,
-      },
+      relations: ['jobListings'],
     });
 
-    // if (!corporate) {
-    //   // If the corporate isn't found, throw an error or return an empty array based on your requirement
-    //   throw new NotFoundException('Corporate not found.');
-    // }
+    if (!corporate) {
+      // If the corporate isn't found, throw an error or return an empty array based on your requirement
+      throw new NotFoundException('Corporate not found.');
+    }
 
     // Fetch job listings that belong to the found corporate
-    return await this.jobListingRepository.find({
-      where: { corporate: corporate },
-    });
+    return corporate.jobListings;
   }
 
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field

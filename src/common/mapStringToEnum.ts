@@ -73,8 +73,10 @@ export function mapJobListingStatusToEnum(
   switch (status) {
     case 'Inactive':
       return JobListingStatusEnum.INACTIVE;
-    default:
+    case 'Active':
       return JobListingStatusEnum.ACTIVE;
+    default:
+      return JobListingStatusEnum.UNVERIFIED;
   }
 }
 

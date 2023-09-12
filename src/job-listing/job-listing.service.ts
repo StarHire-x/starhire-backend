@@ -63,6 +63,12 @@ export class JobListingService {
     return t;
   }
 
+  async findAllByCorporate(corporateId: number): Promise<JobListing[]> {
+    return await this.jobListingRepository.find({
+      where: { corporate: { userId: corporateId } },
+    });
+  }
+
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
   async findOne(id: number) {
     try {

@@ -10,6 +10,9 @@ import {
   InternalServerErrorException,
   Put,
   Req,
+  Query,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
@@ -48,10 +51,10 @@ export class JobListingController {
   }
 
   @Get()
-  async findAllJobListingsByCorporate(@Req() req): Promise<JobListing[]> {
-    // This assumes that you've authenticated and attached the corporate's ID to the request object
-    const corporateId = req.user.id;
-    return this.jobListingService.findAllByCorporate(corporateId);
+  async findAllJobListingsByCorporate(@Req() request): Promise<JobListing[]> {
+    // Assuming the user ID is stored in the request object after authentication
+    const userId = request.user.id;
+    return this.jobListingService.findAllByCorporate(userId);
   }
 
   @Get(':id')

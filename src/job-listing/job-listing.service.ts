@@ -59,9 +59,23 @@ export class JobListingService {
     return await this.jobListingRepository.find();
   }
 
-  async findAllByCorporate(corporateId: number): Promise<JobListing[]> {
+  async findAllByCorporate(id: number): Promise<JobListing[]> {
+    // Find the corporate using the provided user ID
+    const corporate = await this.corporateRepository.findOne({
+      where: { userId: id },
+      relations: {
+        jobListings: true,
+      },
+    });
+
+    // if (!corporate) {
+    //   // If the corporate isn't found, throw an error or return an empty array based on your requirement
+    //   throw new NotFoundException('Corporate not found.');
+    // }
+
+    // Fetch job listings that belong to the found corporate
     return await this.jobListingRepository.find({
-      where: { corporate: { userId: corporateId } },
+      where: { corporate: corporate },
     });
   }
 

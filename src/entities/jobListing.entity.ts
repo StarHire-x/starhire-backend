@@ -1,6 +1,7 @@
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -23,7 +24,7 @@ export class JobListing {
   @Column()
   jobLocation: string;
 
-  @Column()
+  @CreateDateColumn()
   listingDate: Date;
 
   @Column()
@@ -49,7 +50,6 @@ export class JobListing {
     },
   )
   jobApplications: JobApplication[];
-
 
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);

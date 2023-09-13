@@ -95,7 +95,6 @@ export class AdministratorService {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'Admin not found',
-          data: [],
         };
       }
     } catch (err) {

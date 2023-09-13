@@ -166,7 +166,7 @@ export class JobSeekerService {
 
   async findAll() {
     try {
-      const jobSeekers = await this.jobSeekerRepository.find();
+      const jobSeekers = await this.jobSeekerRepository.find({relations: { chats: true }});
       if (jobSeekers.length > 0) {
         return {
           statusCode: HttpStatus.OK,

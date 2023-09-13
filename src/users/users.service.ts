@@ -14,6 +14,8 @@ import { AdministratorService } from 'src/administrator/admin.service';
 import { RecruiterService } from 'src/recruiter/recruiter.service';
 import UserRoleEnum from 'src/enums/userRole.enum';
 import { mapUserRoleToEnum } from 'src/common/mapStringToEnum';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -24,10 +26,13 @@ export class UsersService {
     private corporateService: CorporateService,
     private adminService: AdministratorService,
     private recruiterService: RecruiterService,
+    private jwtService: JwtService,
   ) {}
 
   async create(createUserDto: any) {
     try {
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 5); // hash password before storing in db
+      createUserDto.password = hashedPassword;
       createUserDto.role = mapUserRoleToEnum(createUserDto.role);
       if (createUserDto.role === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.create(createUserDto);
@@ -143,6 +148,65 @@ export class UsersService {
           'Invalid role specified',
           HttpStatus.BAD_REQUEST,
         );
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  // Needs to accept another argument called role, and invoke the method of the corresponding repository
+  async signIn(email: string, password: string, role: string) {
+    try {
+      var retrievedUser: User = null;
+
+      role = mapUserRoleToEnum(role);
+      if (role === UserRoleEnum.JOBSEEKER) {
+        retrievedUser = (await this.jobSeekerService.findByEmail(email)).data;
+      } else if (role === UserRoleEnum.RECRUITER) {
+        retrievedUser = (await this.recruiterService.findByEmail(email)).data;
+      } else if (role === UserRoleEnum.CORPORATE) {
+        retrievedUser = (await this.corporateService.findByEmail(email)).data;
+      } else if (role === UserRoleEnum.ADMINISTRATOR) {
+        //console.log('You hit admin end point');
+        retrievedUser = (await this.adminService.findByEmail(email)).data;
+      } else {
+        // Handle the case where none of the roles match
+        throw new HttpException(
+          'Invalid role specified',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (retrievedUser) {
+        console.log('before checking password');
+        const isPasswordCorrect = await bcrypt.compare(
+          password,
+          retrievedUser.password,
+        );
+
+        console.log(isPasswordCorrect);
+
+        if (isPasswordCorrect) {
+          const payload = {
+            sub: retrievedUser.userId,
+            username: retrievedUser.userName,
+            email: retrievedUser.email,
+            role: retrievedUser.role,
+          };
+          const jwtAccessToken = await this.jwtService.signAsync(payload);
+          const { password, ...retrievedUserWithoutPassword } = retrievedUser; // don't send back password back to frontend
+          return {
+            statusCode: HttpStatus.OK,
+            message: `User ${email} found`,
+            data: retrievedUserWithoutPassword,
+            jwtAccessToken: jwtAccessToken,
+          };
+        } else {
+          return {
+            statusCode: HttpStatus.NOT_FOUND,
+            message: `User ${email} not found`,
+          };
+        }
       }
     } catch (err) {
       throw err;

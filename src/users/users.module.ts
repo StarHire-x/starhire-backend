@@ -11,9 +11,28 @@ import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { Corporate } from 'src/entities/corporate.entity';
 import { Administrator } from 'src/entities/administrator.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth.guard';
+
+
+require("dotenv").config();
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User,JobSeeker,Recruiter,Corporate,Administrator])],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      JobSeeker,
+      Recruiter,
+      Corporate,
+      Administrator,
+    ]),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '2 days' },
+    }),
+  ],
   controllers: [UsersController],
   providers: [
     UsersService,
@@ -21,6 +40,11 @@ import { Administrator } from 'src/entities/administrator.entity';
     RecruiterService,
     CorporateService,
     AdministratorService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    }
   ],
 })
 export class UsersModule {}
+

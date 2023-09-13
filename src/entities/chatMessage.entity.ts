@@ -19,6 +19,15 @@ export class ChatMessage {
   @CreateDateColumn()
   timestamp: Date;
 
+  @Column()
+  isImportant: boolean;
+
+  @Column()
+  userId: number;
+
+  @Column()
+  fileURL: string;
+
   @ManyToOne(() => Chat, (chat) => chat.chatMessages) // Establish many-to-one relationship
   chat: Chat;
 

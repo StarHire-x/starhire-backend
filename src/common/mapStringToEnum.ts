@@ -118,8 +118,10 @@ export function mapUserRoleToEnum(status: string): UserRoleEnum {
       return UserRoleEnum.CORPORATE;
     case 'administrator':
       return UserRoleEnum.ADMINISTRATOR;
-    default:
+    case 'Job_seeker':
       return UserRoleEnum.JOBSEEKER;
+    default:
+      return null;
   }
 }
 

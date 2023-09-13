@@ -59,7 +59,7 @@ export class UsersController {
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
-    } 
+    }
   }
 
   // GET /users?id=1&?
@@ -114,23 +114,47 @@ export class UsersController {
   //   }
   // }
 
-  // GET /users/:id
-  // @Get(':id')
-  // findOneUser(@Param('id', ParseIntPipe) id: number) {
-  //   try {
-  //     return this.usersService.findOne(id);
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-  //     } else {
-  //       throw new InternalServerErrorException('Internal server error');
-  //     }
-  //   }
-  // }
+  // retreive one user to check whether they exist in the system, please don't comment out it is for the forget password and account management so need to be public
+  @Public()
+  @Get('/find')
+  async findOneUser(
+    @Query('email') email: string,
+    @Query('role') role: string,
+  ) {
+    try {
+      const result = await this.usersService.findByEmail(email, role);
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
 
   // updateUser by default is already guarded by authentication, means users must be logged in to call this update user API route
   @Put(':id')
   updateUser(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateEmployerDto: UpdateUserDto,
+  ) {
+    try {
+      return this.usersService.update(+id, updateEmployerDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  // For users to reset their password if they forget so need public access
+  @Public()
+  @Put('/reset/:id')
+  resetUserPassword(
     @Param('id', ParseIntPipe) id: string,
     @Body() updateEmployerDto: UpdateUserDto,
   ) {

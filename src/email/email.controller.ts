@@ -1,15 +1,17 @@
 import { Body, Controller, HttpException, HttpStatus, InternalServerErrorException, Post } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('email')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
+  @Public()
   @Post('/reset')
   async createEmail(@Body() createEmailDto: CreateEmailDto) {
     try {
-        console.log(createEmailDto);
+      console.log(createEmailDto);
       return await this.emailService.resetPassword(createEmailDto);
     } catch (error) {
       if (error instanceof HttpException) {

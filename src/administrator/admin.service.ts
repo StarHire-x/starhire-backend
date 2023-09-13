@@ -113,11 +113,23 @@ export class AdministratorService {
       });
 
       if (!administrator) {
-        throw new NotFoundException('Administrator Id provided is not valid');
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Administrator not updated',
+          data: [],
+        };
       }
 
       Object.assign(administrator, updateAdministratorDto);
-      return await this.administratorRepository.save(administrator);
+      await this.administratorRepository.save(administrator);
+
+      if (administrator) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Administrator updated',
+          data: administrator,
+        };
+      } 
     } catch (error) {
       throw new HttpException(
         'Failed to update administrator',

@@ -134,7 +134,11 @@ export class JobSeekerService {
       });
 
       if (!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid');
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job seeker id not found',
+          data: [],
+        };
       }
 
       Object.assign(jobSeeker, updatedJobSeeker);
@@ -143,9 +147,20 @@ export class JobSeekerService {
         updatedJobSeeker.highestEducationStatus,
       );
 
-      return await this.jobSeekerRepository.save(jobSeeker);
+      await this.jobSeekerRepository.save(jobSeeker);
+
+      if (jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker updated',
+          data: jobSeeker,
+        };
+      } 
     } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Failed to update job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

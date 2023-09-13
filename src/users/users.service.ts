@@ -141,7 +141,6 @@ export class UsersService {
       } else if (role === UserRoleEnum.CORPORATE) {
         return await this.corporateService.findByEmail(email);
       } else if (role === UserRoleEnum.ADMINISTRATOR) {
-        //console.log('You hit admin end point');
         return await this.adminService.findByEmail(email);
       } else {
         // Handle the case where none of the roles match
@@ -217,13 +216,14 @@ export class UsersService {
   // Pass in the role, invoke update method of the corresponding repository
   async update(id: number, updateUserDto: any) {
     try {
-      if (updateUserDto.role === 'Job_Seeker') {
+      const role = mapUserRoleToEnum(updateUserDto.role);
+      if (role === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.update(id, updateUserDto);
-      } else if (updateUserDto.role === 'Administrator') {
-        await this.corporateService.update(id, updateUserDto);
-      } else if (updateUserDto.role === 'Corporate') {
-        return await this.adminService.update(id, updateUserDto);
-      } else if (updateUserDto.role === 'Recruiter') {
+      } else if (role === UserRoleEnum.ADMINISTRATOR) {
+        await this.adminService.update(id, updateUserDto);
+      } else if (role === UserRoleEnum.CORPORATE) {
+        return await this.corporateService.update(id, updateUserDto);
+      } else if (role === UserRoleEnum.RECRUITER) {
         return await this.recruiterService.update(id, updateUserDto);
       }
     } catch (err) {
@@ -236,13 +236,13 @@ export class UsersService {
 
   async remove(id: number, role: string) {
     try {
-      if (role === 'Job_Seeker') {
+      if (mapUserRoleToEnum(role) === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.remove(id);
-      } else if (role === 'Administrator') {
+      } else if (mapUserRoleToEnum(role) === UserRoleEnum.ADMINISTRATOR) {
         await this.corporateService.remove(id);
-      } else if (role === 'Corporate') {
+      } else if (mapUserRoleToEnum(role) === UserRoleEnum.CORPORATE) {
         return await this.adminService.remove(id);
-      } else if (role === 'Recruiter') {
+      } else if (mapUserRoleToEnum(role) === UserRoleEnum.RECRUITER) {
         return await this.recruiterService.remove(id);
       }
     } catch (err) {

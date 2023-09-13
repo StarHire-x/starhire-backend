@@ -24,6 +24,7 @@ import { TicketModule } from './ticket/ticket.module';
 import { ReviewModule } from './review/review.module';
 import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ConfigModule } from '@nestjs/config';
     ReviewModule,
     UploadModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

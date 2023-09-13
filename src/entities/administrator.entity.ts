@@ -9,7 +9,13 @@ export class Administrator extends User {
     cascade: true,
   })
   tickets: Ticket[];
-  
+
+  @Column()
+  fullName: string;
+
+  @Column()
+  profilePictureUrl: string;
+
   constructor(entity: Partial<User>) {
     super(entity);
   }

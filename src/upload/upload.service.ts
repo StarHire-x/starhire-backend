@@ -11,11 +11,14 @@ export class UploadService {
   constructor(private readonly configService: ConfigService) {}
 
   async upload(fileName: string, file: Buffer) {
+    const contentType = this.getContentTypeByFile(fileName);
+
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'starhire-uploader',
         Key: fileName,
         Body: file,
+        ContentType: contentType
       }),
     );
 
@@ -23,6 +26,29 @@ export class UploadService {
       'AWS_S3_REGION',
     )}.amazonaws.com/${fileName}`;
 
-    return s3Url;
+    console.log(s3Url);
+
+    return { url: s3Url };
+  }
+
+  private getContentTypeByFile(fileName: string): string {
+    const fileExtension = fileName.split(".").pop().toLowerCase();
+
+    console.log("File type")
+    console.log(fileExtension)
+    switch (fileExtension) {
+        case 'jpeg':
+        case 'jpg':
+            return 'image/jpeg';
+        case 'png':
+            return 'image/png';
+        case 'gif':
+            return 'image/gif';
+        case 'pdf':
+            return 'application/pdf';
+        // Add other file extensions and MIME types as needed
+        default:
+            return 'application/octet-stream'; // Fallback to binary if unknown type
+    }
   }
 }

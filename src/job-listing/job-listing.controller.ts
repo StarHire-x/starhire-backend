@@ -9,7 +9,6 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
-  Req,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
@@ -47,11 +46,27 @@ export class JobListingController {
     }
   }
 
-  @Get()
-  async findAllJobListingsByCorporate(@Req() req): Promise<JobListing[]> {
-    // This assumes that you've authenticated and attached the corporate's ID to the request object
-    const corporateId = req.user.id;
-    return this.jobListingService.findAllByCorporate(corporateId);
+  @Get('/corporate/:userId')
+  async findAllJobListingsByCorporate(
+    @Param('userId') userId: string,
+  ): Promise<JobListing[]> {
+    try {
+      const numericUserId = parseInt(userId, 10); // Convert string userId to a number.
+
+      if (isNaN(numericUserId)) {
+        // Check if the conversion was successful.
+        throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+      }
+      const result =
+        await this.jobListingService.findAllByCorporate(numericUserId);
+      return result;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   @Get(':id')

@@ -73,8 +73,10 @@ export function mapJobListingStatusToEnum(
   switch (status) {
     case 'Inactive':
       return JobListingStatusEnum.INACTIVE;
-    default:
+    case 'Active':
       return JobListingStatusEnum.ACTIVE;
+    default:
+      return JobListingStatusEnum.UNVERIFIED;
   }
 }
 
@@ -116,8 +118,10 @@ export function mapUserRoleToEnum(status: string): UserRoleEnum {
       return UserRoleEnum.CORPORATE;
     case 'administrator':
       return UserRoleEnum.ADMINISTRATOR;
-    default:
+    case 'job_seeker':
       return UserRoleEnum.JOBSEEKER;
+    default:
+      return null;
   }
 }
 

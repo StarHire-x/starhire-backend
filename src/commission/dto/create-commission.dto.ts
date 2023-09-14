@@ -3,5 +3,5 @@ export class CreateCommissionDto {
   commissionAmount: number;
   // Parent entities
   jobApplicationId: number;
-  recruiterId: number;
+  recruiterId: string;
 }

@@ -23,7 +23,7 @@ export class ChatMessage {
   isImportant: boolean;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   fileURL: string;

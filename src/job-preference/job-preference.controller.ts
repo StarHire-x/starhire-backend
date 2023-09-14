@@ -53,7 +53,7 @@ export class JobPreferenceController {
   }
 
   @Get('/job-seeker/:id')
-  findByJobSeekerId(@Param('id') id: number) {
+  findByJobSeekerId(@Param('id') id: string) {
     try {
       return this.jobPreferenceService.findByJobSeekerId(id);
     } catch (error) {

@@ -7,6 +7,6 @@ export class CreateJobApplicationDto {
   submissionDate: Date;
   // Parent entities
   jobListingId: number;
-  jobSeekerId: number;
-  recruiterId: number;
+  jobSeekerId: string;
+  recruiterId: string;
 }

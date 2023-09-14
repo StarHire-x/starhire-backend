@@ -56,14 +56,14 @@ export class JobListingController {
     @Param('userId') userId: string,
   ): Promise<JobListing[]> {
     try {
-      const numericUserId = parseInt(userId, 10); // Convert string userId to a number.
+      // const numericUserId = parseInt(userId, 10); // Convert string userId to a number.
 
-      if (isNaN(numericUserId)) {
-        // Check if the conversion was successful.
-        throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
-      }
+      // if (isNaN(numericUserId)) {
+      //   // Check if the conversion was successful.
+      //   throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
+      // }
       const result =
-        await this.jobListingService.findAllByCorporate(numericUserId);
+        await this.jobListingService.findAllByCorporate(userId);
       return result;
     } catch (error) {
       if (error instanceof HttpException) {

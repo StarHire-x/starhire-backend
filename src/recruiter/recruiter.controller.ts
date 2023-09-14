@@ -54,7 +54,7 @@ export class RecruiterController {
 
   // GET /recruiter?id=1
   @Get()
-  getNinjas(@Query('id') id: number) {
+  getNinjas(@Query('id') id: string) {
     try {
       return this.recruiterService.findOne(id);
     } catch (error) {
@@ -68,7 +68,7 @@ export class RecruiterController {
 
   // GET /recruiter/:id
   @Get(':id')
-  findOneRecruiter(@Param('id', ParseIntPipe) id: number) {
+  findOneRecruiter(@Param('id') id: string) {
     try {
       return this.recruiterService.findOne(id);
     } catch (error) {
@@ -82,7 +82,7 @@ export class RecruiterController {
 
   @Put(':id')
   updateRecruiter(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updatedRecruiter: UpdateRecruiterDto,
   ) {
     try {
@@ -97,7 +97,7 @@ export class RecruiterController {
   }
 
   @Delete(':id')
-  removeRecruiter(@Param('id', ParseIntPipe) id: number) {
+  removeRecruiter(@Param('id') id: string) {
     try {
       return this.recruiterService.remove(id);
     } catch (error) {

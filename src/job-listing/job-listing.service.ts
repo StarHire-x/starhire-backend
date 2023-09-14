@@ -63,7 +63,7 @@ export class JobListingService {
     return t;
   }
 
-  async findAllByCorporate(id: number): Promise<JobListing[]> {
+  async findAllByCorporate(id: string): Promise<JobListing[]> {
     // Find the corporate using the provided user ID
     const corporate = await this.corporateRepository.findOne({
       where: { userId: id },

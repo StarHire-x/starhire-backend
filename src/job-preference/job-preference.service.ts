@@ -69,7 +69,7 @@ export class JobPreferenceService {
     }
   }
 
-  async findByJobSeekerId(jobSeekerId: number) {
+  async findByJobSeekerId(jobSeekerId: string) {
     try {
       const findJobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId: jobSeekerId },

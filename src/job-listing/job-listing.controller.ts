@@ -9,16 +9,19 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { JobListing } from 'src/entities/jobListing.entity';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('job-listing')
 export class JobListingController {
   constructor(private readonly jobListingService: JobListingService) {}
 
+  @Public()
   @Post()
   // Note: Ensure dto contains a field for the Id of the parent entity parentId
   createJobListing(@Body() createJobListingDto: CreateJobListingDto) {
@@ -33,6 +36,7 @@ export class JobListingController {
     }
   }
 
+  @Public()
   @Get()
   findAllJobListings() {
     try {
@@ -46,6 +50,7 @@ export class JobListingController {
     }
   }
 
+  @Public()
   @Get('/corporate/:userId')
   async findAllJobListingsByCorporate(
     @Param('userId') userId: string,
@@ -69,6 +74,7 @@ export class JobListingController {
     }
   }
 
+  @Public()
   @Get(':id')
   // Ensure that id provided is a number
   findOne(@Param('id') id: number) {
@@ -83,6 +89,7 @@ export class JobListingController {
     }
   }
 
+  @Public()
   @Put(':id')
   updateJobListing(
     @Param('id') id: number, // Ensure that id provided is a number
@@ -99,6 +106,7 @@ export class JobListingController {
     }
   }
 
+  @Public()
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {

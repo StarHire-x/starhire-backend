@@ -214,7 +214,7 @@ export class UsersService {
   }
 
   // Pass in the role, invoke update method of the corresponding repository
-  async update(id: number, updateUserDto: any) {
+  async update(id: string, updateUserDto: any) {
     try {
       const role = mapUserRoleToEnum(updateUserDto.role);
       if (role === UserRoleEnum.JOBSEEKER) {
@@ -234,7 +234,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: number, role: string) {
+  async remove(id: string, role: string) {
     try {
       if (mapUserRoleToEnum(role) === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.remove(id);

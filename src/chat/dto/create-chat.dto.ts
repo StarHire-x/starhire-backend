@@ -2,7 +2,7 @@ import { CreateChatMessageDto } from 'src/chat-message/dto/create-chat-message.d
 
 export class CreateChatDto {
   lastUpdatedAt: Date;
-  jobSeekerId: number;
-  corporateId: number;
-  recruiterId: number;
+  jobSeekerId: string;
+  corporateId: string;
+  recruiterId: string;
 }

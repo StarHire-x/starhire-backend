@@ -3,6 +3,6 @@ export class CreateChatMessageDto {
   timestamp: Date;
   chatId: number;
   isImportant: boolean;
-  userId: number;
+  userId: string;
   fileURL: string;
 }

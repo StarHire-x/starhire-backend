@@ -36,7 +36,6 @@ export class JobListingController {
     }
   }
 
-  @Public()
   @Get()
   findAllJobListings() {
     try {
@@ -50,20 +49,16 @@ export class JobListingController {
     }
   }
 
-  @Public()
   @Get('/corporate/:userId')
-  async findAllJobListingsByCorporate(
-    @Param('userId') userId: string,
-  ): Promise<JobListing[]> {
+  async findAllJobListingsByCorporate(@Param('userId') userId: string) {
     try {
       // const numericUserId = parseInt(userId, 10); // Convert string userId to a number.
-
       // if (isNaN(numericUserId)) {
       //   // Check if the conversion was successful.
       //   throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
       // }
-      const result =
-        await this.jobListingService.findAllByCorporate(userId);
+      const result = await this.jobListingService.findAllByCorporate(userId);
+      console.log(result);
       return result;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -74,7 +69,6 @@ export class JobListingController {
     }
   }
 
-  @Public()
   @Get(':id')
   // Ensure that id provided is a number
   findOne(@Param('id') id: number) {
@@ -89,7 +83,6 @@ export class JobListingController {
     }
   }
 
-  @Public()
   @Put(':id')
   updateJobListing(
     @Param('id') id: number, // Ensure that id provided is a number
@@ -106,7 +99,6 @@ export class JobListingController {
     }
   }
 
-  @Public()
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {

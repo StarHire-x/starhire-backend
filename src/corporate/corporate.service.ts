@@ -84,7 +84,7 @@ export class CorporateService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
       const corporate = await this.corporateRepository.findOne({
         where: { userId: id },
@@ -129,7 +129,7 @@ export class CorporateService {
     }
   }
 
-  async update(id: number, updatedCorporate: UpdateCorporateDto) {
+  async update(id: string, updatedCorporate: UpdateCorporateDto) {
     try {
       const corporate = await this.corporateRepository.findOneBy({
         userId: id,
@@ -162,7 +162,7 @@ export class CorporateService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       return await this.corporateRepository.delete({ userId: id });
     } catch (err) {

@@ -40,7 +40,7 @@ export class JobSeekerController {
 
   // GET /job-seeker/:id
   @Get(':id')
-  findOneJobSeeker(@Param('id') id: number) {
+  findOneJobSeeker(@Param('id') id: string) {
     try {
       return this.jobSeekerService.findOne(id);
     } catch (error) {
@@ -54,7 +54,7 @@ export class JobSeekerController {
 
   @Put(':id')
   updateJobSeeker(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updatedJobSeeker: UpdateJobSeekerDto,
   ) {
     try {
@@ -69,7 +69,7 @@ export class JobSeekerController {
   }
 
   @Delete(':id')
-  removeJobSeeker(@Param('id') id: number) {
+  removeJobSeeker(@Param('id') id: string) {
     try {
       return this.jobSeekerService.remove(id);
     } catch (error) {

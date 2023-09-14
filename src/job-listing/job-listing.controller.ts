@@ -58,7 +58,7 @@ export class JobListingController {
       //   throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
       // }
       const result = await this.jobListingService.findAllByCorporate(userId);
-      console.log(result);
+      //console.log(result);
       return result;
     } catch (error) {
       if (error instanceof HttpException) {

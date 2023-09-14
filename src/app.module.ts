@@ -26,15 +26,17 @@ import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
 
+require("dotenv").config();
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'database-1.cvyrjcgz0edy.ap-southeast-2.rds.amazonaws.com',
-      port: 3306,
-      username: 'admin',
-      password: 'password',
-      database: 'starhire_backend_pair3',
+      host: process.env.DB_HOST_URL,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       entities: entityList,
       synchronize: true,
     }),

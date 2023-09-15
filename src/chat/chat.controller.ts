@@ -31,7 +31,7 @@ export class ChatController {
   }
 
   @Get('/user-chats/:id')
-  findUserChats(@Param('id') userId: number) {
+  findUserChats(@Param('id') userId: string) {
     return this.chatService.findUserChats(userId);
   }
 

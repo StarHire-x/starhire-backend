@@ -1,7 +1,7 @@
 import { CreateJobSeekerDto } from "src/job-seeker/dto/create-job-seeker.dto";
 
 export class CreateJobPreferenceDto {
-  jobSeekerId: number; //parent relationship
+  jobSeekerId: string; //parent relationship
   locationPreference: number;
   salaryPreference: number;
   culturePreference: number;

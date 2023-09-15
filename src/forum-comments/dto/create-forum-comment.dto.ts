@@ -2,6 +2,6 @@ export class CreateForumCommentDto {
   createdAt: Date;
   forumCommentMessage: string;
   isAnonymous: boolean;
-  jobSeekerId: number; // Parent relationship
+  jobSeekerId: string; // Parent relationship
   forumPostId: number; // Parent relationship
 }

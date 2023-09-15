@@ -1,10 +1,10 @@
 import TicketCategoryEnum from "src/enums/ticketCategory.enum";
 
 export class CreateTicketDto {
-  corporateId: number; // parent relationship
-  adminId: number; // parent relationship
-  recruiterId: number; // parent relationship
-  jobSeekerId: number; // parent relationship
+  corporateId: string; // parent relationship
+  adminId: string; // parent relationship
+  recruiterId: string; // parent relationship
+  jobSeekerId: string; // parent relationship
   ticketName: string;
   ticketDescription: string;
   isResolved: boolean;

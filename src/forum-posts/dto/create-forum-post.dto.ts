@@ -6,5 +6,5 @@ export class CreateForumPostDto {
   forumPostMessage: string;
   isAnonymous: boolean;
   forumCategory: ForumCategoryEnum;
-  jobSeekerId: number; // Parent relationship
+  jobSeekerId: string; // Parent relationship
 }

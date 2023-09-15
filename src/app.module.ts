@@ -30,11 +30,11 @@ import { EmailModule } from './email/email.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'starhire-new-database.cvyrjcgz0edy.ap-southeast-2.rds.amazonaws.com',
-      port: 3306,
-      username: 'a7fc761f2b1d002b',
-      password: 'e9c5e810d49002fbe',
-      database: 'starhire_backend_pair1',
+      host: process.env.DB_HOST_URL,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       entities: entityList,
       synchronize: true,
     }),

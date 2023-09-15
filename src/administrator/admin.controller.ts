@@ -52,7 +52,7 @@ export class AdministratorController {
 
   // GET /users/:id
   @Get(':id')
-  findOneAdministrator(@Param('id') id: number) {
+  findOneAdministrator(@Param('id') id: string) {
     try {
       return this.administratorService.findOne(id);
     } catch (error) {
@@ -66,7 +66,7 @@ export class AdministratorController {
 
   @Put(':id')
   updateAdministrator(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateAdministratorDto: UpdateAdministratorDto,
   ) {
     try {
@@ -81,7 +81,7 @@ export class AdministratorController {
   }
 
   @Delete(':id')
-  removeAdministrator(@Param('id') id:  number) {
+  removeAdministrator(@Param('id') id:  string) {
     try {
       return this.administratorService.remove(id);
     } catch (error) {

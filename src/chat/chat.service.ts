@@ -150,7 +150,7 @@ export class ChatService {
     return `This action returns a chat hello`;
   }
 
-  async findUserChats(userId: number) {
+  async findUserChats(userId: string) {
     try {
       const allChats = await this.chatRepository.find({
         where: [

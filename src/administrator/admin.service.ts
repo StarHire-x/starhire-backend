@@ -65,7 +65,7 @@ export class AdministratorService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
       return await this.administratorRepository.findOne({
         where: { userId: id },
@@ -106,7 +106,7 @@ export class AdministratorService {
     }
   }
 
-  async update(id: number, updateAdministratorDto: UpdateAdministratorDto) {
+  async update(id: string, updateAdministratorDto: UpdateAdministratorDto) {
     try {
       const administrator = await this.administratorRepository.findOneBy({
         userId: id,
@@ -138,7 +138,7 @@ export class AdministratorService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       return await this.administratorRepository.delete({
         userId: id,

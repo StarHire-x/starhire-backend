@@ -8,5 +8,5 @@ export class CreateJobListingDto {
   averageSalary: number;
   jobStartDate: Date;
   jobListingStatus: JobListingStatusEnum;
-  corporateId: number; // Parent relationship
+  corporateId: string; // Parent relationship
 }

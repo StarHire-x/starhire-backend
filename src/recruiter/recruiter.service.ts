@@ -113,7 +113,7 @@ export class RecruiterService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     try {
       const recruiter = await this.recruiterRepository.findOne({
         where: { userId: id },
@@ -130,7 +130,7 @@ export class RecruiterService {
     }
   }
 
-  async update(id: number, updatedRecruiter: UpdateRecruiterDto) {
+  async update(id: string, updatedRecruiter: UpdateRecruiterDto) {
     try {
       const recruiter = await this.recruiterRepository.findOneBy({
         userId: id,
@@ -163,7 +163,7 @@ export class RecruiterService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     try {
       return await this.recruiterRepository.delete({ userId: id });
     } catch (err) {

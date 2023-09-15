@@ -42,7 +42,7 @@ export class CorporateController {
 
   // GET /corporate?id=1
   @Get()
-  getNinjas(@Query('id') id: number) {
+  getNinjas(@Query('id') id: string) {
     try {
       return this.corporateService.findOne(id);
     } catch (error) {
@@ -56,7 +56,7 @@ export class CorporateController {
 
   // GET /corporate/:id
   @Get(':id')
-  findOneCorporate(@Param('id', ParseIntPipe) id: number) {
+  findOneCorporate(@Param('id') id: string) {
     try {
       return this.corporateService.findOne(id);
     } catch (error) {
@@ -70,7 +70,7 @@ export class CorporateController {
 
   @Put(':id')
   updateCorporate(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updatedCorporate: UpdateCorporateDto,
   ) {
     try {
@@ -85,7 +85,7 @@ export class CorporateController {
   }
 
   @Delete(':id')
-  removeCorporate(@Param('id', ParseIntPipe) id: number) {
+  removeCorporate(@Param('id') id: string) {
     try {
       return this.corporateService.remove(id);
     } catch (error) {

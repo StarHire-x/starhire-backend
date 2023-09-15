@@ -5,8 +5,8 @@ import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
 
 export abstract class User {
-  @PrimaryGeneratedColumn()
-  userId: number;
+  @PrimaryGeneratedColumn("uuid")
+  userId: string;
 
   @Column({ unique: true })
   userName: string;

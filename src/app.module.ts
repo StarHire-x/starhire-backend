@@ -26,6 +26,8 @@ import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
 
+require("dotenv").config();
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({

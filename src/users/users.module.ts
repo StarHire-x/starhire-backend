@@ -30,7 +30,7 @@ require("dotenv").config();
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '2 days' },
+      signOptions: { expiresIn: '30 days' }, // user with backend access token is valid for 30 days to call our Backend API routes, to sync with NextAuth's Frontend default 30 days of session
     }),
   ],
   controllers: [UsersController],

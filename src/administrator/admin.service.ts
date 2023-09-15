@@ -58,10 +58,7 @@ export class AdministratorService {
         };
       }
     } catch {
-      throw new HttpException(
-        'Failed to find admin',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Failed to find admin', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -83,6 +80,33 @@ export class AdministratorService {
     try {
       const admin = await this.administratorRepository.findOne({
         where: { email },
+      });
+
+      if (admin) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Admin found',
+          data: admin,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Admin not found',
+        };
+      }
+    } catch (err) {
+      console.error('Failed to find admin by email', err); // This logs the error for debugging.
+      throw new HttpException(
+        'An error occurred while trying to find the admin',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async findByUserId(userId: string) {
+    try {
+      const admin = await this.administratorRepository.findOne({
+        where: { userId },
       });
 
       if (admin) {
@@ -129,7 +153,7 @@ export class AdministratorService {
           message: 'Administrator updated',
           data: administrator,
         };
-      } 
+      }
     } catch (error) {
       throw new HttpException(
         'Failed to update administrator',

@@ -134,6 +134,25 @@ export class UsersController {
     }
   }
 
+  //find by user Id used in account management page, basically they can change anything except their user id
+  @Get('/search')
+  async findOneUserByUserId(
+    @Query('userId') userId: string,
+    @Query('role') role: string,
+  ) {
+    try {
+      const result = await this.usersService.findByUserId(userId, role);
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   // updateUser by default is already guarded by authentication, means users must be logged in to call this update user API route
   @Put(':id')
   updateUser(
@@ -171,10 +190,7 @@ export class UsersController {
 
   // deleteUser by default is already guarded by authentication, means users must be logged in to call this delete user API route
   @Delete(':id')
-  removeUser(
-    @Param('id') id: string,
-    @Query('role') role: string,
-  ) {
+  removeUser(@Param('id') id: string, @Query('role') role: string) {
     try {
       return this.usersService.remove(id, role);
     } catch (error) {

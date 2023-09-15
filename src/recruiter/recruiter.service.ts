@@ -39,9 +39,9 @@ export class RecruiterService {
       if (recruiter.role) {
         recruiter.role = mapUserRoleToEnum(recruiter.role);
       }
-      
+
       await this.recruiterRepository.save(recruiter);
-      
+
       if (recruiter) {
         return {
           statusCode: HttpStatus.OK,
@@ -113,6 +113,33 @@ export class RecruiterService {
     }
   }
 
+  //Added code to handle different request
+  async findByUserId(userId: string) {
+    try {
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId },
+      });
+
+      if (recruiter) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Recruiter found',
+          data: recruiter,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Recrutier not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find recruiter',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: string) {
     try {
       const recruiter = await this.recruiterRepository.findOne({
@@ -154,7 +181,7 @@ export class RecruiterService {
           message: 'Recruiter updated',
           data: recruiter,
         };
-      } 
+      }
     } catch (err) {
       throw new HttpException(
         'Failed to update recruiter',

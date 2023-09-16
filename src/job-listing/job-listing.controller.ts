@@ -99,7 +99,7 @@ export class JobListingController {
     }
   }
 
-  @Public()
+  // @Public()
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {

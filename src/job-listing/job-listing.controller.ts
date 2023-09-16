@@ -21,7 +21,6 @@ import { Public } from 'src/users/public.decorator';
 export class JobListingController {
   constructor(private readonly jobListingService: JobListingService) {}
 
-  @Public()
   @Post()
   // Note: Ensure dto contains a field for the Id of the parent entity parentId
   createJobListing(@Body() createJobListingDto: CreateJobListingDto) {
@@ -99,7 +98,6 @@ export class JobListingController {
     }
   }
 
-  // @Public()
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {

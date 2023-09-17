@@ -93,11 +93,25 @@ export class JobSeekerService {
     }
   }
 
-  /*
-  async findByEmail(email: string) {
+  //Added code to handle different request
+  async findByUserId(userId: string) {
     try {
-      return await this.jobSeekerRepository.findOne({
-        where: { email }});
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId },
+      });
+
+      if (jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker found',
+          data: jobSeeker,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job seeker not found',
+        };
+      }
     } catch (err) {
       throw new HttpException(
         'Failed to find job seeker',
@@ -105,7 +119,6 @@ export class JobSeekerService {
       );
     }
   }
-  */
 
   async findOne(id: string) {
     try {
@@ -155,7 +168,7 @@ export class JobSeekerService {
           message: 'Job seeker updated',
           data: jobSeeker,
         };
-      } 
+      }
     } catch (err) {
       throw new HttpException(
         'Failed to update job seeker',
@@ -166,7 +179,9 @@ export class JobSeekerService {
 
   async findAll() {
     try {
-      const jobSeekers = await this.jobSeekerRepository.find({relations: { chats: true }});
+      const jobSeekers = await this.jobSeekerRepository.find({
+        relations: { chats: true },
+      });
       if (jobSeekers.length > 0) {
         return {
           statusCode: HttpStatus.OK,

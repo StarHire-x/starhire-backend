@@ -45,7 +45,19 @@ export class JobListingService {
         ...dtoExcludingParentId,
         corporate,
       });
-      return await this.jobListingRepository.save(jobListing);
+      await this.jobListingRepository.save(jobListing);
+      if (jobListing) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job listing created',
+          data: jobListing,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job listing failed to be created',
+        };
+      }
     } catch (err) {
       throw new HttpException(
         'Failed to create new job listing',
@@ -59,24 +71,39 @@ export class JobListingService {
     const t = await this.jobListingRepository.find({
       relations: { corporate: true, jobApplications: true },
     });
-    console.log(t);
+    //console.log(t);
     return t;
   }
 
-  async findAllByCorporate(id: string): Promise<JobListing[]> {
+  async findAllByCorporate(id: string) {
     // Find the corporate using the provided user ID
-    const corporate = await this.corporateRepository.findOne({
-      where: { userId: id },
-      relations: ['jobListings'],
-    });
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: id },
+        relations: { jobListings: true },
+      });
 
-    if (!corporate) {
-      // If the corporate isn't found, throw an error or return an empty array based on your requirement
-      throw new NotFoundException('Corporate not found.');
+      if (!corporate) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job listing not found',
+          data: [],
+        };
+      }
+
+      // Fetch job listings that belong to the found corporate
+      console.log(corporate.jobListings);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job listing found',
+        data: corporate.jobListings,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job listing',
+        HttpStatus.BAD_REQUEST,
+      );
     }
-
-    // Fetch job listings that belong to the found corporate
-    return corporate.jobListings;
   }
 
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
@@ -115,7 +142,15 @@ export class JobListingService {
         updateJobListingDto.jobListingStatus = mappedStatus;
       }
       Object.assign(jobListing, updateJobListingDto);
-      return await this.jobListingRepository.save(jobListing);
+      await this.jobListingRepository.save(jobListing);
+
+      if (jobListing) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job listing updated',
+          data: jobListing,
+        };
+      }
     } catch (err) {
       throw new HttpException(
         'Failed to update job listing',

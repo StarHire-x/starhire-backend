@@ -155,6 +155,30 @@ export class UsersService {
   }
 
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
+  async findByUserId(userId: string, role: string) {
+    try {
+      role = mapUserRoleToEnum(role);
+      if (role === UserRoleEnum.JOBSEEKER) {
+        return await this.jobSeekerService.findByUserId(userId);
+      } else if (role === UserRoleEnum.RECRUITER) {
+        return await this.recruiterService.findByUserId(userId);
+      } else if (role === UserRoleEnum.CORPORATE) {
+        return await this.corporateService.findByUserId(userId);
+      } else if (role === UserRoleEnum.ADMINISTRATOR) {
+        return await this.adminService.findByUserId(userId);
+      } else {
+        // Handle the case where none of the roles match
+        throw new HttpException(
+          'Invalid role specified',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  // Needs to accept another argument called role, and invoke the method of the corresponding repository
   async signIn(email: string, password: string, role: string) {
     try {
       var retrievedUser: User = null;

@@ -19,7 +19,7 @@ export class Corporate extends User {
   companyRegistrationId: number;
 
   @Column()
-  corporatePicture: string;
+  profilePictureUrl: string;
 
   @Column()
   companyAddress: string;

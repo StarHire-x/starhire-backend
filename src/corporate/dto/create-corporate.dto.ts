@@ -4,6 +4,6 @@ import { CreateUserDto } from "src/users/dto/create-user.dto";
 export class CreateCorporateDto extends PartialType(CreateUserDto) {
   companyName: string;
   companyRegistrationId: number;
-  corporatePicture: string;
+  profilePictureUrl: string;
   companyAddress: string;
 }

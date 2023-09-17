@@ -244,7 +244,7 @@ export class UsersService {
       if (role === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.update(id, updateUserDto);
       } else if (role === UserRoleEnum.ADMINISTRATOR) {
-        await this.adminService.update(id, updateUserDto);
+        return await this.adminService.update(id, updateUserDto);
       } else if (role === UserRoleEnum.CORPORATE) {
         return await this.corporateService.update(id, updateUserDto);
       } else if (role === UserRoleEnum.RECRUITER) {

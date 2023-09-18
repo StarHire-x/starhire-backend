@@ -34,6 +34,14 @@ export class JobListingService {
         throw new NotFoundException('Corporate Id provided is not valid');
       }
 
+      // Ensure jobStartDate is a future date
+      if (createJobListingDto.jobStartDate <= new Date()) {
+        throw new HttpException(
+          'Job start date must be a future date.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       // Ensure jobListingStatus field is a valid enum
       const mappedStatus = mapJobListingStatusToEnum(
         createJobListingDto.jobListingStatus,

@@ -18,7 +18,7 @@ export class JobListing {
   @Column()
   title: string;
 
-  @Column()
+  @Column('varchar', { length: 10000 })
   description: string;
 
   @Column()

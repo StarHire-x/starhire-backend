@@ -155,12 +155,15 @@ export class UsersController {
 
   // updateUser by default is already guarded by authentication, means users must be logged in to call this update user API route
   @Put(':id')
-  updateUser(
+  async updateUser(
     @Param('id') id: string,
     @Body() updateEmployerDto: UpdateUserDto,
   ) {
     try {
-      return this.usersService.update(id, updateEmployerDto);
+      console.log(updateEmployerDto);
+      const result = await this.usersService.update(id, updateEmployerDto);
+      console.log(result);
+      return result;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -173,12 +176,12 @@ export class UsersController {
   // For users to reset their password if they forget so need public access
   @Public()
   @Put('/reset/:id')
-  resetUserPassword(
+  async resetUserPassword(
     @Param('id') id: string,
     @Body() updateEmployerDto: UpdateUserDto,
   ) {
     try {
-      return this.usersService.update(id, updateEmployerDto);
+      return await this.usersService.update(id, updateEmployerDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -190,9 +193,9 @@ export class UsersController {
 
   // deleteUser by default is already guarded by authentication, means users must be logged in to call this delete user API route
   @Delete(':id')
-  removeUser(@Param('id') id: string, @Query('role') role: string) {
+  async removeUser(@Param('id') id: string, @Query('role') role: string) {
     try {
-      return this.usersService.remove(id, role);
+      return await this.usersService.remove(id, role);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(

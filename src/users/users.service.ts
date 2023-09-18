@@ -179,61 +179,79 @@ export class UsersService {
   }
 
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
-  async signIn(email: string, password: string, role: string) {
+  async signIn(email: string, passwordProvided: string, role: string) {
     try {
-      var retrievedUser: User = null;
-
+      // Validate and map the user role
       role = mapUserRoleToEnum(role);
-      if (role === UserRoleEnum.JOBSEEKER) {
-        retrievedUser = (await this.jobSeekerService.findByEmail(email)).data;
-      } else if (role === UserRoleEnum.RECRUITER) {
-        retrievedUser = (await this.recruiterService.findByEmail(email)).data;
-      } else if (role === UserRoleEnum.CORPORATE) {
-        retrievedUser = (await this.corporateService.findByEmail(email)).data;
-      } else if (role === UserRoleEnum.ADMINISTRATOR) {
-        //console.log('You hit admin end point');
-        retrievedUser = (await this.adminService.findByEmail(email)).data;
-      } else {
-        // Handle the case where none of the roles match
+      if (!role) {
         throw new HttpException(
           'Invalid role specified',
           HttpStatus.BAD_REQUEST,
         );
       }
 
-      if (retrievedUser) {
-        console.log('before checking password');
-        const isPasswordCorrect = await bcrypt.compare(
-          password,
-          retrievedUser.password,
+      // Find the user by email based on the role
+      const userService = this.getUserServiceBasedOnRole(role);
+      const retrievedUser = (await userService.findByEmail(email)).data;
+
+      if (!retrievedUser) {
+        throw new HttpException(
+          `User ${email} not found`,
+          HttpStatus.NOT_FOUND,
         );
-
-        console.log(isPasswordCorrect);
-
-        if (isPasswordCorrect) {
-          const payload = {
-            sub: retrievedUser.userId,
-            username: retrievedUser.userName,
-            email: retrievedUser.email,
-            role: retrievedUser.role,
-          };
-          const jwtAccessToken = await this.jwtService.signAsync(payload);
-          const { password, ...retrievedUserWithoutPassword } = retrievedUser; // don't send back password back to frontend
-          return {
-            statusCode: HttpStatus.OK,
-            message: `User ${email} found`,
-            data: retrievedUserWithoutPassword,
-            jwtAccessToken: jwtAccessToken,
-          };
-        } else {
-          return {
-            statusCode: HttpStatus.NOT_FOUND,
-            message: `User ${email} not found`,
-          };
-        }
       }
-    } catch (err) {
-      throw err;
+
+      // Check the password
+      const isPasswordCorrect = await bcrypt.compare(
+        passwordProvided,
+        retrievedUser.password,
+      );
+
+      if (!isPasswordCorrect) {
+        throw new HttpException(
+          'Incorrect password provided',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // Generate JWT token
+      const payload = {
+        sub: retrievedUser.userId,
+        username: retrievedUser.userName,
+        email: retrievedUser.email,
+        role: retrievedUser.role,
+      };
+      const jwtAccessToken = await this.jwtService.signAsync(payload);
+
+      // Return the user data and JWT token
+      const { password, ...retrievedUserWithoutPassword } = retrievedUser;
+      return {
+        statusCode: HttpStatus.OK,
+        message: `User ${email} found`,
+        data: retrievedUserWithoutPassword,
+        jwtAccessToken: jwtAccessToken,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  // Helper function to get the appropriate user service based on role
+  private getUserServiceBasedOnRole(role: string) {
+    switch (role) {
+      case UserRoleEnum.JOBSEEKER:
+        return this.jobSeekerService;
+      case UserRoleEnum.RECRUITER:
+        return this.recruiterService;
+      case UserRoleEnum.CORPORATE:
+        return this.corporateService;
+      case UserRoleEnum.ADMINISTRATOR:
+        return this.adminService;
+      default:
+        throw new HttpException(
+          'Invalid role specified',
+          HttpStatus.BAD_REQUEST,
+        );
     }
   }
 
@@ -244,7 +262,7 @@ export class UsersService {
       if (role === UserRoleEnum.JOBSEEKER) {
         return await this.jobSeekerService.update(id, updateUserDto);
       } else if (role === UserRoleEnum.ADMINISTRATOR) {
-        await this.adminService.update(id, updateUserDto);
+        return await this.adminService.update(id, updateUserDto);
       } else if (role === UserRoleEnum.CORPORATE) {
         return await this.corporateService.update(id, updateUserDto);
       } else if (role === UserRoleEnum.RECRUITER) {

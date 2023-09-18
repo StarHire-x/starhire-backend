@@ -10,7 +10,7 @@ import StarCategoryEnum from 'src/enums/starCategory.enum';
 import { Corporate } from './corporate.entity';
 import { JobSeeker } from './jobSeeker.entity';
 
-@Entity('reviews')
+@Entity({ name: 'reviews' })
 export class Review {
   @PrimaryGeneratedColumn()
   reviewId: number;
@@ -34,4 +34,8 @@ export class Review {
 
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.reviews)
   jobSeeker: JobSeeker;
+
+  constructor(entity: Partial<Review>) {
+    Object.assign(this, entity);
+  }
 }

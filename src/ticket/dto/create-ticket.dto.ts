@@ -1,4 +1,4 @@
-import TicketCategoryEnum from "src/enums/ticketCategory.enum";
+import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
 
 export class CreateTicketDto {
   corporateId: string; // parent relationship

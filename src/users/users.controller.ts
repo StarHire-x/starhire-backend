@@ -152,8 +152,7 @@ export class UsersController {
     }
   }
 
-  // @Roles(UserRoleEnum.RECRUITER) // User mut be logged in + only recruiter can get retrieve all users
-  @Public()
+  @Roles(UserRoleEnum.RECRUITER) // User mut be logged in + only recruiter can get retrieve all users
   @Get('/can-create-chat/:id') // only used by Recruiter
   async findAllCreateChats(@Param('id') userId: number) {
     try {

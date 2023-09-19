@@ -16,6 +16,7 @@ import UserRoleEnum from 'src/enums/userRole.enum';
 import { mapUserRoleToEnum } from 'src/common/mapStringToEnum';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import UserStatusEnum from 'src/enums/userStatus.enum';
 
 @Injectable()
 export class UsersService {
@@ -199,6 +200,14 @@ export class UsersService {
       if (!retrievedUser) {
         throw new HttpException(
           `User ${email} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // check if user is inactive or not
+      if (retrievedUser.status === UserStatusEnum.INACTIVE) {
+        throw new HttpException(
+          `User ${email} account status is Inactive. Please contact our Admin if you want to activate back your account.`,
           HttpStatus.NOT_FOUND,
         );
       }

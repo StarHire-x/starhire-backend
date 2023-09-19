@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cors from 'cors';
 
+require("dotenv").config();
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -18,7 +20,7 @@ async function bootstrap() {
   // }));
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow requests from this origin
+    origin: [process.env.FRONTEND_CLIENT, process.env.FRONTEND_ADMIN], // Allow requests from this origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed HTTP methods
     credentials: true, // Allow credentials (cookies, headers, etc.)
   });

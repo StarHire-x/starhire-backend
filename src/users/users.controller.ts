@@ -26,7 +26,6 @@ import { Roles } from './roles.decorator';
 import UserRoleEnum from 'src/enums/userRole.enum';
 import { RolesGuard } from './roles.guard';
 
-
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -143,6 +142,22 @@ export class UsersController {
     try {
       const result = await this.usersService.findByUserId(userId, role);
       console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  // @Roles(UserRoleEnum.RECRUITER) // User mut be logged in + only recruiter can get retrieve all users
+  @Public()
+  @Get('/can-create-chat/:id') // only used by Recruiter
+  async findAllCreateChats(@Param('id') userId: number) {
+    try {
+      const result = await this.usersService.findAllCreateChats(userId);
       return result;
     } catch (error) {
       if (error instanceof NotFoundException) {

@@ -26,7 +26,6 @@ import { Roles } from './roles.decorator';
 import UserRoleEnum from 'src/enums/userRole.enum';
 import { RolesGuard } from './roles.guard';
 
-
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -61,25 +60,6 @@ export class UsersController {
       }
     }
   }
-
-  // GET /users?id=1&?
-  // @Get('/login')
-  // async getUserByEmailandRole(
-  //   @Query('email') email: string,
-  //   @Query('role') role: string,
-  // ) {
-  //   try {
-  //     const result = await this.usersService.findByEmail(email, role);
-  //     console.log(result);
-  //     return result;
-  //   } catch (error) {
-  //     if (error instanceof HttpException) {
-  //       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-  //     } else {
-  //       throw new InternalServerErrorException('Internal server error');
-  //     }
-  //   }
-  // }
 
   @Public() // public because everyone can log in
   @Get('/login')
@@ -126,9 +106,11 @@ export class UsersController {
       console.log(result);
       return result;
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
+        console.log('Internal server error thrown', error.message);
+
         throw new InternalServerErrorException('Internal server error');
       }
     }

@@ -134,23 +134,25 @@ export class UsersService {
   async findByEmail(email: string, role: string) {
     try {
       role = mapUserRoleToEnum(role);
-      if (role === UserRoleEnum.JOBSEEKER) {
-        return await this.jobSeekerService.findByEmail(email);
-      } else if (role === UserRoleEnum.RECRUITER) {
-        return await this.recruiterService.findByEmail(email);
-      } else if (role === UserRoleEnum.CORPORATE) {
-        return await this.corporateService.findByEmail(email);
-      } else if (role === UserRoleEnum.ADMINISTRATOR) {
-        return await this.adminService.findByEmail(email);
-      } else {
-        // Handle the case where none of the roles match
+      if (!role) {
         throw new HttpException(
           'Invalid role specified',
           HttpStatus.BAD_REQUEST,
         );
       }
-    } catch (err) {
-      throw err;
+      // Find the user by email based on the role
+      const userService = this.getUserServiceBasedOnRole(role);
+      const retrievedUser = (await userService.findByEmail(email)).data;
+
+      if (!retrievedUser) {
+        throw new HttpException(
+          `User ${email} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return retrievedUser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 

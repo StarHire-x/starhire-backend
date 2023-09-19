@@ -181,6 +181,24 @@ export class UsersService {
     }
   }
 
+  // find all jobSeekers and Corporates that does not have an existing chat with recruiter
+  async findAllCreateChats(userId: number) {
+    try {
+      const [jobSeekersResponse, corporatesResponse] = await Promise.all([
+        this.jobSeekerService.findAll(),
+        this.corporateService.findAll(),
+      ]);
+      const allUsers = [...jobSeekersResponse.data, ...corporatesResponse.data];
+      const output = allUsers.filter(
+        (user) =>
+          user.status == 'Active' && !hasChattedWithUser(user.chats, userId),
+      );
+      return output;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   // Needs to accept another argument called role, and invoke the method of the corresponding repository
   async signIn(email: string, passwordProvided: string, role: string) {
     try {
@@ -306,3 +324,15 @@ export class UsersService {
     }
   }
 }
+
+const hasChattedWithUser = (chats, userId) => {
+  // console.log(chats);
+  if (chats.length > 0) {
+    for (let i = 0; i < chats.length; i++) {
+      if (chats[i].recruiter.userId === userId) {
+        return true;
+      }
+    }
+  }
+  return false;
+};

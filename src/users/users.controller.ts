@@ -135,6 +135,22 @@ export class UsersController {
     }
   }
 
+  // @Roles(UserRoleEnum.RECRUITER) // User mut be logged in + only recruiter can get retrieve all users
+  @Public()
+  @Get('/can-create-chat/:id') // only used by Recruiter
+  async findAllCreateChats(@Param('id') userId: number) {
+    try {
+      const result = await this.usersService.findAllCreateChats(userId);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   // updateUser by default is already guarded by authentication, means users must be logged in to call this update user API route
   @Put(':id')
   async updateUser(

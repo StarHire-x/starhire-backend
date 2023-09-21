@@ -2,8 +2,10 @@ import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 
 export class CreateJobListingDto {
   title: string;
+  overview: string;
+  responsibilities: string;
+  requirements: string;
   jobLocation: string;
-  description: string;
   listingDate: Date;
   averageSalary: number;
   jobStartDate: Date;

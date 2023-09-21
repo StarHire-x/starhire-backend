@@ -3,7 +3,9 @@ import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 
 class UpdateDto {
   title: string;
-  description: string;
+  overview: string;
+  responsibilities: string;
+  requirements: string;
   jobLocation: string;
   listingDate: Date;
   averageSalary: number;

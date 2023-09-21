@@ -18,8 +18,14 @@ export class JobListing {
   @Column()
   title: string;
 
-  @Column('varchar', { length: 10000 })
-  description: string;
+  @Column('varchar', { length: 5000 })
+  overview: string;
+
+  @Column('varchar', { length: 5000 })
+  responsibilities: string;
+
+  @Column('varchar', { length: 5000 })
+  requirements: string;
 
   @Column()
   jobLocation: string;

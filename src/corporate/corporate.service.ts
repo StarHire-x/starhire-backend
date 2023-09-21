@@ -39,6 +39,16 @@ export class CorporateService {
       if (corporate.role) {
         corporate.role = mapUserRoleToEnum(corporate.role);
       }
+
+      // check for duplicate UEN number
+      const findUEN = await this.corporateRepository.findOne({
+        where: { companyRegistrationId: corporate.companyRegistrationId }
+      });
+
+      if (findUEN) {
+        throw new ConflictException(`This UEN number ${corporate.companyRegistrationId} has already been used. Please use a different UEN number.`);
+      }
+
       await this.corporateRepository.save(corporate);
       if (corporate) {
         return {
@@ -53,6 +63,11 @@ export class CorporateService {
         };
       }
     } catch (error) {
+      const { response } = error;
+      if (response?.statusCode === 409) {
+        throw new ConflictException(response.message);
+      }
+
       throw new HttpException(
         'Failed to create new corporate',
         HttpStatus.BAD_REQUEST,

@@ -17,12 +17,23 @@ import { mapUserRoleToEnum } from 'src/common/mapStringToEnum';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import UserStatusEnum from 'src/enums/userStatus.enum';
+import { CreateUserDto } from './dto/create-user.dto';
+import { Administrator } from 'src/entities/administrator.entity';
+import { Recruiter } from 'src/entities/recruiter.entity';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Corporate } from 'src/entities/corporate.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(Administrator)
+    private readonly adminRepo: Repository<Administrator>,
+    @InjectRepository(Recruiter)
+    private readonly recruiterRepo: Repository<Recruiter>,
+    @InjectRepository(JobSeeker)
+    private readonly jobSeekerRepo: Repository<JobSeeker>,
+    @InjectRepository(Corporate)
+    private readonly corporateRepo: Repository<Corporate>,
     private jobSeekerService: JobSeekerService,
     private corporateService: CorporateService,
     private adminService: AdministratorService,
@@ -30,8 +41,84 @@ export class UsersService {
     private jwtService: JwtService,
   ) {}
 
+  // check for duplicate username / email / contact number across all user tables
+  async checkForCommonUserDuplicates(createUserDto: CreateUserDto) {
+    try {
+
+      // username
+      const findUserNameAdmin = await this.adminRepo.findOne({
+        where: { userName: createUserDto.userName }
+      });
+
+      const findUserNameRecruiter = await this.recruiterRepo.findOne({
+        where: { userName: createUserDto.userName }
+      });
+
+      const findUserNameJobSeeker = await this.jobSeekerRepo.findOne({
+        where: { userName: createUserDto.userName }
+      });
+
+      const findUserNameCorporate = await this.corporateRepo.findOne({
+        where: { userName: createUserDto.userName }
+      });
+
+      if (findUserNameAdmin || findUserNameRecruiter || findUserNameJobSeeker || findUserNameCorporate) {
+        throw new ConflictException(`This username ${createUserDto.userName} has already been used. Please use a different username.`);
+      }
+
+      // email
+      const findEmailAdmin = await this.adminRepo.findOne({
+        where: { email : createUserDto.email }
+      });
+
+      const findEmailRecruiter = await this.recruiterRepo.findOne({
+        where: { email : createUserDto.email }
+      });
+
+      const findEmailJobSeeker = await this.jobSeekerRepo.findOne({
+        where: { email : createUserDto.email }
+      });
+
+      const findEmailCorporate = await this.corporateRepo.findOne({
+        where: { email : createUserDto.email }
+      });
+
+      if (findEmailAdmin || findEmailRecruiter || findEmailJobSeeker || findEmailCorporate) {
+        throw new ConflictException(`This email ${createUserDto.email} has already been used. Please use a different email.`);
+      }
+
+      // contact no
+      const findContactNoAdmin = await this.adminRepo.findOne({
+        where: { contactNo: createUserDto.contactNo }
+      });
+
+      const findContactNoRecruiter = await this.recruiterRepo.findOne({
+        where: { contactNo: createUserDto.contactNo }
+      });
+
+      const findContactNoJobSeeker = await this.jobSeekerRepo.findOne({
+        where: { contactNo: createUserDto.contactNo }
+      });
+
+      const findContactNoCorporate = await this.corporateRepo.findOne({
+        where: { contactNo: createUserDto.contactNo }
+      });
+
+      if (findContactNoAdmin || findContactNoRecruiter || findContactNoJobSeeker || findContactNoCorporate) {
+        throw new ConflictException(`This contact number ${createUserDto.contactNo} has already been used. Please use a different contact number.`);
+      }
+    } catch (error) {
+      const { response } = error;
+      if (response?.statusCode === 409) {
+        throw new ConflictException(response.message);
+      }
+      throw error;
+    }
+  }
+
   async create(createUserDto: any) {
     try {
+      await this.checkForCommonUserDuplicates(createUserDto);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 5); // hash password before storing in db
       createUserDto.password = hashedPassword;
       createUserDto.role = mapUserRoleToEnum(createUserDto.role);
@@ -51,6 +138,11 @@ export class UsersService {
         );
       }
     } catch (err) {
+      // handle the case where there is duplicate username / email / contact no
+      const { response } = err;
+      if (response?.statusCode === 409) {
+        throw new ConflictException(response.message);
+      }
       throw err;
     }
   }

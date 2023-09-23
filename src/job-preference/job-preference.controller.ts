@@ -11,6 +11,8 @@ import {
   HttpException,
   InternalServerErrorException,
   HttpStatus,
+  ConflictException,
+  Query,
 } from '@nestjs/common';
 import { JobPreferenceService } from './job-preference.service';
 import { CreateJobPreferenceDto } from './dto/create-job-preference.dto';
@@ -21,11 +23,12 @@ export class JobPreferenceController {
   constructor(private readonly jobPreferenceService: JobPreferenceService) {}
 
   @Post()
-  create(@Body() createJobPreferenceDto: CreateJobPreferenceDto) {
+  async create(@Body() createJobPreferenceDto: CreateJobPreferenceDto) {
     try {
-      return this.jobPreferenceService.create(createJobPreferenceDto);
+      console.log('Hello there');
+      return await this.jobPreferenceService.create(createJobPreferenceDto);
     } catch (error) {
-      if (error instanceof HttpException) {
+      if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
@@ -71,6 +74,7 @@ export class JobPreferenceController {
     @Body() updateEmployerDto: UpdateJobPreferenceDto,
   ) {
     try {
+      console.log("Hit update endpoint");
       return this.jobPreferenceService.update(id, updateEmployerDto);
     } catch (error) {
       if (error instanceof NotFoundException) {

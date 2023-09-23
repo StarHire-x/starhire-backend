@@ -43,9 +43,24 @@ export class JobPreferenceService {
         jobSeeker: findJobSeeker,
       });
       await this.jobPreferenceRepository.save(jobPreference);
+      if (jobPreference) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job preference is created',
+          data: jobPreference,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job preference failed to be created',
+        };
+      }
       return jobPreference;
     } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Failed to find job preference',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -75,13 +90,20 @@ export class JobPreferenceService {
         where: { userId: jobSeekerId },
         relations: { jobPreference: true },
       });
+
       if (!findJobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       } else if (findJobSeeker.jobPreference == null) {
         throw new NotFoundException('Job Seeker has no Job Preference!');
       }
 
-      return findJobSeeker.jobPreference;
+      if(findJobSeeker.jobPreference) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job preference is found',
+          data: findJobSeeker.jobPreference,
+        };
+      }
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
@@ -95,7 +117,19 @@ export class JobPreferenceService {
     }
     const { jobSeekerId, ...dtoExcludeRelationship } = updateJobPreference;
     Object.assign(jobPreference, dtoExcludeRelationship);
-    return await this.jobPreferenceRepository.save(jobPreference);
+    await this.jobPreferenceRepository.save(jobPreference);
+    if(jobPreference) {
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is found',
+        data: jobPreference
+      };
+    } else {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Job preference is not found',
+      };
+    }
   }
   catch(err) {
     throw new HttpException(err.message, HttpStatus.BAD_REQUEST);

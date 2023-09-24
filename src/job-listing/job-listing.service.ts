@@ -107,10 +107,7 @@ export class JobListingService {
         data: corporate.jobListings,
       };
     } catch (err) {
-      throw new HttpException(
-        'Failed to find job listing',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 

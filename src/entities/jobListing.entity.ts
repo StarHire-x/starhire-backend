@@ -3,12 +3,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { JobApplication } from './jobApplication.entity';
 import { Corporate } from './corporate.entity';
+import { JobSeeker } from './jobSeeker.entity';
 
 @Entity({ name: 'jobListings' })
 export class JobListing {
@@ -56,6 +58,11 @@ export class JobListing {
     },
   )
   jobApplications: JobApplication[];
+
+  @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.jobListings, {
+    nullable: true,
+  })
+  jobSeekers: JobSeeker[];
 
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);

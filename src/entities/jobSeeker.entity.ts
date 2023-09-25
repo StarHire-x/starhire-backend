@@ -1,4 +1,4 @@
-import { Column, OneToMany, OneToOne } from 'typeorm';
+import { Column, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { Entity } from 'typeorm';
 import { User } from './user.entity';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
@@ -11,6 +11,7 @@ import { JobPreference } from './jobPreference.entity';
 import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
 import { JobExperience } from './jobExperience.entity';
+import { JobListing } from './jobListing.entity';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -78,6 +79,12 @@ export class JobSeeker extends User {
     cascade: true,
   })
   reviews: Review[];
+
+  @ManyToMany(() => JobListing, (jobListing) => jobListing.jobSeekers, {
+    cascade: true,
+    nullable: true,
+  })
+  jobListings: JobListing[];
 
   constructor(entity: Partial<JobSeeker>) {
     super(entity);

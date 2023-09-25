@@ -7,7 +7,7 @@ import {
 import { CreateJobExperienceDto } from './dto/create-job-experience.dto';
 import { UpdateJobExperienceDto } from './dto/update-job-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobExperience } from 'src/entities/jobExperience';
+import { JobExperience } from 'src/entities/jobExperience.entity';
 import { Repository } from 'typeorm';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 
@@ -22,6 +22,7 @@ export class JobExperienceService {
 
   async create(createJobExperienceDto: CreateJobExperienceDto) {
     try {
+      console.log("Hello")
       const { jobSeekerId, ...dtoExcludeRelationship } = createJobExperienceDto;
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
@@ -69,8 +70,9 @@ export class JobExperienceService {
 
   async findByJobSeekerId(jobSeekerId: string) {
     try {
-      const jobSeeker = await this.jobSeekerRepository.findOneBy({
-        userId: jobSeekerId,
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: { jobExperiences: true },
       });
 
       if (!jobSeeker) {
@@ -80,7 +82,7 @@ export class JobExperienceService {
       return {
         statusCode: HttpStatus.OK,
         message: 'Job experience is found',
-        data: jobSeeker.jobExperience,
+        data: jobSeeker.jobExperiences,
       };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);

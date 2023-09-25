@@ -10,7 +10,7 @@ import { Chat } from './chat.entity';
 import { JobPreference } from './jobPreference.entity';
 import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
-import { JobExperience } from './jobExperience';
+import { JobExperience } from './jobExperience.entity';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -64,11 +64,10 @@ export class JobSeeker extends User {
   })
   jobPreference: JobPreference;
 
-  @OneToOne(() => JobExperience, (jobExperience) => jobExperience.jobSeeker, {
+  @OneToMany(() => JobExperience, (jobExperience) => jobExperience.jobSeeker, {
     cascade: true,
-    nullable: true, // one-to-one optional
   })
-  jobExperience: JobExperience;
+  jobExperiences: JobExperience[];
 
   @OneToMany(() => Ticket, (ticket) => ticket.jobSeeker, {
     cascade: true,

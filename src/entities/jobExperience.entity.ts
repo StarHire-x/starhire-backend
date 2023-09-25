@@ -1,4 +1,4 @@
-import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm';
 import { JobSeeker } from './jobSeeker.entity';
 
@@ -22,7 +22,9 @@ export class JobExperience {
   @Column()
   endDate: Date;
 
-  @OneToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobExperience)
+  @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobExperiences, {
+    nullable: false,
+  })
   @JoinColumn()
   jobSeeker: JobSeeker;
 

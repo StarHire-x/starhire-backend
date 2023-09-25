@@ -111,7 +111,11 @@ export class JobExperienceService {
 
   async remove(id: number) {
     try {
-      return await this.jobExperienceRepository.delete({ jobExperienceId: id });
+      await this.jobExperienceRepository.delete({ jobExperienceId: id });
+      return {
+        statusCode: 200,
+        message: 'Job experience is deleted',
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

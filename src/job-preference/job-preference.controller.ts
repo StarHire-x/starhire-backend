@@ -3,16 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
   NotFoundException,
   HttpException,
-  InternalServerErrorException,
   HttpStatus,
   ConflictException,
-  Query,
 } from '@nestjs/common';
 import { JobPreferenceService } from './job-preference.service';
 import { CreateJobPreferenceDto } from './dto/create-job-preference.dto';
@@ -25,13 +22,17 @@ export class JobPreferenceController {
   @Post()
   async create(@Body() createJobPreferenceDto: CreateJobPreferenceDto) {
     try {
-      console.log('Hello there');
       return await this.jobPreferenceService.create(createJobPreferenceDto);
     } catch (error) {
-      if (error instanceof ConflictException) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else if (error instanceof ConflictException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
-        throw new InternalServerErrorException('Internal server error');
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
   }
@@ -47,10 +48,13 @@ export class JobPreferenceController {
     try {
       return this.jobPreferenceService.findOne(id);
     } catch (error) {
-      if (error instanceof HttpException) {
+      if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
       } else {
-        throw new InternalServerErrorException('Internal server error');
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
   }
@@ -60,27 +64,38 @@ export class JobPreferenceController {
     try {
       return this.jobPreferenceService.findByJobSeekerId(id);
     } catch (error) {
-      if (error instanceof HttpException) {
+      if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else if (error instanceof ConflictException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
-        throw new InternalServerErrorException('Internal server error');
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: number,
-    @Body() updateEmployerDto: UpdateJobPreferenceDto,
+    @Body() updateJobPreferenceDto: UpdateJobPreferenceDto,
   ) {
     try {
-      console.log("Hit update endpoint");
-      return this.jobPreferenceService.update(id, updateEmployerDto);
+      const updatedJobPreference = await this.jobPreferenceService.update(
+        id,
+        updateJobPreferenceDto,
+      );
+      return updatedJobPreference;
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+        throw new NotFoundException(error.message);
       } else {
-        throw new InternalServerErrorException('Internal server error');
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
   }
@@ -96,7 +111,10 @@ export class JobPreferenceController {
           HttpStatus.NOT_FOUND,
         );
       } else {
-        throw new InternalServerErrorException('Internal server error');
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
   }

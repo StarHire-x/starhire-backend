@@ -1,7 +1,6 @@
 import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm';
 import { JobSeeker } from './jobSeeker.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'jobPreferences' })
 export class JobPreference {

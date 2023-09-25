@@ -26,41 +26,30 @@ export class JobPreferenceService {
   async create(createJobPreference: CreateJobPreferenceDto) {
     try {
       const { jobSeekerId, ...dtoExcludeRelationship } = createJobPreference;
-      const findJobSeeker = await this.jobSeekerRepository.findOneBy({
+      const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
       });
 
-      if (!findJobSeeker) {
+      if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
-      if (findJobSeeker.jobPreference != null) {
+      if (jobSeeker.jobPreference) {
         throw new ConflictException('Job Seeker already has a Job Preference!');
       }
 
       // Create a new JobPreference entity
       const jobPreference = new JobPreference({
         ...dtoExcludeRelationship,
-        jobSeeker: findJobSeeker,
+        jobSeeker: jobSeeker,
       });
       await this.jobPreferenceRepository.save(jobPreference);
-      if (jobPreference) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Job preference is created',
-          data: jobPreference,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job preference failed to be created',
-        };
-      }
-      return jobPreference;
-    } catch (err) {
-      throw new HttpException(
-        'Failed to find job preference',
-        HttpStatus.BAD_REQUEST,
-      );
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is created',
+        data: jobPreference,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -75,64 +64,56 @@ export class JobPreferenceService {
         relations: { jobSeeker: true },
       });
 
+      if (!jobPreference) {
+        throw new NotFoundException('Job preference not found');
+      }
+
       return jobPreference;
-    } catch (err) {
-      throw new HttpException(
-        'Failed to find job preference',
-        HttpStatus.BAD_REQUEST,
-      );
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   async findByJobSeekerId(jobSeekerId: string) {
     try {
-      const findJobSeeker = await this.jobSeekerRepository.findOne({
-        where: { userId: jobSeekerId },
-        relations: { jobPreference: true },
+      const jobSeeker = await this.jobSeekerRepository.findOneBy({
+        userId: jobSeekerId,
       });
 
-      if (!findJobSeeker) {
+      if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
-      } else if (findJobSeeker.jobPreference == null) {
-        throw new NotFoundException('Job Seeker has no Job Preference!');
       }
-
-      if(findJobSeeker.jobPreference) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Job preference is found',
-          data: findJobSeeker.jobPreference,
-        };
+      if (!jobSeeker.jobPreference) {
+        throw new ConflictException('Job Seeker has no Job Preference!');
       }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is found',
+        data: jobSeeker.jobPreference,
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   async update(id: number, updateJobPreference: UpdateJobPreferenceDto) {
-    // Ensure valid job listing Id is provided
     const jobPreference = await this.findOne(id);
+
     if (!jobPreference) {
       throw new NotFoundException('Job Preference Id provided is not valid');
     }
+
     const { jobSeekerId, ...dtoExcludeRelationship } = updateJobPreference;
+
     Object.assign(jobPreference, dtoExcludeRelationship);
+
     await this.jobPreferenceRepository.save(jobPreference);
-    if(jobPreference) {
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Job preference is found',
-        data: jobPreference
-      };
-    } else {
-      return {
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Job preference is not found',
-      };
-    }
-  }
-  catch(err) {
-    throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+
+    return {
+      statusCode: 200,
+      message: 'Job preference updated',
+      data: jobPreference,
+    };
   }
 
   async remove(id: number) {

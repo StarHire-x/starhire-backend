@@ -17,7 +17,7 @@ import { ChatMessage } from './entities/chatMessage.entity';
 import { Commission } from './entities/commission.entity';
 import { Invoice } from './entities/invoice.entity';
 import { Review } from './entities/review.entity';
-import { JobExperience } from './entities/jobExperience';
+import { JobExperience } from './entities/jobExperience.entity';
 
 export const entityList = [
   User,

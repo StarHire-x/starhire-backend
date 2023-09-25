@@ -13,15 +13,16 @@ import {
 import { JobExperienceService } from './job-experience.service';
 import { CreateJobExperienceDto } from './dto/create-job-experience.dto';
 import { UpdateJobExperienceDto } from './dto/update-job-experience.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('job-experience')
 export class JobExperienceController {
   constructor(private readonly jobExperienceService: JobExperienceService) {}
 
   @Post()
-  create(@Body() createJobExperienceDto: CreateJobExperienceDto) {
+  async create(@Body() createJobExperienceDto: CreateJobExperienceDto) {
     try {
-      return this.jobExperienceService.create(createJobExperienceDto);
+      return await this.jobExperienceService.create(createJobExperienceDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -57,9 +58,11 @@ export class JobExperienceController {
   }
 
   @Get('/job-seeker/:id')
-  findByJobSeekerId(@Param('id') id: string) {
+  async findByJobSeekerId(@Param('id') id: string) {
     try {
-      return this.jobExperienceService.findByJobSeekerId(id);
+      const result = await this.jobExperienceService.findByJobSeekerId(id);
+      console.log(result);
+      return result;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);

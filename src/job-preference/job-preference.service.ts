@@ -74,8 +74,9 @@ export class JobPreferenceService {
 
   async findByJobSeekerId(jobSeekerId: string) {
     try {
-      const jobSeeker = await this.jobSeekerRepository.findOneBy({
-        userId: jobSeekerId,
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: { jobPreference: true },
       });
 
       if (!jobSeeker) {

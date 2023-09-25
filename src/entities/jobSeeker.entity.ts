@@ -10,7 +10,7 @@ import { Chat } from './chat.entity';
 import { JobPreference } from './jobPreference.entity';
 import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
-import { JobExperience } from './job-experience.entity';
+import { JobExperience } from './jobExperience';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {

@@ -7,7 +7,7 @@ import {
 import { CreateJobExperienceDto } from './dto/create-job-experience.dto';
 import { UpdateJobExperienceDto } from './dto/update-job-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobExperience } from 'src/entities/job-experience.entity';
+import { JobExperience } from 'src/entities/jobExperience';
 import { Repository } from 'typeorm';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 

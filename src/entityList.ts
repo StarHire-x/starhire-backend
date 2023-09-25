@@ -17,6 +17,7 @@ import { ChatMessage } from './entities/chatMessage.entity';
 import { Commission } from './entities/commission.entity';
 import { Invoice } from './entities/invoice.entity';
 import { Review } from './entities/review.entity';
+import { JobExperience } from './entities/jobExperience';
 
 export const entityList = [
   User,
@@ -28,6 +29,7 @@ export const entityList = [
   JobListing,
   JobApplication,
   JobPreference,
+  JobExperience,
   ForumPost,
   ForumComment,
   EventListing,

@@ -53,6 +53,7 @@ require("dotenv").config();
     JobListingModule,
     AdministratorModule,
     JobPreferenceModule,
+    JobExperienceModule,
     JobSeekerModule,
     EventListingModule,
     EventRegistrationModule,

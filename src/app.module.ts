@@ -25,6 +25,7 @@ import { ReviewModule } from './review/review.module';
 import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
+import { JobExperienceModule } from './job-experience/job-experience.module';
 
 require("dotenv").config();
 
@@ -62,6 +63,7 @@ require("dotenv").config();
     UploadModule,
     ConfigModule.forRoot({ isGlobal: true }),
     EmailModule,
+    JobExperienceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

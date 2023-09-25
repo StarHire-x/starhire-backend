@@ -11,7 +11,6 @@ import { JobPreference } from 'src/entities/jobPreference.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
 
 @Injectable()
 export class JobPreferenceService {
@@ -20,7 +19,6 @@ export class JobPreferenceService {
     private readonly jobPreferenceRepository: Repository<JobPreference>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
-    private jobSeekerService: JobSeekerService,
   ) {}
 
   async create(createJobPreference: CreateJobPreferenceDto) {

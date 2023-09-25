@@ -43,16 +43,16 @@ export function mapJobApplicationStatusToEnum(
   status: string,
 ): JobApplicationStatusEnum {
   switch (status) {
-    case 'Withdraw':
-      return JobApplicationStatusEnum.WITHDRAWN;
+    case 'Accepted':
+      return JobApplicationStatusEnum.ACCEPTED;
     case 'Submitted':
       return JobApplicationStatusEnum.SUBMITTED;
-    case 'Approved':
-      return JobApplicationStatusEnum.ACCEPTED;
+    case 'Waiting_For_Interview':
+      return JobApplicationStatusEnum.WAITING_FOR_INTERVIEW;
     case 'Rejected':
       return JobApplicationStatusEnum.REJECTED;
     default:
-      return JobApplicationStatusEnum.PENDING;
+      return JobApplicationStatusEnum.PROCESSING;
   }
 }
 

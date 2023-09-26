@@ -170,7 +170,6 @@ export class JobListingService {
     }
   }
 
-  // Note: Since jobListingId is provided as a req param, there is no need to include it in the req body (dto object)
   async assignJobListing(jobSeekerId: string, jobListingId: number) {
     try {
       // Ensure valid job listing Id is provided

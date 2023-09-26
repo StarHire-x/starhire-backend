@@ -234,7 +234,7 @@ export class JobListingService {
         return 'no such listing';
       }
 
-      return jobListing;
+      return jobListing.jobApplications;
     } catch (err) {
       console.log(err);
       throw new HttpException(

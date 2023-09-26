@@ -11,6 +11,7 @@ class UpdateDto {
   averageSalary: number;
   jobStartDate: Date;
   jobListingStatus: JobListingStatusEnum;
+  jobSeekers: [];
 }
 
 export class UpdateJobListingDto extends PartialType(UpdateDto) {}

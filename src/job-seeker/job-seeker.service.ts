@@ -16,6 +16,7 @@ import {
   mapUserRoleToEnum,
   mapUserStatusToEnum,
 } from 'src/common/mapStringToEnum';
+import { Public } from 'src/users/public.decorator';
 
 @Injectable()
 export class JobSeekerService {
@@ -131,6 +132,7 @@ export class JobSeekerService {
           forumPosts: true,
           chats: true,
           tickets: true,
+          jobListings: true,
           // reviews: true,
         },
       });

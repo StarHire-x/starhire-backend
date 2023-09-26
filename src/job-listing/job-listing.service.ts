@@ -13,6 +13,7 @@ import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 import { Corporate } from 'src/entities/corporate.entity';
 import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
 import { JobApplication } from 'src/entities/jobApplication.entity';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
 @Injectable()
 export class JobListingService {
   constructor(
@@ -21,7 +22,8 @@ export class JobListingService {
     // Parent Entity
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
-
+    @InjectRepository(JobSeeker)
+    private readonly jobSeekerRepository: Repository<JobSeeker>,
     @InjectRepository(Corporate)
     private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
@@ -81,7 +83,7 @@ export class JobListingService {
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     const t = await this.jobListingRepository.find({
-      relations: { corporate: true, jobApplications: true },
+      relations: { corporate: true, jobApplications: true, jobSeekers: true },
     });
     //console.log(t);
     return t;
@@ -120,7 +122,7 @@ export class JobListingService {
     try {
       const t = await this.jobListingRepository.findOne({
         where: { jobListingId: id },
-        relations: { corporate: true, jobApplications: true },
+        relations: { corporate: true, jobApplications: true, jobSeekers: true },
       });
       console.log(t);
       return t;
@@ -163,6 +165,47 @@ export class JobListingService {
     } catch (err) {
       throw new HttpException(
         'Failed to update job listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async assignJobListing(jobSeekerId: string, jobListingId: number) {
+    try {
+      // Ensure valid job listing Id is provided
+      const jobListing = await this.jobListingRepository.findOneBy({
+        jobListingId: jobListingId,
+      });
+      if (!jobListing) {
+        throw new NotFoundException('Job Listing Id provided is not valid');
+      }
+
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+      });
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker User ID provided is not valid');
+      }
+
+      // add jobSeeker to jobListing's jobSeeker[].
+      jobListing.jobSeekers.push(jobSeeker);
+      await this.jobListingRepository.save(jobListing);
+
+      // add jobListing to jobSeeker's jobListing[].
+      jobSeeker.jobListings.push(jobListing);
+      await this.jobSeekerRepository.save(jobSeeker);
+
+      if (jobListing && jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker has been assigned to Job listing and Job listing has been assigned to Job seeker',
+          data: jobListing,
+        };
+      }
+
+    } catch (err) {
+      throw new HttpException(
+        'Failed to assign job seeker to job listing and failed to assign job listing to job seeker',
         HttpStatus.BAD_REQUEST,
       );
     }

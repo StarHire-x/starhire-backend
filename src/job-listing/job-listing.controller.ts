@@ -98,6 +98,22 @@ export class JobListingController {
     }
   }
 
+  @Put('/assignJobListing/:jobSeekerId/:jobListingId')
+  assignJobListing(
+    @Param('jobSeekerId') jobSeekerId: string,
+    @Param('jobListingId') jobListingId: number, // Ensure that id provided is a number
+  ) {
+    try {
+      return this.jobListingService.assignJobListing(jobSeekerId, jobListingId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {

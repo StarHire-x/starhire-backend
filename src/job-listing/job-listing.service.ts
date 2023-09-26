@@ -184,14 +184,14 @@ export class JobListingService {
     try {
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobListingId },
-        relations: ['jobSeekers'],
+        relations: ['jobSeekers', 'jobApplications'],
       });
 
       if (!jobListing) {
         return 'no such listing';
       }
 
-      return jobListing.jobSeekers;
+      return jobListing;
     } catch (err) {
       console.log(err);
       throw new HttpException(

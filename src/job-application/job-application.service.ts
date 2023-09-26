@@ -95,6 +95,20 @@ export class JobApplicationService {
     }
   }
 
+  async findAllByJobListingId(id: number): Promise<JobApplication[]> {
+    try {
+      return await this.jobApplicationRepository.find({
+        where: { jobListing: { jobListingId: id } },
+        relations: { jobSeeker: true }, // to retrieve jobSeeker details with job application
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job application by job listing id.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   // Note: Since jobApplicationId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateJobApplicationDto: UpdateJobApplicationDto) {
     try {

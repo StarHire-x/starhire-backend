@@ -59,12 +59,26 @@ export class JobApplicationController {
     }
   }
 
+  @Get('job-listing/:id')
+  findAllByJobListingId(@Param('id') jobListingId: number) {
+    try {
+      return this.jobApplicationService.findAllByJobListingId(jobListingId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Put(':id')
   update(
     @Param('id') id: number, // Ensure that id provided is a number
     @Body() updateJobApplicationDto: UpdateJobApplicationDto,
   ) {
     try {
+      console.log(id, updateJobApplicationDto);
       return this.jobApplicationService.update(id, updateJobApplicationDto);
     } catch (error) {
       if (error instanceof HttpException) {

@@ -1,7 +1,7 @@
 enum JobApplicationStatusEnum {
   SUBMITTED = 'Submitted',
-  PENDING = 'Pending',
-  WITHDRAWN = 'Withdrawn',
+  PROCESSING = 'Processing',
+  WAITING_FOR_INTERVIEW = 'Waiting_For_Interview',
   REJECTED = 'Rejected',
   ACCEPTED = 'Accepted',
 }

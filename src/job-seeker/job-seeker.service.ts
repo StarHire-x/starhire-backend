@@ -131,6 +131,7 @@ export class JobSeekerService {
           forumPosts: true,
           chats: true,
           tickets: true,
+          jobListings: true,
           // reviews: true,
         },
       });

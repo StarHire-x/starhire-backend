@@ -9,6 +9,7 @@ class UpdateDto {
   highestEducationStatus: HighestEducationStatusEnum;
   profilePictureUrl: string;
   homeAddress: string;
+  jobListings: [];
 }
 
 export class UpdateJobSeekerDto extends PartialType(UpdateDto) {}

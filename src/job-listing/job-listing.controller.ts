@@ -111,4 +111,20 @@ export class JobListingController {
       }
     }
   }
+
+  //Method to get all jobseekers associated with a jobListing
+  @Get('/corporate/jobListing/:id')
+  // Ensure that id provided is a number
+  findAllAssignedJobSeekers(@Param('id') id: number) {
+    try {
+      return this.jobListingService.getJobSeekersByJobListingId(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
 }

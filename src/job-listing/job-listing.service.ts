@@ -175,4 +175,29 @@ export class JobListingService {
       );
     }
   }
+
+  async getJobSeekersByJobListingId(jobListingId: number) {
+    try {
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
+        relations: ['jobApplications'],
+      });
+
+      console.log(jobListing);
+
+      if (!jobListing) {
+        return 'no such listing'; // Return a message indicating that the job listing was not found
+      }
+
+      return jobListing;
+      //return jobListing.jobApplications;
+      //return jobListing;
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find job Listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }

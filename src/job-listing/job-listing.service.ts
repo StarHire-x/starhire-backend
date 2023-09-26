@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 import { Corporate } from 'src/entities/corporate.entity';
 import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 @Injectable()
 export class JobListingService {
   constructor(
@@ -20,6 +21,9 @@ export class JobListingService {
     // Parent Entity
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
+
+    @InjectRepository(Corporate)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
   async create(createJobListingDto: CreateJobListingDto) {
@@ -171,6 +175,27 @@ export class JobListingService {
     } catch (err) {
       throw new HttpException(
         'Failed to delete job listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async getJobSeekersByJobListingId(jobListingId: number) {
+    try {
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
+        relations: ['jobSeekers'],
+      });
+
+      if (!jobListing) {
+        return 'no such listing';
+      }
+
+      return jobListing.jobSeekers;
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find job Listing',
         HttpStatus.BAD_REQUEST,
       );
     }

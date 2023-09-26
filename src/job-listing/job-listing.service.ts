@@ -198,11 +198,11 @@ export class JobListingService {
       if (jobListing && jobSeeker) {
         return {
           statusCode: HttpStatus.OK,
-          message: 'Job seeker has been assigned to Job listing and Job listing has been assigned to Job seeker',
+          message:
+            'Job seeker has been assigned to Job listing and Job listing has been assigned to Job seeker',
           data: jobListing,
         };
       }
-
     } catch (err) {
       throw new HttpException(
         'Failed to assign job seeker to job listing and failed to assign job listing to job seeker',
@@ -230,18 +230,16 @@ export class JobListingService {
         relations: ['jobApplications'],
       });
 
-      if(jobListing) {
+      if (jobListing) {
         return {
           statusCode: HttpStatus.OK,
-          message:
-            'Job seeker has been assigned to Job listing and Job listing has been assigned to Job seeker',
+          message: 'Job Applications has ben found',
           data: jobListing.jobApplications,
         };
       } else {
         return {
           statusCode: HttpStatus.NOT_FOUND,
-          message:
-            'Unable to find job seeker',
+          message: 'Unable to find job applications',
         };
       }
     } catch (err) {

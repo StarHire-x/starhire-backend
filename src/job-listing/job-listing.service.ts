@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 import { Corporate } from 'src/entities/corporate.entity';
 import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 @Injectable()
 export class JobListingService {
   constructor(
@@ -20,6 +21,9 @@ export class JobListingService {
     // Parent Entity
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
+
+    @InjectRepository(Corporate)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
   async create(createJobListingDto: CreateJobListingDto) {
@@ -183,13 +187,23 @@ export class JobListingService {
         relations: ['jobApplications'],
       });
 
-      console.log(jobListing);
-
       if (!jobListing) {
         return 'no such listing'; // Return a message indicating that the job listing was not found
       }
 
-      return jobListing;
+      console.log(jobListing.jobApplications[0].jobApplicationId);
+
+      /*
+      const jobApplication = await this.jobApplicationRepository.findOne({
+        where: {
+          jobApplicationId: jobListing.jobApplications.jobApplicationId,
+        },
+        relations: ['recruiters', 'jobSeekers'],
+      });
+      */
+
+
+      //return jobListing.jobApplications;
       //return jobListing.jobApplications;
       //return jobListing;
     } catch (err) {

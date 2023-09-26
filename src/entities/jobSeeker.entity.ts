@@ -82,7 +82,7 @@ export class JobSeeker extends User {
 
   @ManyToMany(() => JobListing, (jobListing) => jobListing.jobSeekers, {
     cascade: true,
-    nullable: true,
+    nullable: true, // optional
   })
   jobListings: JobListing[];
 

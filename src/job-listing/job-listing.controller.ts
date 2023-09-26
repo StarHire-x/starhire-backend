@@ -129,11 +129,11 @@ export class JobListingController {
   }
 
   //Method to get all jobseekers associated with a jobListing
-  @Get('/corporate/jobListing/:id')
+  @Get('/corporate/jobApplications/:id')
   // Ensure that id provided is a number
   findAllAssignedJobSeekers(@Param('id') id: number) {
     try {
-      return this.jobListingService.getJobSeekersByJobListingId(id);
+      return this.jobListingService.getJobApplicationsByJobListingId(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

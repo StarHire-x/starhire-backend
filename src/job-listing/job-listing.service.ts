@@ -223,11 +223,11 @@ export class JobListingService {
     }
   }
 
-  async getJobSeekersByJobListingId(jobListingId: number) {
+  async getJobApplicationsByJobListingId(jobListingId: number) {
     try {
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobListingId },
-        relations: ['jobSeekers', 'jobApplications'],
+        relations: ['jobApplications'],
       });
 
       if (!jobListing) {

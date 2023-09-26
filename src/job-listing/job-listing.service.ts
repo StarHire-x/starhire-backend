@@ -230,11 +230,20 @@ export class JobListingService {
         relations: ['jobApplications'],
       });
 
-      if (!jobListing) {
-        return 'no such listing';
+      if(jobListing) {
+        return {
+          statusCode: HttpStatus.OK,
+          message:
+            'Job seeker has been assigned to Job listing and Job listing has been assigned to Job seeker',
+          data: jobListing.jobApplications,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message:
+            'Unable to find job seeker',
+        };
       }
-
-      return jobListing.jobApplications;
     } catch (err) {
       console.log(err);
       throw new HttpException(

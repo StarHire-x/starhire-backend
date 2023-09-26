@@ -184,28 +184,14 @@ export class JobListingService {
     try {
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobListingId },
-        relations: ['jobApplications'],
+        relations: ['jobSeekers'],
       });
 
       if (!jobListing) {
-        return 'no such listing'; // Return a message indicating that the job listing was not found
+        return 'no such listing';
       }
 
-      console.log(jobListing.jobApplications[0].jobApplicationId);
-
-      /*
-      const jobApplication = await this.jobApplicationRepository.findOne({
-        where: {
-          jobApplicationId: jobListing.jobApplications.jobApplicationId,
-        },
-        relations: ['recruiters', 'jobSeekers'],
-      });
-      */
-
-
-      //return jobListing.jobApplications;
-      //return jobListing.jobApplications;
-      //return jobListing;
+      return jobListing.jobSeekers;
     } catch (err) {
       console.log(err);
       throw new HttpException(

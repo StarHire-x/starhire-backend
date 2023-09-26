@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -62,6 +63,7 @@ export class JobListing {
   @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.jobListings, {
     nullable: true,
   })
+  @JoinTable()
   jobSeekers: JobSeeker[];
 
   constructor(entity: Partial<JobListing>) {

@@ -14,6 +14,7 @@ import { Corporate } from 'src/entities/corporate.entity';
 import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+
 @Injectable()
 export class JobListingService {
   constructor(
@@ -173,16 +174,22 @@ export class JobListingService {
   async assignJobListing(jobSeekerId: string, jobListingId: number) {
     try {
       // Ensure valid job listing Id is provided
-      const jobListing = await this.jobListingRepository.findOneBy({
-        jobListingId: jobListingId,
-      });
+      const jobListing = await this.findOne(jobListingId);
+
       if (!jobListing) {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
 
       const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId: jobSeekerId },
+        relations: {
+          jobListings: true,
+        },
       });
+      // console.log("TEST HERE!")
+      // console.log("Job Seeker[]", jobListing.jobSeekers.length);
+      // console.log("Job Listing[]", jobSeeker.jobListings.length);
+
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker User ID provided is not valid');
       }
@@ -200,7 +207,6 @@ export class JobListingService {
           statusCode: HttpStatus.OK,
           message:
             'Job seeker has been assigned to Job listing and Job listing has been assigned to Job seeker',
-          data: jobListing,
         };
       }
     } catch (err) {

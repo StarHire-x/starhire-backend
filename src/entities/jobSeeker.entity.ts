@@ -102,6 +102,12 @@ export class JobSeeker extends User {
   })
   jobListings: JobListing[];
 
+  @ManyToMany(() => JobListing, (jobListing) => jobListing.savedByJobSeekers, {
+    cascade: true,
+    nullable: true, // optional
+  })
+  savedJobListings: JobListing[];
+
   constructor(entity: Partial<JobSeeker>) {
     super(entity);
     Object.assign(this, entity);

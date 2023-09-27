@@ -66,6 +66,12 @@ export class JobListing {
   @JoinTable()
   jobSeekers: JobSeeker[];
 
+  @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.savedJobListings, {
+    nullable: true, // optional
+  })
+  @JoinTable()
+  savedByJobSeekers: JobSeeker[];
+
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);
   }

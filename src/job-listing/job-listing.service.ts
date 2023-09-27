@@ -236,6 +236,54 @@ export class JobListingService {
     }
   }
 
+  async saveJobListing(jobSeekerId: string, jobListingId: number) {
+    const jobSeeker = await this.jobSeekerRepository.findOne({
+      where: { userId: jobSeekerId },
+      relations: ['savedJobListings'],
+    });
+
+    if (!jobSeeker) {
+      throw new NotFoundException('Job Seeker not found');
+    }
+
+    const jobListing = await this.findOne(jobListingId);
+
+    if (!jobListing) {
+      throw new NotFoundException('Job Listing not found');
+    }
+
+    if (
+      jobSeeker.savedJobListings.some(
+        (j) => j.jobListingId === jobListing.jobListingId,
+      )
+    ) {
+      throw new HttpException(
+        'Job Listing already saved',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    jobSeeker.savedJobListings.push(jobListing);
+    await this.jobSeekerRepository.save(jobSeeker);
+
+    return { message: 'Job Listing saved successfully' };
+  }
+
+  async getSavedJobListingsByJobSeeker(
+    jobSeekerId: string,
+  ): Promise<JobListing[]> {
+    const jobSeeker = await this.jobSeekerRepository.findOne({
+      where: { userId: jobSeekerId },
+      relations: ['savedJobListings'],
+    });
+
+    if (!jobSeeker) {
+      throw new NotFoundException('Job Seeker not found');
+    }
+
+    return jobSeeker.savedJobListings;
+  }
+
   // Note: Associated child entities(job Applications) will be removed as well, since cascade is set to true in the entity class
   async remove(id: number) {
     try {

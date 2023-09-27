@@ -9,6 +9,7 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
@@ -114,6 +115,32 @@ export class JobListingController {
     }
   }
 
+  @Post(':jobListingId/save')
+  async saveJobListing(
+    // @Req() req,
+    @Param('jobSeekerId') jobSeekerId: string,
+    @Param('jobListingId') jobListingId: number,
+  ) {
+    try {
+      return this.jobListingService.saveJobListing(jobSeekerId, jobListingId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+    // console.log('Received token:', req.headers.authorization);
+    // const userId = req.user && req.user.userId; // assuming user info is stored in req.user
+    // if (!userId) {
+    //   throw new HttpException(
+    //     'User not authenticated',
+    //     HttpStatus.UNAUTHORIZED,
+    //   );
+    // }
+    // return this.jobListingService.saveJobListing(userId, jobListingId);
+  }
+
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {
@@ -142,6 +169,18 @@ export class JobListingController {
         throw new InternalServerErrorException('Internal server error');
       }
     }
+  }
+
+  @Get('saved')
+  async findAllSavedJobListingsByJobSeeker(@Req() req) {
+    const userId = req.user && req.user.userId;
+    if (!userId) {
+      throw new HttpException(
+        'User not authenticated',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return this.jobListingService.getSavedJobListingsByJobSeeker(userId);
   }
 
   @Get('/assigned/:userId')

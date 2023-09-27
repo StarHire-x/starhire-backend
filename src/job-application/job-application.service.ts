@@ -156,14 +156,14 @@ export class JobApplicationService {
     try {
       const jobApplication = await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: jobAppliationId },
-        relations: ['jobSeeker'],
+        relations: ['jobSeeker', 'recruiter'],
       });
 
       if (jobApplication) {
         return {
           statusCode: HttpStatus.OK,
           message: 'Job Seekers has ben found',
-          data: jobApplication.jobSeeker,
+          data: jobApplication,
         };
       } else {
         return {

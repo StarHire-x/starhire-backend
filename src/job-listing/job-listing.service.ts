@@ -118,6 +118,25 @@ export class JobListingService {
     }
   }
 
+  async findAllByJobSeeker(id: string): Promise<JobListing[]> {
+    try {
+      const jobListings = await this.jobListingRepository
+        .createQueryBuilder('jobListing')
+        .innerJoinAndSelect('jobListing.jobSeekers', 'jobSeeker')
+        .where('jobSeeker.userId = :userId', { userId: id })
+        .getMany();
+
+      if (!jobListings.length) {
+        throw new NotFoundException(`No job listings found for user ID ${id}`);
+      }
+
+      return jobListings;
+    } catch (error) {
+      console.error('Error in findAllByJobSeeker: ', error);
+      throw error; // Handle database or any other errors, you can further refine this part
+    }
+  }
+
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
   async findOne(id: number) {
     try {

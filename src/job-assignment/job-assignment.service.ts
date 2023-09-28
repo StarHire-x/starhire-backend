@@ -1,4 +1,4 @@
-import { CreateJobAssignmentDto } from './dto/create-jobAssignment.dto';
+import { CreateJobAssignmentDto } from './dto/create-job-assignment.dto';
 import {
   HttpException,
   HttpStatus,
@@ -82,7 +82,7 @@ export class JobAssignmentService {
 
   async findOneByJobSeekerId(jobSeekerId: string) {
     try {
-      const t = await this.jobAssignmentRepository.findOne({
+      const t = await this.jobAssignmentRepository.find({
         where: { jobSeekerId: jobSeekerId },
       });
       if (t) {

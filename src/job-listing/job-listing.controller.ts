@@ -98,13 +98,14 @@ export class JobListingController {
     }
   }
 
-  @Put('/assignJobListing/:jobSeekerId/:jobListingId')
+  @Put('/assignJobListing/:jobSeekerId/:jobListingId/:recruiterId')
   assignJobListing(
     @Param('jobSeekerId') jobSeekerId: string,
-    @Param('jobListingId') jobListingId: number, // Ensure that id provided is a number
+    @Param('jobListingId') jobListingId: number,
+    @Param('recruiterId') recruiterId: string,
   ) {
     try {
-      return this.jobListingService.assignJobListing(jobSeekerId, jobListingId);
+      return this.jobListingService.assignJobListing(jobSeekerId, jobListingId, recruiterId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

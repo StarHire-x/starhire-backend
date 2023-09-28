@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Commission } from './commission.entity';
 import { JobApplication } from './jobApplication.entity';
@@ -40,7 +40,7 @@ export class Recruiter extends User {
   })
   tickets: Ticket[];
 
-  @OneToMany(() => JobListing, (jobListing) => jobListing.recruiter, {
+  @ManyToMany(() => JobListing, (jobListing) => jobListing.recruiters, {
     cascade: true,
   })
   jobListings: JobListing[];

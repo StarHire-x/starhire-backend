@@ -51,11 +51,6 @@ export class JobListing {
   })
   corporate: Corporate;
 
-  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobListings, {
-    nullable: true,
-  })
-  recruiter: Recruiter;
-
   @OneToMany(
     () => JobApplication,
     (jobApplication) => jobApplication.jobListing,
@@ -65,6 +60,12 @@ export class JobListing {
     },
   )
   jobApplications: JobApplication[];
+
+  @ManyToMany(() => Recruiter, (recruiter) => recruiter.jobListings, {
+    nullable: true,
+  })
+  @JoinTable()
+  recruiters: Recruiter[];
 
   @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.jobListings, {
     nullable: true, // optional

@@ -7,6 +7,9 @@ export class Document {
   documentId: number;
 
   @Column()
+  documentName: string;
+
+  @Column()
   documentLink: string;
 
   @ManyToOne(

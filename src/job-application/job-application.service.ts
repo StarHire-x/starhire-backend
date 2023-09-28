@@ -13,6 +13,9 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { mapJobApplicationStatusToEnum } from 'src/common/mapStringToEnum';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { Document } from 'src/entities/document.entity';
+
 
 @Injectable()
 export class JobApplicationService {
@@ -26,28 +29,39 @@ export class JobApplicationService {
     private readonly jobSeekerRepository: Repository<JobSeeker>,
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
+    @InjectRepository(JobAssignment)
+    private readonly jobAssignmentRepository: Repository<JobAssignment>,
   ) {}
 
   async create(createJobApplicationDto: CreateJobApplicationDto) {
     try {
-      const { jobListingId, jobSeekerId, recruiterId, ...dtoExcludingParents } =
+      const { jobListingId, jobSeekerId, documents, ...dtoExcludingParents } =
         createJobApplicationDto;
+
       // Ensure valid Parent Ids are provided
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobListingId },
       });
+      
       if (!jobListing) {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
       const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId: jobSeekerId },
       });
+      
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
-      const recruiter = await this.recruiterRepository.findOne({
-        where: { userId: recruiterId },
+
+      const recruiterReference = await this.jobAssignmentRepository.findOne({
+        where: { jobSeekerId: jobSeekerId, jobListingId: jobListingId },
       });
+      
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId: recruiterReference.recruiterId },
+      });
+
       if (!recruiter) {
         throw new NotFoundException('Recruiter Id provided is not valid');
       }
@@ -66,7 +80,22 @@ export class JobApplicationService {
         recruiter,
       });
 
-      return await this.jobApplicationRepository.save(jobApplication);
+      if (documents && documents.length > 0) {
+        const updatedDocuments = documents.map((createDocumentDto) => {
+          return new Document(createDocumentDto);
+        });
+        jobApplication.documents = updatedDocuments;
+      }
+
+      console.log(jobApplication);
+
+      await this.jobApplicationRepository.save(jobApplication);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job Application successfully created',
+        data: jobApplication,
+      }
     } catch (err) {
       throw new HttpException(
         'Failed to create new job application',
@@ -147,6 +176,38 @@ export class JobApplicationService {
     } catch (err) {
       throw new HttpException(
         'Failed to delete job application',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async getJobApplicationByJobSeekerJobListing(jobSeekerId: string, jobListingId: number) {
+    try {
+      const jobApplication = await this.jobApplicationRepository
+        .createQueryBuilder('jobApplications')
+        .where('jobApplications.userId = :userId', { userId: jobSeekerId })
+        .andWhere('jobApplications.jobListingId = :jobListingId', {
+          jobListingId: jobListingId,
+        })
+        .getOne();
+
+      console.log(jobApplication);
+      
+      if(jobApplication) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: "Existing job application is found",
+          data: jobApplication
+        }
+      } else {
+        throw new HttpException(
+          'No Job applicatione found in job listing',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw new HttpException(
+        'No Job applicationy found in job listing',
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -22,18 +22,18 @@ export class DocumentService {
 
   async create(createDocumentDto: CreateDocumentDto) {
     try {
-      const { jobApplicationId, ...dtoExcludingParentId } = createDocumentDto;
+      const { ...dtoExcludingParentId } = createDocumentDto;
 
-      const jobApplication = await this.jobApplicationRepository.findOneBy({
-        jobApplicationId: jobApplicationId,
-      });
-      if (!jobApplication) {
-        throw new NotFoundException('Job Application Id provided is not valid');
-      }
+      // const jobApplication = await this.jobApplicationRepository.findOneBy({
+      //   jobApplicationId: jobApplicationId,
+      // });
+      // if (!jobApplication) {
+      //   throw new NotFoundException('Job Application Id provided is not valid');
+      // }
 
       const document = new Document({
         ...dtoExcludingParentId,
-        jobApplication: jobApplication,
+        // jobApplication: jobApplication,
       });
 
       return await this.documentRepository.save(document);

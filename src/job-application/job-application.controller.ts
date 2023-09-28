@@ -59,6 +59,26 @@ export class JobApplicationController {
     }
   }
 
+  @Get('/existing/:jobSeekerId/:jobListingId')
+  // Ensure that id provided is a number
+  async findExistingJobApplication(
+    @Param('jobSeekerId') jobSeekerId: string,
+    @Param('jobListingId') jobListingId: number,
+  ) {
+    try {
+      return await this.jobApplicationService.getJobApplicationByJobSeekerJobListing(
+        jobSeekerId,
+        jobListingId
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Get('job-listing/:id')
   findAllByJobListingId(@Param('id') jobListingId: number) {
     try {

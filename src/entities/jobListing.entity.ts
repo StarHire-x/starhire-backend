@@ -12,6 +12,7 @@ import {
 import { JobApplication } from './jobApplication.entity';
 import { Corporate } from './corporate.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { Recruiter } from './recruiter.entity';
 
 @Entity({ name: 'jobListings' })
 export class JobListing {
@@ -49,6 +50,11 @@ export class JobListing {
     nullable: false,
   })
   corporate: Corporate;
+
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobListings, {
+    nullable: true,
+  })
+  recruiter: Recruiter;
 
   @OneToMany(
     () => JobApplication,

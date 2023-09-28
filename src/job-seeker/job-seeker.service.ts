@@ -15,6 +15,7 @@ import {
   mapNotificationModeToEnum,
   mapUserRoleToEnum,
   mapUserStatusToEnum,
+  mapVisibilityToEnum,
 } from 'src/common/mapStringToEnum';
 import { Public } from 'src/users/public.decorator';
 
@@ -99,6 +100,10 @@ export class JobSeekerService {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId },
+        relations: {
+          jobPreference: true,
+          jobExperiences: true
+        }
       });
 
       if (jobSeeker) {
@@ -156,11 +161,31 @@ export class JobSeekerService {
         };
       }
 
+      console.log("Hiiiiiiiiiii");
+      console.log(updatedJobSeeker);
+
       Object.assign(jobSeeker, updatedJobSeeker);
 
-      jobSeeker.highestEducationStatus = mapEducationStatusToEnum(
-        updatedJobSeeker.highestEducationStatus,
-      );
+      if (updatedJobSeeker.status) {
+        jobSeeker.status = mapUserStatusToEnum(updatedJobSeeker.status);
+      }
+      if (updatedJobSeeker.notificationMode) {
+        jobSeeker.notificationMode = mapNotificationModeToEnum(
+          updatedJobSeeker.notificationMode,
+        );
+      }
+      
+      if (updatedJobSeeker.highestEducationStatus) {
+        jobSeeker.highestEducationStatus = mapEducationStatusToEnum(
+          updatedJobSeeker.highestEducationStatus,
+        );
+      }
+
+      if (updatedJobSeeker.visibility) {
+        jobSeeker.visibility = mapVisibilityToEnum(
+          updatedJobSeeker.visibility
+        );
+      }
 
       await this.jobSeekerRepository.save(jobSeeker);
 
@@ -182,7 +207,7 @@ export class JobSeekerService {
   async findAll() {
     try {
       const jobSeekers = await this.jobSeekerRepository.find({
-        relations: { chats: true },
+        relations: { chats: true, jobListings: true },
       });
       if (jobSeekers.length > 0) {
         return {

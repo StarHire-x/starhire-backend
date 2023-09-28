@@ -108,4 +108,18 @@ export class JobApplicationController {
       }
     }
   }
+
+  @Get('/corporate/jobSeekers/:id')
+  // Ensure that id provided is a number
+  findAllAssignedJobSeekers(@Param('id') id: number) {
+    try {
+      return this.jobApplicationService.getJobSeekersByJobApplicatonId(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
 }

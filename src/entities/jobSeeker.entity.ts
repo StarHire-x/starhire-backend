@@ -12,6 +12,7 @@ import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
 import { JobExperience } from './jobExperience.entity';
 import { JobListing } from './jobListing.entity';
+import VisibilityEnum from 'src/enums/visibility.enum';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -25,8 +26,17 @@ export class JobSeeker extends User {
   @Column()
   dateOfBirth: Date;
 
+  @Column()
   @IsEnum(HighestEducationStatusEnum)
   highestEducationStatus: HighestEducationStatusEnum;
+
+  @Column({
+    type: 'enum',
+    enum: VisibilityEnum,
+    default: VisibilityEnum.PUBLIC,
+  })
+  @IsEnum(VisibilityEnum)
+  visibility: VisibilityEnum;
 
   @Column()
   @IsOptional()
@@ -34,6 +44,12 @@ export class JobSeeker extends User {
 
   @Column()
   homeAddress: string;
+
+  @Column()
+  instituteName: string;
+
+  @Column()
+  dateOfGraduation: Date;
 
   @OneToMany(() => ForumComment, (forumComment) => forumComment.jobSeeker, {
     cascade: true,

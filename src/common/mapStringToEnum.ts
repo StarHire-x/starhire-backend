@@ -7,6 +7,7 @@ import StarCategoryEnum from 'src/enums/starCategory.enum';
 import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
 import UserStatusEnum from 'src/enums/userStatus.enum';
+import VisibilityEnum from 'src/enums/visibility.enum';
 
 export function mapForumCategoryToEnum(status: string): ForumCategoryEnum {
   switch (status) {
@@ -71,10 +72,18 @@ export function mapJobListingStatusToEnum(
   status: string,
 ): JobListingStatusEnum {
   switch (status) {
+    /*
     case 'Inactive':
       return JobListingStatusEnum.INACTIVE;
     case 'Active':
       return JobListingStatusEnum.ACTIVE;
+    */
+    case 'Approved':
+      return JobListingStatusEnum.APPROVED;
+    case 'Rejected':
+      return JobListingStatusEnum.REJECTED;
+    case 'Archived':
+      return JobListingStatusEnum.ARCHIVED;
     default:
       return JobListingStatusEnum.UNVERIFIED;
   }
@@ -131,5 +140,14 @@ export function mapUserStatusToEnum(status: string): UserStatusEnum {
       return UserStatusEnum.INACTIVE;
     default:
       return UserStatusEnum.ACTIVE;
+  }
+}
+
+export function mapVisibilityToEnum(status: string): VisibilityEnum {
+  switch (status) {
+    case 'Limited':
+      return VisibilityEnum.LIMITED;
+    default:
+      return VisibilityEnum.PUBLIC;
   }
 }

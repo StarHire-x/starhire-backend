@@ -157,4 +157,32 @@ export class JobApplicationService {
       );
     }
   }
+
+  async getJobSeekersByJobApplicatonId(jobAppliationId: number) {
+    try {
+      const jobApplication = await this.jobApplicationRepository.findOne({
+        where: { jobApplicationId: jobAppliationId },
+        relations: ['jobSeeker', 'recruiter'],
+      });
+
+      if (jobApplication) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job Seekers has ben found',
+          data: jobApplication,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Unable to find job Seekers',
+        };
+      }
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find job Seeker',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }

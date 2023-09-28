@@ -1,9 +1,10 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Commission } from './commission.entity';
 import { JobApplication } from './jobApplication.entity';
 import { Chat } from './chat.entity';
 import { Ticket } from './ticket.entity';
+import { JobListing } from './jobListing.entity';
 
 @Entity({ name: 'recruiters' })
 export class Recruiter extends User {
@@ -38,4 +39,5 @@ export class Recruiter extends User {
     cascade: true,
   })
   tickets: Ticket[];
+
 }

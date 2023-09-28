@@ -1,4 +1,4 @@
-import { Column, ManyToMany, OneToMany, OneToOne } from 'typeorm';
+import { Column, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { Entity } from 'typeorm';
 import { User } from './user.entity';
 import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
@@ -12,6 +12,7 @@ import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
 import { JobExperience } from './jobExperience.entity';
 import { JobListing } from './jobListing.entity';
+import { SavedJobListing } from './savedJobListing.entity';
 import VisibilityEnum from 'src/enums/visibility.enum';
 
 @Entity({ name: 'jobSeekers' })
@@ -102,11 +103,15 @@ export class JobSeeker extends User {
   })
   jobListings: JobListing[];
 
-  @ManyToMany(() => JobListing, (jobListing) => jobListing.savedByJobSeekers, {
-    cascade: true,
-    nullable: true, // optional
-  })
-  savedJobListings: JobListing[];
+  @OneToMany(
+    () => SavedJobListing,
+    (savedJobListing) => savedJobListing.jobSeeker,
+    {
+      cascade: true,
+      nullable: true,
+    },
+  )
+  savedJobListings: SavedJobListing[];
 
   constructor(entity: Partial<JobSeeker>) {
     super(entity);

@@ -12,6 +12,7 @@ import {
 import { JobApplication } from './jobApplication.entity';
 import { Corporate } from './corporate.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { SavedJobListing } from './savedJobListing.entity';
 
 @Entity({ name: 'jobListings' })
 export class JobListing {
@@ -63,14 +64,18 @@ export class JobListing {
   @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.jobListings, {
     nullable: true, // optional
   })
-  @JoinTable()
+  @JoinTable({ name: 'jobseeker_joblistings' })
   jobSeekers: JobSeeker[];
 
-  @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.savedJobListings, {
-    nullable: true, // optional
-  })
-  @JoinTable()
-  savedByJobSeekers: JobSeeker[];
+  @OneToMany(
+    () => SavedJobListing,
+    (savedJobListing) => savedJobListing.jobListing,
+    {
+      cascade: true,
+      nullable: true,
+    },
+  )
+  savedBy: SavedJobListing[];
 
   constructor(entity: Partial<JobListing>) {
     Object.assign(this, entity);

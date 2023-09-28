@@ -18,6 +18,7 @@ import { Commission } from './entities/commission.entity';
 import { Invoice } from './entities/invoice.entity';
 import { Review } from './entities/review.entity';
 import { JobExperience } from './entities/jobExperience.entity';
+import { SavedJobListing } from './entities/savedJobListing.entity';
 
 export const entityList = [
   User,
@@ -40,4 +41,5 @@ export const entityList = [
   Commission,
   Invoice,
   Review,
+  SavedJobListing,
 ];

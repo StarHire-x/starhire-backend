@@ -11,6 +11,7 @@ import {
   Put,
   Req,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
@@ -52,13 +53,7 @@ export class JobListingController {
   @Get('/corporate/:userId')
   async findAllJobListingsByCorporate(@Param('userId') userId: string) {
     try {
-      // const numericUserId = parseInt(userId, 10); // Convert string userId to a number.
-      // if (isNaN(numericUserId)) {
-      //   // Check if the conversion was successful.
-      //   throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
-      // }
       const result = await this.jobListingService.findAllByCorporate(userId);
-      //console.log(result);
       return result;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -115,14 +110,16 @@ export class JobListingController {
     }
   }
 
-  @Post(':jobListingId/save')
-  async saveJobListing(
-    // @Req() req,
-    @Param('jobSeekerId') jobSeekerId: string,
-    @Param('jobListingId') jobListingId: number,
-  ) {
+  @Get('/assigned/:userId')
+  async findAllJobListingsByJobSeeker(@Param('userId') userId: string) {
     try {
-      return this.jobListingService.saveJobListing(jobSeekerId, jobListingId);
+      const jobListings =
+        await this.jobListingService.findAllByJobSeeker(userId);
+
+      // Logging the data to inspect it
+      console.log('Job Listings:', jobListings);
+
+      return jobListings;
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -130,15 +127,6 @@ export class JobListingController {
         throw new InternalServerErrorException('Internal server error');
       }
     }
-    // console.log('Received token:', req.headers.authorization);
-    // const userId = req.user && req.user.userId; // assuming user info is stored in req.user
-    // if (!userId) {
-    //   throw new HttpException(
-    //     'User not authenticated',
-    //     HttpStatus.UNAUTHORIZED,
-    //   );
-    // }
-    // return this.jobListingService.saveJobListing(userId, jobListingId);
   }
 
   @Delete(':id')
@@ -160,39 +148,7 @@ export class JobListingController {
   // Ensure that id provided is a number
   findAllAssignedJobSeekers(@Param('id') id: number) {
     try {
-      console.log('999999999');
       return this.jobListingService.getJobApplicationsByJobListingId(id);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw new HttpException(error.message, HttpStatus.CONFLICT);
-      } else {
-        throw new InternalServerErrorException('Internal server error');
-      }
-    }
-  }
-
-  @Get('saved')
-  async findAllSavedJobListingsByJobSeeker(@Req() req) {
-    const userId = req.user && req.user.userId;
-    if (!userId) {
-      throw new HttpException(
-        'User not authenticated',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-    return this.jobListingService.getSavedJobListingsByJobSeeker(userId);
-  }
-
-  @Get('/assigned/:userId')
-  async findAllJobListingsByJobSeeker(@Param('userId') userId: string) {
-    try {
-      const jobListings =
-        await this.jobListingService.findAllByJobSeeker(userId);
-
-      // Logging the data to inspect it
-      console.log('Job Listings:', jobListings);
-
-      return jobListings;
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

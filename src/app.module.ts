@@ -26,6 +26,7 @@ import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
 import { JobExperienceModule } from './job-experience/job-experience.module';
+import { SavedJobListingModule } from './saved-job-listing/saved-job-listing.module';
 
 require("dotenv").config();
 
@@ -65,6 +66,7 @@ require("dotenv").config();
     ConfigModule.forRoot({ isGlobal: true }),
     EmailModule,
     JobExperienceModule,
+    SavedJobListingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

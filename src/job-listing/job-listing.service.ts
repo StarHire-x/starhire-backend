@@ -118,25 +118,6 @@ export class JobListingService {
     }
   }
 
-  async findAllByJobSeeker(id: string): Promise<JobListing[]> {
-    try {
-      const jobListings = await this.jobListingRepository
-        .createQueryBuilder('jobListing')
-        .innerJoinAndSelect('jobListing.jobSeekers', 'jobSeeker')
-        .where('jobSeeker.userId = :userId', { userId: id })
-        .getMany();
-
-      if (!jobListings.length) {
-        throw new NotFoundException(`No job listings found for user ID ${id}`);
-      }
-
-      return jobListings;
-    } catch (error) {
-      console.error('Error in findAllByJobSeeker: ', error);
-      throw error; // Handle database or any other errors, you can further refine this part
-    }
-  }
-
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
   async findOne(id: number) {
     try {
@@ -205,9 +186,6 @@ export class JobListingService {
           jobListings: true,
         },
       });
-      // console.log("TEST HERE!")
-      // console.log("Job Seeker[]", jobListing.jobSeekers.length);
-      // console.log("Job Listing[]", jobSeeker.jobListings.length);
 
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker User ID provided is not valid');
@@ -236,52 +214,23 @@ export class JobListingService {
     }
   }
 
-  async saveJobListing(jobSeekerId: string, jobListingId: number) {
-    const jobSeeker = await this.jobSeekerRepository.findOne({
-      where: { userId: jobSeekerId },
-      relations: ['savedJobListings'],
-    });
+  async findAllByJobSeeker(id: string): Promise<JobListing[]> {
+    try {
+      const jobListings = await this.jobListingRepository
+        .createQueryBuilder('jobListing')
+        .innerJoinAndSelect('jobListing.jobSeekers', 'jobSeeker')
+        .where('jobSeeker.userId = :userId', { userId: id })
+        .getMany();
 
-    if (!jobSeeker) {
-      throw new NotFoundException('Job Seeker not found');
+      if (!jobListings.length) {
+        throw new NotFoundException(`No job listings found for user ID ${id}`);
+      }
+
+      return jobListings;
+    } catch (error) {
+      console.error('Error in findAllByJobSeeker: ', error);
+      throw error; // Handle database or any other errors, you can further refine this part
     }
-
-    const jobListing = await this.findOne(jobListingId);
-
-    if (!jobListing) {
-      throw new NotFoundException('Job Listing not found');
-    }
-
-    if (
-      jobSeeker.savedJobListings.some(
-        (j) => j.jobListingId === jobListing.jobListingId,
-      )
-    ) {
-      throw new HttpException(
-        'Job Listing already saved',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    jobSeeker.savedJobListings.push(jobListing);
-    await this.jobSeekerRepository.save(jobSeeker);
-
-    return { message: 'Job Listing saved successfully' };
-  }
-
-  async getSavedJobListingsByJobSeeker(
-    jobSeekerId: string,
-  ): Promise<JobListing[]> {
-    const jobSeeker = await this.jobSeekerRepository.findOne({
-      where: { userId: jobSeekerId },
-      relations: ['savedJobListings'],
-    });
-
-    if (!jobSeeker) {
-      throw new NotFoundException('Job Seeker not found');
-    }
-
-    return jobSeeker.savedJobListings;
   }
 
   // Note: Associated child entities(job Applications) will be removed as well, since cascade is set to true in the entity class

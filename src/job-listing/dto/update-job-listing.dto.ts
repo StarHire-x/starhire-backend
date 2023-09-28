@@ -13,7 +13,6 @@ class UpdateDto {
   jobStartDate: Date;
   jobListingStatus: JobListingStatusEnum;
   jobSeekers: [];
-  recruiters: [];
 }
 
 export class UpdateJobListingDto extends PartialType(UpdateDto) {}

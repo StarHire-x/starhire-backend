@@ -61,12 +61,6 @@ export class JobListing {
   )
   jobApplications: JobApplication[];
 
-  @ManyToMany(() => Recruiter, (recruiter) => recruiter.jobListings, {
-    nullable: true,
-  })
-  @JoinTable()
-  recruiters: Recruiter[];
-
   @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.jobListings, {
     nullable: true, // optional
   })

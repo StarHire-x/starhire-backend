@@ -40,8 +40,4 @@ export class Recruiter extends User {
   })
   tickets: Ticket[];
 
-  @ManyToMany(() => JobListing, (jobListing) => jobListing.recruiters, {
-    cascade: true,
-  })
-  jobListings: JobListing[];
 }

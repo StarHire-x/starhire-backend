@@ -90,7 +90,7 @@ export class JobListingService {
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     const t = await this.jobListingRepository.find({
-      relations: { corporate: true, jobApplications: true, jobSeekers: true, recruiters: true },
+      relations: { corporate: true, jobApplications: true, jobSeekers: true},
     });
     //console.log(t);
     return t;
@@ -148,7 +148,7 @@ export class JobListingService {
     try {
       const t = await this.jobListingRepository.findOne({
         where: { jobListingId: id },
-        relations: { corporate: true, jobApplications: true, jobSeekers: true, recruiters: true },
+        relations: { corporate: true, jobApplications: true, jobSeekers: true},
       });
       console.log(t);
       return t;
@@ -221,9 +221,6 @@ export class JobListingService {
     
       const recruiter = await this.recruiterRepository.findOne({
         where: { userId: recruiterId },
-        relations: {
-          jobListings: true,
-        },
       });
 
       if (!recruiter) {
@@ -231,18 +228,12 @@ export class JobListingService {
       }
 
       // add jobSeeker to jobListing's jobSeeker[].
-      // add recruiter to jobListing's recruiter[].
       jobListing.jobSeekers.push(jobSeeker);
-      jobListing.recruiters.push(recruiter);
       await this.jobListingRepository.save(jobListing);
 
       // add jobListing to jobSeeker's jobListing[].
       jobSeeker.jobListings.push(jobListing);
       await this.jobSeekerRepository.save(jobSeeker);
-
-      // add jobListing to recruiter's jobListing[]
-      recruiter.jobListings.push(jobListing);
-      await this.recruiterRepository.save(recruiter);
 
       const jobAssignment = new JobAssignment();
       jobAssignment.jobListingId = jobListingId;

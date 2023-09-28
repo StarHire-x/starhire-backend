@@ -5,6 +5,7 @@ export class CreateJobListingDto {
   overview: string;
   responsibilities: string;
   requirements: string;
+  requiredDocuments: string;
   jobLocation: string;
   listingDate: Date;
   averageSalary: number;

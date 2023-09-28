@@ -41,22 +41,21 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: jobListing.corporate.email,
-        subject:
-          'Job Listing ID: <Strong>${jobListing.jobListingId}</Strong> Status Update',
+        subject: `Status Update on Job Listing:${jobListing.jobListingId} + " ," ${jobListing.title}`,
         html: `Dear <Strong>${jobListing.corporate.userName}</Strong>,<br><br>
                We want to inform you about the status of your job listing.<br>
 
                Your Job Listing ID: <strong>${
                  jobListing.jobListingId
                }</strong>, <strong>${jobListing.title}</strong><br><br>
-               has been<strong>${jobListing.jobListingStatus.toUpperCase()}</strong>
+               has been <strong>${jobListing.jobListingStatus.toUpperCase()}</strong> <br><br>
 
-               Please login to your account to see the changes <a href="http://www.localhost:3000/login">Login</a>
+               Please <a href="http://www.localhost:3001/login">Login</a> to your account to see the changes <br><br>
 
-               If you think this is a mistake, please contact our help desk 
+               For further enquiries please contact our Admin support staff <br><br>
                Thank you for using our service!<br><br>
                Best regards,<br>
-               Starhire`,
+               StarHire`,
       });
       return {
         statusCode: HttpStatus.OK,

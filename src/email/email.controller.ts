@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, HttpStatus, InternalServerErrorException, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Post } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { Public } from 'src/users/public.decorator';
@@ -22,7 +22,7 @@ export class EmailController {
     }
   }
 
-  @Post('/inform-status')
+  @Get('/inform-status/:id')
   async informJobListingStatus(
     @Param('id') id: number, // Define a DTO for your email data
   ) {

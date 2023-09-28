@@ -1,6 +1,8 @@
 enum JobListingStatusEnum {
-  ACTIVE = 'Active',
-  INACTIVE = 'Inactive',
+  //ACTIVE = 'Active',
+  //INACTIVE = 'Inactive',
+  APPROVED = 'Approved',
+  REJECTED = 'Rejected',
   UNVERIFIED = 'Unverified',
   ARCHIVED = 'Archived',
 }

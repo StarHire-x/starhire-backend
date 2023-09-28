@@ -85,7 +85,7 @@ export class JobApplicationService {
     try {
       return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
-        relations: { documents: true },
+        relations: { documents: true, jobSeeker: true },
       });
     } catch (err) {
       throw new HttpException(

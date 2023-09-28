@@ -64,7 +64,6 @@ export class JobApplicationController {
     @Param('joblistingId') jobListingId: number,
     @Param('recruiterId') recruiterId: string,
   ) {
-    console.log(jobListingId, recruiterId);
     try {
       return this.jobApplicationService.findAllByJobListingId(
         jobListingId,

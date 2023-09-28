@@ -76,6 +76,8 @@ export function mapJobListingStatusToEnum(
       return JobListingStatusEnum.INACTIVE;
     case 'Active':
       return JobListingStatusEnum.ACTIVE;
+    case 'Archived':
+      return JobListingStatusEnum.ARCHIVED;
     default:
       return JobListingStatusEnum.UNVERIFIED;
   }

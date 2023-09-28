@@ -133,8 +133,9 @@ export class JobListingController {
   // Ensure that id provided is a number
   findAllAssignedJobSeekers(@Param('id') id: number) {
     try {
-      console.log("999999999")
-      return this.jobListingService.getJobApplicationsByJobListingId(id);
+      return this.jobListingService.getProcessingJobApplicationsByJobListingId(
+        id,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -143,5 +144,4 @@ export class JobListingController {
       }
     }
   }
-
 }

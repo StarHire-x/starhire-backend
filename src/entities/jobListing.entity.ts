@@ -33,6 +33,9 @@ export class JobListing {
   requirements: string;
 
   @Column()
+  requiredDocuments: string;
+
+  @Column()
   jobLocation: string;
 
   @CreateDateColumn()

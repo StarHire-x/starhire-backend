@@ -48,6 +48,8 @@ export function mapJobApplicationStatusToEnum(
       return JobApplicationStatusEnum.ACCEPTED;
     case 'Submitted':
       return JobApplicationStatusEnum.SUBMITTED;
+    case 'To_Be_Submitted':
+      return JobApplicationStatusEnum.TO_BE_SUBMITTED;
     case 'Waiting_For_Interview':
       return JobApplicationStatusEnum.WAITING_FOR_INTERVIEW;
     case 'Rejected':

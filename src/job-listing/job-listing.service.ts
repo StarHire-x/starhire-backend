@@ -248,6 +248,7 @@ export class JobListingService {
     }
   }
 
+  /*
   async getJobApplicationsByJobListingId(jobListingId: number) {
     try {
       const jobListing = await this.jobListingRepository.findOne({
@@ -260,6 +261,39 @@ export class JobListingService {
           statusCode: HttpStatus.OK,
           message: 'Job Applications has ben found',
           data: jobListing.jobApplications,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Unable to find job applications',
+        };
+      }
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find job Listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+  */
+  async getProcessingJobApplicationsByJobListingId(jobListingId: number) {
+    try {
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
+        relations: ['jobApplications'],
+      });
+
+      if (jobListing) {
+        const processingJobApplications = jobListing.jobApplications.filter(
+          (jobApplication) =>
+            jobApplication.jobApplicationStatus === 'Processing',
+        );
+
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Processing Job Applications found',
+          data: processingJobApplications,
         };
       } else {
         return {

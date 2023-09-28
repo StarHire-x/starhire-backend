@@ -72,10 +72,18 @@ export function mapJobListingStatusToEnum(
   status: string,
 ): JobListingStatusEnum {
   switch (status) {
+    /*
     case 'Inactive':
       return JobListingStatusEnum.INACTIVE;
     case 'Active':
       return JobListingStatusEnum.ACTIVE;
+    */
+    case 'Approved':
+      return JobListingStatusEnum.APPROVED;
+    case 'Rejected':
+      return JobListingStatusEnum.REJECTED;
+    case 'Archived':
+      return JobListingStatusEnum.ARCHIVED;
     default:
       return JobListingStatusEnum.UNVERIFIED;
   }

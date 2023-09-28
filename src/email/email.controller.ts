@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, HttpStatus, InternalServerErrorException, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, InternalServerErrorException, Param, Post } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { Public } from 'src/users/public.decorator';
@@ -19,6 +19,27 @@ export class EmailController {
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
+    }
+  }
+
+  @Post('/inform-status')
+  async informJobListingStatus(
+    @Param('id') id: number, // Define a DTO for your email data
+  ) {
+    try {
+      const result = await this.emailService.sendJobListingStatusEmail(id);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job listing status email sent successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Failed to send job listing status email',
+        error: error.message,
+      };
     }
   }
 }

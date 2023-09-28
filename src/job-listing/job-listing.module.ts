@@ -18,5 +18,6 @@ import { JobSeeker } from 'src/entities/jobSeeker.entity';
   ],
   controllers: [JobListingController],
   providers: [JobListingService],
+  exports: [TypeOrmModule.forFeature([JobListing])],
 })
 export class JobListingModule {}

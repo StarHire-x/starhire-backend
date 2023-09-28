@@ -6,6 +6,8 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { Corporate } from 'src/entities/corporate.entity';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Recruiter } from 'src/entities/recruiter.entity';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
 
 @Module({
   imports: [
@@ -14,9 +16,12 @@ import { JobSeeker } from 'src/entities/jobSeeker.entity';
       Corporate,
       JobApplication,
       JobSeeker,
+      Recruiter,
+      JobAssignment
     ]),
   ],
   controllers: [JobListingController],
   providers: [JobListingService],
+  exports: [TypeOrmModule.forFeature([JobListing])],
 })
 export class JobListingModule {}

@@ -94,13 +94,66 @@ export class JobListingController {
     }
   }
 
-  @Put('/assignJobListing/:jobSeekerId/:jobListingId')
+  @Put('/assignJobListing/:jobSeekerId/:jobListingId/:recruiterId')
   assignJobListing(
     @Param('jobSeekerId') jobSeekerId: string,
-    @Param('jobListingId') jobListingId: number, // Ensure that id provided is a number
+    @Param('jobListingId') jobListingId: number,
+    @Param('recruiterId') recruiterId: string,
   ) {
     try {
-      return this.jobListingService.assignJobListing(jobSeekerId, jobListingId);
+      return this.jobListingService.assignJobListing(
+        jobSeekerId,
+        jobListingId,
+        recruiterId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  // @Get('/assigned/:userId')
+  // async findAllJobListingsByJobSeeker(@Param('userId') userId: string) {
+  //   try {
+  //     const jobListings =
+  //       await this.jobListingService.findAllByJobSeeker(userId);
+
+  //     // Logging the data to inspect it
+  //     console.log('Job Listings:', jobListings);
+
+  //     return jobListings;
+  //   } catch (error) {
+  //     if (error instanceof HttpException) {
+  //       throw new HttpException(error.message, HttpStatus.CONFLICT);
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
+
+  @Delete(':id')
+  // Ensure that id provided is a number
+  removeJobListing(@Param('id') id: number) {
+    try {
+      return this.jobListingService.remove(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/corporate/jobApplications/:id')
+  findAllProcessingJobApplicationsByJobListing(@Param('id') id: number) {
+    try {
+      return this.jobListingService.getProcessingJobApplicationsByJobListingId(
+        id,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -129,32 +182,31 @@ export class JobListingController {
     }
   }
 
-  @Delete(':id')
-  // Ensure that id provided is a number
-  removeJobListing(@Param('id') id: number) {
-    try {
-      return this.jobListingService.remove(id);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw new HttpException(error.message, HttpStatus.CONFLICT);
-      } else {
-        throw new InternalServerErrorException('Internal server error');
-      }
-    }
-  }
+  // @Delete(':id')
+  // // Ensure that id provided is a number
+  // removeJobListing(@Param('id') id: number) {
+  //   try {
+  //     return this.jobListingService.remove(id);
+  //   } catch (error) {
+  //     if (error instanceof HttpException) {
+  //       throw new HttpException(error.message, HttpStatus.CONFLICT);
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
 
-  //Method to get all jobseekers associated with a jobListing
-  @Get('/corporate/jobApplications/:id')
-  // Ensure that id provided is a number
-  findAllAssignedJobSeekers(@Param('id') id: number) {
-    try {
-      return this.jobListingService.getJobApplicationsByJobListingId(id);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw new HttpException(error.message, HttpStatus.CONFLICT);
-      } else {
-        throw new InternalServerErrorException('Internal server error');
-      }
-    }
-  }
+  //   @Get('/corporate/jobApplications/:id')
+  //   findAllProcessingJobApplicationsByJobListing(@Param('id') id: number) {
+  //     try {
+  //       console.log('999999999');
+  //       return this.jobListingService.getJobApplicationsByJobListingId(id);
+  //     } catch (error) {
+  //       if (error instanceof HttpException) {
+  //         throw new HttpException(error.message, HttpStatus.CONFLICT);
+  //       } else {
+  //         throw new InternalServerErrorException('Internal server error');
+  //       }
+  //     }
+  //   }
 }

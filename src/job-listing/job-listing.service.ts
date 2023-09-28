@@ -14,6 +14,8 @@ import { Corporate } from 'src/entities/corporate.entity';
 import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Recruiter } from 'src/entities/recruiter.entity';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
 
 @Injectable()
 export class JobListingService {
@@ -25,8 +27,12 @@ export class JobListingService {
     private readonly corporateRepository: Repository<Corporate>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(Recruiter)
+    private readonly recruiterRepository: Repository<Recruiter>,
     @InjectRepository(Corporate)
     private readonly jobApplicationRepository: Repository<JobApplication>,
+    @InjectRepository(JobAssignment)
+    private readonly jobAssignmentRepository: Repository<JobAssignment>,
   ) {}
 
   async create(createJobListingDto: CreateJobListingDto) {
@@ -84,7 +90,7 @@ export class JobListingService {
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     const t = await this.jobListingRepository.find({
-      relations: { corporate: true, jobApplications: true, jobSeekers: true },
+      relations: { corporate: true, jobApplications: true, jobSeekers: true},
     });
     //console.log(t);
     return t;
@@ -123,7 +129,7 @@ export class JobListingService {
     try {
       const t = await this.jobListingRepository.findOne({
         where: { jobListingId: id },
-        relations: { corporate: true, jobApplications: true, jobSeekers: true },
+        relations: { corporate: true, jobApplications: true, jobSeekers: true},
       });
       console.log(t);
       return t;
@@ -171,7 +177,7 @@ export class JobListingService {
     }
   }
 
-  async assignJobListing(jobSeekerId: string, jobListingId: number) {
+  async assignJobListing(jobSeekerId: string, jobListingId: number, recruiterId: string) {
     try {
       // Ensure valid job listing Id is provided
       const jobListing = await this.findOne(jobListingId);
@@ -190,6 +196,14 @@ export class JobListingService {
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker User ID provided is not valid');
       }
+    
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId: recruiterId },
+      });
+
+      if (!recruiter) {
+        throw new NotFoundException('Recruiter User ID provided is not valid');
+      }
 
       // add jobSeeker to jobListing's jobSeeker[].
       jobListing.jobSeekers.push(jobSeeker);
@@ -199,7 +213,13 @@ export class JobListingService {
       jobSeeker.jobListings.push(jobListing);
       await this.jobSeekerRepository.save(jobSeeker);
 
-      if (jobListing && jobSeeker) {
+      const jobAssignment = new JobAssignment();
+      jobAssignment.jobListingId = jobListingId;
+      jobAssignment.jobSeekerId = jobSeekerId;
+      jobAssignment.recruiterId = recruiterId;
+      await this.jobAssignmentRepository.save(jobAssignment);
+
+      if (jobListing && jobSeeker && recruiter) {
         return {
           statusCode: HttpStatus.OK,
           message:
@@ -245,6 +265,7 @@ export class JobListingService {
     }
   }
 
+  /*
   async getJobApplicationsByJobListingId(jobListingId: number) {
     try {
       const jobListing = await this.jobListingRepository.findOne({
@@ -266,6 +287,56 @@ export class JobListingService {
       }
     } catch (err) {
       console.log(err);
+      throw new HttpException(
+        'Failed to find job Listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+  */
+  async getProcessingJobApplicationsByJobListingId(jobListingId: number) {
+    try {
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
+        relations: ['jobApplications'],
+      });
+
+      if (jobListing) {
+        const processingJobApplications = jobListing.jobApplications.filter(
+          (jobApplication) =>
+            jobApplication.jobApplicationStatus === 'Processing',
+        );
+
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Processing Job Applications found',
+          data: processingJobApplications,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Unable to find job applications',
+        };
+      }
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find job Listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  //Method for email
+  async findJobListingWithCorporate(id: number) {
+    try {
+      const t = await this.jobListingRepository.findOne({
+        where: { jobListingId: id },
+        relations: { corporate: true },
+      });
+      console.log(t);
+      return t;
+    } catch (err) {
       throw new HttpException(
         'Failed to find job Listing',
         HttpStatus.BAD_REQUEST,

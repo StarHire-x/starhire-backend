@@ -22,5 +22,6 @@ import { JobAssignment } from 'src/entities/jobAssignment.entity';
   ],
   controllers: [JobListingController],
   providers: [JobListingService],
+  exports: [TypeOrmModule.forFeature([JobListing])],
 })
 export class JobListingModule {}

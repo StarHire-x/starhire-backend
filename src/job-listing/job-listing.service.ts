@@ -329,4 +329,21 @@ export class JobListingService {
       );
     }
   }
+
+  //Method for email
+  async findJobListingWithCorporate(id: number) {
+    try {
+      const t = await this.jobListingRepository.findOne({
+        where: { jobListingId: id },
+        relations: { corporate: true },
+      });
+      console.log(t);
+      return t;
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job Listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }

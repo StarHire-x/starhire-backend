@@ -15,6 +15,7 @@ import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
 
 @Injectable()
 export class JobListingService {
@@ -30,6 +31,8 @@ export class JobListingService {
     private readonly recruiterRepository: Repository<Recruiter>,
     @InjectRepository(Corporate)
     private readonly jobApplicationRepository: Repository<JobApplication>,
+    @InjectRepository(JobAssignment)
+    private readonly jobAssignmentRepository: Repository<JobAssignment>,
   ) {}
 
   async create(createJobListingDto: CreateJobListingDto) {
@@ -240,6 +243,12 @@ export class JobListingService {
       // add jobListing to recruiter's jobListing[]
       recruiter.jobListings.push(jobListing);
       await this.recruiterRepository.save(recruiter);
+
+      const jobAssignment = new JobAssignment();
+      jobAssignment.jobListingId = jobListingId;
+      jobAssignment.jobSeekerId = jobSeekerId;
+      jobAssignment.recruiterId = recruiterId;
+      await this.jobAssignmentRepository.save(jobAssignment);
 
       if (jobListing && jobSeeker && recruiter) {
         return {

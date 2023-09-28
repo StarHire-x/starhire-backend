@@ -7,6 +7,7 @@ import { Corporate } from 'src/entities/corporate.entity';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { Recruiter } from 'src/entities/recruiter.entity';
       JobApplication,
       JobSeeker,
       Recruiter,
+      JobAssignment
     ]),
   ],
   controllers: [JobListingController],

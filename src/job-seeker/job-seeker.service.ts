@@ -100,6 +100,10 @@ export class JobSeekerService {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId },
+        relations: {
+          jobPreference: true,
+          jobExperiences: true
+        }
       });
 
       if (jobSeeker) {

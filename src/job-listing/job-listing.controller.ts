@@ -133,9 +133,27 @@ export class JobListingController {
   // Ensure that id provided is a number
   findAllAssignedJobSeekers(@Param('id') id: number) {
     try {
-      return this.jobListingService.getProcessingJobApplicationsByJobListingId(
-        id,
-      );
+      console.log('999999999');
+      return this.jobListingService.getJobApplicationsByJobListingId(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/assigned/:userId')
+  async findAllJobListingsByJobSeeker(@Param('userId') userId: string) {
+    try {
+      const jobListings =
+        await this.jobListingService.findAllByJobSeeker(userId);
+
+      // Logging the data to inspect it
+      console.log('Job Listings:', jobListings);
+
+      return jobListings;
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

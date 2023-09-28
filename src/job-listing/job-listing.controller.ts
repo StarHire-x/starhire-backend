@@ -17,7 +17,6 @@ import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { JobListing } from 'src/entities/jobListing.entity';
-import { Public } from 'src/users/public.decorator';
 
 @Controller('job-listing')
 export class JobListingController {
@@ -115,25 +114,6 @@ export class JobListingController {
     }
   }
 
-  // @Get('/assigned/:userId')
-  // async findAllJobListingsByJobSeeker(@Param('userId') userId: string) {
-  //   try {
-  //     const jobListings =
-  //       await this.jobListingService.findAllByJobSeeker(userId);
-
-  //     // Logging the data to inspect it
-  //     console.log('Job Listings:', jobListings);
-
-  //     return jobListings;
-  //   } catch (error) {
-  //     if (error instanceof HttpException) {
-  //       throw new HttpException(error.message, HttpStatus.CONFLICT);
-  //     } else {
-  //       throw new InternalServerErrorException('Internal server error');
-  //     }
-  //   }
-  // }
-
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {
@@ -181,32 +161,4 @@ export class JobListingController {
       }
     }
   }
-
-  // @Delete(':id')
-  // // Ensure that id provided is a number
-  // removeJobListing(@Param('id') id: number) {
-  //   try {
-  //     return this.jobListingService.remove(id);
-  //   } catch (error) {
-  //     if (error instanceof HttpException) {
-  //       throw new HttpException(error.message, HttpStatus.CONFLICT);
-  //     } else {
-  //       throw new InternalServerErrorException('Internal server error');
-  //     }
-  //   }
-  // }
-
-  //   @Get('/corporate/jobApplications/:id')
-  //   findAllProcessingJobApplicationsByJobListing(@Param('id') id: number) {
-  //     try {
-  //       console.log('999999999');
-  //       return this.jobListingService.getJobApplicationsByJobListingId(id);
-  //     } catch (error) {
-  //       if (error instanceof HttpException) {
-  //         throw new HttpException(error.message, HttpStatus.CONFLICT);
-  //       } else {
-  //         throw new InternalServerErrorException('Internal server error');
-  //       }
-  //     }
-  //   }
 }

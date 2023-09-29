@@ -102,7 +102,7 @@ export class SavedJobListingService {
       return jobListings;
     } catch (error) {
       console.error('Error in findSavedJobListingsByJobSeeker: ', error);
-      throw error; // Handle database or any other errors, you can further refine this part
+      throw error;
     }
   }
 
@@ -136,29 +136,6 @@ export class SavedJobListingService {
       );
     }
   }
-
-  // async checkIfJobIsSaved(
-  //   jobSeekerId: string,
-  //   jobListingId: number,
-  // ): Promise<boolean> {
-  //   try {
-  //     const existingSavedJobListing =
-  //       await this.savedJobListingRepository.findOne({
-  //         where: {
-  //           jobSeeker: { userId: jobSeekerId },
-  //           jobListing: { jobListingId: jobListingId },
-  //         },
-  //       });
-
-  //     return !!existingSavedJobListing; // returns true if found, false otherwise
-  //   } catch (error) {
-  //     console.error('Error in checkIfJobIsSaved:', error);
-  //     throw new HttpException(
-  //       'Failed to check if job listing is saved',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-  // }
 
   async isJobSavedByUser(
     jobSeekerId: string,

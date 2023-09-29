@@ -8,7 +8,6 @@ import {
   HttpException,
   HttpStatus,
   InternalServerErrorException,
-  Put,
   Req,
   Patch,
   NotFoundException,
@@ -115,27 +114,6 @@ export class SavedJobListingController {
       }
     }
   }
-
-  // @Get('/is-saved/:jobListingId')
-  // async checkIfJobIsSaved(
-  //   @Req() req: any,
-  //   @Param('jobListingId') jobListingId: number,
-  // ): Promise<{ isSaved: boolean }> {
-  //   try {
-  //     const jobSeekerId = req.user.sub;
-  //     const isSaved = await this.savedJobListingService.checkIfJobIsSaved(
-  //       jobSeekerId,
-  //       jobListingId,
-  //     );
-  //     return { isSaved }; // returns { isSaved: true } or { isSaved: false }
-  //   } catch (error) {
-  //     if (error instanceof HttpException) {
-  //       throw new HttpException(error.message, error.getStatus());
-  //     } else {
-  //       throw new InternalServerErrorException('Internal server error');
-  //     }
-  //   }
-  // }
 
   @Get('/is-saved/:jobListingId')
   async isJobSaved(

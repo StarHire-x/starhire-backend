@@ -210,6 +210,13 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdCorporateTwo = await this.corporateRepository.findOne({
+      where: {
+        userName: createCorporateTwoDto.userName,
+        email: createCorporateTwoDto.email,
+      },
+    });
+
     const createdJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
         userName: createJobSeekerDto.userName,
@@ -222,6 +229,7 @@ export class DataInitService implements OnModuleInit {
       !createdAdmin ||
       !createdRecruiter ||
       !createdCorporate ||
+      !createdCorporateTwo ||
       !createdJobSeeker
     ) {
       return;
@@ -264,7 +272,8 @@ export class DataInitService implements OnModuleInit {
     }
 
     // job listing 2 creation
-    const createJobListingTwoDto: CreateJobListingDto = new CreateJobListingDto();
+    const createJobListingTwoDto: CreateJobListingDto =
+      new CreateJobListingDto();
     createJobListingTwoDto.title = 'Kindergarten Teacher';
     createJobListingTwoDto.overview = 'Looking for a Kindergarten teacher.';
     createJobListingTwoDto.responsibilities = 'Manage kindergarten classes.';
@@ -298,6 +307,5 @@ export class DataInitService implements OnModuleInit {
         `job listing ${createJobListingTwoDto.title} is created by corporate username ${createdCorporate.userName}`,
       );
     }
-
   }
 }

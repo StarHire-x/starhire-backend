@@ -131,6 +131,35 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
+    // Corporate account pawfect pawfectis3106@gmail.com creation
+    const hashedCorporateTwoPassword = await bcrypt.hash(
+      process.env.CORPORATE_PW,
+      5,
+    );
+    const createCorporateTwoDto: CreateCorporateDto = new CreateCorporateDto();
+    createCorporateTwoDto.userName = 'pawfectis3106';
+    createCorporateTwoDto.password = hashedCorporateTwoPassword;
+    createCorporateTwoDto.email = 'pawfectis3106@gmail.com';
+    createCorporateTwoDto.contactNo = '65415529';
+    createCorporateTwoDto.role = UserRoleEnum.CORPORATE;
+    createCorporateTwoDto.createdAt = new Date();
+    createCorporateTwoDto.companyRegistrationId = 177452074;
+
+    const existingCorporateTwo = await this.corporateRepository.findOne({
+      where: {
+        userName: createCorporateTwoDto.userName,
+        email: createCorporateTwoDto.email,
+      },
+    });
+
+    // if data init corporate does not exist, means we can create the data init corporate
+    if (!existingCorporateTwo) {
+      await this.corporateService.create(createCorporateTwoDto);
+      console.log(
+        `Data initialized this corporate account ${createCorporateTwoDto.email} successfully!`,
+      );
+    }
+
     // Job Seeker account creation
     const hashedJobSeekerPassword = await bcrypt.hash(
       process.env.JOBSEEKER_PW,

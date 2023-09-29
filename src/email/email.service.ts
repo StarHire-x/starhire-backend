@@ -41,7 +41,7 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: jobListing.corporate.email,
-        subject: `Status Update on Job Listing:${jobListing.jobListingId} + " ," ${jobListing.title}`,
+        subject: `Status Update on Job Listing: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${jobListing.corporate.userName}</Strong>,<br><br>
                We want to inform you about the status of your job listing.<br>
 

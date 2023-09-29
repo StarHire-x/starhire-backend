@@ -13,6 +13,9 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { mapJobApplicationStatusToEnum } from 'src/common/mapStringToEnum';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { Document } from 'src/entities/document.entity';
+
 
 @Injectable()
 export class JobApplicationService {
@@ -26,28 +29,39 @@ export class JobApplicationService {
     private readonly jobSeekerRepository: Repository<JobSeeker>,
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
+    @InjectRepository(JobAssignment)
+    private readonly jobAssignmentRepository: Repository<JobAssignment>,
   ) {}
 
   async create(createJobApplicationDto: CreateJobApplicationDto) {
     try {
-      const { jobListingId, jobSeekerId, recruiterId, ...dtoExcludingParents } =
+      const { jobListingId, jobSeekerId, documents, ...dtoExcludingParents } =
         createJobApplicationDto;
+
       // Ensure valid Parent Ids are provided
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobListingId },
       });
+
       if (!jobListing) {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
       const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId: jobSeekerId },
       });
+
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
-      const recruiter = await this.recruiterRepository.findOne({
-        where: { userId: recruiterId },
+
+      const recruiterReference = await this.jobAssignmentRepository.findOne({
+        where: { jobSeekerId: jobSeekerId, jobListingId: jobListingId },
       });
+
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId: recruiterReference.recruiterId },
+      });
+
       if (!recruiter) {
         throw new NotFoundException('Recruiter Id provided is not valid');
       }
@@ -66,7 +80,22 @@ export class JobApplicationService {
         recruiter,
       });
 
-      return await this.jobApplicationRepository.save(jobApplication);
+      if (documents && documents.length > 0) {
+        const updatedDocuments = documents.map((createDocumentDto) => {
+          return new Document(createDocumentDto);
+        });
+        jobApplication.documents = updatedDocuments;
+      }
+
+      console.log(jobApplication);
+
+      await this.jobApplicationRepository.save(jobApplication);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job Application successfully created',
+        data: jobApplication,
+      };
     } catch (err) {
       throw new HttpException(
         'Failed to create new job application',
@@ -153,6 +182,66 @@ export class JobApplicationService {
     } catch (err) {
       throw new HttpException(
         'Failed to delete job application',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async hasMatchingApplication(
+    seekerApplications: Array<{ jobApplicationId: number }>,
+    listingApplications: Array<{ jobApplicationId: number }>,
+  ): Promise<boolean> {
+    return seekerApplications.some((seekerApp) =>
+      listingApplications.some(
+        (listingApp) =>
+          listingApp.jobApplicationId === seekerApp.jobApplicationId,
+      ),
+    );
+  }
+
+  async getJobApplicationByJobSeekerJobListing(
+    jobSeekerId: string,
+    jobListingId: number,
+  ) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: { jobApplications: true },
+      });
+
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
+        relations: { jobApplications: true },
+      });
+
+      if (jobSeeker.jobApplications.length === 0 || jobListing.jobApplications.length === 0) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Existing job application not found',
+        };
+      } 
+
+      const isMatch = this.hasMatchingApplication(
+        jobSeeker.jobApplications,
+        jobListing.jobApplications,
+      );
+
+      if(isMatch) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Existing job application is found',
+          data: jobSeeker,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Existing job application not found',
+        }
+      }
+
+    } catch (error) {
+      throw new HttpException(
+        'No Job application found in job listing',
         HttpStatus.BAD_REQUEST,
       );
     }

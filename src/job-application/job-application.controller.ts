@@ -20,9 +20,9 @@ export class JobApplicationController {
 
   @Post()
   // Ensure dto contains the id field for the following parent entities: Job Listing, Job Seeker & Recruiter
-  create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
+  async create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
     try {
-      return this.jobApplicationService.create(createJobApplicationDto);
+      return await this.jobApplicationService.create(createJobApplicationDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -50,6 +50,26 @@ export class JobApplicationController {
   findOne(@Param('id') id: number) {
     try {
       return this.jobApplicationService.findOne(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/existing/:jobSeekerId/:jobListingId')
+  // Check whether an existing job application has already been created
+  async findExistingJobApplication(
+    @Param('jobSeekerId') jobSeekerId: string,
+    @Param('jobListingId') jobListingId: number,
+  ) {
+    try {
+      return await this.jobApplicationService.getJobApplicationByJobSeekerJobListing(
+        jobSeekerId,
+        jobListingId
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

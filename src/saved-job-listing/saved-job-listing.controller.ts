@@ -95,4 +95,63 @@ export class SavedJobListingController {
       }
     }
   }
+
+  @Delete('/unsave/:jobListingId')
+  async unsaveJobListing(
+    @Req() req: any,
+    @Param('jobListingId') jobListingId: number,
+  ) {
+    try {
+      const jobSeekerId = req.user.sub;
+      return await this.savedJobListingService.unsaveJobListing(
+        jobSeekerId,
+        jobListingId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, error.getStatus());
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  // @Get('/is-saved/:jobListingId')
+  // async checkIfJobIsSaved(
+  //   @Req() req: any,
+  //   @Param('jobListingId') jobListingId: number,
+  // ): Promise<{ isSaved: boolean }> {
+  //   try {
+  //     const jobSeekerId = req.user.sub;
+  //     const isSaved = await this.savedJobListingService.checkIfJobIsSaved(
+  //       jobSeekerId,
+  //       jobListingId,
+  //     );
+  //     return { isSaved }; // returns { isSaved: true } or { isSaved: false }
+  //   } catch (error) {
+  //     if (error instanceof HttpException) {
+  //       throw new HttpException(error.message, error.getStatus());
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
+
+  @Get('/is-saved/:jobListingId')
+  async isJobSaved(
+    @Req() req: any,
+    @Param('jobListingId') jobListingId: number,
+  ): Promise<any> {
+    const jobSeekerId = req.user.sub;
+    const isSaved = await this.savedJobListingService.isJobSavedByUser(
+      jobSeekerId,
+      jobListingId,
+    );
+
+    if (isSaved) {
+      return { statusCode: HttpStatus.OK, message: 'Job is saved' };
+    } else {
+      throw new NotFoundException('Job not saved by the user');
+    }
+  }
 }

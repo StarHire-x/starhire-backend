@@ -38,11 +38,9 @@ export class JobApplication {
   documents: Document[];
 
   @ManyToOne(() => JobListing, (jobListing) => jobListing.jobApplications)
-  @JoinColumn({ name: 'jobListingId' })
   jobListing: JobListing;
 
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobApplications)
-  @JoinColumn({ name: 'jobSeekerId' })
   jobSeeker: JobSeeker;
 
   @OneToOne(() => Commission, (commission) => commission.jobApplication, {

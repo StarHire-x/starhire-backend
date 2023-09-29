@@ -42,14 +42,14 @@ export class JobApplicationService {
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobListingId },
       });
-      
+
       if (!jobListing) {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
       const jobSeeker = await this.jobSeekerRepository.findOne({
         where: { userId: jobSeekerId },
       });
-      
+
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
@@ -57,7 +57,7 @@ export class JobApplicationService {
       const recruiterReference = await this.jobAssignmentRepository.findOne({
         where: { jobSeekerId: jobSeekerId, jobListingId: jobListingId },
       });
-      
+
       const recruiter = await this.recruiterRepository.findOne({
         where: { userId: recruiterReference.recruiterId },
       });
@@ -95,7 +95,7 @@ export class JobApplicationService {
         statusCode: HttpStatus.OK,
         message: 'Job Application successfully created',
         data: jobApplication,
-      }
+      };
     } catch (err) {
       throw new HttpException(
         'Failed to create new job application',
@@ -181,33 +181,61 @@ export class JobApplicationService {
     }
   }
 
-  async getJobApplicationByJobSeekerJobListing(jobSeekerId: string, jobListingId: number) {
-    try {
-      const jobApplication = await this.jobApplicationRepository
-        .createQueryBuilder('jobApplications')
-        .where('jobApplications.userId = :userId', { userId: jobSeekerId })
-        .andWhere('jobApplications.jobListingId = :jobListingId', {
-          jobListingId: jobListingId,
-        })
-        .getOne();
+  async hasMatchingApplication(
+    seekerApplications: Array<{ jobApplicationId: number }>,
+    listingApplications: Array<{ jobApplicationId: number }>,
+  ): Promise<boolean> {
+    return seekerApplications.some((seekerApp) =>
+      listingApplications.some(
+        (listingApp) =>
+          listingApp.jobApplicationId === seekerApp.jobApplicationId,
+      ),
+    );
+  }
 
-      console.log(jobApplication);
-      
-      if(jobApplication) {
+  async getJobApplicationByJobSeekerJobListing(
+    jobSeekerId: string,
+    jobListingId: number,
+  ) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: { jobApplications: true },
+      });
+
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
+        relations: { jobApplications: true },
+      });
+
+      if (jobSeeker.jobApplications.length === 0 || jobListing.jobApplications.length === 0) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Existing job application not found',
+        };
+      } 
+
+      const isMatch = this.hasMatchingApplication(
+        jobSeeker.jobApplications,
+        jobListing.jobApplications,
+      );
+
+      if(isMatch) {
         return {
           statusCode: HttpStatus.OK,
-          message: "Existing job application is found",
-          data: jobApplication
-        }
+          message: 'Existing job application is found',
+          data: jobSeeker,
+        };
       } else {
-        throw new HttpException(
-          'No Job applicatione found in job listing',
-          HttpStatus.BAD_REQUEST,
-        );
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Existing job application not found',
+        }
       }
+
     } catch (error) {
       throw new HttpException(
-        'No Job applicationy found in job listing',
+        'No Job application found in job listing',
         HttpStatus.BAD_REQUEST,
       );
     }

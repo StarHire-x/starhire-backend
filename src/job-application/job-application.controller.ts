@@ -20,9 +20,9 @@ export class JobApplicationController {
 
   @Post()
   // Ensure dto contains the id field for the following parent entities: Job Listing, Job Seeker & Recruiter
-  create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
+  async create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
     try {
-      return this.jobApplicationService.create(createJobApplicationDto);
+      return await this.jobApplicationService.create(createJobApplicationDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

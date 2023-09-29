@@ -28,6 +28,7 @@ import { EmailModule } from './email/email.module';
 import { JobExperienceModule } from './job-experience/job-experience.module';
 import { JobAssignmentModule } from './job-assignment/job-assignment.module';
 import { SavedJobListingModule } from './saved-job-listing/saved-job-listing.module';
+import { DataInitModule } from './data-init/data-init.module';
 
 require('dotenv').config();
 
@@ -69,6 +70,7 @@ require('dotenv').config();
     JobExperienceModule,
     JobAssignmentModule,
     SavedJobListingModule,
+    DataInitModule
   ],
   controllers: [AppController],
   providers: [AppService],

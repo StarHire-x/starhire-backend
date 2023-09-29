@@ -259,7 +259,6 @@ export class DataInitService implements OnModuleInit {
         averageSalary: createJobListingDto.averageSalary,
         jobStartDate: createJobListingDto.jobStartDate,
         requiredDocuments: createJobListingDto.requiredDocuments,
-        jobListingStatus: createJobListingDto.jobListingStatus,
         corporate: createdCorporate,
       },
     });
@@ -296,7 +295,6 @@ export class DataInitService implements OnModuleInit {
         averageSalary: createJobListingTwoDto.averageSalary,
         jobStartDate: createJobListingTwoDto.jobStartDate,
         requiredDocuments: createJobListingTwoDto.requiredDocuments,
-        jobListingStatus: createJobListingTwoDto.jobListingStatus,
         corporate: createdCorporate,
       },
     });

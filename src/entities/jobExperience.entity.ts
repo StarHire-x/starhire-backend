@@ -1,6 +1,7 @@
 import { Column, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm';
 import { JobSeeker } from './jobSeeker.entity';
+import { IsOptional } from 'class-validator';
 
 @Entity({ name: 'jobExperiences' })
 export class JobExperience {
@@ -20,6 +21,7 @@ export class JobExperience {
   startDate: Date;
 
   @Column()
+  @IsOptional()
   endDate: Date;
 
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobExperiences, {

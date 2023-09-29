@@ -9,13 +9,14 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
+  Req,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
 import { JobListing } from 'src/entities/jobListing.entity';
-import { Public } from 'src/users/public.decorator';
 
 @Controller('job-listing')
 export class JobListingController {
@@ -51,13 +52,7 @@ export class JobListingController {
   @Get('/corporate/:userId')
   async findAllJobListingsByCorporate(@Param('userId') userId: string) {
     try {
-      // const numericUserId = parseInt(userId, 10); // Convert string userId to a number.
-      // if (isNaN(numericUserId)) {
-      //   // Check if the conversion was successful.
-      //   throw new HttpException('Invalid user ID', HttpStatus.BAD_REQUEST);
-      // }
       const result = await this.jobListingService.findAllByCorporate(userId);
-      //console.log(result);
       return result;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -105,7 +100,11 @@ export class JobListingController {
     @Param('recruiterId') recruiterId: string,
   ) {
     try {
-      return this.jobListingService.assignJobListing(jobSeekerId, jobListingId, recruiterId);
+      return this.jobListingService.assignJobListing(
+        jobSeekerId,
+        jobListingId,
+        recruiterId,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

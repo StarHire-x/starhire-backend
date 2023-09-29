@@ -27,8 +27,9 @@ import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
 import { JobExperienceModule } from './job-experience/job-experience.module';
 import { JobAssignmentModule } from './job-assignment/job-assignment.module';
+import { SavedJobListingModule } from './saved-job-listing/saved-job-listing.module';
 
-require("dotenv").config();
+require('dotenv').config();
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ require("dotenv").config();
     EmailModule,
     JobExperienceModule,
     JobAssignmentModule,
+    SavedJobListingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

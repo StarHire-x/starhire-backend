@@ -114,7 +114,7 @@ export class JobApplicationService {
     try {
       return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
-        relations: { documents: true },
+        relations: { documents: true, jobSeeker: true, jobListing: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -124,10 +124,16 @@ export class JobApplicationService {
     }
   }
 
-  async findAllByJobListingId(id: number): Promise<JobApplication[]> {
+  async findAllByJobListingId(
+    jobListingId: number,
+    recruiterId: string,
+  ): Promise<JobApplication[]> {
     try {
       return await this.jobApplicationRepository.find({
-        where: { jobListing: { jobListingId: id } },
+        where: {
+          jobListing: { jobListingId: jobListingId },
+          recruiter: { userId: recruiterId },
+        },
         relations: { jobSeeker: true }, // to retrieve jobSeeker details with job application
       });
     } catch (err) {

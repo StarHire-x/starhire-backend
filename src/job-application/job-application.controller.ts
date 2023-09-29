@@ -60,7 +60,7 @@ export class JobApplicationController {
   }
 
   @Get('/existing/:jobSeekerId/:jobListingId')
-  // Ensure that id provided is a number
+  // Check whether an existing job application has already been created
   async findExistingJobApplication(
     @Param('jobSeekerId') jobSeekerId: string,
     @Param('jobListingId') jobListingId: number,
@@ -79,10 +79,16 @@ export class JobApplicationController {
     }
   }
 
-  @Get('job-listing/:id')
-  findAllByJobListingId(@Param('id') jobListingId: number) {
+  @Get('job-listing/:joblistingId/:recruiterId')
+  findAllByJobListingId(
+    @Param('joblistingId') jobListingId: number,
+    @Param('recruiterId') recruiterId: string,
+  ) {
     try {
-      return this.jobApplicationService.findAllByJobListingId(jobListingId);
+      return this.jobApplicationService.findAllByJobListingId(
+        jobListingId,
+        recruiterId,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

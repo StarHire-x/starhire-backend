@@ -251,7 +251,7 @@ export class JobApplicationService {
     try {
       const jobApplication = await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: jobAppliationId },
-        relations: ['jobSeeker', 'recruiter'],
+        relations: ['jobSeeker', 'recruiter', 'documents'],
       });
 
       if (jobApplication) {

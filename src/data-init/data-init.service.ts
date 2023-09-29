@@ -236,74 +236,74 @@ export class DataInitService implements OnModuleInit {
     }
 
     // job listing 1 creation
-    const createJobListingDto: CreateJobListingDto = new CreateJobListingDto();
-    createJobListingDto.title = 'Nursery Teacher';
-    createJobListingDto.overview = 'Looking for a nursery teacher.';
-    createJobListingDto.responsibilities = 'Manage nursery classes.';
-    createJobListingDto.requirements = 'NIE';
-    createJobListingDto.jobLocation = 'Kent Ridge, Singapore';
-    createJobListingDto.averageSalary = 5000;
-    createJobListingDto.jobStartDate = new Date('2023-10-29');
-    createJobListingDto.requiredDocuments =
-      'Education Certs, Resume, Cover Letter';
-    createJobListingDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
-    createJobListingDto.corporateId = createdCorporate.userId;
+    // const createJobListingDto: CreateJobListingDto = new CreateJobListingDto();
+    // createJobListingDto.title = 'Nursery Teacher';
+    // createJobListingDto.overview = 'Looking for a nursery teacher.';
+    // createJobListingDto.responsibilities = 'Manage nursery classes.';
+    // createJobListingDto.requirements = 'NIE';
+    // createJobListingDto.jobLocation = 'Kent Ridge, Singapore';
+    // createJobListingDto.averageSalary = 5000;
+    // createJobListingDto.jobStartDate = new Date('2023-10-29');
+    // createJobListingDto.requiredDocuments =
+    //   'Education Certs, Resume, Cover Letter';
+    // createJobListingDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
+    // createJobListingDto.corporateId = createdCorporate.userId;
 
-    const existingJobListingOne = await this.jobListingRepository.findOne({
-      where: {
-        title: createJobListingDto.title,
-        overview: createJobListingDto.overview,
-        responsibilities: createJobListingDto.responsibilities,
-        requirements: createJobListingDto.requirements,
-        jobLocation: createJobListingDto.jobLocation,
-        averageSalary: createJobListingDto.averageSalary,
-        jobStartDate: createJobListingDto.jobStartDate,
-        requiredDocuments: createJobListingDto.requiredDocuments,
-        corporate: createdCorporate,
-      },
-    });
+    // const existingJobListingOne = await this.jobListingRepository.findOne({
+    //   where: {
+    //     title: createJobListingDto.title,
+    //     overview: createJobListingDto.overview,
+    //     responsibilities: createJobListingDto.responsibilities,
+    //     requirements: createJobListingDto.requirements,
+    //     jobLocation: createJobListingDto.jobLocation,
+    //     averageSalary: createJobListingDto.averageSalary,
+    //     jobStartDate: createJobListingDto.jobStartDate,
+    //     requiredDocuments: createJobListingDto.requiredDocuments,
+    //     corporate: createdCorporate,
+    //   },
+    // });
 
-    if (!existingJobListingOne) {
-      await this.jobListingService.create(createJobListingDto);
-      console.log(
-        `job listing ${createJobListingDto.title} is created by corporate username ${createdCorporate.userName}`,
-      );
-    }
+    // if (!existingJobListingOne) {
+    //   await this.jobListingService.create(createJobListingDto);
+    //   console.log(
+    //     `job listing ${createJobListingDto.title} is created by corporate username ${createdCorporate.userName}`,
+    //   );
+    // }
 
     // job listing 2 creation
-    const createJobListingTwoDto: CreateJobListingDto =
-      new CreateJobListingDto();
-    createJobListingTwoDto.title = 'Kindergarten Teacher';
-    createJobListingTwoDto.overview = 'Looking for a Kindergarten teacher.';
-    createJobListingTwoDto.responsibilities = 'Manage kindergarten classes.';
-    createJobListingTwoDto.requirements = 'NIE';
-    createJobListingTwoDto.jobLocation = 'Woodlands, Singapore';
-    createJobListingTwoDto.averageSalary = 7500;
-    createJobListingTwoDto.jobStartDate = new Date('2023-11-25');
-    createJobListingTwoDto.requiredDocuments =
-      'Education Certs, Resume, Cover Letter';
-    createJobListingTwoDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
-    createJobListingTwoDto.corporateId = createdCorporate.userId;
+    // const createJobListingTwoDto: CreateJobListingDto =
+    //   new CreateJobListingDto();
+    // createJobListingTwoDto.title = 'Kindergarten Teacher';
+    // createJobListingTwoDto.overview = 'Looking for a Kindergarten teacher.';
+    // createJobListingTwoDto.responsibilities = 'Manage kindergarten classes.';
+    // createJobListingTwoDto.requirements = 'NIE';
+    // createJobListingTwoDto.jobLocation = 'Woodlands, Singapore';
+    // createJobListingTwoDto.averageSalary = 7500;
+    // createJobListingTwoDto.jobStartDate = new Date('2023-11-25');
+    // createJobListingTwoDto.requiredDocuments =
+    //   'Education Certs, Resume, Cover Letter';
+    // createJobListingTwoDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
+    // createJobListingTwoDto.corporateId = createdCorporate.userId;
 
-    const existingJobListingTwo = await this.jobListingRepository.findOne({
-      where: {
-        title: createJobListingTwoDto.title,
-        overview: createJobListingTwoDto.overview,
-        responsibilities: createJobListingTwoDto.responsibilities,
-        requirements: createJobListingTwoDto.requirements,
-        jobLocation: createJobListingTwoDto.jobLocation,
-        averageSalary: createJobListingTwoDto.averageSalary,
-        jobStartDate: createJobListingTwoDto.jobStartDate,
-        requiredDocuments: createJobListingTwoDto.requiredDocuments,
-        corporate: createdCorporate,
-      },
-    });
+    // const existingJobListingTwo = await this.jobListingRepository.findOne({
+    //   where: {
+    //     title: createJobListingTwoDto.title,
+    //     overview: createJobListingTwoDto.overview,
+    //     responsibilities: createJobListingTwoDto.responsibilities,
+    //     requirements: createJobListingTwoDto.requirements,
+    //     jobLocation: createJobListingTwoDto.jobLocation,
+    //     averageSalary: createJobListingTwoDto.averageSalary,
+    //     jobStartDate: createJobListingTwoDto.jobStartDate,
+    //     requiredDocuments: createJobListingTwoDto.requiredDocuments,
+    //     corporate: createdCorporate,
+    //   },
+    // });
 
-    if (!existingJobListingTwo) {
-      await this.jobListingService.create(createJobListingTwoDto);
-      console.log(
-        `job listing ${createJobListingTwoDto.title} is created by corporate username ${createdCorporate.userName}`,
-      );
-    }
+    // if (!existingJobListingTwo) {
+    //   await this.jobListingService.create(createJobListingTwoDto);
+    //   console.log(
+    //     `job listing ${createJobListingTwoDto.title} is created by corporate username ${createdCorporate.userName}`,
+    //   );
+    // }
   }
 }

@@ -73,26 +73,22 @@ export class JobPreferenceService {
   }
 
   async findByJobSeekerId(jobSeekerId: string) {
-    try {
-      const jobSeeker = await this.jobSeekerRepository.findOne({
-        where: { userId: jobSeekerId },
-        relations: { jobPreference: true },
-      });
+    const jobSeeker = await this.jobSeekerRepository.findOne({
+      where: { userId: jobSeekerId },
+      relations: { jobPreference: true },
+    });
 
-      if (!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid');
-      }
-      if (!jobSeeker.jobPreference) {
-        throw new ConflictException('Job Seeker has no Job Preference!');
-      }
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Job preference is found',
-        data: jobSeeker.jobPreference,
-      };
-    } catch (err) {
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    if (!jobSeeker) {
+      throw new NotFoundException('Job Seeker Id provided is not valid');
     }
+    if (!jobSeeker.jobPreference) {
+      throw new NotFoundException('Job Seeker has no existing job preference');
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Job preference is found',
+      data: jobSeeker.jobPreference,
+    };
   }
 
   async update(id: number, updateJobPreference: UpdateJobPreferenceDto) {

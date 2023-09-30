@@ -70,11 +70,7 @@ export class SavedJobListingService {
       savedJobListing.jobSeeker = jobSeeker;
       savedJobListing.jobListing = jobListing;
 
-      const countBefore = await this.savedJobListingRepository.count();
-
-      const result = await this.savedJobListingRepository.save(savedJobListing);
-
-      const countAfter = await this.savedJobListingRepository.count();
+      await this.savedJobListingRepository.save(savedJobListing);
 
       return {
         statusCode: HttpStatus.OK,
@@ -106,7 +102,52 @@ export class SavedJobListingService {
       return jobListings;
     } catch (error) {
       console.error('Error in findSavedJobListingsByJobSeeker: ', error);
-      throw error; // Handle database or any other errors, you can further refine this part
+      throw error;
     }
+  }
+
+  async unsaveJobListing(jobSeekerId: string, jobListingId: number) {
+    try {
+      const savedJobListing = await this.savedJobListingRepository.findOne({
+        where: {
+          jobListing: { jobListingId },
+          jobSeeker: { userId: jobSeekerId },
+        },
+      });
+
+      if (!savedJobListing) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Saved JobListing not found',
+        };
+      }
+
+      await this.savedJobListingRepository.remove(savedJobListing);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'JobListing unsaved successfully',
+      };
+    } catch (error) {
+      console.error('Error in unsaveJobListing:', error);
+      throw new HttpException(
+        'Failed to unsave job listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async isJobSavedByUser(
+    jobSeekerId: string,
+    jobListingId: number,
+  ): Promise<boolean> {
+    const savedJob = await this.savedJobListingRepository.findOne({
+      where: {
+        jobListing: { jobListingId },
+        jobSeeker: { userId: jobSeekerId },
+      },
+    });
+
+    return !!savedJob;
   }
 }

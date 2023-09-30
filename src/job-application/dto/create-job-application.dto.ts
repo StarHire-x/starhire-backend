@@ -5,6 +5,7 @@ export class CreateJobApplicationDto {
   jobApplicationStatus: JobApplicationStatusEnum;
   availableStartDate: Date;
   availableEndDate: Date;
+  remarks: string;
   submissionDate: Date;
   // Parent entities
   jobListingId: number;

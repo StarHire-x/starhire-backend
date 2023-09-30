@@ -28,6 +28,13 @@ export class JobApplication {
   @Column({ nullable: true })
   availableEndDate: Date;
 
+  @Column({
+    type: 'varchar',
+    length: 2000,
+    nullable: true,
+  })
+  remarks: string;
+
   @Column({ nullable: true })
   submissionDate: Date;
 

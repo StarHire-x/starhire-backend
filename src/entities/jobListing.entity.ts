@@ -23,13 +23,13 @@ export class JobListing {
   @Column()
   title: string;
 
-  @Column('varchar', { length: 5000 })
+  @Column('varchar', { length: 3000 })
   overview: string;
 
-  @Column('varchar', { length: 5000 })
+  @Column('varchar', { length: 4000 })
   responsibilities: string;
 
-  @Column('varchar', { length: 5000 })
+  @Column('varchar', { length: 4000 })
   requirements: string;
 
   @Column()

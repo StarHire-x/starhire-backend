@@ -305,6 +305,7 @@ export class JobListingService {
       const jobListings = await this.jobListingRepository
         .createQueryBuilder('jobListing')
         .innerJoinAndSelect('jobListing.jobSeekers', 'jobSeeker')
+        .innerJoinAndSelect('jobListing.corporate', 'corporate')
         .where('jobSeeker.userId = :userId', { userId: id })
         .getMany();
 

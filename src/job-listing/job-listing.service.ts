@@ -90,7 +90,7 @@ export class JobListingService {
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     const t = await this.jobListingRepository.find({
-      relations: { corporate: true, jobApplications: true, jobSeekers: true},
+      relations: { corporate: true, jobApplications: true, jobSeekers: true },
     });
     //console.log(t);
     return t;
@@ -129,7 +129,7 @@ export class JobListingService {
     try {
       const t = await this.jobListingRepository.findOne({
         where: { jobListingId: id },
-        relations: { corporate: true, jobApplications: true, jobSeekers: true},
+        relations: { corporate: true, jobApplications: true, jobSeekers: true },
       });
       console.log(t);
       return t;
@@ -177,7 +177,11 @@ export class JobListingService {
     }
   }
 
-  async assignJobListing(jobSeekerId: string, jobListingId: number, recruiterId: string) {
+  async assignJobListing(
+    jobSeekerId: string,
+    jobListingId: number,
+    recruiterId: string,
+  ) {
     try {
       // Ensure valid job listing Id is provided
       const jobListing = await this.findOne(jobListingId);
@@ -196,7 +200,7 @@ export class JobListingService {
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker User ID provided is not valid');
       }
-    
+
       const recruiter = await this.recruiterRepository.findOne({
         where: { userId: recruiterId },
       });
@@ -229,6 +233,68 @@ export class JobListingService {
     } catch (err) {
       throw new HttpException(
         'Failed to assign job seeker to job listing and failed to assign job listing to job seeker',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async deassignJobListing(jobSeekerId: string, jobListingId: number) {
+    try {
+      const jobListing = await this.findOne(jobListingId);
+
+      if (!jobListing) {
+        throw new NotFoundException('Job Listing Id provided is not valid');
+      }
+
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: {
+          jobListings: true,
+        },
+      });
+
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker User ID provided is not valid');
+      }
+
+      // remove jobSeeker from jobListing's jobSeeker[].
+      const jobSeekerIndex = jobListing.jobSeekers.findIndex(
+        (js) => js.userId === jobSeekerId,
+      );
+      if (jobSeekerIndex !== -1) {
+        jobListing.jobSeekers.splice(jobSeekerIndex, 1);
+        await this.jobListingRepository.save(jobListing);
+      }
+
+      // remove jobListing from jobSeeker's jobListing[].
+      const jobListingIndex = jobSeeker.jobListings.findIndex(
+        (jl) => jl.jobListingId === jobListingId,
+      );
+      if (jobListingIndex !== -1) {
+        jobSeeker.jobListings.splice(jobListingIndex, 1);
+        await this.jobSeekerRepository.save(jobSeeker);
+      }
+
+      // remove entry from JobAssignment table
+      const jobAssignment = await this.jobAssignmentRepository.findOne({
+        where: {
+          jobListingId: jobListingId,
+          jobSeekerId: jobSeekerId,
+        },
+      });
+      if (jobAssignment) {
+        await this.jobAssignmentRepository.remove(jobAssignment);
+      }
+
+      if (jobListing && jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker has been de-assigned from Job listing',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to de-assign job seeker from job listing',
         HttpStatus.BAD_REQUEST,
       );
     }

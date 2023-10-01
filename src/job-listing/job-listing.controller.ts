@@ -114,6 +114,26 @@ export class JobListingController {
     }
   }
 
+  @Delete('/rejectJobListing/:jobSeekerId/:jobListingId')
+  rejectJobListing(
+    @Param('jobSeekerId') jobSeekerId: string,
+    @Param('jobListingId') jobListingId: number,
+  ) {
+    try {
+      console.log('Hello There');
+      return this.jobListingService.deassignJobListing(
+        jobSeekerId,
+        jobListingId
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Delete(':id')
   // Ensure that id provided is a number
   removeJobListing(@Param('id') id: number) {

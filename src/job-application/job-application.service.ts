@@ -114,7 +114,7 @@ export class JobApplicationService {
     try {
       return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
-        relations: { documents: true, jobSeeker: true, jobListing: true },
+        relations: { documents: true, jobSeeker: true, jobListing: true, recruiter: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -197,6 +197,33 @@ export class JobApplicationService {
           listingApp.jobApplicationId === seekerApp.jobApplicationId,
       ),
     );
+  }
+
+  async getJobApplicationByJobSeeker(jobSeekerId: string) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: { jobApplications: true },
+      });
+
+      if(jobSeeker.jobApplications.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Existing job application is found',
+          data: jobSeeker.jobApplications,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'No job application is found for job seeker'
+        };
+      }
+    } catch (error) {
+      throw new HttpException(
+        'No Job application is found',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async getJobApplicationByJobSeekerJobListing(

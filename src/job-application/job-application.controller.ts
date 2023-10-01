@@ -59,6 +59,21 @@ export class JobApplicationController {
     }
   }
 
+  @Get('/jobSeeker/:jobSeekerId')
+  async findJobApplicationsByJobSeeker(
+    @Param('jobSeekerId') jobSeekerId: string
+  ) {
+    try {
+      return await this.jobApplicationService.getJobApplicationByJobSeeker(jobSeekerId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Get('/existing/:jobSeekerId/:jobListingId')
   // Check whether an existing job application has already been created
   async findExistingJobApplication(

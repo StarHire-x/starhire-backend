@@ -207,7 +207,7 @@ export class JobSeekerService {
   async findAll() {
     try {
       const jobSeekers = await this.jobSeekerRepository.find({
-        relations: { chats: true, jobListings: true },
+        relations: { chats: true, jobListings: true, jobPreference: true, jobExperiences: true },
       });
       if (jobSeekers.length > 0) {
         return {

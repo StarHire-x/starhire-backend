@@ -247,6 +247,13 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdCorporateThree = await this.corporateRepository.findOne({
+      where: {
+        userName: createCorporateThreeDto.userName,
+        email: createCorporateThreeDto.email,
+      },
+    });
+
     const createdJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
         userName: createJobSeekerDto.userName,
@@ -260,6 +267,7 @@ export class DataInitService implements OnModuleInit {
       !createdRecruiter ||
       !createdCorporate ||
       !createdCorporateTwo ||
+      !createdCorporateThree ||
       !createdJobSeeker
     ) {
       return;

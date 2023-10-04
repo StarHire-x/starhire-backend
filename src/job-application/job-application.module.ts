@@ -7,6 +7,7 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { Document } from 'src/entities/document.entity';
 
 // Ensure imports contain all parent classes
 @Module({
@@ -17,6 +18,7 @@ import { JobAssignment } from 'src/entities/jobAssignment.entity';
       Recruiter,
       JobSeeker,
       JobAssignment,
+      Document,
     ]),
   ],
   controllers: [JobApplicationController],

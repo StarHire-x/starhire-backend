@@ -190,7 +190,7 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
-    // Job Seeker account creation
+    // Job Seeker account jobseeker jobseeker@gmail.com creation
     const hashedJobSeekerPassword = await bcrypt.hash(
       process.env.JOBSEEKER_PW,
       5,
@@ -215,6 +215,34 @@ export class DataInitService implements OnModuleInit {
       await this.jobSeekerService.create(createJobSeekerDto);
       console.log(
         `Data initialized this job seeker account ${createJobSeekerDto.email} successfully!`,
+      );
+    }
+
+    // Job Seeker account jobseeker2 jobseeker2@gmail.com creation
+    const hashedJobSeekerTwoPassword = await bcrypt.hash(
+      process.env.JOBSEEKER_PW,
+      5,
+    );
+    const createJobSeekerTwoDto: CreateJobSeekerDto = new CreateJobSeekerDto();
+    createJobSeekerTwoDto.userName = 'jobseeker2';
+    createJobSeekerTwoDto.password = hashedJobSeekerTwoPassword;
+    createJobSeekerTwoDto.email = 'jobseeker2@gmail.com';
+    createJobSeekerTwoDto.contactNo = '92345678';
+    createJobSeekerTwoDto.role = UserRoleEnum.JOBSEEKER;
+    createJobSeekerTwoDto.createdAt = new Date();
+
+    const existingJobSeekerTwo = await this.jobSeekerRepository.findOne({
+      where: {
+        userName: createJobSeekerTwoDto.userName,
+        email: createJobSeekerTwoDto.email,
+      },
+    });
+
+    // if data init job seeker does not exist, means we can create the data init job seeker
+    if (!existingJobSeekerTwo) {
+      await this.jobSeekerService.create(createJobSeekerTwoDto);
+      console.log(
+        `Data initialized this job seeker account ${createJobSeekerTwoDto.email} successfully!`,
       );
     }
 
@@ -261,6 +289,13 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdJobSeekerTwo = await this.jobSeekerRepository.findOne({
+      where: {
+        userName: createJobSeekerTwoDto.userName,
+        email: createJobSeekerTwoDto.email,
+      },
+    });
+
     // if any of the accounts not valid, don't proceed data init
     if (
       !createdAdmin ||
@@ -268,7 +303,8 @@ export class DataInitService implements OnModuleInit {
       !createdCorporate ||
       !createdCorporateTwo ||
       !createdCorporateThree ||
-      !createdJobSeeker
+      !createdJobSeeker ||
+      !createdJobSeekerTwo
     ) {
       return;
     }

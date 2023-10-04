@@ -31,6 +31,8 @@ export class JobApplicationService {
     private readonly recruiterRepository: Repository<Recruiter>,
     @InjectRepository(JobAssignment)
     private readonly jobAssignmentRepository: Repository<JobAssignment>,
+    @InjectRepository(Document)
+    private readonly documentRepository: Repository<Document>,
   ) {}
 
   async create(createJobApplicationDto: CreateJobApplicationDto) {
@@ -156,14 +158,27 @@ export class JobApplicationService {
         throw new NotFoundException('Job Application Id provided is invalid');
       }
 
+      const { documents, ...dtoExcludeRelationship } = updateJobApplicationDto;
+
+      Object.assign(jobApplication, dtoExcludeRelationship);
+
       // If jobApplicationStatus is to be updated, ensure it is a valid enum
       if (updateJobApplicationDto.jobApplicationStatus) {
         const mappedStatus = mapJobApplicationStatusToEnum(
           updateJobApplicationDto.jobApplicationStatus,
         );
-        updateJobApplicationDto.jobApplicationStatus = mappedStatus;
+        jobApplication.jobApplicationStatus = mappedStatus;
       }
-      Object.assign(jobApplication, updateJobApplicationDto);
+
+      if (documents && documents.length > 0) {
+        const updatedDocuments = documents.map(
+          (updateDocumentsDto) => {
+            return new Document(updateDocumentsDto);
+          },
+        );
+        jobApplication.documents = updatedDocuments;
+      }
+  
       return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
       throw new HttpException(

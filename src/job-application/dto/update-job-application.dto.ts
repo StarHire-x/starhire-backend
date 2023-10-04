@@ -1,4 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { UpdateDocumentDto } from 'src/document/dto/update-document.dto';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 
 class UpdateDto {
@@ -7,7 +8,7 @@ class UpdateDto {
   availableEndDate: Date;
   remarks: string;
   submissionDate: Date;
-  documents: Document[];
+  documents: UpdateDocumentDto[];
 }
 
 export class UpdateJobApplicationDto extends PartialType(UpdateDto) {}

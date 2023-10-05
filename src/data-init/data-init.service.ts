@@ -309,75 +309,78 @@ export class DataInitService implements OnModuleInit {
       return;
     }
 
+    // if there's any existing job listings, don't data init job listings
+    const existingJobListings = await this.jobListingRepository.find();
+    if (existingJobListings.length > 0) {
+      return;
+    }
+
     // job listing 1 creation
-    // const createJobListingDto: CreateJobListingDto = new CreateJobListingDto();
-    // createJobListingDto.title = 'Nursery Teacher';
-    // createJobListingDto.overview = 'Looking for a nursery teacher.';
-    // createJobListingDto.responsibilities = 'Manage nursery classes.';
-    // createJobListingDto.requirements = 'NIE';
-    // createJobListingDto.jobLocation = 'Kent Ridge, Singapore';
-    // createJobListingDto.averageSalary = 5000;
-    // createJobListingDto.jobStartDate = new Date('2023-10-29');
-    // createJobListingDto.requiredDocuments =
-    //   'Education Certs, Resume, Cover Letter';
-    // createJobListingDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
-    // createJobListingDto.corporateId = createdCorporate.userId;
+    const createJobListingDto: CreateJobListingDto = new CreateJobListingDto();
+    createJobListingDto.title = 'English Child Care Teacher';
+    createJobListingDto.overview =
+      'Looking for an L1 and L2 teachers for Tots and K1 class. Must have a DPT/ACEY.';
+    createJobListingDto.responsibilities =
+      "Take a class of 14 children with a Chinese teacher as a partner. Update parents on children's activities, curriculum, progress and well being. Works well with the other staff - team player.";
+    createJobListingDto.requirements =
+      'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
+    createJobListingDto.jobLocation = 'Hillview, Singapore';
+    createJobListingDto.averageSalary = 3000;
+    createJobListingDto.jobStartDate = new Date('2023-10-09');
+    createJobListingDto.requiredDocuments =
+      'Early Childhood Graduation Cert,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
+    createJobListingDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingDto.corporateId = createdCorporateThree.userId;
 
-    // const existingJobListingOne = await this.jobListingRepository.findOne({
-    //   where: {
-    //     title: createJobListingDto.title,
-    //     overview: createJobListingDto.overview,
-    //     responsibilities: createJobListingDto.responsibilities,
-    //     requirements: createJobListingDto.requirements,
-    //     jobLocation: createJobListingDto.jobLocation,
-    //     averageSalary: createJobListingDto.averageSalary,
-    //     jobStartDate: createJobListingDto.jobStartDate,
-    //     requiredDocuments: createJobListingDto.requiredDocuments,
-    //     corporate: createdCorporate,
-    //   },
-    // });
-
-    // if (!existingJobListingOne) {
-    //   await this.jobListingService.create(createJobListingDto);
-    //   console.log(
-    //     `job listing ${createJobListingDto.title} is created by corporate username ${createdCorporate.userName}`,
-    //   );
-    // }
+    await this.jobListingService.create(createJobListingDto);
+    console.log(
+      `job listing ${createJobListingDto.title} is created by corporate username ${createdCorporateThree.userName}`,
+    );
 
     // job listing 2 creation
-    // const createJobListingTwoDto: CreateJobListingDto =
-    //   new CreateJobListingDto();
-    // createJobListingTwoDto.title = 'Kindergarten Teacher';
-    // createJobListingTwoDto.overview = 'Looking for a Kindergarten teacher.';
-    // createJobListingTwoDto.responsibilities = 'Manage kindergarten classes.';
-    // createJobListingTwoDto.requirements = 'NIE';
-    // createJobListingTwoDto.jobLocation = 'Woodlands, Singapore';
-    // createJobListingTwoDto.averageSalary = 7500;
-    // createJobListingTwoDto.jobStartDate = new Date('2023-11-25');
-    // createJobListingTwoDto.requiredDocuments =
-    //   'Education Certs, Resume, Cover Letter';
-    // createJobListingTwoDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
-    // createJobListingTwoDto.corporateId = createdCorporate.userId;
+    const createJobListingTwoDto: CreateJobListingDto =
+      new CreateJobListingDto();
+    createJobListingTwoDto.title = 'Chinese Child Care Teacher';
+    createJobListingTwoDto.overview =
+      'Looking for an L1 and L2 teachers for Tots and K1 class. Must have a DPT/ACEY.';
+    createJobListingTwoDto.responsibilities =
+      "Take a class of 14 children with an English teacher as a partner Update parents on children's activities, curriculum, progress and well being. Works well with the other staff - team player.";
+    createJobListingTwoDto.requirements =
+      'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
+    createJobListingTwoDto.jobLocation = 'Kallang, Singapore';
+    createJobListingTwoDto.averageSalary = 2800;
+    createJobListingTwoDto.jobStartDate = new Date('2023-10-16');
+    createJobListingTwoDto.requiredDocuments =
+      'Early Childhood Graduation Cert,Chinese Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
+    createJobListingTwoDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingTwoDto.corporateId = createdCorporateThree.userId;
 
-    // const existingJobListingTwo = await this.jobListingRepository.findOne({
-    //   where: {
-    //     title: createJobListingTwoDto.title,
-    //     overview: createJobListingTwoDto.overview,
-    //     responsibilities: createJobListingTwoDto.responsibilities,
-    //     requirements: createJobListingTwoDto.requirements,
-    //     jobLocation: createJobListingTwoDto.jobLocation,
-    //     averageSalary: createJobListingTwoDto.averageSalary,
-    //     jobStartDate: createJobListingTwoDto.jobStartDate,
-    //     requiredDocuments: createJobListingTwoDto.requiredDocuments,
-    //     corporate: createdCorporate,
-    //   },
-    // });
+    await this.jobListingService.create(createJobListingTwoDto);
+    console.log(
+      `job listing ${createJobListingTwoDto.title} is created by corporate username ${createdCorporateThree.userName}`,
+    );
 
-    // if (!existingJobListingTwo) {
-    //   await this.jobListingService.create(createJobListingTwoDto);
-    //   console.log(
-    //     `job listing ${createJobListingTwoDto.title} is created by corporate username ${createdCorporate.userName}`,
-    //   );
-    // }
+    // job listing 3 creation
+    const createJobListingThreeDto: CreateJobListingDto =
+      new CreateJobListingDto();
+    createJobListingThreeDto.title = 'Infant Care Assistant Teacher';
+    createJobListingThreeDto.overview =
+      'Looking for a few infant care assistant teachers';
+    createJobListingThreeDto.responsibilities =
+      'Attends to the basic needs of children from 2 months to 17 months (Infant Care). Ensures children’s safety & well-being while under the centre’s care. Implements centre’s programmes and new initiatives.';
+    createJobListingThreeDto.requirements =
+      'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
+    createJobListingThreeDto.jobLocation = 'Yishun, Singapore';
+    createJobListingThreeDto.averageSalary = 3200;
+    createJobListingThreeDto.jobStartDate = new Date('2023-10-23');
+    createJobListingThreeDto.requiredDocuments =
+      'Early Childhood Graduation Cert,Resume';
+    createJobListingThreeDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingThreeDto.corporateId = createdCorporateThree.userId;
+
+    await this.jobListingService.create(createJobListingThreeDto);
+    console.log(
+      `job listing ${createJobListingThreeDto.title} is created by corporate username ${createdCorporateThree.userName}`,
+    );
   }
 }

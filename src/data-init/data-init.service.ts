@@ -382,5 +382,28 @@ export class DataInitService implements OnModuleInit {
     console.log(
       `job listing ${createJobListingThreeDto.title} is created by corporate username ${createdCorporateThree.userName}`,
     );
+
+    // job listing 4 creation, unverified job listing for pawfectis3106@gmail.com email demo
+    const createJobListingFourDto: CreateJobListingDto =
+      new CreateJobListingDto();
+    createJobListingFourDto.title = 'Preschool Educator';
+    createJobListingFourDto.overview =
+      'Looking for a few Preschool Educators';
+    createJobListingFourDto.responsibilities =
+      'Taking care of young childrens.';
+    createJobListingFourDto.requirements =
+      'Passionate in nurturing and educating the young children. Has good communications and interpersonal skills. Accredited L1/L2 / ACEY by ECDA. Has at lease one year of relevant working experience. Students completing ACEY or Diploma may be considered. Singaporean only';
+    createJobListingFourDto.jobLocation = 'Sembawang, Singapore';
+    createJobListingFourDto.averageSalary = 5200;
+    createJobListingFourDto.jobStartDate = new Date('2023-10-30');
+    createJobListingFourDto.requiredDocuments =
+      'Early Childhood Graduation Cert,Resume';
+    createJobListingFourDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
+    createJobListingFourDto.corporateId = createdCorporateTwo.userId;
+
+    await this.jobListingService.create(createJobListingFourDto);
+    console.log(
+      `job listing ${createJobListingFourDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
+    );
   }
 }

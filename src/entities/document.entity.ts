@@ -12,6 +12,9 @@ export class Document {
   @Column()
   documentLink: string;
 
+  @Column()
+  mandatory: boolean;
+
   @ManyToOne(
     () => JobApplication,
     (jobApplication) => jobApplication.documents,

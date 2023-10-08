@@ -20,6 +20,7 @@ import { Review } from './entities/review.entity';
 import { JobExperience } from './entities/jobExperience.entity';
 import { JobAssignment } from './entities/jobAssignment.entity';
 import { SavedJobListing } from './entities/savedJobListing.entity';
+import { ForumCategory } from './entities/forumCategory.entity';
 
 export const entityList = [
   User,
@@ -33,6 +34,7 @@ export const entityList = [
   JobPreference,
   JobExperience,
   ForumPost,
+  ForumCategory,
   ForumComment,
   EventListing,
   EventRegistration,

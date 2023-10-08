@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { ForumComment } from './forumComment.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { ForumCategory } from './forumCategory.entity';
 
 @Entity({ name: 'forumPosts' })
 export class ForumPost {
@@ -26,8 +27,10 @@ export class ForumPost {
   @Column()
   isAnonymous: boolean;
 
-  @Column()
-  forumCategory: ForumCategoryEnum;
+  @ManyToOne(() => ForumCategory, (forumCategory) => forumCategory.forumPosts, {
+    nullable: false,
+  })
+  forumCategory: ForumCategory;
 
   @OneToMany(() => ForumComment, (forumComment) => forumComment.forumPost, {
     cascade: true,

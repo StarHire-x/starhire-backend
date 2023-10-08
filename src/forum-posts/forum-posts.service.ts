@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { ForumPost } from 'src/entities/forumPost.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { mapForumCategoryToEnum } from 'src/common/mapStringToEnum';
+import { ForumCategory } from 'src/entities/forumCategory.entity';
 
 @Injectable()
 export class ForumPostsService {
@@ -20,12 +21,15 @@ export class ForumPostsService {
     // Parent Entity
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(ForumCategory)
+    private readonly forumCategoryRepository: Repository<ForumCategory>,
   ) {}
 
   async create(createForumPostDto: CreateForumPostDto) {
     try {
       // Ensure valid job seeker id is provided
-      const { jobSeekerId, ...dtoExcludingParentId } = createForumPostDto;
+      const { jobSeekerId, forumCategoryId, ...dtoExcludingParentId } =
+        createForumPostDto;
 
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
@@ -34,16 +38,19 @@ export class ForumPostsService {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
 
-      // Ensure forumCategory field is a valid enum
-      const mappedStatus = mapForumCategoryToEnum(
-        createForumPostDto.forumCategory,
-      );
-      createForumPostDto.forumCategory = mappedStatus;
+      // Ensure forumCategory exists
+      const forumCategory = await this.forumCategoryRepository.findOneBy({
+        forumCategoryId: forumCategoryId,
+      });
+      if (!forumCategory) {
+        throw new NotFoundException('Forum Category provided is not valid');
+      }
 
       // Create the forum post, establishing relationship to parent (job seeker entity)
       const forumPost = new ForumPost({
         ...dtoExcludingParentId,
         jobSeeker,
+        forumCategory,
       });
       await this.forumPostRepository.save(forumPost);
       return {
@@ -82,6 +89,8 @@ export class ForumPostsService {
   // Note: Since forumPostId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateForumPostDto: UpdateForumPostDto) {
     try {
+      const { forumCategoryId, ...dtoExcludingParentId } = updateForumPostDto;
+
       // Ensure valid forum post Id is provided
       const forumPost = await this.forumPostRepository.findOneBy({
         forumPostId: id,
@@ -90,14 +99,15 @@ export class ForumPostsService {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      // If forumCategory is to be updated, ensure it is a valid enum
-      if (updateForumPostDto.forumCategory) {
-        const mappedStatus = mapForumCategoryToEnum(
-          updateForumPostDto.forumCategory,
-        );
-        updateForumPostDto.forumCategory = mappedStatus;
+      // If forumCategory is to be updated, ensure it exists
+      const forumCategory = await this.forumCategoryRepository.findOneBy({
+        forumCategoryId: forumCategoryId,
+      });
+      if (!forumCategory) {
+        throw new NotFoundException('Forum Category provided is not valid');
       }
-      Object.assign(forumPost, updateForumPostDto);
+
+      Object.assign(forumPost, { ...dtoExcludingParentId, forumCategory });
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(

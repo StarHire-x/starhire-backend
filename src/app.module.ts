@@ -29,6 +29,7 @@ import { JobExperienceModule } from './job-experience/job-experience.module';
 import { JobAssignmentModule } from './job-assignment/job-assignment.module';
 import { SavedJobListingModule } from './saved-job-listing/saved-job-listing.module';
 import { DataInitModule } from './data-init/data-init.module';
+import { ForumCategoriesModule } from './forum-categories/forum-categories.module';
 
 require('dotenv').config();
 
@@ -70,7 +71,8 @@ require('dotenv').config();
     JobExperienceModule,
     JobAssignmentModule,
     SavedJobListingModule,
-    DataInitModule
+    DataInitModule,
+    ForumCategoriesModule
   ],
   controllers: [AppController],
   providers: [AppService],

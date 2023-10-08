@@ -1,12 +1,11 @@
 import { PartialType } from '@nestjs/mapped-types';
-import ForumCategoryEnum from 'src/enums/forumCategory.enum';
 
 class UpdateDto {
   forumPostTitle: string;
   createdAt: Date;
   forumPostMessage: string;
   isAnonymous: boolean;
-  forumCategory: ForumCategoryEnum;
+  forumCategoryId: number;
 }
 
 export class UpdateForumPostDto extends PartialType(UpdateDto) {}

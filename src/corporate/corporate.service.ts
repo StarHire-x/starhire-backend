@@ -15,12 +15,15 @@ import {
   mapUserRoleToEnum,
   mapUserStatusToEnum,
 } from 'src/common/mapStringToEnum';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
 
 @Injectable()
 export class CorporateService {
   constructor(
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
+    @InjectRepository(JobSeeker)
+    private readonly jobSeekerRepository: Repository<JobSeeker>,
   ) {}
 
   async create(createCorporateDto: CreateCorporateDto) {
@@ -42,11 +45,13 @@ export class CorporateService {
 
       // check for duplicate UEN number
       const findUEN = await this.corporateRepository.findOne({
-        where: { companyRegistrationId: corporate.companyRegistrationId }
+        where: { companyRegistrationId: corporate.companyRegistrationId },
       });
 
       if (findUEN) {
-        throw new ConflictException(`This UEN number ${corporate.companyRegistrationId} has already been used. Please use a different UEN number.`);
+        throw new ConflictException(
+          `This UEN number ${corporate.companyRegistrationId} has already been used. Please use a different UEN number.`,
+        );
       }
 
       await this.corporateRepository.save(corporate);
@@ -168,6 +173,108 @@ export class CorporateService {
     } catch (err) {
       throw new HttpException(
         'Failed to find corporate',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findAllCorporatesSocial() {
+    try {
+      const corporates = await this.corporateRepository.find({
+        relations: { followers: true },
+      });
+      if (corporates.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate found',
+          data: corporates,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Corporate not found',
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find corporate',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async addFollower(corporateId: string, jobSeekerId: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: corporateId },
+        relations: { followers: true },
+      });
+
+      //console.log(corporate);
+
+      if (!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
+      }
+
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+        relations: { following: true },
+      });
+
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+
+      if (corporate && jobSeeker) {
+        corporate.followers.push(jobSeeker);
+        await this.corporateRepository.save(corporate);
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker is following corporate',
+        };
+      }
+    } catch (error) {
+      throw new HttpException(
+        'Job seeker following process failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async removeFollower(corporateId: string, jobSeekerId: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: corporateId },
+        relations: ['followers'],
+      });
+
+      if (!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
+      }
+
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+      });
+
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+
+      if (corporate && jobSeeker) {
+        // Remove the jobSeeker from the corporate's followers array
+        corporate.followers = corporate.followers.filter(
+          (follower) => follower.userId !== jobSeekerId,
+        );
+
+        await this.corporateRepository.save(corporate);
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job seeker has unfollowed the corporate',
+        };
+      }
+    } catch (error) {
+      throw new HttpException(
+        'Unfollowing process failed',
         HttpStatus.BAD_REQUEST,
       );
     }

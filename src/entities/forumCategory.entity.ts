@@ -7,7 +7,7 @@ export class ForumCategory {
   forumCategoryId: number;
 
   @Column()
-  forumCategoryTitle: Date;
+  forumCategoryTitle: string;
 
   @Column()
   isArchived: boolean;

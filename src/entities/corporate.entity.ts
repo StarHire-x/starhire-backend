@@ -1,10 +1,11 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { EventListing } from './eventListing.entity';
 import { JobListing } from './jobListing.entity';
 import { Chat } from './chat.entity';
 import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
+import { JobSeeker } from './jobSeeker.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -47,4 +48,10 @@ export class Corporate extends User {
   // TODO: Relationship with Review entity
   @OneToMany(() => Review, (review) => review.corporate)
   reviews: Review[];
+
+  @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.following, {
+    nullable: true,
+    cascade: true,
+  })
+  followers: JobSeeker[];
 }

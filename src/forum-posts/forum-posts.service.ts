@@ -45,7 +45,12 @@ export class ForumPostsService {
         ...dtoExcludingParentId,
         jobSeeker,
       });
-      return await this.forumPostRepository.save(forumPost);
+      await this.forumPostRepository.save(forumPost);
+      return {
+        statusCode: HttpStatus.CREATED,
+        message:
+          'Forum post has been created',
+      };
     } catch (err) {
       throw new HttpException(
         'Failed to create new forum post',

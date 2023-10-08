@@ -13,7 +13,7 @@ export class ForumCategory {
   isArchived: boolean;
 
   @Column()
-  forumGuidelines: string[];
+  forumGuidelines: string;
 
   @OneToMany(() => ForumPost, (forumPost) => forumPost.forumCategory) // Establish one-to-many relationship
   forumPosts: ForumPost[];

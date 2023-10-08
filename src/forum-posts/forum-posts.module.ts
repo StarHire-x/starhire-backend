@@ -4,9 +4,10 @@ import { ForumPostsController } from './forum-posts.controller';
 import { ForumPostsService } from './forum-posts.service';
 import { ForumPost } from '../entities/forumPost.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { ForumCategory } from 'src/entities/forumCategory.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ForumPost, JobSeeker])],
+  imports: [TypeOrmModule.forFeature([ForumPost, JobSeeker, ForumCategory])],
   controllers: [ForumPostsController],
   providers: [ForumPostsService],
 })

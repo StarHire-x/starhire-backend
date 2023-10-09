@@ -116,7 +116,12 @@ export class JobApplicationService {
     try {
       return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
-        relations: { documents: true, jobSeeker: true, jobListing: true, recruiter: true },
+        relations: {
+          documents: true,
+          jobSeeker: true,
+          jobListing: true,
+          recruiter: true,
+        },
       });
     } catch (err) {
       throw new HttpException(
@@ -171,14 +176,12 @@ export class JobApplicationService {
       }
 
       if (documents && documents.length > 0) {
-        const updatedDocuments = documents.map(
-          (updateDocumentsDto) => {
-            return new Document(updateDocumentsDto);
-          },
-        );
+        const updatedDocuments = documents.map((updateDocumentsDto) => {
+          return new Document(updateDocumentsDto);
+        });
         jobApplication.documents = updatedDocuments;
       }
-  
+
       return await this.jobApplicationRepository.save(jobApplication);
     } catch (err) {
       throw new HttpException(
@@ -221,7 +224,7 @@ export class JobApplicationService {
         relations: { jobApplications: true },
       });
 
-      if(jobSeeker.jobApplications.length > 0) {
+      if (jobSeeker.jobApplications.length > 0) {
         return {
           statusCode: HttpStatus.OK,
           message: 'Existing job application is found',
@@ -230,7 +233,7 @@ export class JobApplicationService {
       } else {
         return {
           statusCode: HttpStatus.NOT_FOUND,
-          message: 'No job application is found for job seeker'
+          message: 'No job application is found for job seeker',
         };
       }
     } catch (error) {
@@ -256,19 +259,22 @@ export class JobApplicationService {
         relations: { jobApplications: true },
       });
 
-      if (jobSeeker.jobApplications.length === 0 || jobListing.jobApplications.length === 0) {
+      if (
+        jobSeeker.jobApplications.length === 0 ||
+        jobListing.jobApplications.length === 0
+      ) {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'Existing job application not found',
         };
-      } 
+      }
 
       const isMatch = this.hasMatchingApplication(
         jobSeeker.jobApplications,
         jobListing.jobApplications,
       );
 
-      if(isMatch) {
+      if (isMatch) {
         return {
           statusCode: HttpStatus.OK,
           message: 'Existing job application is found',
@@ -278,9 +284,8 @@ export class JobApplicationService {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'Existing job application not found',
-        }
+        };
       }
-
     } catch (error) {
       throw new HttpException(
         'No Job application found in job listing',

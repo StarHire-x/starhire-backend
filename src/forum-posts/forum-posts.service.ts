@@ -67,10 +67,12 @@ export class ForumPostsService {
 
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
+    console.log("FIND ALL METHOD CALLED");
     return this.forumPostRepository.find({
       order: {
         createdAt: 'DESC',
       },
+      relations: {forumCategory: true, forumComments: true}
     });
   }
 
@@ -102,12 +104,36 @@ export class ForumPostsService {
         where: {
           jobSeeker: {userId: jobSeeker.userId}
         },
-        relations: { jobSeeker: true },
+        relations: { jobSeeker: true, forumCategory: true, forumComments: true },
       });
       return response;
     } catch (err) {
       throw new HttpException(
         'Failed to find forum post',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findForumPostByForumCategoryId(forumCategoryId: number) {
+    try {
+      const forumCategory = await this.forumCategoryRepository.findOne({
+        where: {forumCategoryId: forumCategoryId},
+      });
+      if (!forumCategory) {
+        throw new NotFoundException('Forum category Id provided is not valid');
+      }
+
+      const response = await this.forumPostRepository.find({
+        where: {
+          forumCategory: {forumCategoryId: forumCategoryId}
+        },
+        relations: { forumCategory: true, forumComments: true },
+      });
+      return response;
+    } catch (err) {
+      throw new HttpException(
+        'Failed to retrieve forum posts',
         HttpStatus.BAD_REQUEST,
       );
     }

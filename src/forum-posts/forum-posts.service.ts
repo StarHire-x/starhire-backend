@@ -67,12 +67,11 @@ export class ForumPostsService {
 
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
-    console.log("FIND ALL METHOD CALLED");
     return this.forumPostRepository.find({
       order: {
         createdAt: 'DESC',
       },
-      relations: {forumCategory: true, forumComments: true}
+      relations: { forumCategory: true, forumComments: true },
     });
   }
 
@@ -94,17 +93,24 @@ export class ForumPostsService {
   async findForumPostsByJobSeekerId(jobSeekerId: string) {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOne({
-        where: {userId: jobSeekerId},
+        where: { userId: jobSeekerId },
       });
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
 
       const response = await this.forumPostRepository.find({
-        where: {
-          jobSeeker: {userId: jobSeeker.userId}
+        order: {
+          createdAt: 'DESC',
         },
-        relations: { jobSeeker: true, forumCategory: true, forumComments: true },
+        where: {
+          jobSeeker: { userId: jobSeeker.userId },
+        },
+        relations: {
+          jobSeeker: true,
+          forumCategory: true,
+          forumComments: true,
+        },
       });
       return response;
     } catch (err) {
@@ -118,15 +124,18 @@ export class ForumPostsService {
   async findForumPostByForumCategoryId(forumCategoryId: number) {
     try {
       const forumCategory = await this.forumCategoryRepository.findOne({
-        where: {forumCategoryId: forumCategoryId},
+        where: { forumCategoryId: forumCategoryId },
       });
       if (!forumCategory) {
         throw new NotFoundException('Forum category Id provided is not valid');
       }
 
       const response = await this.forumPostRepository.find({
+        order: {
+          createdAt: 'DESC',
+        },
         where: {
-          forumCategory: {forumCategoryId: forumCategoryId}
+          forumCategory: { forumCategoryId: forumCategoryId },
         },
         relations: { forumCategory: true, forumComments: true },
       });

@@ -7,7 +7,7 @@ import {
 import { CreateForumPostDto } from './dto/create-forum-post.dto';
 import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { ForumPost } from 'src/entities/forumPost.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { mapForumCategoryToEnum } from 'src/common/mapStringToEnum';
@@ -55,8 +55,7 @@ export class ForumPostsService {
       await this.forumPostRepository.save(forumPost);
       return {
         statusCode: HttpStatus.CREATED,
-        message:
-          'Forum post has been created',
+        message: 'Forum post has been created',
       };
     } catch (err) {
       throw new HttpException(
@@ -77,6 +76,44 @@ export class ForumPostsService {
       return await this.forumPostRepository.findOne({
         where: { forumPostId: id },
         relations: { jobSeeker: true, forumComments: true },
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find forum post',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findRecentForumPosts() {
+    try {
+      const twentyFourHoursAgo = new Date();
+      twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+      return await this.forumPostRepository.find({
+        where: {
+          createdAt: MoreThanOrEqual(twentyFourHoursAgo),
+        },
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find forum post',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findForumPostsByJobSeekerId(jobSeekerId: string) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOneBy({
+        userId: jobSeekerId,
+      });
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+      return await this.forumPostRepository.find({
+        where: {
+          jobSeeker: jobSeeker,
+        },
       });
     } catch (err) {
       throw new HttpException(

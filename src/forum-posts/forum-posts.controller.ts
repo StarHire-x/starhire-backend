@@ -59,6 +59,32 @@ export class ForumPostsController {
     }
   }
 
+  @Get('/recent')
+  findRecentForumPosts() {
+    try {
+      return this.forumPostsService.findRecentForumPosts();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/jobSeeker/:jobSeekerId')
+  findForumPostsByJobSeekerId(@Param('jobSeekerId') jobSeekerId: string) {
+    try {
+      return this.forumPostsService.findForumPostsByJobSeekerId(jobSeekerId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Put(':id')
   // Ensure that id provided is a number
   updateForumPost(

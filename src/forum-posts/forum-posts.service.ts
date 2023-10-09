@@ -67,7 +67,11 @@ export class ForumPostsService {
 
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
-    return this.forumPostRepository.find();
+    return this.forumPostRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
@@ -85,36 +89,22 @@ export class ForumPostsService {
     }
   }
 
-  async findRecentForumPosts() {
-    try {
-      const twentyFourHoursAgo = new Date();
-      twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-      return await this.forumPostRepository.find({
-        where: {
-          createdAt: MoreThanOrEqual(twentyFourHoursAgo),
-        },
-      });
-    } catch (err) {
-      throw new HttpException(
-        'Failed to find forum post',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
   async findForumPostsByJobSeekerId(jobSeekerId: string) {
     try {
-      const jobSeeker = await this.jobSeekerRepository.findOneBy({
-        userId: jobSeekerId,
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: {userId: jobSeekerId},
       });
       if (!jobSeeker) {
         throw new NotFoundException('Job Seeker Id provided is not valid');
       }
-      return await this.forumPostRepository.find({
+
+      const response = await this.forumPostRepository.find({
         where: {
-          jobSeeker: jobSeeker,
+          jobSeeker: {userId: jobSeeker.userId}
         },
+        relations: { jobSeeker: true },
       });
+      return response;
     } catch (err) {
       throw new HttpException(
         'Failed to find forum post',

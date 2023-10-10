@@ -84,8 +84,14 @@ export class TicketService {
         ticket.ticketCategory = mapTicketCategoryToEnum(ticket.ticketCategory);
       }
 
-      return await this.ticketRepository.save(ticket);
+      await this.ticketRepository.save(ticket);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Ticket successfully created',
+        data: ticket,
+      };
     } catch (err) {
+      console.log(err);
       throw new HttpException(
         'Failed to create new ticket',
         HttpStatus.BAD_REQUEST,

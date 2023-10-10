@@ -80,6 +80,20 @@ export class JobAssignmentService {
     }
   }
 
+  async findByJobListingId(jobListingId: number) {
+    const response = await this.jobAssignmentRepository.find({
+      where: {jobListingId: jobListingId}
+    });
+    if (response) {
+      return response;
+    } else {
+      throw new HttpException(
+        'Failed to find job assignments',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
   async findOneByJobSeekerId(jobSeekerId: string) {
     try {
       const t = await this.jobAssignmentRepository.find({

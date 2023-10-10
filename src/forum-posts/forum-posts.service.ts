@@ -12,6 +12,7 @@ import { ForumPost } from 'src/entities/forumPost.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { mapForumCategoryToEnum } from 'src/common/mapStringToEnum';
 import { ForumCategory } from 'src/entities/forumCategory.entity';
+import ForumPostEnum from 'src/enums/forumPost.enum';
 
 @Injectable()
 export class ForumPostsService {
@@ -71,7 +72,18 @@ export class ForumPostsService {
       order: {
         createdAt: 'DESC',
       },
-      relations: { jobSeeker: true, forumCategory: true},
+      relations: { jobSeeker: true, forumCategory: true },
+      where: [
+        {
+          forumPostStatus: ForumPostEnum.Pending,
+        },
+        {
+          forumPostStatus: ForumPostEnum.Reported,
+        },
+        {
+          forumPostStatus: ForumPostEnum.Active,
+        },
+      ],
     });
   }
 
@@ -80,7 +92,7 @@ export class ForumPostsService {
     try {
       return await this.forumPostRepository.findOne({
         where: { forumPostId: id },
-        relations: { jobSeeker: true},
+        relations: { jobSeeker: true },
       });
     } catch (err) {
       throw new HttpException(
@@ -103,9 +115,20 @@ export class ForumPostsService {
         order: {
           createdAt: 'DESC',
         },
-        where: {
-          jobSeeker: { userId: jobSeeker.userId },
-        },
+        where: [
+          {
+            jobSeeker: { userId: jobSeeker.userId },
+            forumPostStatus: ForumPostEnum.Pending,
+          },
+          {
+            jobSeeker: { userId: jobSeeker.userId },
+            forumPostStatus: ForumPostEnum.Active,
+          },
+          {
+            jobSeeker: { userId: jobSeeker.userId },
+            forumPostStatus: ForumPostEnum.Reported,
+          },
+        ],
         relations: {
           jobSeeker: true,
           forumCategory: true,
@@ -133,15 +156,51 @@ export class ForumPostsService {
         order: {
           createdAt: 'DESC',
         },
-        where: {
-          forumCategory: { forumCategoryId: forumCategoryId },
-        },
+        where: [
+          {
+            forumCategory: { forumCategoryId: forumCategoryId },
+            forumPostStatus: ForumPostEnum.Pending,
+          },
+          {
+            forumCategory: { forumCategoryId: forumCategoryId },
+            forumPostStatus: ForumPostEnum.Active,
+          },
+          {
+            forumCategory: { forumCategoryId: forumCategoryId },
+            forumPostStatus: ForumPostEnum.Reported,
+          },
+        ],
         relations: { jobSeeker: true, forumCategory: true },
       });
       return response;
     } catch (err) {
       throw new HttpException(
         'Failed to retrieve forum posts',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  // change forum post status to "inactive"
+  async deleteOwnForumPostByPostIdAndUserId(
+    forumPostId: number,
+    userId: string,
+  ) {
+    try {
+      // Ensure valid forum post Id is provided
+      const forumPost = await this.forumPostRepository.findOneBy({
+        forumPostId: forumPostId,
+        jobSeeker: { userId: userId },
+      });
+      if (!forumPost) {
+        throw new NotFoundException('Forum Post Id provided is not valid');
+      }
+
+      forumPost.forumPostStatus = ForumPostEnum.Inactive;
+      return await this.forumPostRepository.save(forumPost);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to delete a forum post',
         HttpStatus.BAD_REQUEST,
       );
     }

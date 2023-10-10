@@ -86,6 +86,23 @@ export class ForumPostsController {
       }
     }
 
+  @Put('/delete/:forumPostId/:userId')
+  // Ensure that id provided is a number
+  deleteForumPost(
+    @Param('forumPostId') forumPostId: number,
+    @Param('userId') userId: string,
+  ) {
+    try {
+      return this.forumPostsService.deleteOwnForumPostByPostIdAndUserId(forumPostId, userId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Put(':id')
   // Ensure that id provided is a number
   updateForumPost(

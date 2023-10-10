@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn } from 'typeorm';
 import { IsEnum } from 'class-validator';
 import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
 import { Administrator } from './administrator.entity';
@@ -20,7 +20,7 @@ export class Ticket {
   @Column()
   isResolved: boolean;
 
-  @Column()
+  @CreateDateColumn() // Automatically sets the current date and time
   submissionDate: Date;
 
   @Column()

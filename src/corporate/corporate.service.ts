@@ -16,6 +16,9 @@ import {
   mapUserStatusToEnum,
 } from 'src/common/mapStringToEnum';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { EmailService } from 'src/email/email.service';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import UserRoleEnum from 'src/enums/userRole.enum';
 
 @Injectable()
 export class CorporateService {
@@ -24,6 +27,7 @@ export class CorporateService {
     private readonly corporateRepository: Repository<Corporate>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    private emailService: EmailService,
   ) {}
 
   async create(createCorporateDto: CreateCorporateDto) {
@@ -294,9 +298,31 @@ export class CorporateService {
         };
       }
 
+      const initialNotificationStatus = corporate.notificationMode;
+
       Object.assign(corporate, updatedCorporate);
 
+      if (updatedCorporate.status) {
+        corporate.status = mapUserStatusToEnum(updatedCorporate.status);
+      }
+
+      if (updatedCorporate.notificationMode) {
+        corporate.notificationMode = mapNotificationModeToEnum(
+          updatedCorporate.notificationMode,
+        );
+      }
+
       await this.corporateRepository.save(corporate);
+
+      if (
+        initialNotificationStatus === NotificationModeEnum.SMS &&
+        corporate.notificationMode === NotificationModeEnum.EMAIL
+      ) {
+        await this.emailService.sendNotificationStatusEmail(
+          corporate,
+          UserRoleEnum.CORPORATE,
+        );
+      }
 
       if (corporate) {
         return {

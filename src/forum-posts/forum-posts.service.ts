@@ -67,7 +67,12 @@ export class ForumPostsService {
 
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
-    return this.forumPostRepository.find();
+    return this.forumPostRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: { jobSeeker: true, forumCategory: true, forumComments: true },
+    });
   }
 
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
@@ -85,15 +90,29 @@ export class ForumPostsService {
     }
   }
 
-  async findRecentForumPosts() {
+  async findForumPostsByJobSeekerId(jobSeekerId: string) {
     try {
-      const twentyFourHoursAgo = new Date();
-      twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-      return await this.forumPostRepository.find({
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: jobSeekerId },
+      });
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+
+      const response = await this.forumPostRepository.find({
+        order: {
+          createdAt: 'DESC',
+        },
         where: {
-          createdAt: MoreThanOrEqual(twentyFourHoursAgo),
+          jobSeeker: { userId: jobSeeker.userId },
+        },
+        relations: {
+          jobSeeker: true,
+          forumCategory: true,
+          forumComments: true,
         },
       });
+      return response;
     } catch (err) {
       throw new HttpException(
         'Failed to find forum post',
@@ -102,22 +121,28 @@ export class ForumPostsService {
     }
   }
 
-  async findForumPostsByJobSeekerId(jobSeekerId: string) {
+  async findForumPostByForumCategoryId(forumCategoryId: number) {
     try {
-      const jobSeeker = await this.jobSeekerRepository.findOneBy({
-        userId: jobSeekerId,
+      const forumCategory = await this.forumCategoryRepository.findOne({
+        where: { forumCategoryId: forumCategoryId },
       });
-      if (!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid');
+      if (!forumCategory) {
+        throw new NotFoundException('Forum category Id provided is not valid');
       }
-      return await this.forumPostRepository.find({
-        where: {
-          jobSeeker: jobSeeker,
+
+      const response = await this.forumPostRepository.find({
+        order: {
+          createdAt: 'DESC',
         },
+        where: {
+          forumCategory: { forumCategoryId: forumCategoryId },
+        },
+        relations: { jobSeeker: true, forumCategory: true, forumComments: true },
       });
+      return response;
     } catch (err) {
       throw new HttpException(
-        'Failed to find forum post',
+        'Failed to retrieve forum posts',
         HttpStatus.BAD_REQUEST,
       );
     }

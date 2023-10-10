@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobExperience } from 'src/entities/jobExperience.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JobExperience, JobSeeker])],
+  imports: [TypeOrmModule.forFeature([JobExperience, JobSeeker]), EmailModule],
   controllers: [JobExperienceController],
   providers: [JobExperienceService, JobSeekerService],
 })

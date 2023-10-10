@@ -23,7 +23,7 @@ export class ForumPost {
   @Column()
   createdAt: Date;
 
-  @Column()
+  @Column('varchar', { length: 8000 })
   forumPostMessage: string;
 
   @Column()

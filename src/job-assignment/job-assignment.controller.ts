@@ -43,6 +43,19 @@ export class JobAssignmentController {
     }
   }
 
+  @Get('/jobListing/:jobListingId')
+  findByJobListingId(@Param('jobListingId') jobListingId: number) {
+    try {
+      return this.jobAssignmentService.findByJobListingId(jobListingId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Get(':id')
   // Ensure that id provided is a number
   findOneByJobSeekerId(@Param('id') jobSeekerId: string) {

@@ -28,30 +28,39 @@ export class JobAssignmentService {
   async create(createJobAssignmentDto: CreateJobAssignmentDto) {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOne({
-        where: { userId: createJobAssignmentDto.jobSeekerId }
+        where: { userId: createJobAssignmentDto.jobSeekerId },
       });
 
       if (!jobSeeker) {
-        throw new HttpException(`Provided job seeker id ${createJobAssignmentDto.jobSeekerId} not found!`, 404);
+        throw new HttpException(
+          `Provided job seeker id ${createJobAssignmentDto.jobSeekerId} not found!`,
+          404,
+        );
       }
 
-      const jobListing= await this.jobListingRepository.findOne({
-        where: { jobListingId: createJobAssignmentDto.jobListingId }
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: createJobAssignmentDto.jobListingId },
       });
 
       if (!jobListing) {
-        throw new HttpException(`Provided job listing id ${createJobAssignmentDto.jobListingId} not found!`, 404);
+        throw new HttpException(
+          `Provided job listing id ${createJobAssignmentDto.jobListingId} not found!`,
+          404,
+        );
       }
-      
+
       const recruiter = await this.recruiterRepository.findOne({
-        where: { userId: createJobAssignmentDto.recruiterId }
+        where: { userId: createJobAssignmentDto.recruiterId },
       });
 
       if (!recruiter) {
-        throw new HttpException(`Provided recruiter id ${createJobAssignmentDto.recruiterId} not found!`, 404);
+        throw new HttpException(
+          `Provided recruiter id ${createJobAssignmentDto.recruiterId} not found!`,
+          404,
+        );
       }
-      
-      const jobAssignment= new JobAssignment();
+
+      const jobAssignment = new JobAssignment();
       jobAssignment.jobListingId = jobListing.jobListingId;
       jobAssignment.jobSeekerId = jobSeeker.userId;
       jobAssignment.recruiterId = recruiter.userId;
@@ -80,9 +89,9 @@ export class JobAssignmentService {
     }
   }
 
-  async findByJobListingId(jobListingId: number) {
+  async findByJobListingId(jobListingId: number, recruiterId: string) {
     const response = await this.jobAssignmentRepository.find({
-      where: {jobListingId: jobListingId}
+      where: { jobListingId: jobListingId, recruiterId: recruiterId },
     });
     if (response) {
       return response;

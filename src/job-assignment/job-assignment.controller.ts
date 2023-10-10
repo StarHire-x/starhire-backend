@@ -43,10 +43,10 @@ export class JobAssignmentController {
     }
   }
 
-  @Get('/jobListing/:jobListingId')
-  findByJobListingId(@Param('jobListingId') jobListingId: number) {
+  @Get('/:jobListingId/:recruiterId')
+  findByJobListingId(@Param('jobListingId') jobListingId: number, @Param('recruiterId') recruiterId: string) {
     try {
-      return this.jobAssignmentService.findByJobListingId(jobListingId);
+      return this.jobAssignmentService.findByJobListingId(jobListingId, recruiterId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

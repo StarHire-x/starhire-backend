@@ -10,7 +10,7 @@ export class ForumComment {
   @Column()
   createdAt: Date;
 
-  @Column()
+  @Column('varchar', { length: 8000 })
   forumCommentMessage: string;
 
   @Column()

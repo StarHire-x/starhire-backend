@@ -22,24 +22,24 @@ export class EmailController {
     }
   }
 
-  @Get('/inform-status/:id')
-  async informJobListingStatus(
-    @Param('id') id: number, // Define a DTO for your email data
-  ) {
-    try {
-      const result = await this.emailService.sendJobListingStatusEmail(id);
+  // @Get('/inform-status/:id')
+  // async informJobListingStatus(
+  //   @Param('id') id: number, // Define a DTO for your email data
+  // ) {
+  //   try {
+  //     const result = await this.emailService.sendJobListingStatusEmail(id);
 
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Job listing status email sent successfully',
-        data: result,
-      };
-    } catch (error) {
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Failed to send job listing status email',
-        error: error.message,
-      };
-    }
-  }
+  //     return {
+  //       statusCode: HttpStatus.OK,
+  //       message: 'Job listing status email sent successfully',
+  //       data: result,
+  //     };
+  //   } catch (error) {
+  //     return {
+  //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  //       message: 'Failed to send job listing status email',
+  //       error: error.message,
+  //     };
+  //   }
+  // }
 }

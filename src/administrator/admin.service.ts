@@ -9,12 +9,17 @@ import { UpdateAdministratorDto } from './dto/update-admin.dto';
 import { Repository } from 'typeorm';
 import { Administrator } from 'src/entities/administrator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EmailService } from 'src/email/email.service';
+import { mapNotificationModeToEnum, mapUserStatusToEnum } from 'src/common/mapStringToEnum';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import UserRoleEnum from 'src/enums/userRole.enum';
 
 @Injectable()
 export class AdministratorService {
   constructor(
     @InjectRepository(Administrator)
     private readonly administratorRepository: Repository<Administrator>,
+    private emailService: EmailService,
   ) {}
 
   async create(createAdministratorDto: CreateAdministratorDto) {
@@ -144,8 +149,33 @@ export class AdministratorService {
         };
       }
 
+      const initialNotificationStatus = administrator.notificationMode;
+
       Object.assign(administrator, updateAdministratorDto);
+
+      if (updateAdministratorDto.status) {
+        administrator.status = mapUserStatusToEnum(
+          updateAdministratorDto.status,
+        );
+      }
+
+      if (updateAdministratorDto.notificationMode) {
+        administrator.notificationMode = mapNotificationModeToEnum(
+          updateAdministratorDto.notificationMode,
+        );
+      }
+
       await this.administratorRepository.save(administrator);
+
+      if (
+        initialNotificationStatus === NotificationModeEnum.SMS &&
+        administrator.notificationMode === NotificationModeEnum.EMAIL
+      ) {
+        await this.emailService.sendNotificationStatusEmail(
+          administrator,
+          UserRoleEnum.ADMINISTRATOR,
+        );
+      }
 
       if (administrator) {
         return {

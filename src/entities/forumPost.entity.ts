@@ -9,6 +9,8 @@ import {
 import { ForumComment } from './forumComment.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { ForumCategory } from './forumCategory.entity';
+import ForumPostEnum from 'src/enums/forumPost.enum';
+import { IsEnum } from 'class-validator';
 
 @Entity({ name: 'forumPosts' })
 export class ForumPost {
@@ -26,6 +28,10 @@ export class ForumPost {
 
   @Column()
   isAnonymous: boolean;
+
+  @Column()
+  @IsEnum(ForumPostEnum)
+  forumPostStatus: ForumPostEnum;
 
   @ManyToOne(() => ForumCategory, (forumCategory) => forumCategory.forumPosts, {
     nullable: false,

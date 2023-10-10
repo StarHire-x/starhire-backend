@@ -18,12 +18,16 @@ import {
   mapVisibilityToEnum,
 } from 'src/common/mapStringToEnum';
 import { Public } from 'src/users/public.decorator';
+import { EmailService } from 'src/email/email.service';
+import UserRoleEnum from 'src/enums/userRole.enum';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
 
 @Injectable()
 export class JobSeekerService {
   constructor(
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    private emailService: EmailService
   ) {}
 
   async create(createJobSeekerDto: CreateJobSeekerDto) {
@@ -161,14 +165,14 @@ export class JobSeekerService {
         };
       }
 
-      console.log("Hiiiiiiiiiii");
-      console.log(updatedJobSeeker);
+      const initialNotificationStatus = jobSeeker.notificationMode;
 
       Object.assign(jobSeeker, updatedJobSeeker);
 
       if (updatedJobSeeker.status) {
         jobSeeker.status = mapUserStatusToEnum(updatedJobSeeker.status);
       }
+
       if (updatedJobSeeker.notificationMode) {
         jobSeeker.notificationMode = mapNotificationModeToEnum(
           updatedJobSeeker.notificationMode,
@@ -189,6 +193,13 @@ export class JobSeekerService {
 
       await this.jobSeekerRepository.save(jobSeeker);
 
+      if(initialNotificationStatus === NotificationModeEnum.SMS && jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+        await this.emailService.sendNotificationStatusEmail(
+          jobSeeker,
+          UserRoleEnum.JOBSEEKER
+        );
+      }
+      
       if (jobSeeker) {
         return {
           statusCode: HttpStatus.OK,

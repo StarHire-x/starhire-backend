@@ -12,7 +12,6 @@ import { JobListing } from 'src/entities/jobListing.entity';
 
 @Module({
   imports: [
-    JobListingModule,
     TypeOrmModule.forFeature([JobListing, Corporate]),
     ConfigModule.forRoot(),
     MailerModule.forRootAsync({
@@ -34,7 +33,8 @@ import { JobListing } from 'src/entities/jobListing.entity';
       inject: [ConfigService],
     }),
   ],
-  controllers: [EmailController, JobListingController],
-  providers: [EmailService, JobListingService],
+  controllers: [EmailController],
+  providers: [EmailService],
+  exports: [EmailService]
 })
 export class EmailModule {}

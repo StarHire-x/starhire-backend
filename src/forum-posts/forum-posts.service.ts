@@ -71,7 +71,7 @@ export class ForumPostsService {
       order: {
         createdAt: 'DESC',
       },
-      relations: { jobSeeker: true, forumCategory: true, forumComments: true },
+      relations: { jobSeeker: true, forumCategory: true, forumComments: {jobSeeker: true} },
     });
   }
 
@@ -109,7 +109,7 @@ export class ForumPostsService {
         relations: {
           jobSeeker: true,
           forumCategory: true,
-          forumComments: true,
+          forumComments: {jobSeeker: true},
         },
       });
       return response;
@@ -137,7 +137,7 @@ export class ForumPostsService {
         where: {
           forumCategory: { forumCategoryId: forumCategoryId },
         },
-        relations: { jobSeeker: true, forumCategory: true, forumComments: true },
+        relations: { jobSeeker: true, forumCategory: true, forumComments: {jobSeeker: true} },
       });
       return response;
     } catch (err) {

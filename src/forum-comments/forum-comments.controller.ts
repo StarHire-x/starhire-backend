@@ -45,11 +45,11 @@ export class ForumCommentsController {
     }
   }
 
-  @Get(':id')
+  @Get('/forumPost/:forumPostId')
   // Ensure that id provided is a number
-  findOneForumComment(@Param('id') id: number) {
+  findCommentsByForumPostId(@Param('forumPostId') forumPostId: number) {
     try {
-      return this.forumCommentsService.findOne(id);
+      return this.forumCommentsService.findCommentsByForumPostId(forumPostId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -58,6 +58,20 @@ export class ForumCommentsController {
       }
     }
   }
+
+  // @Get(':id')
+  // // Ensure that id provided is a number
+  // findOneForumComment(@Param('id') id: number) {
+  //   try {
+  //     return this.forumCommentsService.findOne(id);
+  //   } catch (error) {
+  //     if (error instanceof HttpException) {
+  //       throw new HttpException(error.message, HttpStatus.CONFLICT);
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
 
   @Put(':id')
   // Ensure that id provided is a number

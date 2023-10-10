@@ -67,6 +67,25 @@ export class ForumCommentsService {
     return await this.forumCommentRepository.find();
   }
 
+  async findCommentsByForumPostId(forumPostId: number) {
+    try {
+      const comments = await this.forumCommentRepository.find({
+        where: {forumPost: {forumPostId: forumPostId}},
+        order: {
+          createdAt: 'DESC',
+        },
+        relations: {jobSeeker: true}
+      });
+
+      return comments;
+    } catch (err) {
+      throw new HttpException(
+        `Failed to find forum comments for this forum post id ${forumPostId}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     try {
       // I want to know which job seeker posted the comment and which forum post the comment belongs to

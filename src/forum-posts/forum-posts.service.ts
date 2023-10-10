@@ -71,7 +71,7 @@ export class ForumPostsService {
       order: {
         createdAt: 'DESC',
       },
-      relations: { jobSeeker: true, forumCategory: true, forumComments: {jobSeeker: true} },
+      relations: { jobSeeker: true, forumCategory: true},
     });
   }
 
@@ -80,7 +80,7 @@ export class ForumPostsService {
     try {
       return await this.forumPostRepository.findOne({
         where: { forumPostId: id },
-        relations: { jobSeeker: true, forumComments: true },
+        relations: { jobSeeker: true},
       });
     } catch (err) {
       throw new HttpException(
@@ -109,7 +109,6 @@ export class ForumPostsService {
         relations: {
           jobSeeker: true,
           forumCategory: true,
-          forumComments: {jobSeeker: true},
         },
       });
       return response;
@@ -137,7 +136,7 @@ export class ForumPostsService {
         where: {
           forumCategory: { forumCategoryId: forumCategoryId },
         },
-        relations: { jobSeeker: true, forumCategory: true, forumComments: {jobSeeker: true} },
+        relations: { jobSeeker: true, forumCategory: true },
       });
       return response;
     } catch (err) {

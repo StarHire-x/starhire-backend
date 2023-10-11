@@ -76,12 +76,15 @@ export class ForumPostsService {
       where: [
         {
           forumPostStatus: ForumPostEnum.Pending,
+          forumCategory: { isArchived: false },
         },
         {
           forumPostStatus: ForumPostEnum.Reported,
+          forumCategory: { isArchived: false },
         },
         {
           forumPostStatus: ForumPostEnum.Active,
+          forumCategory: { isArchived: false },
         },
       ],
     });
@@ -127,7 +130,7 @@ export class ForumPostsService {
           {
             jobSeeker: { userId: jobSeeker.userId },
             forumPostStatus: ForumPostEnum.Reported,
-          },
+          }
         ],
         relations: {
           jobSeeker: true,
@@ -158,15 +161,15 @@ export class ForumPostsService {
         },
         where: [
           {
-            forumCategory: { forumCategoryId: forumCategoryId },
+            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
             forumPostStatus: ForumPostEnum.Pending,
           },
           {
-            forumCategory: { forumCategoryId: forumCategoryId },
+            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
             forumPostStatus: ForumPostEnum.Active,
           },
           {
-            forumCategory: { forumCategoryId: forumCategoryId },
+            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
             forumPostStatus: ForumPostEnum.Reported,
           },
         ],

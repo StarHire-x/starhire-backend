@@ -326,7 +326,7 @@ export class DataInitService implements OnModuleInit {
       'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
     createJobListingDto.jobLocation = 'Hillview, Singapore';
     createJobListingDto.averageSalary = 3000;
-    createJobListingDto.jobStartDate = new Date('2023-10-09');
+    createJobListingDto.jobStartDate = new Date('2024-10-09');
     createJobListingDto.requiredDocuments =
       'Early Childhood Graduation Cert,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -349,7 +349,7 @@ export class DataInitService implements OnModuleInit {
       'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
     createJobListingTwoDto.jobLocation = 'Kallang, Singapore';
     createJobListingTwoDto.averageSalary = 2800;
-    createJobListingTwoDto.jobStartDate = new Date('2023-10-16');
+    createJobListingTwoDto.jobStartDate = new Date('2024-10-16');
     createJobListingTwoDto.requiredDocuments =
       'Early Childhood Graduation Cert,Chinese Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingTwoDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -372,7 +372,7 @@ export class DataInitService implements OnModuleInit {
       'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
     createJobListingThreeDto.jobLocation = 'Yishun, Singapore';
     createJobListingThreeDto.averageSalary = 3200;
-    createJobListingThreeDto.jobStartDate = new Date('2023-10-23');
+    createJobListingThreeDto.jobStartDate = new Date('2024-10-23');
     createJobListingThreeDto.requiredDocuments =
       'Early Childhood Graduation Cert,Resume';
     createJobListingThreeDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -387,15 +387,14 @@ export class DataInitService implements OnModuleInit {
     const createJobListingFourDto: CreateJobListingDto =
       new CreateJobListingDto();
     createJobListingFourDto.title = 'Preschool Educator';
-    createJobListingFourDto.overview =
-      'Looking for a few Preschool Educators';
+    createJobListingFourDto.overview = 'Looking for a few Preschool Educators';
     createJobListingFourDto.responsibilities =
       'Taking care of young childrens.';
     createJobListingFourDto.requirements =
       'Passionate in nurturing and educating the young children. Has good communications and interpersonal skills. Accredited L1/L2 / ACEY by ECDA. Has at lease one year of relevant working experience. Students completing ACEY or Diploma may be considered. Singaporean only';
     createJobListingFourDto.jobLocation = 'Sembawang, Singapore';
     createJobListingFourDto.averageSalary = 5200;
-    createJobListingFourDto.jobStartDate = new Date('2023-10-30');
+    createJobListingFourDto.jobStartDate = new Date('2024-10-30');
     createJobListingFourDto.requiredDocuments =
       'Early Childhood Graduation Cert,Resume';
     createJobListingFourDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;

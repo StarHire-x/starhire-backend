@@ -20,9 +20,12 @@ export class ForumCategoriesController {
     private readonly forumCategoriesService: ForumCategoriesService,
   ) {}
   @Post()
-  createForumCategory(@Body() createForumCategoryDto: CreateForumCategoryDto) {
+  async createForumCategory(
+    @Body() createForumCategoryDto: CreateForumCategoryDto,
+  ) {
     try {
-      return this.forumCategoriesService.create(createForumCategoryDto);
+      await this.forumCategoriesService.create(createForumCategoryDto);
+      return;
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

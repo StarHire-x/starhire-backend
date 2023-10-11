@@ -17,6 +17,7 @@ import {
 } from 'src/common/mapStringToEnum';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { EmailService } from 'src/email/email.service';
+import { TwilioService } from 'src/twilio/twilio.service';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
 
@@ -28,6 +29,7 @@ export class CorporateService {
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
     private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createCorporateDto: CreateCorporateDto) {
@@ -319,6 +321,14 @@ export class CorporateService {
         corporate.notificationMode === NotificationModeEnum.EMAIL
       ) {
         await this.emailService.sendNotificationStatusEmail(
+          corporate,
+          UserRoleEnum.CORPORATE,
+        );
+      } else if (
+        initialNotificationStatus === NotificationModeEnum.EMAIL &&
+        corporate.notificationMode === NotificationModeEnum.SMS
+      ) {
+        await this.twilioService.sendNotificationStatusSMS(
           corporate,
           UserRoleEnum.CORPORATE,
         );

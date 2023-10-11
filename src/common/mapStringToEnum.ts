@@ -112,10 +112,18 @@ export function mapTicketCategoryToEnum(status: string): TicketCategoryEnum {
       return TicketCategoryEnum.EVENT;
     case 'joblisting':
       return TicketCategoryEnum.JOBLISTING;
+    case 'generalenquiries':
+      return TicketCategoryEnum.GENERAL_ENQURIES;
+    case 'technicalsupport':
+      return TicketCategoryEnum.TECHNICAL_SUPPORT;
+    case 'reportvulnerability':
+      return TicketCategoryEnum.REPORT_VULNERABILITY;
+    /*
     case 'chat':
       return TicketCategoryEnum.CHAT;
     case 'website':
       return TicketCategoryEnum.WEBSITE;
+      */
     default:
       return null;
   }

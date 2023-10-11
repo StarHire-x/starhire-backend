@@ -13,6 +13,7 @@ import { DataInitService } from './data-init.service';
 import { JobListingService } from 'src/job-listing/job-listing.service';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { EmailModule } from 'src/email/email.module';
+import { TwilioModule } from 'src/twilio/twilio.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EmailModule } from 'src/email/email.module';
       JobAssignment,
     ]),
     EmailModule,
+    TwilioModule,
   ],
   controllers: [],
   providers: [

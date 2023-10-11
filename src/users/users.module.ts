@@ -15,6 +15,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { EmailModule } from 'src/email/email.module';
+import { TwilioModule } from 'src/twilio/twilio.module';
 
 
 require("dotenv").config();
@@ -33,7 +34,8 @@ require("dotenv").config();
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '30 days' }, // user with backend access token is valid for 30 days to call our Backend API routes, to sync with NextAuth's Frontend default 30 days of session
     }),
-    EmailModule
+    EmailModule,
+    TwilioModule,
   ],
   controllers: [UsersController],
   providers: [

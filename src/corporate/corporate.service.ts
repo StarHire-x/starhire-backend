@@ -50,15 +50,15 @@ export class CorporateService {
       }
 
       // check for duplicate UEN number
-      const findUEN = await this.corporateRepository.findOne({
-        where: { companyRegistrationId: corporate.companyRegistrationId },
-      });
+      // const findUEN = await this.corporateRepository.findOne({
+      //   where: { companyRegistrationId: corporate.companyRegistrationId },
+      // });
 
-      if (findUEN) {
-        throw new ConflictException(
-          `This UEN number ${corporate.companyRegistrationId} has already been used. Please use a different UEN number.`,
-        );
-      }
+      // if (findUEN) {
+      //   throw new ConflictException(
+      //     `This UEN number ${corporate.companyRegistrationId} has already been used. Please use a different UEN number.`,
+      //   );
+      // }
 
       await this.corporateRepository.save(corporate);
       if (corporate) {

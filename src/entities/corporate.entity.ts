@@ -16,7 +16,7 @@ export class Corporate extends User {
   @Column()
   companyName: string;
 
-  @Column({ unique: true })
+  @Column()
   companyRegistrationId: number;
 
   @Column()

@@ -15,6 +15,7 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { EmailModule } from 'src/email/email.module';
 import { EmailService } from 'src/email/email.service';
 import { APP_GUARD } from '@nestjs/core';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { APP_GUARD } from '@nestjs/core';
   providers: [
     JobSeekerService,
     EmailService,
+    TwilioService,
   ],
 })
 export class JobSeekerModule {}

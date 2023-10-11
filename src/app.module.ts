@@ -30,6 +30,9 @@ import { JobAssignmentModule } from './job-assignment/job-assignment.module';
 import { SavedJobListingModule } from './saved-job-listing/saved-job-listing.module';
 import { DataInitModule } from './data-init/data-init.module';
 import { ForumCategoriesModule } from './forum-categories/forum-categories.module';
+import { TwilioController } from './twilio/twilio.controller';
+import { TwilioService } from './twilio/twilio.service';
+import { TwilioModule } from './twilio/twilio.module';
 
 require('dotenv').config();
 
@@ -72,9 +75,10 @@ require('dotenv').config();
     JobAssignmentModule,
     SavedJobListingModule,
     DataInitModule,
-    ForumCategoriesModule
+    ForumCategoriesModule,
+    TwilioModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, TwilioController],
+  providers: [AppService, TwilioService],
 })
 export class AppModule {}

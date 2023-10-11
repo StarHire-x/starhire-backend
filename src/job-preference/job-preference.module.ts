@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
 import { EmailModule } from 'src/email/email.module';
+import { TwilioModule } from 'src/twilio/twilio.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JobPreference, JobSeeker]), EmailModule],
+  imports: [TypeOrmModule.forFeature([JobPreference, JobSeeker]), EmailModule, TwilioModule],
   controllers: [JobPreferenceController],
   providers: [JobPreferenceService, JobSeekerService],
 })

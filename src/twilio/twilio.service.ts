@@ -28,9 +28,10 @@ export class TwilioService {
       return;
     } 
 
-    const message = `Hello ${user.name}, You have changed your notification settings to ${user.notificationMode}
-    Please use the following link to login: ${loginLink} to see the changes`;
-    
+    const message = `Hello ${user.userName},
+Your notification settings have been updated to: ${user.notificationMode}.
+Log in to view the changes: ${loginLink}`;
+
     try {
       //to refers to the whatsapp number , body refer to message
       await this.client.messages.create({

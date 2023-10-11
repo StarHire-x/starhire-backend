@@ -13,6 +13,7 @@ import { EmailService } from 'src/email/email.service';
 import { mapNotificationModeToEnum, mapUserStatusToEnum } from 'src/common/mapStringToEnum';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Injectable()
 export class AdministratorService {
@@ -20,6 +21,7 @@ export class AdministratorService {
     @InjectRepository(Administrator)
     private readonly administratorRepository: Repository<Administrator>,
     private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createAdministratorDto: CreateAdministratorDto) {
@@ -172,6 +174,14 @@ export class AdministratorService {
         administrator.notificationMode === NotificationModeEnum.EMAIL
       ) {
         await this.emailService.sendNotificationStatusEmail(
+          administrator,
+          UserRoleEnum.ADMINISTRATOR,
+        );
+      } else if (
+        initialNotificationStatus === NotificationModeEnum.EMAIL &&
+        administrator.notificationMode === NotificationModeEnum.SMS
+      ) {
+        await this.twilioService.sendNotificationStatusSMS(
           administrator,
           UserRoleEnum.ADMINISTRATOR,
         );

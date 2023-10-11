@@ -16,6 +16,10 @@ import { JobApplication } from 'src/entities/jobApplication.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { EmailService } from 'src/email/email.service';
+import { TwilioService } from 'src/twilio/twilio.service';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import { Administrator } from 'src/entities/administrator.entity';
 
 @Injectable()
 export class JobListingService {
@@ -33,6 +37,10 @@ export class JobListingService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
     @InjectRepository(JobAssignment)
     private readonly jobAssignmentRepository: Repository<JobAssignment>,
+    @InjectRepository(Administrator)
+    private readonly administratorRepository: Repository<Administrator>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createJobListingDto: CreateJobListingDto) {
@@ -67,6 +75,24 @@ export class JobListingService {
         corporate,
       });
       await this.jobListingRepository.save(jobListing);
+
+      const adminList = await this.administratorRepository.find();
+      adminList.map((admin) => {
+        if (admin.notificationMode === NotificationModeEnum.EMAIL) {
+          this.emailService.notifyAdminOnNewJobListing(
+            admin,
+            corporate,
+            jobListing,
+          );
+        } else if (admin.notificationMode === NotificationModeEnum.SMS) {
+          this.twilioService.notifyAdminOnNewJobListing(
+            admin,
+            corporate,
+            jobListing,
+          );
+        }
+      });
+
       if (jobListing) {
         return {
           statusCode: HttpStatus.OK,
@@ -145,12 +171,15 @@ export class JobListingService {
   async update(id: number, updateJobListingDto: UpdateJobListingDto) {
     try {
       // Ensure valid job listing Id is provided
-      const jobListing = await this.jobListingRepository.findOneBy({
-        jobListingId: id,
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: id },
+        relations: { corporate: true }
       });
       if (!jobListing) {
         throw new NotFoundException('Job Listing Id provided is not valid');
       }
+
+      const corporate = jobListing.corporate;
 
       // If jobListingStatus is to be updated, ensure it is a valid enum
       if (updateJobListingDto.jobListingStatus) {
@@ -161,6 +190,28 @@ export class JobListingService {
       }
       Object.assign(jobListing, updateJobListingDto);
       await this.jobListingRepository.save(jobListing);
+
+      if (jobListing.jobListingStatus !== JobListingStatusEnum.UNVERIFIED) {
+        if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
+          this.emailService.notifyCorporateOnJobListingStatus(
+            corporate,
+            jobListing,
+          );
+        } else if (corporate.notificationMode === NotificationModeEnum.SMS) { 
+          this.twilioService.notifyCorporateOnJobListingStatus(corporate, jobListing);
+        }
+      } 
+
+      if (jobListing.jobListingStatus === JobListingStatusEnum.APPROVED) {
+        const recruiterList = await this.recruiterRepository.find();
+        recruiterList.map((recruiter) => {
+          if(recruiter.notificationMode === NotificationModeEnum.EMAIL) {
+            this.emailService.notifyRecruiterOnNewJobListing(recruiter,corporate,jobListing);
+          } else if(recruiter.notificationMode === NotificationModeEnum.SMS) {
+            this.twilioService.notifyRecruiterOnNewJobListing(recruiter,corporate,jobListing);
+          }
+        })
+      }
 
       if (jobListing) {
         return {

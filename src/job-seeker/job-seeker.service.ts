@@ -153,6 +153,32 @@ export class JobSeekerService {
     }
   }
 
+  async findMyFollowings(id: string) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: id },
+        relations: {
+          following: true
+        },
+      });
+
+      if (jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Number of followings found',
+          data: jobSeeker.following.length,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Following not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async update(id: string, updatedJobSeeker: UpdateJobSeekerDto) {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOneBy({

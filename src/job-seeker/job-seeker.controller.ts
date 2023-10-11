@@ -51,6 +51,19 @@ export class JobSeekerController {
       }
     }
   }
+ 
+  @Get('/followings/:id')
+  findJobSeekerFollowings(@Param('id') id: string) {
+    try {
+      return this.jobSeekerService.findMyFollowings(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
 
   @Put(':id')
   updateJobSeeker(

@@ -68,9 +68,11 @@ export class TicketService {
 
       // Ensure 1 of the 3 normal type users is provided
       // Admin ID can be null upon ticket creation until an Admin picks up the ticket
+      /*
       if (!recruiter && !corporate && !jobSeeker) {
         throw new NotFoundException('Normal User Ids provided is not valid');
       }
+      */
 
       const ticket = new Ticket({
         ...ticketWithoutParentId,

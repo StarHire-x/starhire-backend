@@ -108,22 +108,18 @@ export function mapStarCategoryToEnum(status: string): StarCategoryEnum {
 
 export function mapTicketCategoryToEnum(status: string): TicketCategoryEnum {
   switch (status.toLowerCase()) {
-    case 'event':
-      return TicketCategoryEnum.EVENT;
-    case 'joblisting':
-      return TicketCategoryEnum.JOBLISTING;
-    case 'generalenquiries':
-      return TicketCategoryEnum.GENERAL_ENQURIES;
-    case 'technicalsupport':
-      return TicketCategoryEnum.TECHNICAL_SUPPORT;
-    case 'reportvulnerability':
-      return TicketCategoryEnum.REPORT_VULNERABILITY;
-    /*
-    case 'chat':
-      return TicketCategoryEnum.CHAT;
-    case 'website':
-      return TicketCategoryEnum.WEBSITE;
-      */
+    case 'general':
+      return TicketCategoryEnum.GENERAL;
+    case 'account':
+      return TicketCategoryEnum.ACCOUNT;
+    case 'jobs':
+      return TicketCategoryEnum.JOBS;
+    case 'events':
+      return TicketCategoryEnum.EVENTS;
+    case 'forum':
+      return TicketCategoryEnum.FORUM;
+    case 'subscriptionbilling':
+      return TicketCategoryEnum.SUBSCRIPTION_BILLING;
     default:
       return null;
   }

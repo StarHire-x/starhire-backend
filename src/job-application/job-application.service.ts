@@ -15,7 +15,9 @@ import { Recruiter } from 'src/entities/recruiter.entity';
 import { mapJobApplicationStatusToEnum } from 'src/common/mapStringToEnum';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { Document } from 'src/entities/document.entity';
-
+import { EmailService } from 'src/email/email.service';
+import { TwilioService } from 'src/twilio/twilio.service';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
 
 @Injectable()
 export class JobApplicationService {
@@ -33,6 +35,8 @@ export class JobApplicationService {
     private readonly jobAssignmentRepository: Repository<JobAssignment>,
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createJobApplicationDto: CreateJobApplicationDto) {
@@ -43,6 +47,7 @@ export class JobApplicationService {
       // Ensure valid Parent Ids are provided
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobListingId },
+        relations: { corporate: true },
       });
 
       if (!jobListing) {
@@ -67,6 +72,8 @@ export class JobApplicationService {
       if (!recruiter) {
         throw new NotFoundException('Recruiter Id provided is not valid');
       }
+
+      const corporate = jobListing.corporate;
 
       // Ensure jobApplicationStatus field is a valid enum
       const mappedStatus = mapJobApplicationStatusToEnum(
@@ -93,6 +100,44 @@ export class JobApplicationService {
 
       await this.jobApplicationRepository.save(jobApplication);
 
+      if (jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyJobSeekerOnApplicationStatus(
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+          recruiter,
+        );
+      } else if (jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyJobSeekerOnApplicationStatus(
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+          recruiter,
+        );
+      }
+
+      if (recruiter.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyRecruiterOnApplicationStatus(
+          recruiter,
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+        );
+      } else if (recruiter.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyRecruiterOnApplicationStatus(
+          recruiter,
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+        );
+      }
+
+      //We don't send corporate cos recrutier need to see whether the stuff submitted by job seeker is valid anot
+
       return {
         statusCode: HttpStatus.OK,
         message: 'Job Application successfully created',
@@ -116,7 +161,12 @@ export class JobApplicationService {
     try {
       return await this.jobApplicationRepository.findOne({
         where: { jobApplicationId: id },
-        relations: { documents: true, jobSeeker: true, jobListing: true, recruiter: true },
+        relations: {
+          documents: true,
+          jobSeeker: true,
+          jobListing: true,
+          recruiter: true,
+        },
       });
     } catch (err) {
       throw new HttpException(
@@ -150,9 +200,19 @@ export class JobApplicationService {
   async update(id: number, updateJobApplicationDto: UpdateJobApplicationDto) {
     try {
       // Ensure valid Job Application Id is provided
-      const jobApplication = await this.jobApplicationRepository.findOneBy({
-        jobApplicationId: id,
+      const jobApplication = await this.jobApplicationRepository.findOne({
+        where: { jobApplicationId: id },
+        relations: { jobSeeker: true, recruiter: true, jobListing: true },
       });
+
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobApplication.jobListing.jobListingId },
+        relations: { corporate: true },
+      });
+
+      const corporate = jobListing.corporate;
+      const jobSeeker = jobApplication.jobSeeker;
+      const recruiter = jobApplication.recruiter;
 
       if (!jobApplication) {
         throw new NotFoundException('Job Application Id provided is invalid');
@@ -171,15 +231,73 @@ export class JobApplicationService {
       }
 
       if (documents && documents.length > 0) {
-        const updatedDocuments = documents.map(
-          (updateDocumentsDto) => {
-            return new Document(updateDocumentsDto);
-          },
-        );
+        const updatedDocuments = documents.map((updateDocumentsDto) => {
+          return new Document(updateDocumentsDto);
+        });
         jobApplication.documents = updatedDocuments;
       }
-  
-      return await this.jobApplicationRepository.save(jobApplication);
+
+      await this.jobApplicationRepository.save(jobApplication);
+
+      if (jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyJobSeekerOnApplicationStatus(
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+          recruiter,
+        );
+      } else if (jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyJobSeekerOnApplicationStatus(
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+          recruiter,
+        );
+      }
+
+      if (recruiter.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyRecruiterOnApplicationStatus(
+          recruiter,
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+        );
+      } else if (recruiter.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyRecruiterOnApplicationStatus(
+          recruiter,
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          corporate,
+        );
+      }
+
+      if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyCorporateOnApplicationStatus(
+          corporate,
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          recruiter,
+        );
+      } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyCorporateOnApplicationStatus(
+          corporate,
+          jobSeeker,
+          jobApplication,
+          jobListing,
+          recruiter,
+        );
+      }
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job Application successfully updated',
+        data: jobApplication,
+      };
     } catch (err) {
       throw new HttpException(
         'Failed to update job application',
@@ -221,7 +339,7 @@ export class JobApplicationService {
         relations: { jobApplications: true },
       });
 
-      if(jobSeeker.jobApplications.length > 0) {
+      if (jobSeeker.jobApplications.length > 0) {
         return {
           statusCode: HttpStatus.OK,
           message: 'Existing job application is found',
@@ -230,7 +348,7 @@ export class JobApplicationService {
       } else {
         return {
           statusCode: HttpStatus.NOT_FOUND,
-          message: 'No job application is found for job seeker'
+          message: 'No job application is found for job seeker',
         };
       }
     } catch (error) {
@@ -256,19 +374,22 @@ export class JobApplicationService {
         relations: { jobApplications: true },
       });
 
-      if (jobSeeker.jobApplications.length === 0 || jobListing.jobApplications.length === 0) {
+      if (
+        jobSeeker.jobApplications.length === 0 ||
+        jobListing.jobApplications.length === 0
+      ) {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'Existing job application not found',
         };
-      } 
+      }
 
       const isMatch = this.hasMatchingApplication(
         jobSeeker.jobApplications,
         jobListing.jobApplications,
       );
 
-      if(isMatch) {
+      if (isMatch) {
         return {
           statusCode: HttpStatus.OK,
           message: 'Existing job application is found',
@@ -278,9 +399,8 @@ export class JobApplicationService {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'Existing job application not found',
-        }
+        };
       }
-
     } catch (error) {
       throw new HttpException(
         'No Job application found in job listing',

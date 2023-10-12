@@ -50,7 +50,11 @@ export class ForumCommentsService {
         forumPost,
       });
 
-      return await this.forumCommentRepository.save(forumComment);
+      await this.forumCommentRepository.save(forumComment);
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'Forum comment has been created',
+      };
     } catch (err) {
       throw new HttpException(
         'Failed to create new forum comment',
@@ -61,6 +65,25 @@ export class ForumCommentsService {
 
   async findAll() {
     return await this.forumCommentRepository.find();
+  }
+
+  async findCommentsByForumPostId(forumPostId: number) {
+    try {
+      const comments = await this.forumCommentRepository.find({
+        where: {forumPost: {forumPostId: forumPostId}},
+        order: {
+          createdAt: 'DESC',
+        },
+        relations: {jobSeeker: true}
+      });
+
+      return comments;
+    } catch (err) {
+      throw new HttpException(
+        `Failed to find forum comments for this forum post id ${forumPostId}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: number) {

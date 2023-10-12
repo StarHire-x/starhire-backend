@@ -14,10 +14,10 @@ export abstract class User {
   @Column()
   password: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
-  @Column({ unique: true })
+  @Column()
   contactNo: string;
 
   @Column({

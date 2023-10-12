@@ -12,6 +12,10 @@ import { JobExperience } from 'src/entities/jobExperience.entity';
 import { Ticket } from 'src/entities/ticket.entity';
 import { Review } from 'src/entities/review.entity';
 import { JobListing } from 'src/entities/jobListing.entity';
+import { EmailModule } from 'src/email/email.module';
+import { EmailService } from 'src/email/email.service';
+import { APP_GUARD } from '@nestjs/core';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Module({
   imports: [
@@ -29,6 +33,10 @@ import { JobListing } from 'src/entities/jobListing.entity';
     ]),
   ],
   controllers: [JobSeekerController],
-  providers: [JobSeekerService],
+  providers: [
+    JobSeekerService,
+    EmailService,
+    TwilioService,
+  ],
 })
 export class JobSeekerModule {}

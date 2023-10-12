@@ -17,6 +17,7 @@ import {
 import { CorporateService } from './corporate.service';
 import { CreateCorporateDto } from './dto/create-corporate.dto';
 import { UpdateCorporateDto } from './dto/update-corporate.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('corporate')
 export class CorporateController {
@@ -38,6 +39,52 @@ export class CorporateController {
   @Get('/all')
   findAllCorporates() {
     return this.corporateService.findAll();
+  }
+
+  @Public()
+  @Get('/social')
+  getAllCorporateSocial() {
+    try {
+      return this.corporateService.findAllCorporatesSocial();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Put('/following/:corporateId/:jobSeekerId')
+  async followCorporate(
+    @Param('corporateId') corporateId: string,
+    @Param('jobSeekerId') jobSeekerId: string,
+  ) {
+    try {
+      return this.corporateService.addFollower(corporateId, jobSeekerId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+  
+  @Put('/unfollow/:corporateId/:jobSeekerId')
+  async unfollowCorporate(
+    @Param('corporateId') corporateId: string,
+    @Param('jobSeekerId') jobSeekerId: string,
+  ) {
+    try {
+      return this.corporateService.removeFollower(corporateId, jobSeekerId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   // GET /corporate?id=1

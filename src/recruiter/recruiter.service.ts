@@ -15,12 +15,18 @@ import {
   mapUserRoleToEnum,
   mapUserStatusToEnum,
 } from 'src/common/mapStringToEnum';
+import { EmailService } from 'src/email/email.service';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import UserRoleEnum from 'src/enums/userRole.enum';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Injectable()
 export class RecruiterService {
   constructor(
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createRecruiterDto: CreateRecruiterDto) {
@@ -171,9 +177,39 @@ export class RecruiterService {
         };
       }
 
+      const initialNotificationStatus = recruiter.notificationMode;
+
       Object.assign(recruiter, updatedRecruiter);
 
+      if (updatedRecruiter.status) {
+        recruiter.status = mapUserStatusToEnum(updatedRecruiter.status);
+      }
+
+      if (updatedRecruiter.notificationMode) {
+        recruiter.notificationMode = mapNotificationModeToEnum(
+          updatedRecruiter.notificationMode,
+        );
+      }
+
       await this.recruiterRepository.save(recruiter);
+
+      if (
+        initialNotificationStatus === NotificationModeEnum.SMS &&
+        recruiter.notificationMode === NotificationModeEnum.EMAIL
+      ) {
+        await this.emailService.sendNotificationStatusEmail(
+          recruiter,
+          UserRoleEnum.RECRUITER,
+        );
+      } else if (
+        initialNotificationStatus === NotificationModeEnum.EMAIL &&
+        recruiter.notificationMode === NotificationModeEnum.SMS
+      ) {
+        await this.twilioService.sendNotificationStatusSMS(
+          recruiter,
+          UserRoleEnum.RECRUITER,
+        );
+      }
 
       if (recruiter) {
         return {

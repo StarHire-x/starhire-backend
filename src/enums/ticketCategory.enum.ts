@@ -1,8 +1,10 @@
 enum TicketCategoryEnum {
-  EVENT = "Event",
-  JOBLISTING = "JobListing",
-  CHAT = "Chat",
-  WEBSITE = "Website"
+  GENERAL = 'General',
+  ACCOUNT = 'Account',
+  JOBS = 'Jobs',
+  EVENTS = 'Events',
+  FORUM = 'Forum',
+  SUBSCRIPTION_BILLING = 'SubscriptionBilling',
 }
 
 export default TicketCategoryEnum;

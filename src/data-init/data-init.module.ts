@@ -12,10 +12,30 @@ import { Recruiter } from 'src/entities/recruiter.entity';
 import { DataInitService } from './data-init.service';
 import { JobListingService } from 'src/job-listing/job-listing.service';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { EmailModule } from 'src/email/email.module';
+import { TwilioModule } from 'src/twilio/twilio.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Administrator, Recruiter, Corporate, JobSeeker, JobListing, JobAssignment])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Administrator,
+      Recruiter,
+      Corporate,
+      JobSeeker,
+      JobListing,
+      JobAssignment,
+    ]),
+    EmailModule,
+    TwilioModule,
+  ],
   controllers: [],
-  providers: [DataInitService, AdministratorService, RecruiterService, CorporateService, JobSeekerService, JobListingService],
+  providers: [
+    DataInitService,
+    AdministratorService,
+    RecruiterService,
+    CorporateService,
+    JobSeekerService,
+    JobListingService,
+  ],
 })
 export class DataInitModule {}

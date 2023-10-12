@@ -8,6 +8,8 @@ import { Recruiter } from 'src/entities/recruiter.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { Document } from 'src/entities/document.entity';
+import { EmailService } from 'src/email/email.service';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 // Ensure imports contain all parent classes
 @Module({
@@ -22,6 +24,6 @@ import { Document } from 'src/entities/document.entity';
     ]),
   ],
   controllers: [JobApplicationController],
-  providers: [JobApplicationService],
+  providers: [JobApplicationService,EmailService,TwilioService],
 })
 export class JobApplicationModule {}

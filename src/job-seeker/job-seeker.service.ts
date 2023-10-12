@@ -18,12 +18,18 @@ import {
   mapVisibilityToEnum,
 } from 'src/common/mapStringToEnum';
 import { Public } from 'src/users/public.decorator';
+import { EmailService } from 'src/email/email.service';
+import UserRoleEnum from 'src/enums/userRole.enum';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import { TwilioService } from 'src/twilio/twilio.service';
 
 @Injectable()
 export class JobSeekerService {
   constructor(
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createJobSeekerDto: CreateJobSeekerDto) {
@@ -147,6 +153,32 @@ export class JobSeekerService {
     }
   }
 
+  async findMyFollowings(id: string) {
+    try {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: id },
+        relations: {
+          following: true
+        },
+      });
+
+      if (jobSeeker) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Number of followings found',
+          data: jobSeeker.following.length,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Following not found',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async update(id: string, updatedJobSeeker: UpdateJobSeekerDto) {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
@@ -161,14 +193,14 @@ export class JobSeekerService {
         };
       }
 
-      console.log("Hiiiiiiiiiii");
-      console.log(updatedJobSeeker);
+      const initialNotificationStatus = jobSeeker.notificationMode;
 
       Object.assign(jobSeeker, updatedJobSeeker);
 
       if (updatedJobSeeker.status) {
         jobSeeker.status = mapUserStatusToEnum(updatedJobSeeker.status);
       }
+
       if (updatedJobSeeker.notificationMode) {
         jobSeeker.notificationMode = mapNotificationModeToEnum(
           updatedJobSeeker.notificationMode,
@@ -189,13 +221,27 @@ export class JobSeekerService {
 
       await this.jobSeekerRepository.save(jobSeeker);
 
-      if (jobSeeker) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Job seeker updated',
-          data: jobSeeker,
-        };
-      }
+      if(initialNotificationStatus === NotificationModeEnum.SMS && jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+        await this.emailService.sendNotificationStatusEmail(
+          jobSeeker,
+          UserRoleEnum.JOBSEEKER
+        );
+      } else if (
+        initialNotificationStatus === NotificationModeEnum.EMAIL &&
+        jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+          await this.twilioService.sendNotificationStatusSMS(
+            jobSeeker,
+            UserRoleEnum.JOBSEEKER
+          );
+        }
+      
+        if (jobSeeker) {
+          return {
+            statusCode: HttpStatus.OK,
+            message: 'Job seeker updated',
+            data: jobSeeker,
+          };
+        }
     } catch (err) {
       throw new HttpException(
         'Failed to update job seeker',

@@ -14,6 +14,7 @@ import { JobExperience } from './jobExperience.entity';
 import { JobListing } from './jobListing.entity';
 import { SavedJobListing } from './savedJobListing.entity';
 import VisibilityEnum from 'src/enums/visibility.enum';
+import { Corporate } from './corporate.entity';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -112,6 +113,12 @@ export class JobSeeker extends User {
     },
   )
   savedJobListings: SavedJobListing[];
+
+  @ManyToMany(() => Corporate, (corporate) => corporate.followers, {
+    nullable: true,
+  })
+  @JoinTable({ name: 'jobseeker_corporate' })
+  following: Corporate[];
 
   constructor(entity: Partial<JobSeeker>) {
     super(entity);

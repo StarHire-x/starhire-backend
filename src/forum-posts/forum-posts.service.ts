@@ -130,7 +130,7 @@ export class ForumPostsService {
           {
             jobSeeker: { userId: jobSeeker.userId },
             forumPostStatus: ForumPostEnum.Reported,
-          }
+          },
         ],
         relations: {
           jobSeeker: true,
@@ -161,15 +161,24 @@ export class ForumPostsService {
         },
         where: [
           {
-            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
+            forumCategory: {
+              forumCategoryId: forumCategoryId,
+              isArchived: false,
+            },
             forumPostStatus: ForumPostEnum.Pending,
           },
           {
-            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
+            forumCategory: {
+              forumCategoryId: forumCategoryId,
+              isArchived: false,
+            },
             forumPostStatus: ForumPostEnum.Active,
           },
           {
-            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
+            forumCategory: {
+              forumCategoryId: forumCategoryId,
+              isArchived: false,
+            },
             forumPostStatus: ForumPostEnum.Reported,
           },
         ],
@@ -204,6 +213,27 @@ export class ForumPostsService {
     } catch (err) {
       throw new HttpException(
         'Failed to delete a forum post',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  // change forum post status to "Reported"
+  async updateForumPostToReported(forumPostId: number) {
+    try {
+      // Ensure valid forum post Id is provided
+      const forumPost = await this.forumPostRepository.findOneBy({
+        forumPostId: forumPostId,
+      });
+      if (!forumPost) {
+        throw new NotFoundException('Forum Post Id provided is not valid');
+      }
+
+      forumPost.forumPostStatus = ForumPostEnum.Reported;
+      return await this.forumPostRepository.save(forumPost);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update this forum post to Reported',
         HttpStatus.BAD_REQUEST,
       );
     }

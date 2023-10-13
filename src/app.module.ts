@@ -33,6 +33,7 @@ import { ForumCategoriesModule } from './forum-categories/forum-categories.modul
 import { TwilioController } from './twilio/twilio.controller';
 import { TwilioService } from './twilio/twilio.service';
 import { TwilioModule } from './twilio/twilio.module';
+import { TypeformModule } from './typeform/typeform.module';
 
 require('dotenv').config();
 
@@ -76,7 +77,8 @@ require('dotenv').config();
     SavedJobListingModule,
     DataInitModule,
     ForumCategoriesModule,
-    TwilioModule
+    TwilioModule,
+    TypeformModule
   ],
   controllers: [AppController, TwilioController],
   providers: [AppService, TwilioService],

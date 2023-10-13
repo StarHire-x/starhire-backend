@@ -199,7 +199,7 @@ export class ForumPostsService {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      forumPost.forumPostStatus = ForumPostEnum.Inactive;
+      forumPost.forumPostStatus = ForumPostEnum.Deleted;
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(

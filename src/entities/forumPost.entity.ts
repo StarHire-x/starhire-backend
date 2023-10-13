@@ -50,12 +50,6 @@ export class ForumPost {
   })
   jobSeeker: JobSeeker;
 
-  @OneToMany(() => Ticket, (tickets) => tickets.forumPost, {
-    cascade: true,
-    nullable: true,
-  })
-  tickets: Ticket[];
-
   constructor(entity: Partial<ForumPost>) {
     Object.assign(this, entity);
   }

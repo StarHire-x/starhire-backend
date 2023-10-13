@@ -40,9 +40,6 @@ export class Ticket {
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.tickets)
   jobSeeker: JobSeeker;
 
-  @ManyToOne(() => ForumPost, (forumPost) => forumPost.tickets)
-  forumPost: ForumPost;
-
   constructor(entity: Partial<Ticket>) {
     Object.assign(this, entity);
   }

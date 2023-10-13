@@ -123,7 +123,7 @@ export class JobListingController {
       console.log('Hello There');
       return this.jobListingService.deassignJobListing(
         jobSeekerId,
-        jobListingId
+        jobListingId,
       );
     } catch (error) {
       if (error instanceof HttpException) {

@@ -1,6 +1,7 @@
 import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Entity } from 'typeorm';
 import { JobSeeker } from './jobSeeker.entity';
+import { Corporate } from './corporate.entity';
 
 @Entity({ name: 'jobPreferences' })
 export class JobPreference {
@@ -8,16 +9,10 @@ export class JobPreference {
   jobPreferenceId: number;
 
   @Column()
-  locationPreference: number;
+  benefitPreference: number;
 
   @Column()
   salaryPreference: number;
-
-  @Column()
-  culturePreference: number;
-
-  @Column()
-  diversityPreference: number;
 
   @Column()
   workLifeBalancePreference: number;
@@ -25,6 +20,10 @@ export class JobPreference {
   @OneToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobPreference)
   @JoinColumn()
   jobSeeker: JobSeeker;
+
+  @OneToOne(() => Corporate, (corporate) => corporate.jobPreference)
+  @JoinColumn()
+  corporate: Corporate;
 
   constructor(entity: Partial<JobPreference>) {
     Object.assign(this, entity);

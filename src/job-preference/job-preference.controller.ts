@@ -59,10 +59,10 @@ export class JobPreferenceController {
     }
   }
 
-  @Get('/job-seeker/:id')
-  findByJobSeekerId(@Param('id') id: string) {
+  @Get('/:role/:id')
+  findExistingPreferenceByUser(@Param('role') role: string, @Param('id') id: string) {
     try {
-      return this.jobPreferenceService.findByJobSeekerId(id);
+      return this.jobPreferenceService.findPreferenceByUserId(id, role);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

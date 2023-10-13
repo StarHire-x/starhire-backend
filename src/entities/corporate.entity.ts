@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 import { EventListing } from './eventListing.entity';
 import { JobListing } from './jobListing.entity';
@@ -6,6 +6,7 @@ import { Chat } from './chat.entity';
 import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { JobPreference } from './jobPreference.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -44,6 +45,12 @@ export class Corporate extends User {
     cascade: true,
   })
   tickets: Ticket[];
+
+  @OneToOne(() => JobPreference, (preference) => preference.corporate, {
+    cascade: true,
+    nullable: true, // one-to-one optional
+  })
+  jobPreference: JobPreference;
 
   // TODO: Relationship with Review entity
   @OneToMany(() => Review, (review) => review.corporate)

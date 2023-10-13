@@ -5,6 +5,7 @@ import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
 import { Recruiter } from './recruiter.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { ForumPost } from './forumPost.entity';
 
 @Entity({ name: 'tickets' })
 export class Ticket {
@@ -38,6 +39,9 @@ export class Ticket {
 
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.tickets)
   jobSeeker: JobSeeker;
+
+  @ManyToOne(() => ForumPost, (forumPost) => forumPost.tickets)
+  forumPost: ForumPost;
 
   constructor(entity: Partial<Ticket>) {
     Object.assign(this, entity);

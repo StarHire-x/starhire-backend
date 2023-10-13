@@ -11,6 +11,7 @@ import { JobSeeker } from './jobSeeker.entity';
 import { ForumCategory } from './forumCategory.entity';
 import ForumPostEnum from 'src/enums/forumPost.enum';
 import { IsEnum } from 'class-validator';
+import { Ticket } from './ticket.entity';
 
 @Entity({ name: 'forumPosts' })
 export class ForumPost {
@@ -48,6 +49,12 @@ export class ForumPost {
     nullable: false,
   })
   jobSeeker: JobSeeker;
+
+  @OneToMany(() => Ticket, (tickets) => tickets.forumPost, {
+    cascade: true,
+    nullable: true,
+  })
+  tickets: Ticket[];
 
   constructor(entity: Partial<ForumPost>) {
     Object.assign(this, entity);

@@ -73,18 +73,22 @@ export class ForumPostsController {
   }
 
   @Get('/forum-category/:forumCategoryId')
-    // Ensure that id provided is a number
-    findForumPostByForumCategoryId(@Param('forumCategoryId') forumCategoryId: number) {
-      try {
-        return this.forumPostsService.findForumPostByForumCategoryId(forumCategoryId);
-      } catch (error) {
-        if (error instanceof HttpException) {
-          throw new HttpException(error.message, HttpStatus.CONFLICT);
-        } else {
-          throw new InternalServerErrorException('Internal server error');
-        }
+  // Ensure that id provided is a number
+  findForumPostByForumCategoryId(
+    @Param('forumCategoryId') forumCategoryId: number,
+  ) {
+    try {
+      return this.forumPostsService.findForumPostByForumCategoryId(
+        forumCategoryId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
       }
     }
+  }
 
   @Put('/delete/:forumPostId/:userId')
   // Ensure that id provided is a number
@@ -93,7 +97,24 @@ export class ForumPostsController {
     @Param('userId') userId: string,
   ) {
     try {
-      return this.forumPostsService.deleteOwnForumPostByPostIdAndUserId(forumPostId, userId);
+      return this.forumPostsService.deleteOwnForumPostByPostIdAndUserId(
+        forumPostId,
+        userId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Put('/report/:forumPostId')
+  // Ensure that id provided is a number
+  reportForumPost(@Param('forumPostId') forumPostId: number) {
+    try {
+      return this.forumPostsService.updateForumPostToReported(forumPostId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

@@ -10,6 +10,7 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 import { Corporate } from 'src/entities/corporate.entity';
 import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
 import { JobApplication } from 'src/entities/jobApplication.entity';
@@ -435,11 +436,17 @@ export class JobListingService {
       });
 
       if (jobListing) {
+        /*
         const processingJobApplications = jobListing.jobApplications.filter(
           (jobApplication) =>
             jobApplication.jobApplicationStatus === 'Processing',
         );
-
+        */
+        const processingJobApplications = jobListing.jobApplications.filter(
+          (jobApplication) =>
+            jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.SUBMITTED,
+        );
         return {
           statusCode: HttpStatus.OK,
           message: 'Processing Job Applications found',

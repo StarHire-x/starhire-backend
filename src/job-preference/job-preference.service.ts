@@ -11,6 +11,8 @@ import { JobPreference } from 'src/entities/jobPreference.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Corporate } from 'src/entities/corporate.entity';
+import UserRoleEnum from 'src/enums/userRole.enum';
 
 @Injectable()
 export class JobPreferenceService {
@@ -19,33 +21,68 @@ export class JobPreferenceService {
     private readonly jobPreferenceRepository: Repository<JobPreference>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(Corporate)
+    private readonly corporateRepository: Repository<Corporate>,
   ) {}
 
   async create(createJobPreference: CreateJobPreferenceDto) {
     try {
-      const { jobSeekerId, ...dtoExcludeRelationship } = createJobPreference;
-      const jobSeeker = await this.jobSeekerRepository.findOneBy({
-        userId: jobSeekerId,
-      });
+      const { jobSeekerId, corporateId, ...dtoExcludeRelationship } =
+        createJobPreference;
 
-      if (!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid');
-      }
-      if (jobSeeker.jobPreference) {
-        throw new ConflictException('Job Seeker already has a Job Preference!');
+      if (jobSeekerId) {
+        const jobSeeker = await this.jobSeekerRepository.findOneBy({
+          userId: jobSeekerId,
+        });
+
+        if (!jobSeeker) {
+          throw new NotFoundException('Job Seeker Id provided is not valid');
+        }
+        if (jobSeeker.jobPreference) {
+          throw new ConflictException(
+            'Job Seeker already has a Job Preference!',
+          );
+        }
+
+        // Create a new JobPreference entity
+        const jobPreference = new JobPreference({
+          ...dtoExcludeRelationship,
+          jobSeeker: jobSeeker,
+        });
+        await this.jobPreferenceRepository.save(jobPreference);
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job preference is created for job seeker',
+          data: jobPreference,
+        };
       }
 
-      // Create a new JobPreference entity
-      const jobPreference = new JobPreference({
-        ...dtoExcludeRelationship,
-        jobSeeker: jobSeeker,
-      });
-      await this.jobPreferenceRepository.save(jobPreference);
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Job preference is created',
-        data: jobPreference,
-      };
+      if (corporateId) {
+        const corporate = await this.corporateRepository.findOneBy({
+          userId: corporateId,
+        });
+
+        if (!corporate) {
+          throw new NotFoundException('Corporate Id provided is not valid');
+        }
+        if (corporate.jobPreference) {
+          throw new ConflictException(
+            'Corporate already has a Job Preference!',
+          );
+        }
+
+        // Create a new JobPreference entity
+        const jobPreference = new JobPreference({
+          ...dtoExcludeRelationship,
+          corporate: corporate,
+        });
+        await this.jobPreferenceRepository.save(jobPreference);
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job preference is created for corporate',
+          data: jobPreference,
+        };
+      }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -91,6 +128,46 @@ export class JobPreferenceService {
     };
   }
 
+  async findPreferenceByUserId(userId: string, role: string) {
+    if (role === UserRoleEnum.JOBSEEKER) {
+      const jobSeeker = await this.jobSeekerRepository.findOne({
+        where: { userId: userId },
+        relations: { jobPreference: true },
+      });
+
+      if (!jobSeeker) {
+        throw new NotFoundException('Job Seeker Id provided is not valid');
+      }
+      if (!jobSeeker.jobPreference) {
+        throw new NotFoundException(
+          'Job Seeker has no existing job preference',
+        );
+      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is found',
+        data: jobSeeker.jobPreference,
+      };
+    } else if (role === UserRoleEnum.CORPORATE) {
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: userId },
+        relations: { jobPreference: true },
+      });
+
+      if (!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
+      }
+      if (!corporate.jobPreference) {
+        throw new NotFoundException('Corporate has no existing job preference');
+      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is found',
+        data: corporate.jobPreference,
+      };
+    }
+  }
+
   async update(id: number, updateJobPreference: UpdateJobPreferenceDto) {
     const jobPreference = await this.findOne(id);
 
@@ -98,7 +175,8 @@ export class JobPreferenceService {
       throw new NotFoundException('Job Preference Id provided is not valid');
     }
 
-    const { jobSeekerId, ...dtoExcludeRelationship } = updateJobPreference;
+    const { jobSeekerId, corporateId, ...dtoExcludeRelationship } =
+      updateJobPreference;
 
     Object.assign(jobPreference, dtoExcludeRelationship);
 

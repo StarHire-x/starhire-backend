@@ -393,8 +393,7 @@ export class DataInitService implements OnModuleInit {
     const createJobListingFourDto: CreateJobListingDto =
       new CreateJobListingDto();
     createJobListingFourDto.title = 'Preschool Educator';
-    createJobListingFourDto.overview =
-      'Looking for a few Preschool Educators';
+    createJobListingFourDto.overview = 'Looking for a few Preschool Educators';
     createJobListingFourDto.responsibilities =
       'Taking care of young childrens.';
     createJobListingFourDto.requirements =

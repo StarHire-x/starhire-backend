@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ForumPost } from 'src/entities/forumPost.entity';
 import { ForumCategory } from 'src/entities/forumCategory.entity';
 import { CreateForumCategoryDto } from './dto/create-forum-category.dto';
 import { UpdateForumCategoryDto } from './dto/update-forum-category.dto';
@@ -15,24 +14,29 @@ import { UpdateForumCategoryDto } from './dto/update-forum-category.dto';
 export class ForumCategoriesService {
   constructor(
     @InjectRepository(ForumCategory)
-    private readonly forumCategoryRepository: Repository<ForumCategory>,
-    // Parent Entity
-    @InjectRepository(ForumPost)
-    private readonly jobSeekerRepository: Repository<ForumPost>,
+    private readonly forumCategoryRepository: Repository<ForumCategory>, // Parent Entity
   ) {}
 
   async create(createForumCategoryDto: CreateForumCategoryDto) {
     try {
-      const { ...objectLiterals } = createForumCategoryDto;
+      const { forumCategoryTitle, ...objectLiterals } = createForumCategoryDto;
+
+      const forumCategoryExists = await this.forumCategoryRepository.findOne({
+        where: { forumCategoryTitle: forumCategoryTitle },
+      });
+      if (forumCategoryExists) {
+        throw new HttpException(
+          'Category name already exists!',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const forumCategory = new ForumCategory({
+        forumCategoryTitle,
         ...objectLiterals,
       });
       return await this.forumCategoryRepository.save(forumCategory);
     } catch (err) {
-      throw new HttpException(
-        'Failed to create new forum category',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -46,7 +50,13 @@ export class ForumCategoriesService {
     try {
       return await this.forumCategoryRepository.findOne({
         where: { forumCategoryId: id },
-        relations: { forumPosts: { forumComments: true, forumCategory: true } },
+        relations: {
+          forumPosts: {
+            forumComments: { jobSeeker: true }, // might be too nested
+            forumCategory: true,
+            jobSeeker: true,
+          },
+        },
       });
     } catch (err) {
       throw new HttpException(

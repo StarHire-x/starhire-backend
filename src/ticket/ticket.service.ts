@@ -102,7 +102,14 @@ export class TicketService {
   }
 
   async findAll() {
-    return await this.ticketRepository.find();
+    return await this.ticketRepository.find({
+      relations: {
+        corporate: true,
+        recruiter: true,
+        administrator: true,
+        jobSeeker: true,
+      },
+    });
   }
 
   async findOne(id: number) {

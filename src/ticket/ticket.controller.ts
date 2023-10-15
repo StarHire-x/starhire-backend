@@ -38,7 +38,7 @@ export class TicketController {
     }
   }
 
-  @Get('/all')
+  @Get()
   findAllTickets() {
     try {
       return this.ticketService.findAll();

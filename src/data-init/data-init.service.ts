@@ -19,6 +19,9 @@ import { JobListing } from 'src/entities/jobListing.entity';
 import { JobListingService } from 'src/job-listing/job-listing.service';
 import { CreateJobListingDto } from 'src/job-listing/dto/create-job-listing.dto';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import { ForumCategory } from 'src/entities/forumCategory.entity';
+import { ForumCategoriesService } from 'src/forum-categories/forum-categories.service';
+import { CreateForumCategoryDto } from 'src/forum-categories/dto/create-forum-category.dto';
 
 require('dotenv').config();
 
@@ -40,6 +43,9 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(JobListing)
     private readonly jobListingRepository: Repository<JobListing>,
     private readonly jobListingService: JobListingService,
+    @InjectRepository(ForumCategory)
+    private readonly forumCategoryRepository: Repository<ForumCategory>,
+    private readonly forumCategoryService: ForumCategoriesService,
   ) {}
 
   async onModuleInit() {
@@ -404,6 +410,64 @@ export class DataInitService implements OnModuleInit {
     await this.jobListingService.create(createJobListingFourDto);
     console.log(
       `job listing ${createJobListingFourDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
+    );
+
+     // if there's any existing forum categories, don't data init forum categories
+     const existingForumCategories= await this.forumCategoryRepository.find();
+     if (existingForumCategories.length > 0) {
+       return;
+     }
+
+    //create forum category
+    const createEventsForumCategory: CreateForumCategoryDto = 
+    new CreateForumCategoryDto();
+
+    createEventsForumCategory.forumCategoryTitle = 'Events';
+    createEventsForumCategory.isArchived = false;
+    createEventsForumCategory.forumGuidelines = "This is Events guidelines";
+
+		await this.forumCategoryService.create(createEventsForumCategory);
+		console.log(
+      `Events forum category is created.`,
+    );
+
+		//create confessions category
+    const createConfessionsForumCategory: CreateForumCategoryDto = 
+    new CreateForumCategoryDto();
+
+    createConfessionsForumCategory.forumCategoryTitle = 'Confessions';
+    createConfessionsForumCategory.isArchived = false;
+    createConfessionsForumCategory.forumGuidelines = "This is Confessions guidelines";
+
+		await this.forumCategoryService.create(createConfessionsForumCategory);
+		console.log(
+      `Confessions forum category is created.`,
+    );
+
+		//create career category
+    const createCareerForumCategory: CreateForumCategoryDto = 
+    new CreateForumCategoryDto();
+
+    createCareerForumCategory.forumCategoryTitle = 'Career';
+    createCareerForumCategory.isArchived = false;
+    createCareerForumCategory.forumGuidelines = "This is Career guidelines";
+
+		await this.forumCategoryService.create(createCareerForumCategory);
+		console.log(
+      `Career forum category is created.`,
+    );
+
+		//create miscellaneous category
+    const createMiscellaneousForumCategory: CreateForumCategoryDto = 
+    new CreateForumCategoryDto();
+
+    createMiscellaneousForumCategory.forumCategoryTitle = 'Miscellaneous';
+    createMiscellaneousForumCategory.isArchived = false;
+    createMiscellaneousForumCategory.forumGuidelines = "This is Miscellaneous guidelines";
+
+		await this.forumCategoryService.create(createMiscellaneousForumCategory);
+		console.log(
+      `Miscellaneous forum category is created.`,
     );
   }
 }

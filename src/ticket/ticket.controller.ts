@@ -38,7 +38,7 @@ export class TicketController {
     }
   }
 
-  @Get('/all')
+  @Get()
   findAllTickets() {
     try {
       return this.ticketService.findAll();
@@ -108,6 +108,18 @@ export class TicketController {
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
+    }
+  }
+
+  @Put('resolve/:id')
+  async resolveTicket(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.ticketService.resolveTicket(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException('Failed to resolve ticket');
     }
   }
 }

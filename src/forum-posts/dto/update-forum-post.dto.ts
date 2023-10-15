@@ -7,7 +7,6 @@ class UpdateDto {
   forumPostMessage: string;
   isAnonymous: boolean;
   forumPostStatus: ForumPostEnum;
-  forumCategoryId: number;
 }
 
 export class UpdateForumPostDto extends PartialType(UpdateDto) {}

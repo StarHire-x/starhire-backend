@@ -120,6 +120,13 @@ export class JobApplicationController {
   ) {
     try {
       console.log(id, updateJobApplicationDto);
+
+      /*
+      if (updateJobApplicationDto.hasOwnProperty('jobApplicationStatus')) {
+        console.log("This field is present");
+      }
+      */
+
       return this.jobApplicationService.update(id, updateJobApplicationDto);
     } catch (error) {
       if (error instanceof HttpException) {

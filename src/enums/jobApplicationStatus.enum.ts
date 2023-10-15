@@ -3,10 +3,10 @@ enum JobApplicationStatusEnum {
   PROCESSING = 'Processing',
   TO_BE_SUBMITTED = 'To_Be_Submitted',
   WAITING_FOR_INTERVIEW = 'Waiting_For_Interview',
-  OFFER_REJECTED = 'offer_Rejected',
-  OFFER_ACCEPTED = 'offer_Accepted',
-  //REJECTED = 'Rejected',
-  //ACCEPTED = 'Accepted',
+  OFFER_REJECTED = 'Offer_Rejected',
+  OFFER_ACCEPTED = 'Offer_Accepted',
+  REJECTED = 'Rejected',
+  OFFERED = 'Offered',
 }
 
 export default JobApplicationStatusEnum;

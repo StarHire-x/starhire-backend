@@ -130,7 +130,7 @@ export class ForumPostsService {
           {
             jobSeeker: { userId: jobSeeker.userId },
             forumPostStatus: ForumPostEnum.Reported,
-          }
+          },
         ],
         relations: {
           jobSeeker: true,
@@ -161,15 +161,24 @@ export class ForumPostsService {
         },
         where: [
           {
-            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
+            forumCategory: {
+              forumCategoryId: forumCategoryId,
+              isArchived: false,
+            },
             forumPostStatus: ForumPostEnum.Pending,
           },
           {
-            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
+            forumCategory: {
+              forumCategoryId: forumCategoryId,
+              isArchived: false,
+            },
             forumPostStatus: ForumPostEnum.Active,
           },
           {
-            forumCategory: { forumCategoryId: forumCategoryId, isArchived: false },
+            forumCategory: {
+              forumCategoryId: forumCategoryId,
+              isArchived: false,
+            },
             forumPostStatus: ForumPostEnum.Reported,
           },
         ],
@@ -199,7 +208,7 @@ export class ForumPostsService {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      forumPost.forumPostStatus = ForumPostEnum.Inactive;
+      forumPost.forumPostStatus = ForumPostEnum.Deleted;
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(
@@ -209,11 +218,30 @@ export class ForumPostsService {
     }
   }
 
+  // change forum post status to "Reported"
+  async updateForumPostToReported(forumPostId: number) {
+    try {
+      // Ensure valid forum post Id is provided
+      const forumPost = await this.forumPostRepository.findOneBy({
+        forumPostId: forumPostId,
+      });
+      if (!forumPost) {
+        throw new NotFoundException('Forum Post Id provided is not valid');
+      }
+
+      forumPost.forumPostStatus = ForumPostEnum.Reported;
+      return await this.forumPostRepository.save(forumPost);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update this forum post to Reported',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   // Note: Since forumPostId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateForumPostDto: UpdateForumPostDto) {
     try {
-      const { forumCategoryId, ...dtoExcludingParentId } = updateForumPostDto;
-
       // Ensure valid forum post Id is provided
       const forumPost = await this.forumPostRepository.findOneBy({
         forumPostId: id,
@@ -222,15 +250,9 @@ export class ForumPostsService {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      // If forumCategory is to be updated, ensure it exists
-      const forumCategory = await this.forumCategoryRepository.findOneBy({
-        forumCategoryId: forumCategoryId,
-      });
-      if (!forumCategory) {
-        throw new NotFoundException('Forum Category provided is not valid');
-      }
+      //forumCategory cannot be updated
 
-      Object.assign(forumPost, { ...dtoExcludingParentId, forumCategory });
+      Object.assign(forumPost, { ...updateForumPostDto });
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(

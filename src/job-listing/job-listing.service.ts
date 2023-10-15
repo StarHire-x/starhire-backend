@@ -117,7 +117,11 @@ export class JobListingService {
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     const t = await this.jobListingRepository.find({
-      relations: { corporate: true, jobApplications: {recruiter: true}, jobSeekers: true },
+      relations: {
+        corporate: true,
+        jobApplications: { recruiter: true },
+        jobSeekers: true,
+      },
     });
     //console.log(t);
     return t;
@@ -174,7 +178,7 @@ export class JobListingService {
       // Ensure valid job listing Id is provided
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: id },
-        relations: { corporate: true }
+        relations: { corporate: true },
       });
       if (!jobListing) {
         throw new NotFoundException('Job Listing Id provided is not valid');
@@ -198,20 +202,31 @@ export class JobListingService {
             corporate,
             jobListing,
           );
-        } else if (corporate.notificationMode === NotificationModeEnum.SMS) { 
-          this.twilioService.notifyCorporateOnJobListingStatus(corporate, jobListing);
+        } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
+          this.twilioService.notifyCorporateOnJobListingStatus(
+            corporate,
+            jobListing,
+          );
         }
-      } 
+      }
 
       if (jobListing.jobListingStatus === JobListingStatusEnum.APPROVED) {
         const recruiterList = await this.recruiterRepository.find();
         recruiterList.map((recruiter) => {
-          if(recruiter.notificationMode === NotificationModeEnum.EMAIL) {
-            this.emailService.notifyRecruiterOnNewJobListing(recruiter,corporate,jobListing);
-          } else if(recruiter.notificationMode === NotificationModeEnum.SMS) {
-            this.twilioService.notifyRecruiterOnNewJobListing(recruiter,corporate,jobListing);
+          if (recruiter.notificationMode === NotificationModeEnum.EMAIL) {
+            this.emailService.notifyRecruiterOnNewJobListing(
+              recruiter,
+              corporate,
+              jobListing,
+            );
+          } else if (recruiter.notificationMode === NotificationModeEnum.SMS) {
+            this.twilioService.notifyRecruiterOnNewJobListing(
+              recruiter,
+              corporate,
+              jobListing,
+            );
           }
-        })
+        });
       }
 
       if (jobListing) {

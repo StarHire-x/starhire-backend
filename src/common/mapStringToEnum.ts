@@ -44,7 +44,7 @@ export function mapJobApplicationStatusToEnum(
   status: string,
 ): JobApplicationStatusEnum {
   switch (status) {
-    case 'offer_Accepted':
+    case 'Offer_Accepted':
       return JobApplicationStatusEnum.OFFER_ACCEPTED;
     case 'Submitted':
       return JobApplicationStatusEnum.SUBMITTED;
@@ -52,8 +52,12 @@ export function mapJobApplicationStatusToEnum(
       return JobApplicationStatusEnum.TO_BE_SUBMITTED;
     case 'Waiting_For_Interview':
       return JobApplicationStatusEnum.WAITING_FOR_INTERVIEW;
-    case 'offer_Rejected':
+    case 'Offer_Rejected':
       return JobApplicationStatusEnum.OFFER_REJECTED;
+    case 'Offered':
+      return JobApplicationStatusEnum.OFFERED;
+    case 'Rejected':
+      return JobApplicationStatusEnum.REJECTED;
     default:
       return JobApplicationStatusEnum.PROCESSING;
   }

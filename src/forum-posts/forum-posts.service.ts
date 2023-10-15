@@ -242,8 +242,6 @@ export class ForumPostsService {
   // Note: Since forumPostId is provided as a req param, there is no need to include it in the req body (dto object)
   async update(id: number, updateForumPostDto: UpdateForumPostDto) {
     try {
-      const { forumCategoryId, ...dtoExcludingParentId } = updateForumPostDto;
-
       // Ensure valid forum post Id is provided
       const forumPost = await this.forumPostRepository.findOneBy({
         forumPostId: id,
@@ -252,15 +250,9 @@ export class ForumPostsService {
         throw new NotFoundException('Forum Post Id provided is not valid');
       }
 
-      // If forumCategory is to be updated, ensure it exists
-      const forumCategory = await this.forumCategoryRepository.findOneBy({
-        forumCategoryId: forumCategoryId,
-      });
-      if (!forumCategory) {
-        throw new NotFoundException('Forum Category provided is not valid');
-      }
+      //forumCategory cannot be updated
 
-      Object.assign(forumPost, { ...dtoExcludingParentId, forumCategory });
+      Object.assign(forumPost, { ...updateForumPostDto });
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(

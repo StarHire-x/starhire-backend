@@ -50,7 +50,13 @@ export class ForumCategoriesService {
     try {
       return await this.forumCategoryRepository.findOne({
         where: { forumCategoryId: id },
-        relations: { forumPosts: { forumComments: true, forumCategory: true } },
+        relations: {
+          forumPosts: {
+            forumComments: { jobSeeker: true }, // might be too nested
+            forumCategory: true,
+            jobSeeker: true,
+          },
+        },
       });
     } catch (err) {
       throw new HttpException(

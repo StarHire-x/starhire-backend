@@ -14,6 +14,10 @@ import { JobListingService } from 'src/job-listing/job-listing.service';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { EmailModule } from 'src/email/email.module';
 import { TwilioModule } from 'src/twilio/twilio.module';
+import { ForumCategory } from 'src/entities/forumCategory.entity';
+import { ForumCategoriesService } from 'src/forum-categories/forum-categories.service';
+import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
+import { ForumPost } from 'src/entities/forumPost.entity';
 
 @Module({
   imports: [
@@ -24,6 +28,8 @@ import { TwilioModule } from 'src/twilio/twilio.module';
       JobSeeker,
       JobListing,
       JobAssignment,
+      ForumCategory,
+      ForumPost,
     ]),
     EmailModule,
     TwilioModule,
@@ -36,6 +42,8 @@ import { TwilioModule } from 'src/twilio/twilio.module';
     CorporateService,
     JobSeekerService,
     JobListingService,
+    ForumCategoriesService,
+    ForumPostsService,
   ],
 })
 export class DataInitModule {}

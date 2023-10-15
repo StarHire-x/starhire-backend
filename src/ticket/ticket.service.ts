@@ -178,4 +178,17 @@ export class TicketService {
       );
     }
   }
+
+  async resolveTicket(id: number): Promise<Ticket> {
+    const ticket = await this.ticketRepository.findOne({
+      where: { ticketId: id },
+    });
+
+    if (!ticket) {
+      throw new NotFoundException('Ticket not found');
+    }
+
+    ticket.isResolved = true;
+    return await this.ticketRepository.save(ticket);
+  }
 }

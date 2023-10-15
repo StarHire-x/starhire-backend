@@ -110,4 +110,16 @@ export class TicketController {
       }
     }
   }
+
+  @Put('resolve/:id')
+  async resolveTicket(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.ticketService.resolveTicket(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw new InternalServerErrorException('Failed to resolve ticket');
+    }
+  }
 }

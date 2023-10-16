@@ -74,10 +74,10 @@ export class ForumPostsService {
       },
       relations: { jobSeeker: true, forumCategory: true },
       where: [
-        {
-          forumPostStatus: ForumPostEnum.Pending,
-          forumCategory: { isArchived: false },
-        },
+        // {
+        //   forumPostStatus: ForumPostEnum.Pending,
+        //   forumCategory: { isArchived: false },
+        // },
         {
           forumPostStatus: ForumPostEnum.Reported,
           forumCategory: { isArchived: false },
@@ -160,13 +160,13 @@ export class ForumPostsService {
           createdAt: 'DESC',
         },
         where: [
-          {
-            forumCategory: {
-              forumCategoryId: forumCategoryId,
-              isArchived: false,
-            },
-            forumPostStatus: ForumPostEnum.Pending,
-          },
+          // {
+          //   forumCategory: {
+          //     forumCategoryId: forumCategoryId,
+          //     isArchived: false,
+          //   },
+          //   forumPostStatus: ForumPostEnum.Pending,
+          // },
           {
             forumCategory: {
               forumCategoryId: forumCategoryId,

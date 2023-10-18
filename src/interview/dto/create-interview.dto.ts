@@ -1,5 +1,7 @@
 export class CreateInterviewDto {
   jobApplicationId: number;
   corporateId: string;
-  chosenDates: Date;
+  firstChosenDates: Date;
+  secondChosenDates: Date;
+  thirdChosenDates: Date;
 }

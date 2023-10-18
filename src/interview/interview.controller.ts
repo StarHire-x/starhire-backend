@@ -9,9 +9,7 @@ export class InterviewController {
   constructor(private readonly interviewService: InterviewService) {}
 
   @Post()
-  async create(
-    @Body() createInterviewDto: CreateInterviewDto,
-  ): Promise<Interview> {
+  async create(@Body() createInterviewDto: CreateInterviewDto) {
     const interview =
       await this.interviewService.createInterview(createInterviewDto);
     return interview;

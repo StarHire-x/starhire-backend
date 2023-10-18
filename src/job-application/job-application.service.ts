@@ -436,4 +436,31 @@ export class JobApplicationService {
       );
     }
   }
+
+  async getJobApplicationById(jobAppliationId: number) {
+    try {
+      const jobApplication = await this.jobApplicationRepository.findOne({
+        where: { jobApplicationId: jobAppliationId },
+      });
+
+      if (jobApplication) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job Application found',
+          data: jobApplication,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Unable to find job application',
+        };
+      }
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find job application',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }

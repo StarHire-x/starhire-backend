@@ -17,7 +17,13 @@ export class Interview {
   id: number;
 
   @Column({ type: 'datetime' })
-  chosenDates: Date;
+  firstChosenDates: Date;
+
+  @Column({ type: 'datetime' })
+  secondChosenDates: Date;
+
+  @Column({ type: 'datetime' })
+  thirdChosenDates: Date;
 
   @Column({ type: 'datetime' })
   scheduledDate: Date;
@@ -25,10 +31,7 @@ export class Interview {
   @Column({ default: 'empty' })
   interviewLink: string;
 
-  @Column({ default: 'PENDING' })
-  status: string;
-
-  @Column()
+  @Column({ default: InterviewStatusEnum.PENDING })
   interviewStatus: InterviewStatusEnum;
 
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.interviews)

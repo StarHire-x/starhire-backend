@@ -6,8 +6,6 @@ import { Interview } from 'src/entities/interview.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JobApplicationService } from 'src/job-application/job-application.service';
-import { UsersService } from 'src/users/users.service';
-import UserRoleEnum from 'src/enums/userRole.enum';
 import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
 import { RecruiterService } from 'src/recruiter/recruiter.service';
 import { CorporateService } from 'src/corporate/corporate.service';
@@ -23,11 +21,15 @@ export class InterviewService {
     private readonly corporateService: CorporateService,
   ) {}
 
-  async createInterview(
-    createInterviewDto: CreateInterviewDto,
-  ): Promise<Interview> {
+  async createInterview(createInterviewDto: CreateInterviewDto) {
     try {
-      const { jobApplicationId, chosenDates, corporateId } = createInterviewDto;
+      const {
+        jobApplicationId,
+        firstChosenDates,
+        secondChosenDates,
+        thirdChosenDates,
+        corporateId,
+      } = createInterviewDto;
 
       // Find the job application first by the ID
       const result =
@@ -52,14 +54,27 @@ export class InterviewService {
 
       const Corporate = await this.corporateService.findByUserId(corporateId);
 
+      const JobApplication =
+        await this.jobApplicationService.getJobApplicationById(
+          jobApplicationId,
+        );
 
       const interview = new Interview();
       interview.jobSeeker = JobSeeker.data;
       interview.recruiter = Recruiter.data;
       interview.corporate = Corporate.data;
-      interview.chosenDates = chosenDates;
+      interview.firstChosenDates = firstChosenDates;
+      interview.secondChosenDates = secondChosenDates;
+      interview.thirdChosenDates = thirdChosenDates;
+      interview.jobApplication = JobApplication.data;
 
-      return await this.interviewRepository.save(interview);
+      await this.interviewRepository.save(interview);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Interview Request Created',
+        data: interview,
+      };
     } catch (error) {
       console.error(error);
 

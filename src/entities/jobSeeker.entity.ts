@@ -15,6 +15,7 @@ import { JobListing } from './jobListing.entity';
 import { SavedJobListing } from './savedJobListing.entity';
 import VisibilityEnum from 'src/enums/visibility.enum';
 import { Corporate } from './corporate.entity';
+import { Interview } from './interview.entity';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -117,6 +118,9 @@ export class JobSeeker extends User {
   @ManyToMany(() => Corporate, (corporate) => corporate.followers, {
     nullable: true,
   })
+  @OneToMany(() => Interview, (interview) => interview.jobSeeker)
+  interviews: Interview[];
+
   @JoinTable({ name: 'jobseeker_corporate' })
   following: Corporate[];
 

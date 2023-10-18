@@ -5,6 +5,7 @@ import { JobApplication } from './jobApplication.entity';
 import { Chat } from './chat.entity';
 import { Ticket } from './ticket.entity';
 import { JobListing } from './jobListing.entity';
+import { Interview } from './interview.entity';
 
 @Entity({ name: 'recruiters' })
 export class Recruiter extends User {
@@ -40,4 +41,6 @@ export class Recruiter extends User {
   })
   tickets: Ticket[];
 
+  @OneToMany(() => Interview, (interview) => interview.recruiter)
+  interviews: Interview[];
 }

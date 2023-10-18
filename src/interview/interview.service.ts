@@ -100,7 +100,7 @@ export class InterviewService {
       } else if (role === 'corporate') {
         interviews = await this.interviewRepository.find({
           where: {
-            jobSeeker: {
+            corporate: {
               userId,
             },
           },
@@ -108,7 +108,7 @@ export class InterviewService {
       } else if (role === 'recruiter') {
         interviews = await this.interviewRepository.find({
           where: {
-            jobSeeker: {
+            recruiter: {
               userId,
             },
           },

@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
 import { Interview } from 'src/entities/interview.entity';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('interview')
 export class InterviewController {
@@ -13,6 +14,24 @@ export class InterviewController {
     const interview =
       await this.interviewService.createInterview(createInterviewDto);
     return interview;
+  }
+
+  @Public()
+  @Get('/:userId/:role')
+  async getInterviewDatesByUserID(
+    @Param('userId') userId: string,
+    @Param('role') role: string,
+  ) {
+    const result = await this.interviewService.getInterviewDatesByUserID(
+      userId,
+      role,
+    );
+    if (result.statusCode === HttpStatus.OK) {
+      console.log(result);
+      return result;
+    } else {
+      return { statusCode: result.statusCode, message: result.message };
+    }
   }
 
   /*

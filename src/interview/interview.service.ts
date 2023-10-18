@@ -85,6 +85,57 @@ export class InterviewService {
     }
   }
 
+  async getInterviewDatesByUserID(userId: string, role: string) {
+    try {
+      let interviews;
+
+      if (role === 'jobSeeker') {
+        interviews = await this.interviewRepository.find({
+          where: {
+            jobSeeker: {
+              userId,
+            },
+          },
+        });
+      } else if (role === 'corporate') {
+        interviews = await this.interviewRepository.find({
+          where: {
+            jobSeeker: {
+              userId,
+            },
+          },
+        });
+      } else if (role === 'recruiter') {
+        interviews = await this.interviewRepository.find({
+          where: {
+            jobSeeker: {
+              userId,
+            },
+          },
+        });
+      }
+
+      if (interviews.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Interviews found',
+          data: interviews,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'No pending interviews found for this user',
+        };
+      }
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find interviews',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   /*
 
   findAll() {

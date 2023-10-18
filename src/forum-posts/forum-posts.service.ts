@@ -73,6 +73,7 @@ export class ForumPostsService {
         createdAt: 'DESC',
       },
       relations: { jobSeeker: true, forumCategory: true },
+      loadRelationIds: {relations: ['forumComments']}, // to retrieve number of comments only, no need fetch the entire comment object
       where: [
         // {
         //   forumPostStatus: ForumPostEnum.Pending,
@@ -136,6 +137,7 @@ export class ForumPostsService {
           jobSeeker: true,
           forumCategory: true,
         },
+        loadRelationIds: {relations: ['forumComments']}, // to retrieve number of comments only, no need fetch the entire comment object
       });
       return response;
     } catch (err) {
@@ -183,6 +185,7 @@ export class ForumPostsService {
           },
         ],
         relations: { jobSeeker: true, forumCategory: true },
+        loadRelationIds: {relations: ['forumComments']}, // to retrieve number of comments only, no need fetch the entire comment object
       });
       return response;
     } catch (err) {

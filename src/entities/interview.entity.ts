@@ -1,5 +1,3 @@
-// interview.entity.ts
-
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -13,7 +11,7 @@ import { Recruiter } from './recruiter.entity';
 import { JobApplication } from './jobApplication.entity';
 import InterviewStatusEnum from 'src/enums/InterviewStatus.enum';
 
-@Entity()
+@Entity({ name: 'interviews' })
 export class Interview {
   @PrimaryGeneratedColumn()
   id: number;
@@ -54,4 +52,8 @@ export class Interview {
   )
   @JoinColumn()
   jobApplication: JobApplication;
+
+  constructor(partial: Partial<Interview> = {}) {
+    Object.assign(this, partial);
+  }
 }

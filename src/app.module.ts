@@ -34,6 +34,7 @@ import { TwilioController } from './twilio/twilio.controller';
 import { TwilioService } from './twilio/twilio.service';
 import { TwilioModule } from './twilio/twilio.module';
 import { TypeformModule } from './typeform/typeform.module';
+import { InterviewModule } from './interview/interview.module';
 
 require('dotenv').config();
 
@@ -78,7 +79,8 @@ require('dotenv').config();
     DataInitModule,
     ForumCategoriesModule,
     TwilioModule,
-    TypeformModule
+    TypeformModule,
+    InterviewModule
   ],
   controllers: [AppController, TwilioController],
   providers: [AppService, TwilioService],

@@ -121,10 +121,17 @@ export class CorporateService {
           jobListings: true,
           chats: true,
           tickets: true,
-          // reviews: true,
+          jobPreference: true,
         },
       });
-      return corporate;
+      if(!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
+      } 
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Corporate is found',
+        data: corporate,
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

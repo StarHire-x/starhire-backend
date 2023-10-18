@@ -22,6 +22,7 @@ export class UploadController {
     )
     file: Express.Multer.File,
   ) {
+    console.log("File Upload Triggered");
     return await this.uploadService.upload(file.originalname, file.buffer);
   }
 }

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { InterviewService } from './interview.service';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
-import { Interview } from './entities/interview.entity';
+import { Interview } from 'src/entities/interview.entity';
 
 @Controller('interview')
 export class InterviewController {

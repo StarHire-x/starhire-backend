@@ -1,11 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
-import { Interview } from './entities/interview.entity';
+import { Interview } from 'src/entities/interview.entity';
 //import { JobApplication } from 'src/entities/jobApplication.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JobApplicationService } from 'src/job-application/job-application.service';
+import { UsersService } from 'src/users/users.service';
+import UserRoleEnum from 'src/enums/userRole.enum';
+import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
+import { RecruiterService } from 'src/recruiter/recruiter.service';
+import { CorporateService } from 'src/corporate/corporate.service';
 
 @Injectable()
 export class InterviewService {
@@ -13,6 +18,9 @@ export class InterviewService {
     @InjectRepository(Interview)
     private readonly interviewRepository: Repository<Interview>,
     private readonly jobApplicationService: JobApplicationService,
+    private readonly jobSeekerService: JobSeekerService,
+    private readonly recruiterService: RecruiterService,
+    private readonly corporateService: CorporateService,
   ) {}
 
   async createInterview(
@@ -38,11 +46,17 @@ export class InterviewService {
       const recruiterId = result.data.recruiter.userId;
       const jobSeekerId = result.data.jobSeeker.userId;
 
+      const JobSeeker = await this.jobSeekerService.findByUserId(jobSeekerId);
+
+      const Recruiter = await this.recruiterService.findByUserId(recruiterId);
+
+      const Corporate = await this.corporateService.findByUserId(corporateId);
+
+
       const interview = new Interview();
-      interview.jobApplication = jobApplicationId;
-      interview.jobSeeker = jobSeekerId;
-      interview.corporate = corporateId;
-      interview.recruiter = recruiterId;
+      interview.jobSeeker = JobSeeker.data;
+      interview.recruiter = Recruiter.data;
+      interview.corporate = Corporate.data;
       interview.chosenDates = chosenDates;
 
       return await this.interviewRepository.save(interview);

@@ -16,8 +16,8 @@ export class Interview {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text', { array: true, default: [] })
-  chosenDates: Date[];
+  @Column({ type: 'datetime' })
+  chosenDates: Date;
 
   @Column({ type: 'datetime' })
   scheduledDate: Date;

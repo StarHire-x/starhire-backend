@@ -8,6 +8,7 @@ export class CreateTicketDto {
   ticketName: string;
   ticketDescription: string;
   isResolved: boolean;
+  email: string;
   submissionDate: Date;
   ticketCategory: TicketCategoryEnum;
 }

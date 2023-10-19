@@ -16,6 +16,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { EmailModule } from 'src/email/email.module';
 import { TwilioModule } from 'src/twilio/twilio.module';
+import { JobListing } from 'src/entities/jobListing.entity';
 
 
 require("dotenv").config();
@@ -28,6 +29,7 @@ require("dotenv").config();
       Recruiter,
       Corporate,
       Administrator,
+      JobListing,
     ]),
     JwtModule.register({
       global: true,

@@ -16,6 +16,8 @@ import { EmailModule } from 'src/email/email.module';
 import { EmailService } from 'src/email/email.service';
 import { APP_GUARD } from '@nestjs/core';
 import { TwilioService } from 'src/twilio/twilio.service';
+import { CorporateService } from 'src/corporate/corporate.service';
+import { Corporate } from 'src/entities/corporate.entity';
 
 @Module({
   imports: [
@@ -27,9 +29,11 @@ import { TwilioService } from 'src/twilio/twilio.service';
       Chat,
       JobPreference,
       JobExperience,
+      JobListing,
       Ticket,
       Review,
       JobListing,
+      Corporate,
     ]),
   ],
   controllers: [JobSeekerController],

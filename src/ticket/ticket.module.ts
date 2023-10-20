@@ -7,9 +7,19 @@ import { Administrator } from 'src/entities/administrator.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { Corporate } from 'src/entities/corporate.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Document } from 'src/entities/document.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Ticket, Administrator, Recruiter, Corporate, JobSeeker])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Ticket,
+      Administrator,
+      Recruiter,
+      Corporate,
+      JobSeeker,
+      Document,
+    ]),
+  ],
   controllers: [TicketController],
   providers: [TicketService],
 })

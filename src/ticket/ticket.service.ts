@@ -14,6 +14,7 @@ import { Administrator } from 'src/entities/administrator.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { Corporate } from 'src/entities/corporate.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Document } from 'src/entities/document.entity';
 import { mapTicketCategoryToEnum } from 'src/common/mapStringToEnum';
 
 @Injectable()
@@ -30,6 +31,8 @@ export class TicketService {
     private readonly corporateRepository: Repository<Corporate>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(Document)
+    private readonly documentRepository: Repository<Document>,
   ) {}
 
   async create(createTicketDto: CreateTicketDto) {
@@ -39,6 +42,7 @@ export class TicketService {
         corporateId,
         jobSeekerId,
         adminId,
+        documents,
         ...ticketWithoutParentId
       } = createTicketDto;
 
@@ -82,6 +86,17 @@ export class TicketService {
         jobSeeker,
       });
 
+      if (documents && documents.length > 0) {
+        const updatedDocuments = documents.map((createDocumentDto) => {
+          return new Document(createDocumentDto);
+        });
+        ticket.documents = updatedDocuments;
+      }
+
+      console.log(ticket);
+
+      await this.ticketRepository.save(ticket);
+
       if (ticket.ticketCategory) {
         ticket.ticketCategory = mapTicketCategoryToEnum(ticket.ticketCategory);
       }
@@ -108,6 +123,7 @@ export class TicketService {
         recruiter: true,
         administrator: true,
         jobSeeker: true,
+        documents: true,
       },
     });
   }
@@ -118,6 +134,7 @@ export class TicketService {
       return await this.ticketRepository.findOne({
         where: { ticketId: id },
         relations: {
+          documents: true,
           corporate: true,
           recruiter: true,
           administrator: true,

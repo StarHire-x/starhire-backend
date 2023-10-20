@@ -18,6 +18,7 @@ import { ForumCategory } from 'src/entities/forumCategory.entity';
 import { ForumCategoriesService } from 'src/forum-categories/forum-categories.service';
 import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
 import { ForumPost } from 'src/entities/forumPost.entity';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ForumPost } from 'src/entities/forumPost.entity';
       JobSeeker,
       JobListing,
       JobAssignment,
+      JobApplication,
       ForumCategory,
       ForumPost,
     ]),

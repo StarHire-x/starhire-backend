@@ -18,7 +18,7 @@ export class TypeformService {
     private readonly corporateTypeFormRepository: Repository<CorporateTypeform>,
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
-    private readonly jobListingService: JobListingService,
+    private jobListingService: JobListingService,
   ) {}
 
   async fetchAllCorporateResponses() {

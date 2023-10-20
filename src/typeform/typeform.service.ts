@@ -125,6 +125,9 @@ export class TypeformService {
         // skip email field
       } else if (fieldId === 'o1fqUVreUxhf') {
         continue;
+        // Date field
+      } else if (fieldId === '77AzLt6BSUSA') {
+        fieldValue = answerObject.date;
         // text fields
       } else if (fieldId in typeformFieldTypeText) {
         fieldValue = answerObject.text;
@@ -180,7 +183,8 @@ export class TypeformService {
       requirements: corporateTypeformInfo.experienceRequired || '',
       requiredDocuments: '',
       jobLocation: corporateTypeformInfo.address || '',
-      listingDate: new Date(),
+      listingDate:
+        new Date(corporateTypeformInfo.startDate) || new Date(2024, 0, 1),
       averageSalary: 0,
       jobStartDate: corporateTypeformInfo.startDate || null,
       jobListingStatus: JobListingStatusEnum.UNVERIFIED,
@@ -200,6 +204,7 @@ export class TypeformService {
     const corporateAccount = await this.updateCorporateAccountDetails(
       corporateTypeformInfo,
     );
+    // return corporateAccount;
 
     // Create the job listing
     const jobListing = await this.createJobListings(corporateTypeformInfo);

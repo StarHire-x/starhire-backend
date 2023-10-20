@@ -29,7 +29,7 @@ export class TypeformController {
   }
 
   @Post('/corporate')
-  async saveCorporateResponse(@Body('email') email: string) {
-    return this.typeformService.saveCorporateResponseByEmail(email);
+  async handleTypeformSubmission(@Body('email') email: string) {
+    return this.typeformService.handleFormSubmit(email);
   }
 }

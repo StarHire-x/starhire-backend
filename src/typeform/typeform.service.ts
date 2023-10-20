@@ -1,10 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CorporateTypeform } from 'src/entities/corporateTypeform.entity';
 import { Repository } from 'typeorm';
+import { Corporate } from 'src/entities/corporate.entity';
+import { JobListingService } from 'src/job-listing/job-listing.service';
+import { CreateJobListingDto } from 'src/job-listing/dto/create-job-listing.dto';
+import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 
 @Injectable()
 export class TypeformService {
@@ -12,6 +16,9 @@ export class TypeformService {
     private readonly httpService: HttpService,
     @InjectRepository(CorporateTypeform)
     private readonly corporateTypeFormRepository: Repository<CorporateTypeform>,
+    @InjectRepository(Corporate)
+    private readonly corporateRepository: Repository<Corporate>,
+    private readonly jobListingService: JobListingService,
   ) {}
 
   async fetchAllCorporateResponses() {
@@ -111,18 +118,18 @@ export class TypeformService {
       const fieldName = typeformFieldNameMapping[fieldId];
       let fieldValue = '';
 
+      // Single choice field (numberOfRoles)
       if (fieldId === 'wV082U1xrwMG') {
-        // Single choice
         const choice = answerObject.choice;
         fieldValue = choice.label;
+        // skip email field
       } else if (fieldId === 'o1fqUVreUxhf') {
-        // skip email
         continue;
-      } else if (fieldId in typeformFieldTypeText) {
         // text fields
+      } else if (fieldId in typeformFieldTypeText) {
         fieldValue = answerObject.text;
+        // Multiple choice fields
       } else {
-        // Multiple choice
         const responseObject = answerObject.choices;
         const labelsArray = responseObject.labels;
         for (const label of labelsArray) {
@@ -136,6 +143,67 @@ export class TypeformService {
     const savedCorporateTypeform =
       await this.corporateTypeFormRepository.save(corporateTypeform);
     return savedCorporateTypeform;
+  }
+
+  async updateCorporateAccountDetails(accountInfo) {
+    // find corporate Account by email
+    const corporateEmail = accountInfo.email;
+    const corporateAccount = await this.corporateRepository.findOne({
+      where: { email: corporateEmail },
+    });
+
+    // Check whether the following fields are present in account info & update them in corporate info
+    if ('schoolName' in accountInfo) {
+      corporateAccount.companyName = accountInfo['schoolName'];
+    }
+    if ('address' in accountInfo) {
+      corporateAccount.companyAddress = accountInfo['address'];
+    }
+    await this.corporateRepository.save(corporateAccount);
+    return corporateAccount;
+
+    // Additional fields provided by typeform to be included in Corporate Entity class
+    // firstName, postalCode, regions
+  }
+
+  async createJobListings(corporateTypeformInfo) {
+    // find corporate Account by email
+    const corporateEmail = corporateTypeformInfo.email;
+    const corporateAccount = await this.corporateRepository.findOne({
+      where: { email: corporateEmail },
+    });
+
+    const dto: CreateJobListingDto = {
+      title: corporateTypeformInfo.jobTitle || '',
+      overview: corporateTypeformInfo.jobDescription || '',
+      responsibilities: '',
+      requirements: corporateTypeformInfo.experienceRequired || '',
+      requiredDocuments: '',
+      jobLocation: corporateTypeformInfo.address || '',
+      listingDate: new Date(),
+      averageSalary: 0,
+      jobStartDate: corporateTypeformInfo.startDate || null,
+      jobListingStatus: JobListingStatusEnum.UNVERIFIED,
+      corporateId: corporateAccount.userId,
+    };
+
+    const jobListing = await this.jobListingService.create(dto);
+    return jobListing;
+  }
+
+  async handleFormSubmit(email: string) {
+    // Retrieve the typeform response & save it in the sql db
+    const corporateTypeformInfo =
+      await this.saveCorporateResponseByEmail(email);
+
+    // Update the corporate account details
+    const corporateAccount = await this.updateCorporateAccountDetails(
+      corporateTypeformInfo,
+    );
+
+    // Create the job listing
+    const jobListing = await this.createJobListings(corporateTypeformInfo);
+    return jobListing;
   }
 }
 

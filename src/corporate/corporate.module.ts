@@ -13,5 +13,3 @@ import { TwilioService } from 'src/twilio/twilio.service';
   providers: [CorporateService, EmailService, TwilioService],
 })
 export class CorporateModule {}
-
-

@@ -34,7 +34,7 @@ export class JobListingService {
     private readonly jobSeekerRepository: Repository<JobSeeker>,
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
-    @InjectRepository(Corporate)
+    @InjectRepository(JobApplication)
     private readonly jobApplicationRepository: Repository<JobApplication>,
     @InjectRepository(JobAssignment)
     private readonly jobAssignmentRepository: Repository<JobAssignment>,

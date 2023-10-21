@@ -15,6 +15,7 @@ import {
 import { JobSeekerService } from './job-seeker.service';
 import { CreateJobSeekerDto } from './dto/create-job-seeker.dto';
 import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('job-seeker')
 export class JobSeekerController {
@@ -33,9 +34,18 @@ export class JobSeekerController {
     }
   }
 
-  @Get()
-  findAllJobSeeker() {
-    return this.jobSeekerService.findAll();
+  @Public()
+  @Get('/similarity/:id')
+  findAllJobSeeker(@Param('id') id: number) {
+    try {
+      return this.jobSeekerService.findAllWithSimilarity(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
   }
 
   // GET /job-seeker/:id
@@ -51,7 +61,7 @@ export class JobSeekerController {
       }
     }
   }
- 
+
   @Get('/followings/:id')
   findJobSeekerFollowings(@Param('id') id: string) {
     try {

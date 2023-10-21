@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
 import { Repository } from 'typeorm';
 import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Ticket } from 'src/entities/ticket.entity';
 
 @Injectable()
 export class DocumentService {
@@ -18,6 +19,8 @@ export class DocumentService {
     private readonly documentRepository: Repository<Document>,
     @InjectRepository(JobApplication)
     private readonly jobApplicationRepository: Repository<JobApplication>,
+    @InjectRepository(Ticket)
+    private readonly ticketRepository: Repository<Ticket>,
   ) {}
 
   async create(createDocumentDto: CreateDocumentDto) {
@@ -54,7 +57,7 @@ export class DocumentService {
       // Returns jobApplication (parent) entity as well
       return await this.documentRepository.findOne({
         where: { documentId: id },
-        relations: { jobApplication: true },
+        relations: { jobApplication: true, ticket: true },
       });
     } catch (err) {
       throw new HttpException(

@@ -3,6 +3,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
+  OneToMany,
   CreateDateColumn,
 } from 'typeorm';
 import { IsEnum } from 'class-validator';
@@ -11,6 +12,7 @@ import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
 import { Recruiter } from './recruiter.entity';
 import { JobSeeker } from './jobSeeker.entity';
+import { Document } from './document.entity';
 import { ForumPost } from './forumPost.entity';
 
 @Entity({ name: 'tickets' })
@@ -32,6 +34,12 @@ export class Ticket {
 
   @CreateDateColumn() // Automatically sets the current date and time
   submissionDate: Date;
+
+  @OneToMany(() => Document, (document) => document.ticket, {
+    cascade: true,
+    nullable: true,
+  })
+  documents: Document[];
 
   @Column()
   @IsEnum(TicketCategoryEnum)

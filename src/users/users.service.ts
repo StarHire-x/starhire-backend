@@ -267,77 +267,6 @@ export class UsersService {
     return `${month} ${year}`;
   }
 
-  // async findAllStatistics() {
-  //   const userData = (await this.findAll()).data;
-
-  //   let overviewStatistics = {
-  //     jobSeeker: 0,
-  //     corporate: 0,
-  //     recruiter: 0,
-  //     administrator: 0,
-  //   };
-
-  //   overviewStatistics.jobSeeker = userData.reduce((acc, curr) => {
-  //     return curr.role === 'Job_Seeker' ? acc + 1 : acc;
-  //   }, 0);
-  //   overviewStatistics.corporate = userData.reduce((acc, curr) => {
-  //     return curr.role === 'Corporate' ? acc + 1 : acc;
-  //   }, 0);
-  //   overviewStatistics.recruiter = userData.reduce((acc, curr) => {
-  //     return curr.role === 'Recruiter' ? acc + 1 : acc;
-  //   }, 0);
-  //   overviewStatistics.administrator = userData.reduce((acc, curr) => {
-  //     return curr.role === 'Administrator' ? acc + 1 : acc;
-  //   }, 0);
-
-  //   const labelsSet = new Set();
-  //   for (const data of userData) {
-  //     const monthYr = this.formatDate(data.createdAt);
-  //     labelsSet.add(monthYr);
-  //   }
-
-  //   const labelsArray = Array.from(labelsSet);
-
-  //   const userStatistics = {
-  //     overall: overviewStatistics,
-  //     labels: labelsArray,
-  //     dataCorporate: labelsArray.map((label) => {
-  //       return userData.reduce((acc, curr) => {
-  //         const monthYr = this.formatDate(curr.createdAt);
-  //         return curr.role === UserRoleEnum.CORPORATE && monthYr === label
-  //           ? acc + 1
-  //           : acc;
-  //       }, 0);
-  //     }),
-  //     dataJobSeeker: labelsArray.map((label) => {
-  //       return userData.reduce((acc, curr) => {
-  //         const monthYr = this.formatDate(curr.createdAt);
-  //         return curr.role === UserRoleEnum.JOBSEEKER && monthYr === label
-  //           ? acc + 1
-  //           : acc;
-  //       }, 0);
-  //     }),
-  //     dataRecruiter: labelsArray.map((label) => {
-  //       return userData.reduce((acc, curr) => {
-  //         const monthYr = this.formatDate(curr.createdAt);
-  //         return curr.role === UserRoleEnum.RECRUITER && monthYr === label
-  //           ? acc + 1
-  //           : acc;
-  //       }, 0);
-  //     }),
-  //     dataAdmin: labelsArray.map((label) => {
-  //       return userData.reduce((acc, curr) => {
-  //         const monthYr = this.formatDate(curr.createdAt);
-  //         return curr.role === UserRoleEnum.ADMINISTRATOR && monthYr === label
-  //           ? acc + 1
-  //           : acc;
-  //       }, 0);
-  //     }),
-  //   };
-
-  //   return userStatistics;
-  // }
-
   // 0(N) time complexity yooo
   async findAllStatistics() {
     const userData = (await this.findAll()).data;
@@ -371,12 +300,12 @@ export class UsersService {
         overviewStatistics.administrator = overviewStatistics.administrator + 1;
       } else if (data.role === UserRoleEnum.RECRUITER) {
         overviewStatistics.recruiter = overviewStatistics.recruiter + 1;
-      } 
+      }
       statistics[role][monthYr] = (statistics[role][monthYr] || 0) + 1;
     }
 
     const labelsArray = Array.from(labelsSet);
-  
+
     const userStatistics = {
       overall: overviewStatistics,
       labels: labelsArray,
@@ -397,6 +326,66 @@ export class UsersService {
     return {
       statusCode: HttpStatus.OK,
       message: 'User statistics retrieved',
+      data: userStatistics,
+    };
+  }
+
+  async findBreakdownStatistics() {
+    const userData = (await this.findAll()).data;
+
+    let activeStatistics = {
+      jobSeeker: 0,
+      corporate: 0,
+      recruiter: 0,
+      administrator: 0,
+      total: 0,
+    };
+
+    let inactiveStatistics = {
+      jobSeeker: 0,
+      corporate: 0,
+      recruiter: 0,
+      administrator: 0,
+      total: 0,
+    };
+
+    for (const data of userData) {
+      if (data.status === UserStatusEnum.ACTIVE) {
+        const role = data.role;
+        if (data.role === UserRoleEnum.JOBSEEKER) {
+          activeStatistics.jobSeeker = activeStatistics.jobSeeker + 1;
+        } else if (data.role === UserRoleEnum.CORPORATE) {
+          activeStatistics.corporate = activeStatistics.corporate + 1;
+        } else if (data.role === UserRoleEnum.ADMINISTRATOR) {
+          activeStatistics.administrator = activeStatistics.administrator + 1;
+        } else if (data.role === UserRoleEnum.RECRUITER) {
+          activeStatistics.recruiter = activeStatistics.recruiter + 1;
+        }
+        activeStatistics.total = activeStatistics.total + 1;
+      } else if (data.status === UserStatusEnum.INACTIVE) {
+        const role = data.role;
+        if (data.role === UserRoleEnum.JOBSEEKER) {
+          inactiveStatistics.jobSeeker = inactiveStatistics.jobSeeker + 1;
+        } else if (data.role === UserRoleEnum.CORPORATE) {
+          inactiveStatistics.corporate = inactiveStatistics.corporate + 1;
+        } else if (data.role === UserRoleEnum.ADMINISTRATOR) {
+          inactiveStatistics.administrator =
+            inactiveStatistics.administrator + 1;
+        } else if (data.role === UserRoleEnum.RECRUITER) {
+          inactiveStatistics.recruiter = inactiveStatistics.recruiter + 1;
+        }
+        inactiveStatistics.total = inactiveStatistics.total + 1;
+      }
+    }
+
+    const userStatistics = {
+      active: activeStatistics,
+      inactive: inactiveStatistics,
+    };
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User breakdown statistics retrieved',
       data: userStatistics,
     };
   }

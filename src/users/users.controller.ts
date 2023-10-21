@@ -61,6 +61,21 @@ export class UsersController {
     }
   }
 
+  @Get('/getStats')
+  async findAllUsersWithStats() {
+    try {
+      const result = await this.usersService.findAllStatistics();
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Public() // public because everyone can log in
   @Get('/login')
   async signInWithEmailHashedPwRole(

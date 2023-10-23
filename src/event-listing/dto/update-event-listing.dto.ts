@@ -1,12 +1,14 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateEventListingDto } from './create-event-listing.dto';
+import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
 
 class UpdateDto {
-    eventName: string;
-    location: string;
-    dateAndTime: Date;
-    description: string;
-    image: string;
+  eventName: string;
+  location: string;
+  eventDate: Date;
+  details: string;
+  image: string;
+  listingDate: Date;
+  eventListingStatus: EventListingStatusEnum;
 }
 
 export class UpdateEventListingDto extends PartialType(UpdateDto) {}

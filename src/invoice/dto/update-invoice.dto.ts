@@ -9,7 +9,7 @@ class UpdateDto {
 
   totalAmount: number;
 
-  paid: boolean;
+  isPaid: boolean;
 }
 
 export class UpdateInvoiceDto extends PartialType(UpdateDto) {}

@@ -3,7 +3,8 @@ export class CreateInvoiceDto {
   dueDate: Date;
   billingAddress: string;
   totalAmount: number;
-  paid: boolean;
-  // Parent Id
-  commissionIds: number[];
+  isPaid: boolean;
+  administratorId: string;
+  corporateId: string;
+  jobApplicationIds: number[];
 }

@@ -5,7 +5,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Commission } from './commission.entity';
 import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
 import { JobApplication } from './jobApplication.entity';
@@ -41,7 +40,7 @@ export class Invoice {
   corporate: Corporate;
 
   @OneToMany(() => JobApplication, (jobApplication) => jobApplication.invoice, {
-    nullable: true,
+    nullable: false,
   })
   jobApplications: JobApplication[];
 

@@ -4,40 +4,68 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Administrator } from 'src/entities/administrator.entity';
+import { Corporate } from 'src/entities/corporate.entity';
+import { Invoice } from 'src/entities/invoice.entity';
+import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Repository } from 'typeorm';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Invoice } from 'src/entities/invoice.entity';
-import { Repository } from 'typeorm';
-import { Commission } from 'src/entities/commission.entity';
 
 @Injectable()
 export class InvoiceService {
   constructor(
     @InjectRepository(Invoice)
     private readonly invoiceRepository: Repository<Invoice>,
-    @InjectRepository(Commission)
-    private readonly commissionRepository: Repository<Commission>,
+    @InjectRepository(Corporate)
+    private readonly corporateRepository: Repository<Corporate>,
+    @InjectRepository(Administrator)
+    private readonly administratorRepository: Repository<Administrator>,
+    @InjectRepository(JobApplication)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
   async create(createInvoiceDto: CreateInvoiceDto) {
     try {
-      const { commissionIds, ...dtoExcludingParentId } = createInvoiceDto;
-      const commissions = [];
-      for (const commissionIdString in commissionIds) {
-        const commissionId = Number(commissionIdString);
-        const commission = await this.commissionRepository.findOne({
-          where: { commissionId: commissionId },
+      const {
+        administratorId,
+        corporateId,
+        jobApplicationIds,
+        ...dtoExcludingParentId
+      } = createInvoiceDto;
+
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: corporateId },
+      });
+      if (!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
+      }
+
+      const administrator = await this.administratorRepository.findOne({
+        where: { userId: administratorId },
+      });
+      if (!corporate) {
+        throw new NotFoundException('Administrator Id provided is not valid');
+      }
+
+      const jobApplications = [];
+      for (let id of jobApplicationIds) {
+        const jobApplication = await this.jobApplicationRepository.findOne({
+          where: { jobApplicationId: id },
         });
-        if (!commission) {
+        if (!jobApplication) {
           throw new NotFoundException(
-            `Commission ID ${commissionId} is invalid`,
+            `Job Application Id ${id} provided is not valid`,
           );
         }
-        commissions.push(commission);
+        jobApplications.push(jobApplication);
       }
+
       const invoice = new Invoice({
         ...dtoExcludingParentId,
-        commissions: commissions,
+        administrator: administrator,
+        corporate: corporate,
+        jobApplications: jobApplications,
       });
       return await this.invoiceRepository.save(invoice);
     } catch (err) {
@@ -56,7 +84,11 @@ export class InvoiceService {
     try {
       return await this.invoiceRepository.findOne({
         where: { invoiceId: id },
-        relations: { commissions: true },
+        relations: {
+          administrator: true,
+          corporate: true,
+          jobApplications: true,
+        },
       });
     } catch (err) {
       throw new HttpException('Failed to find invoice', HttpStatus.BAD_REQUEST);

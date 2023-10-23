@@ -11,6 +11,7 @@ import { Commission } from 'src/entities/commission.entity';
 import { Repository } from 'typeorm';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
+import { Administrator } from 'src/entities/administrator.entity';
 
 @Injectable()
 export class CommissionService {
@@ -22,18 +23,28 @@ export class CommissionService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
+    @InjectRepository(Administrator)
+    private readonly administratorRepository: Repository<Administrator>,
   ) {}
 
   async create(createCommissionDto: CreateCommissionDto) {
     try {
-      const { jobApplicationId, recruiterId, ...dtoExcludingParentIds } =
+      const { jobApplicationIds, recruiterId, ...dtoExcludingParentIds } =
         createCommissionDto;
-      const jobApplication = await this.jobApplicationRepository.findOne({
-        where: { jobApplicationId: jobApplicationId },
-      });
-      if (!jobApplication) {
-        throw new NotFoundException('Invalid Job Application Id provided');
+
+      const jobApplications = [];
+      for (let id of jobApplicationIds) {
+        const jobApplication = await this.jobApplicationRepository.findOne({
+          where: { jobApplicationId: id },
+        });
+        if (!jobApplication) {
+          throw new NotFoundException(
+            `Job Application Id ${id} provided is not valid`,
+          );
+        }
+        jobApplications.push(jobApplication);
       }
+
       const recruiter = await this.recruiterRepository.findOne({
         where: { userId: recruiterId },
       });
@@ -43,7 +54,7 @@ export class CommissionService {
 
       const commission = new Commission({
         ...dtoExcludingParentIds,
-        jobApplication,
+        jobApplications,
         recruiter,
       });
       return await this.commissionRepository.save(commission);
@@ -65,7 +76,7 @@ export class CommissionService {
   async findOne(id: number) {
     return await this.commissionRepository.findOne({
       where: { commissionId: id },
-      relations: { recruiter: true, jobApplication: true },
+      relations: { recruiter: true, jobApplications: true },
     });
   }
 

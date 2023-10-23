@@ -1,14 +1,14 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Invoice } from './invoice.entity';
-import { Recruiter } from './recruiter.entity';
 import { JobApplication } from './jobApplication.entity';
+import { Recruiter } from './recruiter.entity';
+import { Administrator } from './administrator.entity';
 
 @Entity({ name: 'commissions' })
 export class Commission {
@@ -21,15 +21,32 @@ export class Commission {
   @Column()
   commissionAmount: number;
 
-  @OneToOne(() => Invoice, { nullable: true })
-  @JoinColumn()
-  invoice: Invoice;
+  // @OneToOne(() => Invoice, { nullable: true })
+  // @JoinColumn()
+  // invoice: Invoice;
 
-  @OneToOne(() => JobApplication, { nullable: false })
-  jobApplication: JobApplication;
+  @ManyToOne(
+    () => Administrator,
+    (administrator) => administrator.commissions,
+    {
+      nullable: true,
+    },
+  )
+  administrator: Administrator;
 
-  @ManyToOne(() => Recruiter, (recruiter) => recruiter.commissions)
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.commissions, {
+    nullable: false,
+  })
   recruiter: Recruiter;
+
+  @OneToMany(
+    () => JobApplication,
+    (jobApplication) => jobApplication.commission,
+    {
+      nullable: false,
+    },
+  )
+  jobApplications: JobApplication[];
 
   constructor(entity: Partial<Commission>) {
     Object.assign(this, entity);

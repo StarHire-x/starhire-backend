@@ -51,10 +51,9 @@ export class JobApplication {
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.jobApplications)
   jobSeeker: JobSeeker;
 
-  @OneToOne(() => Commission, (commission) => commission.jobApplication, {
+  @ManyToOne(() => Commission, (commission) => commission.jobApplications, {
     nullable: true,
   })
-  @JoinColumn()
   commission: Commission;
 
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobApplications)

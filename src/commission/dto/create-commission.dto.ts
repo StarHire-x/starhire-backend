@@ -2,6 +2,6 @@ export class CreateCommissionDto {
   commissionDate: Date;
   commissionAmount: number;
   // Parent entities
-  jobApplicationId: number;
+  jobApplicationIds: number[];
   recruiterId: string;
 }

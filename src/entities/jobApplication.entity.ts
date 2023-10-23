@@ -13,6 +13,7 @@ import { JobListing } from './jobListing.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { Commission } from './commission.entity';
 import { Recruiter } from './recruiter.entity';
+import { Invoice } from './invoice.entity';
 
 @Entity({ name: 'jobApplications' })
 export class JobApplication {
@@ -58,6 +59,11 @@ export class JobApplication {
 
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobApplications)
   recruiter: Recruiter;
+
+  @ManyToOne(() => Invoice, (invoice) => invoice.jobApplications, {
+    nullable: true,
+  })
+  invoice: Invoice;
 
   constructor(entity: Partial<JobApplication>) {
     Object.assign(this, entity);

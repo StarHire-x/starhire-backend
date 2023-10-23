@@ -7,6 +7,7 @@ import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { JobPreference } from './jobPreference.entity';
+import { Invoice } from './invoice.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -61,4 +62,9 @@ export class Corporate extends User {
     cascade: true,
   })
   followers: JobSeeker[];
+
+  @OneToMany(() => Invoice, (invoice) => invoice.corporate, {
+    nullable: true,
+  })
+  invoices: Invoice[];
 }

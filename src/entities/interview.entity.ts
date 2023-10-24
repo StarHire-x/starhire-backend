@@ -9,7 +9,7 @@ import { JobSeeker } from './jobSeeker.entity';
 import { Corporate } from './corporate.entity';
 import { Recruiter } from './recruiter.entity';
 import { JobApplication } from './jobApplication.entity';
-import InterviewStatusEnum from 'src/enums/InterviewStatus.enum';
+// import InterviewStatusEnum from 'src/enums/InterviewStatus.enum';
 
 @Entity({ name: 'interviews' })
 export class Interview {
@@ -31,8 +31,8 @@ export class Interview {
   @Column({ default: 'empty' })
   interviewLink: string;
 
-  @Column({ default: InterviewStatusEnum.PENDING })
-  interviewStatus: InterviewStatusEnum;
+  // @Column({ default: InterviewStatusEnum.PENDING })
+  // interviewStatus: InterviewStatusEnum;
 
   /*
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.interviews)

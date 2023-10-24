@@ -78,7 +78,7 @@ require('dotenv').config();
     DataInitModule,
     ForumCategoriesModule,
     TwilioModule,
-    TypeformModule
+    TypeformModule,
   ],
   controllers: [AppController, TwilioController],
   providers: [AppService, TwilioService],

@@ -245,7 +245,7 @@ export class UsersService {
     }
   }
 
-  formatDate(isoString) {
+  formatDateByMonth(isoString) {
     const months = [
       'Jan',
       'Feb',
@@ -262,9 +262,143 @@ export class UsersService {
     ];
 
     const date = new Date(isoString);
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    return `${month} ${year}`;
+    const month = months[date.getMonth()].toUpperCase();
+    const year = date.getFullYear().toString().slice(-2);
+    return `${month}-${year}`;
+  }
+
+  formatDateByDay(isoString) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const date = new Date(isoString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = months[date.getMonth()].toUpperCase();
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}-${month}-${year}`;
+  }
+
+  formatDateByWeek(isoString, reference) {
+    const targetDate = new Date(isoString);
+
+    for (let range of reference) {
+      const [start, end] = range.split(' to ');
+      const startDate = this.parseDate(start);
+      const endDate = this.parseDate(end);
+
+      if (targetDate >= startDate && targetDate <= endDate) {
+        return range;
+      }
+    }
+
+    return 'Date out of range';
+  }
+
+  parseDate(dateString) {
+    const [day, month, year] = dateString.split('-');
+    const months = {
+      JAN: 0,
+      FEB: 1,
+      MAR: 2,
+      APR: 3,
+      MAY: 4,
+      JUN: 5,
+      JUL: 6,
+      AUG: 7,
+      SEP: 8,
+      OCT: 9,
+      NOV: 10,
+      DEC: 11,
+    };
+    return new Date(
+      global.Number(`20${year}`),
+      months[month],
+      global.Number(day),
+    );
+  }
+
+  obtainDateByDayWeeksMonth() {
+    const startDate = new Date('2023-08-27');
+    const today = new Date();
+
+    // Array for days
+    const dateArrayInDays = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= today) {
+      const day = currentDate.getDate().toString().padStart(2, '0');
+      const month = currentDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const year = currentDate.getFullYear().toString().slice(-2);
+      dateArrayInDays.push(`${day}-${month}-${year}`);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Array for weeks
+    const dateArrayByWeek = [];
+    currentDate = new Date(startDate);
+    while (currentDate <= today) {
+      const startDay = currentDate.getDate().toString().padStart(2, '0');
+      const startMonth = currentDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const startYear = currentDate.getFullYear().toString().slice(-2);
+
+      // Calculate the end date of the week
+      let endDate = new Date(currentDate);
+      endDate.setDate(endDate.getDate() + 6);
+      if (endDate > today) {
+        endDate = today;
+      }
+
+      const endDay = endDate.getDate().toString().padStart(2, '0');
+      const endMonth = endDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const endYear = endDate.getFullYear().toString().slice(-2);
+
+      // Add the week to the array
+      dateArrayByWeek.push(
+        `${startDay}-${startMonth}-${startYear} to ${endDay}-${endMonth}-${endYear}`,
+      );
+
+      // Increment the date
+      currentDate.setDate(currentDate.getDate() + 7);
+    }
+
+    // Array for months
+    const dateArrayInMonths = [];
+    currentDate = new Date(startDate);
+    while (currentDate <= today) {
+      const month = currentDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const year = currentDate.getFullYear().toString().slice(-2);
+      const monthYear = `${month}-${year}`;
+      if (!dateArrayInMonths.includes(monthYear)) {
+        dateArrayInMonths.push(monthYear);
+      }
+      currentDate.setDate(1); // Set to the 1st to prevent rollover
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+
+    return {
+      dateArrayInDays,
+      dateArrayByWeek,
+      dateArrayInMonths,
+    };
   }
 
   // 0(N) time complexity yooo
@@ -278,7 +412,6 @@ export class UsersService {
       administrator: 0,
     };
 
-    const labelsSet = new Set();
     const statistics = {
       Corporate: {},
       Job_Seeker: {},
@@ -286,10 +419,16 @@ export class UsersService {
       Administrator: {},
     };
 
+    const result = this.obtainDateByDayWeeksMonth();
+    const month = result.dateArrayInMonths;
+    const day = result.dateArrayInDays;
+    const weeks = result.dateArrayByWeek;
+
     // Single pass to calculate all statistics
     for (const data of userData) {
-      const monthYr = this.formatDate(data.createdAt);
-      labelsSet.add(monthYr);
+      const monthSum = this.formatDateByMonth(data.createdAt);
+      const daySum = this.formatDateByDay(data.createdAt);
+      const weekSum = this.formatDateByWeek(data.createdAt, weeks);
 
       const role = data.role;
       if (data.role === UserRoleEnum.JOBSEEKER) {
@@ -301,26 +440,58 @@ export class UsersService {
       } else if (data.role === UserRoleEnum.RECRUITER) {
         overviewStatistics.recruiter = overviewStatistics.recruiter + 1;
       }
-      statistics[role][monthYr] = (statistics[role][monthYr] || 0) + 1;
+      statistics[role][monthSum] = (statistics[role][monthSum] || 0) + 1;
+      statistics[role][daySum] = (statistics[role][daySum] || 0) + 1;
+      statistics[role][weekSum] = (statistics[role][weekSum] || 0) + 1;
     }
-
-    const labelsArray = Array.from(labelsSet);
 
     const userStatistics = {
       overall: overviewStatistics,
-      labels: labelsArray,
-      dataCorporate: labelsArray.map(
-        (label: string) => statistics.Corporate[label] || 0,
-      ),
-      dataJobSeeker: labelsArray.map(
-        (label: string) => statistics.Job_Seeker[label] || 0,
-      ),
-      dataRecruiter: labelsArray.map(
-        (label: string) => statistics.Recruiter[label] || 0,
-      ),
-      dataAdmin: labelsArray.map(
-        (label: string) => statistics.Administrator[label] || 0,
-      ),
+      month: {
+        labels: month,
+        dataCorporate: month.map(
+          (label: string) => statistics.Corporate[label] || 0,
+        ),
+        dataJobSeeker: month.map(
+          (label: string) => statistics.Job_Seeker[label] || 0,
+        ),
+        dataRecruiter: month.map(
+          (label: string) => statistics.Recruiter[label] || 0,
+        ),
+        dataAdmin: month.map(
+          (label: string) => statistics.Administrator[label] || 0,
+        ),
+      },
+      day: {
+        labels: day,
+        dataCorporate: day.map(
+          (label: string) => statistics.Corporate[label] || 0,
+        ),
+        dataJobSeeker: day.map(
+          (label: string) => statistics.Job_Seeker[label] || 0,
+        ),
+        dataRecruiter: day.map(
+          (label: string) => statistics.Recruiter[label] || 0,
+        ),
+        dataAdmin: day.map(
+          (label: string) => statistics.Administrator[label] || 0,
+        ),
+      },
+      week: {
+        labels: weeks,
+        dataCorporate: weeks.map(
+          (label: string) => statistics.Corporate[label] || 0,
+        ),
+        dataJobSeeker: weeks.map(
+          (label: string) => statistics.Job_Seeker[label] || 0,
+        ),
+        dataRecruiter: weeks.map(
+          (label: string) => statistics.Recruiter[label] || 0,
+        ),
+        dataAdmin: weeks.map(
+          (label: string) => statistics.Administrator[label] || 0,
+        ),
+      },
     };
 
     return {

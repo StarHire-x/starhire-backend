@@ -8,6 +8,7 @@ import { Review } from './review.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { JobPreference } from './jobPreference.entity';
 import { Invoice } from './invoice.entity';
+import { Interview } from './interview.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -67,4 +68,8 @@ export class Corporate extends User {
     nullable: true,
   })
   invoices: Invoice[];
+  /*
+  @OneToMany(() => Interview, (interview) => interview.corporate)
+  interviews: Interview[];
+  */
 }

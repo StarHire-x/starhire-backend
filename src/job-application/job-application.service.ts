@@ -320,18 +320,6 @@ export class JobApplicationService {
     }
   }
 
-  async hasMatchingApplication(
-    seekerApplications: Array<{ jobApplicationId: number }>,
-    listingApplications: Array<{ jobApplicationId: number }>,
-  ): Promise<boolean> {
-    return seekerApplications.some((seekerApp) =>
-      listingApplications.some(
-        (listingApp) =>
-          listingApp.jobApplicationId === seekerApp.jobApplicationId,
-      ),
-    );
-  }
-
   async getJobApplicationByJobSeeker(jobSeekerId: string) {
     try {
       const jobSeeker = await this.jobSeekerRepository.findOne({
@@ -364,36 +352,18 @@ export class JobApplicationService {
     jobListingId: number,
   ) {
     try {
-      const jobSeeker = await this.jobSeekerRepository.findOne({
-        where: { userId: jobSeekerId },
-        relations: { jobApplications: true },
+      const jobApplication = await this.jobApplicationRepository.findOne({
+        where: {
+          jobSeeker: { userId: jobSeekerId },
+          jobListing: { jobListingId: jobListingId },
+        },
+        relations: { jobSeeker: true, jobListing: true },
       });
-
-      const jobListing = await this.jobListingRepository.findOne({
-        where: { jobListingId: jobListingId },
-        relations: { jobApplications: true },
-      });
-
-      if (
-        jobSeeker.jobApplications.length === 0 ||
-        jobListing.jobApplications.length === 0
-      ) {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Existing job application not found',
-        };
-      }
-
-      const isMatch = this.hasMatchingApplication(
-        jobSeeker.jobApplications,
-        jobListing.jobApplications,
-      );
-
-      if (isMatch) {
+    
+      if (jobApplication) {
         return {
           statusCode: HttpStatus.OK,
-          message: 'Existing job application is found',
-          data: jobSeeker,
+          message: 'Existing job application found',
         };
       } else {
         return {

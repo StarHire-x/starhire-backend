@@ -9,6 +9,7 @@ import { Public } from 'src/users/public.decorator';
 export class InterviewController {
   constructor(private readonly interviewService: InterviewService) {}
 
+  /*
   @Post()
   async create(@Body() createInterviewDto: CreateInterviewDto) {
     const interview =

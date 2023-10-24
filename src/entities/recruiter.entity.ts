@@ -41,6 +41,8 @@ export class Recruiter extends User {
   })
   tickets: Ticket[];
 
+  /*
   @OneToMany(() => Interview, (interview) => interview.recruiter)
   interviews: Interview[];
+  */
 }

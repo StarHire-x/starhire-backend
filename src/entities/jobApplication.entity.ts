@@ -60,8 +60,10 @@ export class JobApplication {
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobApplications)
   recruiter: Recruiter;
 
+  /*
   @OneToMany(() => Interview, (interview) => interview.jobApplication)
   interviews: Interview[];
+  */
 
   constructor(entity: Partial<JobApplication>) {
     Object.assign(this, entity);

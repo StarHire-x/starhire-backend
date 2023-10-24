@@ -63,6 +63,8 @@ export class Corporate extends User {
   })
   followers: JobSeeker[];
 
+  /*
   @OneToMany(() => Interview, (interview) => interview.corporate)
   interviews: Interview[];
+  */
 }

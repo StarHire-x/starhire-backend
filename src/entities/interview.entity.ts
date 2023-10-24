@@ -34,6 +34,7 @@ export class Interview {
   @Column({ default: InterviewStatusEnum.PENDING })
   interviewStatus: InterviewStatusEnum;
 
+  /*
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.interviews)
   @JoinColumn()
   jobSeeker: JobSeeker;
@@ -55,6 +56,7 @@ export class Interview {
   )
   @JoinColumn()
   jobApplication: JobApplication;
+  */
 
   constructor(partial: Partial<Interview> = {}) {
     Object.assign(this, partial);

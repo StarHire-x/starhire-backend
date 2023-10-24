@@ -21,6 +21,7 @@ export class InterviewService {
     private readonly corporateService: CorporateService,
   ) {}
 
+  /*
   async createInterview(createInterviewDto: CreateInterviewDto) {
     try {
       const {

@@ -61,7 +61,6 @@ export class UsersController {
     }
   }
 
-  @Public()
   @Get('/getStats')
   async findAllUsersWithStats() {
     try {

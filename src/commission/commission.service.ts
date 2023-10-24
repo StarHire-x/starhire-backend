@@ -11,7 +11,6 @@ import { Commission } from 'src/entities/commission.entity';
 import { Repository } from 'typeorm';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
-import { Administrator } from 'src/entities/administrator.entity';
 
 @Injectable()
 export class CommissionService {
@@ -23,8 +22,6 @@ export class CommissionService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
-    @InjectRepository(Administrator)
-    private readonly administratorRepository: Repository<Administrator>,
   ) {}
 
   async create(createCommissionDto: CreateCommissionDto) {

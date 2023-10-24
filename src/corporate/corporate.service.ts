@@ -118,7 +118,7 @@ export class CorporateService {
         where: { userId: id },
         relations: {
           eventListings: true,
-          jobListings: {jobApplications: true}, 
+          jobListings: {jobApplications: {recruiter: true, invoice: true}}, 
           chats: true,
           tickets: true,
           jobPreference: true,

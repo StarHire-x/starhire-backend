@@ -119,7 +119,10 @@ export class EventListingService {
       // For this part, we want the relationship with other entities to show, at most 1 level, no need to be too detail
       const t = await this.eventListingRepository.findOne({
         where: { eventListingId: id },
-        relations: { corporate: true, eventRegistrations: true },
+        relations: {
+          corporate: true,
+          eventRegistrations: true,
+        },
       });
       console.log(t);
       return t;

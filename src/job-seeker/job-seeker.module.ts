@@ -18,6 +18,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { TwilioService } from 'src/twilio/twilio.service';
 import { CorporateService } from 'src/corporate/corporate.service';
 import { Corporate } from 'src/entities/corporate.entity';
+import { EventListing } from 'src/entities/eventListing.entity';
 
 @Module({
   imports: [
@@ -37,10 +38,6 @@ import { Corporate } from 'src/entities/corporate.entity';
     ]),
   ],
   controllers: [JobSeekerController],
-  providers: [
-    JobSeekerService,
-    EmailService,
-    TwilioService,
-  ],
+  providers: [JobSeekerService, EmailService, TwilioService],
 })
 export class JobSeekerModule {}

@@ -1,9 +1,11 @@
+import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   OneToMany,
   ManyToOne,
+  CreateDateColumn,
 } from 'typeorm';
 import { EventRegistration } from './eventRegistration.entity';
 import { Corporate } from './corporate.entity';
@@ -20,13 +22,19 @@ export class EventListing {
   location: string;
 
   @Column()
-  dateAndTime: Date;
+  eventDate: Date;
 
-  @Column()
-  description: string;
+  @Column('varchar', { length: 4000 })
+  details: string;
 
   @Column()
   image: string;
+
+  @CreateDateColumn()
+  listingDate: Date;
+
+  @Column()
+  eventListingStatus: EventListingStatusEnum;
 
   @OneToMany(
     () => EventRegistration,

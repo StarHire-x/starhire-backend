@@ -3,17 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Put,
   Param,
   Delete,
-  ConflictException,
   InternalServerErrorException,
   HttpException,
   NotFoundException,
   HttpStatus,
-  ParseIntPipe,
-  Query,
 } from '@nestjs/common';
 import { EventListingService } from './event-listing.service';
 import { CreateEventListingDto } from './dto/create-event-listing.dto';
@@ -24,7 +20,8 @@ export class EventListingController {
   constructor(private readonly eventListingService: EventListingService) {}
 
   @Post()
-  create(@Body() createEventListingDto: CreateEventListingDto) {
+  // Note: Ensure dto contains a field for the Id of the parent entity parentId
+  createEventListing(@Body() createEventListingDto: CreateEventListingDto) {
     try {
       return this.eventListingService.create(createEventListingDto);
     } catch (error) {
@@ -36,7 +33,7 @@ export class EventListingController {
     }
   }
 
-  @Get('/all')
+  @Get()
   findAllEventListings() {
     try {
       return this.eventListingService.findAll();
@@ -49,9 +46,23 @@ export class EventListingController {
     }
   }
 
+  @Get('/corporate/:userId')
+  async findAllEventListingsByCorporate(@Param('userId') userId: string) {
+    try {
+      const result = await this.eventListingService.findAllByCorporate(userId);
+      return result;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   // GET /event-listing/:id
   @Get(':id')
-  findOneEventListing(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: number) {
     try {
       return this.eventListingService.findOne(id);
     } catch (error) {
@@ -85,10 +96,7 @@ export class EventListingController {
       return this.eventListingService.remove(id);
     } catch (error) {
       if (error instanceof HttpException) {
-        throw new HttpException(
-          error.message,
-          HttpStatus.CONFLICT,
-        );
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       } else {
         throw new InternalServerErrorException('Internal server error');
       }

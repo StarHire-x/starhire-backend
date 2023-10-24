@@ -22,6 +22,7 @@ import { Administrator } from 'src/entities/administrator.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Corporate } from 'src/entities/corporate.entity';
+import { Number } from 'twilio/lib/twiml/VoiceResponse';
 
 @Injectable()
 export class UsersService {
@@ -242,6 +243,151 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  formatDate(isoString) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const date = new Date(isoString);
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${month} ${year}`;
+  }
+
+  // 0(N) time complexity yooo
+  async findAllStatistics() {
+    const userData = (await this.findAll()).data;
+
+    let overviewStatistics = {
+      jobSeeker: 0,
+      corporate: 0,
+      recruiter: 0,
+      administrator: 0,
+    };
+
+    const labelsSet = new Set();
+    const statistics = {
+      Corporate: {},
+      Job_Seeker: {},
+      Recruiter: {},
+      Administrator: {},
+    };
+
+    // Single pass to calculate all statistics
+    for (const data of userData) {
+      const monthYr = this.formatDate(data.createdAt);
+      labelsSet.add(monthYr);
+
+      const role = data.role;
+      if (data.role === UserRoleEnum.JOBSEEKER) {
+        overviewStatistics.jobSeeker = overviewStatistics.jobSeeker + 1;
+      } else if (data.role === UserRoleEnum.CORPORATE) {
+        overviewStatistics.corporate = overviewStatistics.corporate + 1;
+      } else if (data.role === UserRoleEnum.ADMINISTRATOR) {
+        overviewStatistics.administrator = overviewStatistics.administrator + 1;
+      } else if (data.role === UserRoleEnum.RECRUITER) {
+        overviewStatistics.recruiter = overviewStatistics.recruiter + 1;
+      }
+      statistics[role][monthYr] = (statistics[role][monthYr] || 0) + 1;
+    }
+
+    const labelsArray = Array.from(labelsSet);
+
+    const userStatistics = {
+      overall: overviewStatistics,
+      labels: labelsArray,
+      dataCorporate: labelsArray.map(
+        (label: string) => statistics.Corporate[label] || 0,
+      ),
+      dataJobSeeker: labelsArray.map(
+        (label: string) => statistics.Job_Seeker[label] || 0,
+      ),
+      dataRecruiter: labelsArray.map(
+        (label: string) => statistics.Recruiter[label] || 0,
+      ),
+      dataAdmin: labelsArray.map(
+        (label: string) => statistics.Administrator[label] || 0,
+      ),
+    };
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User statistics retrieved',
+      data: userStatistics,
+    };
+  }
+
+  async findBreakdownStatistics() {
+    const userData = (await this.findAll()).data;
+
+    let activeStatistics = {
+      jobSeeker: 0,
+      corporate: 0,
+      recruiter: 0,
+      administrator: 0,
+      total: 0,
+    };
+
+    let inactiveStatistics = {
+      jobSeeker: 0,
+      corporate: 0,
+      recruiter: 0,
+      administrator: 0,
+      total: 0,
+    };
+
+    for (const data of userData) {
+      if (data.status === UserStatusEnum.ACTIVE) {
+        const role = data.role;
+        if (data.role === UserRoleEnum.JOBSEEKER) {
+          activeStatistics.jobSeeker = activeStatistics.jobSeeker + 1;
+        } else if (data.role === UserRoleEnum.CORPORATE) {
+          activeStatistics.corporate = activeStatistics.corporate + 1;
+        } else if (data.role === UserRoleEnum.ADMINISTRATOR) {
+          activeStatistics.administrator = activeStatistics.administrator + 1;
+        } else if (data.role === UserRoleEnum.RECRUITER) {
+          activeStatistics.recruiter = activeStatistics.recruiter + 1;
+        }
+        activeStatistics.total = activeStatistics.total + 1;
+      } else if (data.status === UserStatusEnum.INACTIVE) {
+        const role = data.role;
+        if (data.role === UserRoleEnum.JOBSEEKER) {
+          inactiveStatistics.jobSeeker = inactiveStatistics.jobSeeker + 1;
+        } else if (data.role === UserRoleEnum.CORPORATE) {
+          inactiveStatistics.corporate = inactiveStatistics.corporate + 1;
+        } else if (data.role === UserRoleEnum.ADMINISTRATOR) {
+          inactiveStatistics.administrator =
+            inactiveStatistics.administrator + 1;
+        } else if (data.role === UserRoleEnum.RECRUITER) {
+          inactiveStatistics.recruiter = inactiveStatistics.recruiter + 1;
+        }
+        inactiveStatistics.total = inactiveStatistics.total + 1;
+      }
+    }
+
+    const userStatistics = {
+      active: activeStatistics,
+      inactive: inactiveStatistics,
+    };
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User breakdown statistics retrieved',
+      data: userStatistics,
+    };
   }
 
   // Needs to accept another argument called role, and invoke the method of the corresponding repository

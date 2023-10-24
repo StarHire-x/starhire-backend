@@ -3,6 +3,7 @@ import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
 import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
 import StarCategoryEnum from 'src/enums/starCategory.enum';
 import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
@@ -92,6 +93,17 @@ export function mapJobListingStatusToEnum(
       return JobListingStatusEnum.ARCHIVED;
     default:
       return JobListingStatusEnum.UNVERIFIED;
+  }
+}
+
+export function mapEventListingStatusToEnum(
+  status: string,
+): EventListingStatusEnum {
+  switch (status) {
+    case 'Expired':
+      return EventListingStatusEnum.EXPIRED;
+    default:
+      return EventListingStatusEnum.UPCOMING;
   }
 }
 

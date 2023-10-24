@@ -21,11 +21,11 @@ import { Administrator } from 'src/entities/administrator.entity';
       JobSeeker,
       Recruiter,
       JobAssignment,
-      Administrator
+      Administrator,
     ]),
   ],
   controllers: [JobListingController],
-  providers: [JobListingService,TwilioService,EmailService],
+  providers: [JobListingService, TwilioService, EmailService],
   exports: [TypeOrmModule.forFeature([JobListing])],
 })
 export class JobListingModule {}

@@ -8,6 +8,8 @@ import { Review } from './review.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { JobPreference } from './jobPreference.entity';
 import { Invoice } from './invoice.entity';
+import CorporatePromotionStatusEnum  from 'src/enums/corporatePromotionStatus.enum';
+import { IsEnum } from 'class-validator';
 //import { Interview } from './interview.entity';
 
 @Entity({ name: 'corporates' })
@@ -28,8 +30,18 @@ export class Corporate extends User {
   @Column()
   companyAddress: string;
 
+  /*
   @Column({ default: 'Regular' })
   corporatePromotionStatus: string;
+  */
+
+  @Column({
+    type: 'enum',
+    enum: CorporatePromotionStatusEnum,
+    default: CorporatePromotionStatusEnum.REGULAR,
+  })
+  @IsEnum(CorporatePromotionStatusEnum)
+  corporatePromotionStatus: CorporatePromotionStatusEnum;
 
   @OneToMany(() => EventListing, (eventListing) => eventListing.corporate, {
     cascade: true,

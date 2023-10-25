@@ -87,7 +87,7 @@ export class InvoiceService {
         relations: {
           administrator: true,
           corporate: true,
-          jobApplications: true,
+          jobApplications: {invoice: true},
         },
       });
     } catch (err) {
@@ -115,11 +115,19 @@ export class InvoiceService {
 
   async remove(id: number) {
     try {
+      const invoiceToDelete = await this.findOne(id);
+      const jobApplications = invoiceToDelete.jobApplications;
+      for (let i = 0; i < jobApplications.length; i++) {
+        const jobApplication = jobApplications[i];
+        jobApplication.invoice = null;
+        await this.jobApplicationRepository.save(jobApplication);
+      }
       return await this.invoiceRepository.delete({ invoiceId: id });
     } catch (err) {
       throw new HttpException(
-        'Failed to delete Invoice',
-        HttpStatus.BAD_REQUEST,
+        'Failed to delete Invoice from backend',
+        err.message,
+        // HttpStatus.BAD_REQUEST,
       );
     }
   }

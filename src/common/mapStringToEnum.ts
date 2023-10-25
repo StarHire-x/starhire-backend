@@ -181,8 +181,8 @@ export function mapCorporatePromotionStatusEnum(
   switch (status) {
     case 'Regular':
       return CorporatePromotionStatusEnum.REGULAR;
-    case 'Promoted':
-      return CorporatePromotionStatusEnum.PROMOTED;
+    case 'Premium':
+      return CorporatePromotionStatusEnum.PREMIUM;
     case 'Requested':
       return CorporatePromotionStatusEnum.REQUESTED;
     default:

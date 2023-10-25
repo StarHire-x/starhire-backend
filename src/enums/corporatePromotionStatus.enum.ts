@@ -1,6 +1,6 @@
 enum CorporatePromotionStatusEnum {
   REGULAR = 'Regular',
-  PROMOTED = 'Promoted',
+  PREMIUM = 'Premium',
   REQUESTED = 'REQUESTED',
 }
 

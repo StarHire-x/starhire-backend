@@ -20,6 +20,7 @@ import { EmailService } from 'src/email/email.service';
 import { TwilioService } from 'src/twilio/twilio.service';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
+import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
 
 @Injectable()
 export class CorporateService {
@@ -371,10 +372,9 @@ export class CorporateService {
     try {
       const corporates = await this.corporateRepository.find({
         where: {
-          corporatePromotionStatus: 'Requested',
+          corporatePromotionStatus: CorporatePromotionStatusEnum.REQUESTED,
         },
       });
-
       if (corporates.length > 0) {
         return {
           statusCode: HttpStatus.OK,

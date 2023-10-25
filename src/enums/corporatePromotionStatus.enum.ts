@@ -1,7 +1,7 @@
 enum CorporatePromotionStatusEnum {
   REGULAR = 'Regular',
   PREMIUM = 'Premium',
-  REQUESTED = 'REQUESTED',
+  REQUESTED = 'Requested',
 }
 
 export default CorporatePromotionStatusEnum;

@@ -536,8 +536,8 @@ export class DataInitService implements OnModuleInit {
       console.log(`Deleted forum post is created.`);
     }
 
-    // create reported forum posts under confessions category by jobseeker@gmail.com
-    if (confessionsCategory && existingJobSeeker) {
+    // create reported forum posts under confessions category by jobseeker2@gmail.com
+    if (confessionsCategory && existingJobSeekerTwo) {
       await this.forumPostService.create({
         forumPostTitle: 'c******************',
         createdAt: new Date(),
@@ -550,7 +550,7 @@ export class DataInitService implements OnModuleInit {
       console.log(`Reported forum post 1 is created.`);
     }
 
-    if (confessionsCategory && existingJobSeeker) {
+    if (confessionsCategory && existingJobSeekerTwo) {
       await this.forumPostService.create({
         forumPostTitle: 'k*****************',
         createdAt: new Date(),

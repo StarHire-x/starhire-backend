@@ -9,6 +9,7 @@ import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
 import UserStatusEnum from 'src/enums/userStatus.enum';
 import VisibilityEnum from 'src/enums/visibility.enum';
+import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
 
 export function mapForumCategoryToEnum(status: string): ForumCategoryEnum {
   switch (status) {
@@ -171,5 +172,20 @@ export function mapVisibilityToEnum(status: string): VisibilityEnum {
       return VisibilityEnum.LIMITED;
     default:
       return VisibilityEnum.PUBLIC;
+  }
+}
+
+export function mapCorporatePromotionStatusEnum(
+  status: string,
+): CorporatePromotionStatusEnum {
+  switch (status) {
+    case 'Regular':
+      return CorporatePromotionStatusEnum.REGULAR;
+    case 'Promoted':
+      return CorporatePromotionStatusEnum.PROMOTED;
+    case 'Requested':
+      return CorporatePromotionStatusEnum.REQUESTED;
+    default:
+      return CorporatePromotionStatusEnum.REGULAR;
   }
 }

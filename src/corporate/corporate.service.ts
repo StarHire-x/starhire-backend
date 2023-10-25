@@ -124,9 +124,9 @@ export class CorporateService {
           jobPreference: true,
         },
       });
-      if(!corporate) {
+      if (!corporate) {
         throw new NotFoundException('Corporate Id provided is not valid');
-      } 
+      }
       return {
         statusCode: HttpStatus.OK,
         message: 'Corporate is found',
@@ -362,6 +362,35 @@ export class CorporateService {
     } catch (err) {
       throw new HttpException(
         'Failed to delete a corporate',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async getAllPromotionRequest() {
+    try {
+      const corporates = await this.corporateRepository.find({
+        where: {
+          corporatePromotionStatus: 'Requested',
+        },
+      });
+
+      if (corporates.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate found',
+          data: corporates,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Corporate not found',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find corporate',
         HttpStatus.BAD_REQUEST,
       );
     }

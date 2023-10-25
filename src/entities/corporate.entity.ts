@@ -7,7 +7,7 @@ import { Ticket } from './ticket.entity';
 import { Review } from './review.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { JobPreference } from './jobPreference.entity';
-import { Interview } from './interview.entity';
+//import { Interview } from './interview.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -26,6 +26,9 @@ export class Corporate extends User {
 
   @Column()
   companyAddress: string;
+
+  @Column({ default: 'Regular' })
+  corporatePromotionStatus: string;
 
   @OneToMany(() => EventListing, (eventListing) => eventListing.corporate, {
     cascade: true,

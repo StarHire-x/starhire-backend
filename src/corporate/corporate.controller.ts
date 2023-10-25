@@ -41,6 +41,12 @@ export class CorporateController {
     return this.corporateService.findAll();
   }
 
+  @Public() //rmb to remove this, only for testing convinence
+  @Get('/PromotionRequests')
+  getRequestedCorporates() {
+    return this.corporateService.getAllPromotionRequest();
+  }
+
   @Public()
   @Get('/social')
   getAllCorporateSocial() {

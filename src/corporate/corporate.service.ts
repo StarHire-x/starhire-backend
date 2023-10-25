@@ -123,6 +123,7 @@ export class CorporateService {
           chats: true,
           tickets: true,
           jobPreference: true,
+          invoices: true,
         },
       });
       if (!corporate) {

@@ -452,7 +452,7 @@ export class DataInitService implements OnModuleInit {
     createConfessionsForumCategory.forumCategoryTitle = 'Confessions';
     createConfessionsForumCategory.isArchived = false;
     createConfessionsForumCategory.forumGuidelines =
-      'This is Confessions guidelines';
+      'This is Confessions guidelines~This is another Confessions guidelines';
 
     const confessionsCategory = await this.forumCategoryService.create(
       createConfessionsForumCategory,
@@ -487,12 +487,11 @@ export class DataInitService implements OnModuleInit {
       new CreateForumCategoryDto();
 
     createOthersForumCategory.forumCategoryTitle = 'Others';
-    createOthersForumCategory.isArchived = true;
-    createOthersForumCategory.forumGuidelines =
-      'This is Miscellaneous guidelines';
+    createOthersForumCategory.isArchived = false;
+    createOthersForumCategory.forumGuidelines = 'This is Others guidelines';
 
     await this.forumCategoryService.create(createOthersForumCategory);
-    console.log(`Miscellaneous forum category is created.`);
+    console.log(`Others forum category is created.`);
 
     // create pending forum posts under confessions category by jobseeker@gmail.com
     if (confessionsCategory && existingJobSeeker) {
@@ -521,6 +520,20 @@ export class DataInitService implements OnModuleInit {
         jobSeekerId: existingJobSeeker.userId,
       });
       console.log(`Pending forum post 2 is created.`);
+    }
+
+    // create deleted forum post under confessions category by jobseeker@gmail.com
+    if (confessionsCategory && existingJobSeeker) {
+      await this.forumPostService.create({
+        forumPostTitle: 'I take back what I said!',
+        createdAt: new Date(),
+        forumPostMessage: 'Oopsies.',
+        isAnonymous: true,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Deleted,
+        jobSeekerId: existingJobSeeker.userId,
+      });
+      console.log(`Deleted forum post is created.`);
     }
 
     // create reported forum posts under confessions category by jobseeker@gmail.com

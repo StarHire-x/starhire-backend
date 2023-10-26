@@ -83,7 +83,7 @@ export class DataInitService implements OnModuleInit {
     createAdministratorDto.contactNo = '05854749';
     createAdministratorDto.role = UserRoleEnum.ADMINISTRATOR;
     createAdministratorDto.createdAt = new Date();
-    createAdministratorDto.fullName = 'Administrator'
+    createAdministratorDto.fullName = 'Administrator';
     createAdministratorDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/BRYANLEONG_PHOTO.png';
 
@@ -297,6 +297,40 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
+    // Job Seeker account jobseeker3 jobseeker3@gmail.com creation
+    const hashedJobSeekerThreePassword = await bcrypt.hash(
+      process.env.JOBSEEKER_PW,
+      5,
+    );
+    const createJobSeekerThreeDto: CreateJobSeekerDto =
+      new CreateJobSeekerDto();
+    createJobSeekerThreeDto.userName = 'jobseeker3';
+    createJobSeekerThreeDto.password = hashedJobSeekerThreePassword;
+    createJobSeekerThreeDto.email = 'jobseeker3@gmail.com';
+    createJobSeekerThreeDto.contactNo = '92445638';
+    createJobSeekerThreeDto.role = UserRoleEnum.JOBSEEKER;
+    createJobSeekerThreeDto.createdAt = new Date();
+    createJobSeekerThreeDto.fullName = 'Betty Tan';
+    createJobSeekerThreeDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/yuna.png';
+
+    let existingJobSeekerThree = await this.jobSeekerRepository.findOne({
+      where: {
+        userName: createJobSeekerThreeDto.userName,
+        email: createJobSeekerThreeDto.email,
+      },
+    });
+
+    // if data init job seeker does not exist, means we can create the data init job seeker
+    if (!existingJobSeekerThree) {
+      existingJobSeekerThree = (
+        await this.jobSeekerService.create(createJobSeekerThreeDto)
+      )?.data;
+      console.log(
+        `Data initialized this job seeker account ${createJobSeekerThreeDto.email} successfully!`,
+      );
+    }
+
     // at here, all 4 types of accounts will be valid, use them to link up with other entities
     const createdAdmin = await this.administratorRepository.findOne({
       where: {
@@ -347,6 +381,13 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdJobSeekerThree = await this.jobSeekerRepository.findOne({
+      where: {
+        userName: createJobSeekerThreeDto.userName,
+        email: createJobSeekerThreeDto.email,
+      },
+    });
+
     // if any of the accounts not valid, don't proceed data init
     if (
       !createdAdmin ||
@@ -355,7 +396,8 @@ export class DataInitService implements OnModuleInit {
       !createdCorporateTwo ||
       !createdCorporateThree ||
       !createdJobSeeker ||
-      !createdJobSeekerTwo
+      !createdJobSeekerTwo ||
+      !createdJobSeekerThree
     ) {
       return;
     }
@@ -367,7 +409,8 @@ export class DataInitService implements OnModuleInit {
     }
 
     // jobPreference 1 creation
-    const createJobPreferenceDto: CreateJobPreferenceDto = new CreateJobPreferenceDto();
+    const createJobPreferenceDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
     createJobPreferenceDto.benefitPreference = 3;
     createJobPreferenceDto.salaryPreference = 4;
     createJobPreferenceDto.workLifeBalancePreference = 3;
@@ -424,6 +467,18 @@ export class DataInitService implements OnModuleInit {
     await this.jobPreferenceService.create(createJobPreferenceFiveDto);
     console.log(
       `job preference is created by corporate username ${createdCorporateThree.userName}`,
+    );
+
+    const createJobPreferenceSixDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
+    createJobPreferenceSixDto.benefitPreference = 3;
+    createJobPreferenceSixDto.salaryPreference = 2;
+    createJobPreferenceSixDto.workLifeBalancePreference = 5;
+    createJobPreferenceSixDto.jobSeekerId = createdJobSeekerThree.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceSixDto);
+    console.log(
+      `job preference is created by jobseeker username ${createdJobSeekerThree.userName}`,
     );
 
     // if there's any existing job listings, don't data init job listings
@@ -565,7 +620,6 @@ export class DataInitService implements OnModuleInit {
     console.log(
       `job listing ${createJobListingSixDto.title} is created by corporate username ${createdCorporate.userName}`,
     );
-
 
     // if there's any existing forum categories, don't data init forum categories
     const existingForumCategories = await this.forumCategoryRepository.find();

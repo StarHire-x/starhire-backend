@@ -117,15 +117,19 @@ export class TicketService {
   }
 
   async findAll() {
-    return await this.ticketRepository.find({
-      relations: {
-        corporate: true,
-        recruiter: true,
-        administrator: true,
-        jobSeeker: true,
-        documents: true,
-      },
-    });
+    try {
+      return await this.ticketRepository.find({
+        relations: {
+          corporate: true,
+          recruiter: true,
+          administrator: true,
+          jobSeeker: true,
+          documents: true,
+        },
+      });
+    } catch (error) {
+      throw new HttpException('Failed to find ticket', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findOne(id: number) {

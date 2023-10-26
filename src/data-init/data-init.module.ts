@@ -23,6 +23,8 @@ import { Ticket } from 'src/entities/ticket.entity';
 import { TicketService } from 'src/ticket/ticket.service';
 import { Document } from 'src/entities/document.entity';
 import { DocumentService } from 'src/document/document.service';
+import { JobPreference } from 'src/entities/jobPreference.entity';
+import { JobPreferenceService } from 'src/job-preference/job-preference.service';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { DocumentService } from 'src/document/document.service';
       ForumPost,
       Ticket,
       Document,
+      JobPreference,
     ]),
     EmailModule,
     TwilioModule,
@@ -54,6 +57,7 @@ import { DocumentService } from 'src/document/document.service';
     ForumPostsService,
     TicketService,
     DocumentService,
+    JobPreferenceService,
   ],
 })
 export class DataInitModule {}

@@ -26,9 +26,13 @@ import { Ticket } from 'src/entities/ticket.entity';
 import { TicketService } from 'src/ticket/ticket.service';
 import { CreateTicketDto } from 'src/ticket/dto/create-ticket.dto';
 import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import { JobPreference } from 'src/entities/jobPreference.entity';
+import { JobPreferenceService } from 'src/job-preference/job-preference.service';
+import { CreateJobPreferenceDto } from 'src/job-preference/dto/create-job-preference.dto';
 import { ForumPost } from 'src/entities/forumPost.entity';
 import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
 import ForumPostEnum from 'src/enums/forumPost.enum';
+
 
 require('dotenv').config();
 
@@ -59,6 +63,9 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
     private readonly ticketService: TicketService,
+    @InjectRepository(JobPreference)
+    private readonly jobPreferenceRepository: Repository<JobPreference>,
+    private readonly jobPreferenceService: JobPreferenceService,
   ) {}
 
   async onModuleInit() {
@@ -76,6 +83,9 @@ export class DataInitService implements OnModuleInit {
     createAdministratorDto.contactNo = '05854749';
     createAdministratorDto.role = UserRoleEnum.ADMINISTRATOR;
     createAdministratorDto.createdAt = new Date();
+    createAdministratorDto.fullName = 'Administrator'
+    createAdministratorDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/BRYANLEONG_PHOTO.png';
 
     // check if this data init admin exists in db or not
     const existingAdmin = await this.administratorRepository.findOne({
@@ -105,6 +115,9 @@ export class DataInitService implements OnModuleInit {
     createRecruiterDto.contactNo = '65415522';
     createRecruiterDto.role = UserRoleEnum.RECRUITER;
     createRecruiterDto.createdAt = new Date();
+    createRecruiterDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/lia.jpeg';
+    createRecruiterDto.fullName = 'Recrutier Lia';
 
     const existingRecruiter = await this.recruiterRepository.findOne({
       where: {
@@ -134,6 +147,9 @@ export class DataInitService implements OnModuleInit {
     createCorporateDto.role = UserRoleEnum.CORPORATE;
     createCorporateDto.createdAt = new Date();
     createCorporateDto.companyRegistrationId = 177452096;
+    createCorporateDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png';
+    createCorporateDto.companyName = 'Corporate Pte Ltd';
 
     const existingCorporate = await this.corporateRepository.findOne({
       where: {
@@ -163,6 +179,9 @@ export class DataInitService implements OnModuleInit {
     createCorporateTwoDto.role = UserRoleEnum.CORPORATE;
     createCorporateTwoDto.createdAt = new Date();
     createCorporateTwoDto.companyRegistrationId = 177452074;
+    createCorporateTwoDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/Scenery+8.jpg';
+    createCorporateDto.companyName = 'Pawfect Pte Ltd';
 
     const existingCorporateTwo = await this.corporateRepository.findOne({
       where: {
@@ -193,6 +212,9 @@ export class DataInitService implements OnModuleInit {
     createCorporateThreeDto.role = UserRoleEnum.CORPORATE;
     createCorporateThreeDto.createdAt = new Date();
     createCorporateThreeDto.companyRegistrationId = 177452082;
+    createCorporateThreeDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/MapleBearLogo.png';
+    createCorporateThreeDto.companyName = 'Maple Bear Pte Ltd';
 
     const existingCorporateThree = await this.corporateRepository.findOne({
       where: {
@@ -221,6 +243,9 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.contactNo = '65415524';
     createJobSeekerDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerDto.createdAt = new Date();
+    createJobSeekerDto.fullName = 'Jane Tan';
+    createJobSeekerDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/yeji.jpg';
 
     let existingJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
@@ -251,6 +276,9 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.contactNo = '92345678';
     createJobSeekerTwoDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerTwoDto.createdAt = new Date();
+    createJobSeekerTwoDto.fullName = 'Karen Tan';
+    createJobSeekerTwoDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/chaeryeon.jpg';
 
     let existingJobSeekerTwo = await this.jobSeekerRepository.findOne({
       where: {
@@ -331,6 +359,72 @@ export class DataInitService implements OnModuleInit {
     ) {
       return;
     }
+
+    // if there's any existing job preference, don't data init job preferences;
+    const existingJobPreference = await this.jobPreferenceRepository.find();
+    if (existingJobPreference.length > 0) {
+      return;
+    }
+
+    // jobPreference 1 creation
+    const createJobPreferenceDto: CreateJobPreferenceDto = new CreateJobPreferenceDto();
+    createJobPreferenceDto.benefitPreference = 3;
+    createJobPreferenceDto.salaryPreference = 4;
+    createJobPreferenceDto.workLifeBalancePreference = 3;
+    createJobPreferenceDto.jobSeekerId = createdJobSeeker.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceDto);
+    console.log(
+      `job preference is created by jobseeker username ${createdJobSeeker.userName}`,
+    );
+
+    const createJobPreferenceTwoDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
+    createJobPreferenceTwoDto.benefitPreference = 5;
+    createJobPreferenceTwoDto.salaryPreference = 2;
+    createJobPreferenceTwoDto.workLifeBalancePreference = 3;
+    createJobPreferenceTwoDto.jobSeekerId = createdJobSeekerTwo.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceTwoDto);
+    console.log(
+      `job preference is created by jobseeker username ${createdJobSeekerTwo.userName}`,
+    );
+
+    const createJobPreferenceThreeDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
+    createJobPreferenceThreeDto.benefitPreference = 2;
+    createJobPreferenceThreeDto.salaryPreference = 5;
+    createJobPreferenceThreeDto.workLifeBalancePreference = 3;
+    createJobPreferenceThreeDto.corporateId = createdCorporate.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceThreeDto);
+    console.log(
+      `job preference is created by corporate username ${createdCorporate.userName}`,
+    );
+
+    const createJobPreferenceFourDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
+    createJobPreferenceFourDto.benefitPreference = 1;
+    createJobPreferenceFourDto.salaryPreference = 4;
+    createJobPreferenceFourDto.workLifeBalancePreference = 5;
+    createJobPreferenceFourDto.corporateId = createdCorporateTwo.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceFourDto);
+    console.log(
+      `job preference is created by corporate username ${createdCorporateTwo.userName}`,
+    );
+
+    const createJobPreferenceFiveDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
+    createJobPreferenceFiveDto.benefitPreference = 3;
+    createJobPreferenceFiveDto.salaryPreference = 4;
+    createJobPreferenceFiveDto.workLifeBalancePreference = 3;
+    createJobPreferenceFiveDto.corporateId = createdCorporateThree.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceFiveDto);
+    console.log(
+      `job preference is created by corporate username ${createdCorporateThree.userName}`,
+    );
 
     // if there's any existing job listings, don't data init job listings
     const existingJobListings = await this.jobListingRepository.find();
@@ -427,6 +521,51 @@ export class DataInitService implements OnModuleInit {
     console.log(
       `job listing ${createJobListingFourDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
     );
+
+    const createJobListingFiveDto: CreateJobListingDto =
+      new CreateJobListingDto();
+    createJobListingFiveDto.title = 'Tamil Assistant Teacher';
+    createJobListingFiveDto.overview =
+      'Looking for a few tamil assistant teachers';
+    createJobListingFiveDto.responsibilities =
+      'Attends to the basic needs of children from 2 months to 17 months (Infant Care). Teach them Tamil and also ensures children’s safety & well-being while under the centre’s care. Implements centre’s programmes and new initiatives.';
+    createJobListingFiveDto.requirements =
+      'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
+    createJobListingFiveDto.jobLocation = 'Tengah, Singapore';
+    createJobListingFiveDto.averageSalary = 3000;
+    createJobListingFiveDto.jobStartDate = new Date('2024-10-23');
+    createJobListingFiveDto.requiredDocuments =
+      'Early Childhood Graduation Cert,Resume,Tamil Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
+    createJobListingFiveDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingFiveDto.corporateId = createdCorporateTwo.userId;
+
+    await this.jobListingService.create(createJobListingFiveDto);
+    console.log(
+      `job listing ${createJobListingFiveDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
+    );
+
+    const createJobListingSixDto: CreateJobListingDto =
+      new CreateJobListingDto();
+    createJobListingSixDto.title = 'English Assistant Teacher';
+    createJobListingSixDto.overview =
+      'Looking for a few english assistant teachers';
+    createJobListingSixDto.responsibilities =
+      'Attends to the basic needs of children from 2 months to 17 months (Infant Care). Teach them English and also ensures children’s safety & well-being while under the centre’s care. Implements centre’s programmes and new initiatives.';
+    createJobListingSixDto.requirements =
+      'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
+    createJobListingSixDto.jobLocation = 'Woodland, Singapore';
+    createJobListingSixDto.averageSalary = 2800;
+    createJobListingSixDto.jobStartDate = new Date('2024-10-23');
+    createJobListingSixDto.requiredDocuments =
+      'Early Childhood Graduation Cert,Resume,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
+    createJobListingSixDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingSixDto.corporateId = createdCorporate.userId;
+
+    await this.jobListingService.create(createJobListingSixDto);
+    console.log(
+      `job listing ${createJobListingSixDto.title} is created by corporate username ${createdCorporate.userName}`,
+    );
+
 
     // if there's any existing forum categories, don't data init forum categories
     const existingForumCategories = await this.forumCategoryRepository.find();

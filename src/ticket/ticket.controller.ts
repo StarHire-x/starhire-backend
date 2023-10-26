@@ -39,9 +39,10 @@ export class TicketController {
   }
 
   @Get()
-  findAllTickets() {
+  async findAllTickets() {
     try {
-      return this.ticketService.findAll();
+      const result = await this.ticketService.findAll();
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

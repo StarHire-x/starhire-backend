@@ -22,6 +22,13 @@ import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 import { ForumCategory } from 'src/entities/forumCategory.entity';
 import { ForumCategoriesService } from 'src/forum-categories/forum-categories.service';
 import { CreateForumCategoryDto } from 'src/forum-categories/dto/create-forum-category.dto';
+import { Ticket } from 'src/entities/ticket.entity';
+import { TicketService } from 'src/ticket/ticket.service';
+import { CreateTicketDto } from 'src/ticket/dto/create-ticket.dto';
+import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import { ForumPost } from 'src/entities/forumPost.entity';
+import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
+import ForumPostEnum from 'src/enums/forumPost.enum';
 
 require('dotenv').config();
 
@@ -46,6 +53,12 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(ForumCategory)
     private readonly forumCategoryRepository: Repository<ForumCategory>,
     private readonly forumCategoryService: ForumCategoriesService,
+    @InjectRepository(ForumPost)
+    private readonly forumPostRepository: Repository<ForumPost>,
+    private readonly forumPostService: ForumPostsService,
+    @InjectRepository(Ticket)
+    private readonly ticketRepository: Repository<Ticket>,
+    private readonly ticketService: TicketService,
   ) {}
 
   async onModuleInit() {
@@ -209,7 +222,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerDto.createdAt = new Date();
 
-    const existingJobSeeker = await this.jobSeekerRepository.findOne({
+    let existingJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
         userName: createJobSeekerDto.userName,
         email: createJobSeekerDto.email,
@@ -218,7 +231,9 @@ export class DataInitService implements OnModuleInit {
 
     // if data init job seeker does not exist, means we can create the data init job seeker
     if (!existingJobSeeker) {
-      await this.jobSeekerService.create(createJobSeekerDto);
+      existingJobSeeker = (
+        await this.jobSeekerService.create(createJobSeekerDto)
+      )?.data;
       console.log(
         `Data initialized this job seeker account ${createJobSeekerDto.email} successfully!`,
       );
@@ -237,7 +252,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerTwoDto.createdAt = new Date();
 
-    const existingJobSeekerTwo = await this.jobSeekerRepository.findOne({
+    let existingJobSeekerTwo = await this.jobSeekerRepository.findOne({
       where: {
         userName: createJobSeekerTwoDto.userName,
         email: createJobSeekerTwoDto.email,
@@ -246,7 +261,9 @@ export class DataInitService implements OnModuleInit {
 
     // if data init job seeker does not exist, means we can create the data init job seeker
     if (!existingJobSeekerTwo) {
-      await this.jobSeekerService.create(createJobSeekerTwoDto);
+      existingJobSeekerTwo = (
+        await this.jobSeekerService.create(createJobSeekerTwoDto)
+      )?.data;
       console.log(
         `Data initialized this job seeker account ${createJobSeekerTwoDto.email} successfully!`,
       );
@@ -411,62 +428,187 @@ export class DataInitService implements OnModuleInit {
       `job listing ${createJobListingFourDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
     );
 
-     // if there's any existing forum categories, don't data init forum categories
-     const existingForumCategories= await this.forumCategoryRepository.find();
-     if (existingForumCategories.length > 0) {
-       return;
-     }
+    // if there's any existing forum categories, don't data init forum categories
+    const existingForumCategories = await this.forumCategoryRepository.find();
+    if (existingForumCategories.length > 0) {
+      return;
+    }
 
     //create forum category
-    const createEventsForumCategory: CreateForumCategoryDto = 
-    new CreateForumCategoryDto();
+    const createEventsForumCategory: CreateForumCategoryDto =
+      new CreateForumCategoryDto();
 
     createEventsForumCategory.forumCategoryTitle = 'Events';
     createEventsForumCategory.isArchived = false;
-    createEventsForumCategory.forumGuidelines = "This is Events guidelines";
+    createEventsForumCategory.forumGuidelines = 'This is Events guidelines';
 
-		await this.forumCategoryService.create(createEventsForumCategory);
-		console.log(
-      `Events forum category is created.`,
-    );
+    await this.forumCategoryService.create(createEventsForumCategory);
+    console.log(`Events forum category is created.`);
 
-		//create confessions category
-    const createConfessionsForumCategory: CreateForumCategoryDto = 
-    new CreateForumCategoryDto();
+    //create confessions category
+    const createConfessionsForumCategory: CreateForumCategoryDto =
+      new CreateForumCategoryDto();
 
     createConfessionsForumCategory.forumCategoryTitle = 'Confessions';
     createConfessionsForumCategory.isArchived = false;
-    createConfessionsForumCategory.forumGuidelines = "This is Confessions guidelines";
+    createConfessionsForumCategory.forumGuidelines =
+      'This is Confessions guidelines~This is another Confessions guidelines';
 
-		await this.forumCategoryService.create(createConfessionsForumCategory);
-		console.log(
-      `Confessions forum category is created.`,
+    const confessionsCategory = await this.forumCategoryService.create(
+      createConfessionsForumCategory,
     );
+    console.log(`Confessions forum category is created.`);
 
-		//create career category
-    const createCareerForumCategory: CreateForumCategoryDto = 
-    new CreateForumCategoryDto();
+    //create career category
+    const createCareerForumCategory: CreateForumCategoryDto =
+      new CreateForumCategoryDto();
 
     createCareerForumCategory.forumCategoryTitle = 'Career';
     createCareerForumCategory.isArchived = false;
-    createCareerForumCategory.forumGuidelines = "This is Career guidelines";
+    createCareerForumCategory.forumGuidelines = 'This is Career guidelines';
 
-		await this.forumCategoryService.create(createCareerForumCategory);
-		console.log(
-      `Career forum category is created.`,
-    );
+    await this.forumCategoryService.create(createCareerForumCategory);
+    console.log(`Career forum category is created.`);
 
-		//create miscellaneous category
-    const createMiscellaneousForumCategory: CreateForumCategoryDto = 
-    new CreateForumCategoryDto();
+    //create miscellaneous category
+    const createMiscellaneousForumCategory: CreateForumCategoryDto =
+      new CreateForumCategoryDto();
 
     createMiscellaneousForumCategory.forumCategoryTitle = 'Miscellaneous';
     createMiscellaneousForumCategory.isArchived = false;
-    createMiscellaneousForumCategory.forumGuidelines = "This is Miscellaneous guidelines";
+    createMiscellaneousForumCategory.forumGuidelines =
+      'This is Miscellaneous guidelines';
 
-		await this.forumCategoryService.create(createMiscellaneousForumCategory);
-		console.log(
-      `Miscellaneous forum category is created.`,
+    await this.forumCategoryService.create(createMiscellaneousForumCategory);
+    console.log(`Miscellaneous forum category is created.`);
+
+    //create miscellaneous category
+    const createOthersForumCategory: CreateForumCategoryDto =
+      new CreateForumCategoryDto();
+
+    createOthersForumCategory.forumCategoryTitle = 'Others';
+    createOthersForumCategory.isArchived = false;
+    createOthersForumCategory.forumGuidelines = 'This is Others guidelines';
+
+    await this.forumCategoryService.create(createOthersForumCategory);
+    console.log(`Others forum category is created.`);
+
+    // create pending forum posts under confessions category by jobseeker@gmail.com
+    if (confessionsCategory && existingJobSeeker) {
+      await this.forumPostService.create({
+        forumPostTitle: 'I have a confession to make...',
+        createdAt: new Date(),
+        forumPostMessage:
+          'I really love this application. I have always wanted to find such an application.',
+        isAnonymous: false,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Pending,
+        jobSeekerId: existingJobSeeker.userId,
+      });
+      console.log(`Pending forum post 1 is created.`);
+    }
+
+    if (confessionsCategory && existingJobSeeker) {
+      await this.forumPostService.create({
+        forumPostTitle: 'Let me be pretty honest down here!',
+        createdAt: new Date(),
+        forumPostMessage:
+          'My company cares for me so much!!! I love them to bits, there is welfare everywhere.',
+        isAnonymous: true,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Pending,
+        jobSeekerId: existingJobSeeker.userId,
+      });
+      console.log(`Pending forum post 2 is created.`);
+    }
+
+    // create deleted forum post under confessions category by jobseeker@gmail.com
+    if (confessionsCategory && existingJobSeeker) {
+      await this.forumPostService.create({
+        forumPostTitle: 'I take back what I said!',
+        createdAt: new Date(),
+        forumPostMessage: 'Oopsies.',
+        isAnonymous: true,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Deleted,
+        jobSeekerId: existingJobSeeker.userId,
+      });
+      console.log(`Deleted forum post is created.`);
+    }
+
+    // create reported forum posts under confessions category by jobseeker2@gmail.com
+    if (confessionsCategory && existingJobSeekerTwo) {
+      await this.forumPostService.create({
+        forumPostTitle: 'c******************',
+        createdAt: new Date(),
+        forumPostMessage: 'HELLO C*** C*** B** GET YOUR S*** TOGETHER',
+        isAnonymous: false,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Reported,
+        jobSeekerId: existingJobSeekerTwo.userId,
+      });
+      console.log(`Reported forum post 1 is created.`);
+    }
+
+    if (confessionsCategory && existingJobSeekerTwo) {
+      await this.forumPostService.create({
+        forumPostTitle: 'k*****************',
+        createdAt: new Date(),
+        forumPostMessage: 'F*** F*** F***',
+        isAnonymous: false,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Reported,
+        jobSeekerId: existingJobSeekerTwo.userId,
+      });
+      console.log(`Reported forum post 2 is created.`);
+    }
+
+    // if there's any existing tickets, don't data init tickets
+    const existingTickets = await this.ticketRepository.find();
+    if (existingTickets.length > 0) {
+      return;
+    }
+
+    // ticket 1 creation
+    const createTicketOneDto: CreateTicketDto = new CreateTicketDto();
+    createTicketOneDto.ticketName = 'Unable to login';
+    createTicketOneDto.ticketDescription =
+      'I am unable to login even though I am sure that I keyed in the correct credentials';
+    createTicketOneDto.isResolved = true;
+    createTicketOneDto.email = 'jobseeker@gmail.com';
+    createTicketOneDto.ticketCategory = TicketCategoryEnum.ACCOUNT;
+
+    await this.ticketService.create(createTicketOneDto);
+    console.log(
+      `ticket ${createTicketOneDto.ticketName} is created by email ${createTicketOneDto.email}`,
+    );
+
+    // ticket 2 creation
+    const createTicketTwoDto: CreateTicketDto = new CreateTicketDto();
+    createTicketTwoDto.ticketName = 'Regarding fee charges';
+    createTicketTwoDto.ticketDescription =
+      'I just want to check what are the all the fees associated if for example I register and successfully find a job through StarHire';
+    createTicketTwoDto.isResolved = true;
+    createTicketTwoDto.email = 'jobseeker2@gmail.com';
+    createTicketTwoDto.ticketCategory = TicketCategoryEnum.SUBSCRIPTION_BILLING;
+
+    await this.ticketService.create(createTicketTwoDto);
+    console.log(
+      `ticket ${createTicketTwoDto.ticketName} is created by email ${createTicketTwoDto.email}`,
+    );
+
+    // ticket 3 creation
+    const createTicketThreeDto: CreateTicketDto = new CreateTicketDto();
+    createTicketThreeDto.ticketName = 'Landing page';
+    createTicketThreeDto.ticketDescription =
+      'I am unable to click on anything on the landing page and the whole website just feels very laggy to me';
+    createTicketThreeDto.isResolved = true;
+    createTicketThreeDto.email = 'jobseeker@gmail.com';
+    createTicketThreeDto.ticketCategory = TicketCategoryEnum.GENERAL;
+
+    await this.ticketService.create(createTicketThreeDto);
+    console.log(
+      `ticket ${createTicketThreeDto.ticketName} is created by email ${createTicketThreeDto.email}`,
     );
   }
 }

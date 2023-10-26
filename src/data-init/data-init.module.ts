@@ -19,6 +19,10 @@ import { ForumCategoriesService } from 'src/forum-categories/forum-categories.se
 import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
 import { ForumPost } from 'src/entities/forumPost.entity';
 import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Ticket } from 'src/entities/ticket.entity';
+import { TicketService } from 'src/ticket/ticket.service';
+import { Document } from 'src/entities/document.entity';
+import { DocumentService } from 'src/document/document.service';
 
 @Module({
   imports: [
@@ -32,6 +36,8 @@ import { JobApplication } from 'src/entities/jobApplication.entity';
       JobApplication,
       ForumCategory,
       ForumPost,
+      Ticket,
+      Document,
     ]),
     EmailModule,
     TwilioModule,
@@ -46,6 +52,8 @@ import { JobApplication } from 'src/entities/jobApplication.entity';
     JobListingService,
     ForumCategoriesService,
     ForumPostsService,
+    TicketService,
+    DocumentService,
   ],
 })
 export class DataInitModule {}

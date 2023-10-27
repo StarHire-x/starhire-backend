@@ -33,7 +33,6 @@ import { ForumPost } from 'src/entities/forumPost.entity';
 import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
 import ForumPostEnum from 'src/enums/forumPost.enum';
 
-
 require('dotenv').config();
 
 @Injectable()
@@ -244,7 +243,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.createdAt = new Date();
     createJobSeekerDto.fullName = 'David Tan';
     createJobSeekerDto.dateOfBirth = new Date('2000-10-09');
-    createJobSeekerDto.homeAddress = "123 King St";
+    createJobSeekerDto.homeAddress = '123 King St';
     createJobSeekerDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker1.jpg';
 
@@ -691,33 +690,48 @@ export class DataInitService implements OnModuleInit {
     await this.forumCategoryService.create(createOthersForumCategory);
     console.log(`Others forum category is created.`);
 
-    // create pending forum posts under confessions category by jobseeker@gmail.com
+    // create active forum post under confessions category by jobseeker@gmail.com
+    if (confessionsCategory && existingJobSeeker) {
+      await this.forumPostService.create({
+        forumPostTitle: 'What the... f',
+        createdAt: new Date(),
+        forumPostMessage:
+          'It has welfare, high pay, and best part of it all, unlimited leaves!',
+        isAnonymous: false,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Active,
+        jobSeekerId: existingJobSeeker.userId,
+      });
+      console.log(`Active forum post 1 is created.`);
+    }
+
+    // create inactive forum post under confessions category by jobseeker@gmail.com
+    if (confessionsCategory && existingJobSeeker) {
+      await this.forumPostService.create({
+        forumPostTitle: 'This company did not give me what I wanted.',
+        createdAt: new Date(),
+        forumPostMessage: 'The location was just too far...',
+        isAnonymous: false,
+        forumCategoryId: confessionsCategory.forumCategoryId,
+        forumPostStatus: ForumPostEnum.Inactive,
+        jobSeekerId: existingJobSeeker.userId,
+      });
+      console.log(`Inactive forum post 1 is created.`);
+    }
+
+    // create pending forum post under confessions category by jobseeker@gmail.com
     if (confessionsCategory && existingJobSeeker) {
       await this.forumPostService.create({
         forumPostTitle: 'I have a confession to make...',
         createdAt: new Date(),
         forumPostMessage:
-          'I really love this application. I have always wanted to find such an application.',
+          'I really love this application. I have always wanted to find such an application. I really love this application. I have always wanted to find such an application. I really love this application. I have always wanted to find such an application. I really love this application. I have always wanted to find such an application.',
         isAnonymous: false,
         forumCategoryId: confessionsCategory.forumCategoryId,
         forumPostStatus: ForumPostEnum.Pending,
         jobSeekerId: existingJobSeeker.userId,
       });
       console.log(`Pending forum post 1 is created.`);
-    }
-
-    if (confessionsCategory && existingJobSeeker) {
-      await this.forumPostService.create({
-        forumPostTitle: 'Let me be pretty honest down here!',
-        createdAt: new Date(),
-        forumPostMessage:
-          'My company cares for me so much!!! I love them to bits, there is welfare everywhere.',
-        isAnonymous: true,
-        forumCategoryId: confessionsCategory.forumCategoryId,
-        forumPostStatus: ForumPostEnum.Pending,
-        jobSeekerId: existingJobSeeker.userId,
-      });
-      console.log(`Pending forum post 2 is created.`);
     }
 
     // create deleted forum post under confessions category by jobseeker@gmail.com
@@ -734,8 +748,8 @@ export class DataInitService implements OnModuleInit {
       console.log(`Deleted forum post is created.`);
     }
 
-    // create reported forum posts under confessions category by jobseeker2@gmail.com
-    if (confessionsCategory && existingJobSeekerTwo) {
+    // create reported forum post under confessions category by jobseeker@gmail.com
+    if (confessionsCategory && existingJobSeeker) {
       await this.forumPostService.create({
         forumPostTitle: 'c******************',
         createdAt: new Date(),
@@ -743,16 +757,17 @@ export class DataInitService implements OnModuleInit {
         isAnonymous: false,
         forumCategoryId: confessionsCategory.forumCategoryId,
         forumPostStatus: ForumPostEnum.Reported,
-        jobSeekerId: existingJobSeekerTwo.userId,
+        jobSeekerId: existingJobSeeker.userId,
       });
       console.log(`Reported forum post 1 is created.`);
     }
 
+    // create reported forum post under confessions category by jobseeker2@gmail.com
     if (confessionsCategory && existingJobSeekerTwo) {
       await this.forumPostService.create({
-        forumPostTitle: 'k*****************',
+        forumPostTitle: 'What a beautiful day!',
         createdAt: new Date(),
-        forumPostMessage: 'F*** F*** F***',
+        forumPostMessage: 'Wow this is just lovely!',
         isAnonymous: false,
         forumCategoryId: confessionsCategory.forumCategoryId,
         forumPostStatus: ForumPostEnum.Reported,

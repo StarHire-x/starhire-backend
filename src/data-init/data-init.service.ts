@@ -85,8 +85,7 @@ export class DataInitService implements OnModuleInit {
     createAdministratorDto.createdAt = new Date();
     createAdministratorDto.fullName = 'Administrator';
     createAdministratorDto.profilePictureUrl =
-      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/BRYANLEONG_PHOTO.png';
-
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/admin1.jpg';
     // check if this data init admin exists in db or not
     const existingAdmin = await this.administratorRepository.findOne({
       where: {
@@ -116,7 +115,7 @@ export class DataInitService implements OnModuleInit {
     createRecruiterDto.role = UserRoleEnum.RECRUITER;
     createRecruiterDto.createdAt = new Date();
     createRecruiterDto.profilePictureUrl =
-      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/lia.jpeg';
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/recruiter1.jpg';
     createRecruiterDto.fullName = 'Recrutier Lia';
 
     const existingRecruiter = await this.recruiterRepository.findOne({
@@ -243,9 +242,9 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.contactNo = '65415524';
     createJobSeekerDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerDto.createdAt = new Date();
-    createJobSeekerDto.fullName = 'Jane Tan';
+    createJobSeekerDto.fullName = 'David Tan';
     createJobSeekerDto.profilePictureUrl =
-      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/yeji.jpg';
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker1.jpg';
 
     let existingJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
@@ -276,9 +275,9 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.contactNo = '92345678';
     createJobSeekerTwoDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerTwoDto.createdAt = new Date();
-    createJobSeekerTwoDto.fullName = 'Karen Tan';
+    createJobSeekerTwoDto.fullName = 'George Tan';
     createJobSeekerTwoDto.profilePictureUrl =
-      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/chaeryeon.jpg';
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker2.jpg';
 
     let existingJobSeekerTwo = await this.jobSeekerRepository.findOne({
       where: {
@@ -310,9 +309,9 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerThreeDto.contactNo = '92445638';
     createJobSeekerThreeDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerThreeDto.createdAt = new Date();
-    createJobSeekerThreeDto.fullName = 'Betty Tan';
+    createJobSeekerThreeDto.fullName = 'Patrick Tan';
     createJobSeekerThreeDto.profilePictureUrl =
-      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/yuna.png';
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker3.jpg';
 
     let existingJobSeekerThree = await this.jobSeekerRepository.findOne({
       where: {

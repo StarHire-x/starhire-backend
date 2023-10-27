@@ -243,6 +243,8 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerDto.createdAt = new Date();
     createJobSeekerDto.fullName = 'David Tan';
+    createJobSeekerDto.dateOfBirth = new Date('2000-10-09');
+    createJobSeekerDto.homeAddress = "123 King St";
     createJobSeekerDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker1.jpg';
 
@@ -276,6 +278,8 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerTwoDto.createdAt = new Date();
     createJobSeekerTwoDto.fullName = 'George Tan';
+    createJobSeekerTwoDto.dateOfBirth = new Date('2000-10-09');
+    createJobSeekerTwoDto.homeAddress = '123 King St';
     createJobSeekerTwoDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker2.jpg';
 
@@ -310,6 +314,8 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerThreeDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerThreeDto.createdAt = new Date();
     createJobSeekerThreeDto.fullName = 'Patrick Tan';
+    createJobSeekerThreeDto.dateOfBirth = new Date('2000-10-09');
+    createJobSeekerThreeDto.homeAddress = '123 King St';
     createJobSeekerThreeDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker3.jpg';
 

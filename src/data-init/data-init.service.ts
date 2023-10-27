@@ -675,7 +675,7 @@ export class DataInitService implements OnModuleInit {
     await this.forumCategoryService.create(createMiscellaneousForumCategory);
     console.log(`Miscellaneous forum category is created.`);
 
-    //create miscellaneous category
+    //create others category
     const createOthersForumCategory: CreateForumCategoryDto =
       new CreateForumCategoryDto();
 

@@ -179,7 +179,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateTwoDto.companyRegistrationId = 177452074;
     createCorporateTwoDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/Scenery+8.jpg';
-    createCorporateDto.companyName = 'Pawfect Pte Ltd';
+    createCorporateTwoDto.companyName = 'Pawfect Pte Ltd';
 
     const existingCorporateTwo = await this.corporateRepository.findOne({
       where: {

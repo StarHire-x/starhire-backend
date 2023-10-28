@@ -48,6 +48,34 @@ export class CorporateController {
   }
 
   @Public()
+  @Get('/getStats')
+  async getAllCorporateJobListingStats() {
+    try {
+      return await this.corporateService.findAllJobStatistics();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Public()
+  @Get('/getBreakdown')
+  async getAllCorporateJobListingBreakdown() {
+    try {
+      return await this.corporateService.findBreakdownJobStatistics();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Public()
   @Get('/social')
   getAllCorporateSocial() {
     try {
@@ -76,7 +104,7 @@ export class CorporateController {
       }
     }
   }
-  
+
   @Put('/unfollow/:corporateId/:jobSeekerId')
   async unfollowCorporate(
     @Param('corporateId') corporateId: string,

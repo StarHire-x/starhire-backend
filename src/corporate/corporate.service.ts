@@ -21,6 +21,7 @@ import { TwilioService } from 'src/twilio/twilio.service';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
 import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
+import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
 
 @Injectable()
 export class CorporateService {
@@ -113,13 +114,108 @@ export class CorporateService {
     }
   }
 
+  async findAllJobStatistics() {
+    const corporates = await this.corporateRepository.find({
+      relations: { jobListings: true },
+    });
+
+    const statistics = {};
+
+    for (const data of corporates) {
+      const jobListings = data.jobListings;
+      statistics[data.companyName] = jobListings.length;
+    }
+
+    const labels = Object.keys(statistics);
+    const values = Object.values(statistics);
+
+    const result = {
+      labels: labels,
+      values: values,
+    };
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Statistics retrieved',
+      data: result,
+    };
+  }
+
+  async findBreakdownJobStatistics() {
+    const corporates = await this.corporateRepository.find({
+      relations: { jobListings: true },
+    });
+
+    const statistics = {};
+
+    let approvedCount = 0;
+    let rejectedCount = 0;
+    let unverifiedCount = 0;
+    let archivedCount = 0;
+
+    for (const data of corporates) {
+      const jobListings = data.jobListings;
+      const breakdown = {
+        approved: 0,
+        rejected: 0,
+        unverified: 0,
+        archived: 0,
+      }
+      breakdown.approved = jobListings.filter((jobListing) => jobListing.jobListingStatus === JobListingStatusEnum.APPROVED).length
+      breakdown.rejected = jobListings.filter(
+        (jobListing) =>
+          jobListing.jobListingStatus === JobListingStatusEnum.REJECTED,
+      ).length;
+      breakdown.unverified = jobListings.filter(
+        (jobListing) =>
+          jobListing.jobListingStatus === JobListingStatusEnum.UNVERIFIED,
+      ).length;
+      breakdown.archived = jobListings.filter(
+        (jobListing) =>
+          jobListing.jobListingStatus === JobListingStatusEnum.ARCHIVED,
+      ).length;
+      approvedCount += breakdown.approved;
+      rejectedCount += breakdown.rejected;
+      unverifiedCount += breakdown.unverified;
+      archivedCount += breakdown.archived;
+      statistics[data.companyName] = breakdown;
+    }
+
+    statistics['total'] = {
+      approved: approvedCount,
+      rejected: rejectedCount,
+      unverified: unverifiedCount,
+      archived: archivedCount,
+    };
+
+    // const labels = Object.keys(statistics);
+    // const values = Object.values(statistics);
+
+    // const result = {
+    //   labels: labels,
+    //   values: values,
+    // };
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Statistics retrieved',
+      data: statistics,
+    };
+  }
+
   async findOne(id: string) {
     try {
       const corporate = await this.corporateRepository.findOne({
         where: { userId: id },
         relations: {
           eventListings: true,
-          jobListings: {jobApplications: {recruiter: true, invoice: true, jobListing: true}}, 
+          jobListings: {
+            jobApplications: {
+              recruiter: true,
+              invoice: true,
+              jobListing: true,
+            },
+          },
           chats: true,
           tickets: true,
           jobPreference: true,

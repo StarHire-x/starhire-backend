@@ -25,10 +25,12 @@ export class PaymentController {
 
       const subscriptionId = session.subscription as string;
       const clientReferenceId = session.client_reference_id as string;
+      const stripeCustId = session.customer as string;
 
       await this.paymentService.handleSubscription(
         subscriptionId,
         clientReferenceId,
+        stripeCustId,
       );
 
       return 'Webhook received and processed';

@@ -139,7 +139,6 @@ export class UsersService {
 
   async create(createUserDto: any) {
     try {
-      console.log('Hit 2');
       await this.checkForCommonUserDuplicates(createUserDto);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 5); // hash password before storing in db
       createUserDto.password = hashedPassword;

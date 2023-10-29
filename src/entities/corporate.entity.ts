@@ -22,6 +22,9 @@ export class Corporate extends User {
   companyName: string;
 
   @Column()
+  schoolCategory: string;
+
+  @Column()
   companyRegistrationId: number;
 
   @Column()
@@ -29,6 +32,12 @@ export class Corporate extends User {
 
   @Column()
   companyAddress: string;
+
+  @Column()
+  postalCode: string;
+
+  @Column()
+  regions: string;
 
   @Column({
     type: 'enum',

@@ -122,6 +122,10 @@ export class TypeformService {
       if (fieldId === 'wV082U1xrwMG') {
         const choice = answerObject.choice;
         fieldValue = choice.label;
+        // Single choice field (school category)
+      } else if (fieldId === 'RdXmXPgAKFQH') {
+        const choice = answerObject.choice;
+        fieldValue = choice.label;
         // skip email field
       } else if (fieldId === 'o1fqUVreUxhf') {
         continue;
@@ -162,6 +166,15 @@ export class TypeformService {
     if ('address' in accountInfo) {
       corporateAccount.companyAddress = accountInfo['address'];
     }
+    if ('schoolCategory' in accountInfo) {
+      corporateAccount.schoolCategory = accountInfo['schoolCategory'];
+    }
+    if ('postalCode' in accountInfo) {
+      corporateAccount.postalCode = accountInfo['postalCode'];
+    }
+    if ('regions' in accountInfo) {
+      corporateAccount.regions = accountInfo['regions'];
+    }
     await this.corporateRepository.save(corporateAccount);
     return corporateAccount;
 
@@ -176,20 +189,27 @@ export class TypeformService {
       where: { email: corporateEmail },
     });
 
-    const dto: CreateJobListingDto = {
-      title: corporateTypeformInfo.jobTitle || '',
-      overview: corporateTypeformInfo.jobDescription || '',
-      responsibilities: '',
-      requirements: corporateTypeformInfo.experienceRequired || '',
-      requiredDocuments: '',
-      jobLocation: corporateTypeformInfo.address || '',
-      listingDate:
-        new Date(corporateTypeformInfo.startDate) || new Date(2024, 0, 1),
-      averageSalary: 0,
-      jobStartDate: corporateTypeformInfo.startDate || null,
-      jobListingStatus: JobListingStatusEnum.UNVERIFIED,
-      corporateId: corporateAccount.userId,
-    };
+    const dto: CreateJobListingDto = new CreateJobListingDto();
+    dto.title = corporateTypeformInfo.jobTitle || '';
+    dto.overview = corporateTypeformInfo.jobDescription || '';
+    dto.responsibilities = '';
+    dto.requirements = corporateTypeformInfo.experienceRequired || '';
+    dto.requiredDocuments = '';
+    dto.jobLocation = corporateTypeformInfo.address || '';
+    dto.averageSalary = 0;
+    dto.jobStartDate = corporateTypeformInfo.startDate || null;
+    dto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
+    dto.corporateId = corporateAccount.userId;
+
+    dto.payRange = corporateTypeformInfo.payRange || '';
+    dto.jobType = corporateTypeformInfo.jobType || '';
+    dto.schedule = corporateTypeformInfo.schedule || '';
+    dto.supplementalPay = corporateTypeformInfo.supplementalPay || '';
+    dto.otherBenefits = corporateTypeformInfo.otherBenefits || '';
+    dto.certificationsRequired = corporateTypeformInfo.certificationsRequired || '';
+    dto.typeOfWorkers = corporateTypeformInfo.typeOfWorkers || '';
+    dto.requiredLanguages = corporateTypeformInfo.requiredLanguages || '';
+    dto.otherConsiderations = corporateTypeformInfo.otherConsiderations || '';
 
     const jobListing = await this.jobListingService.create(dto);
     return jobListing;
@@ -216,6 +236,7 @@ const typeformFieldNameMapping = {
   vPCppHgr2VuK: 'firstName',
   o1fqUVreUxhf: 'email',
   AoIMKWblS8tv: 'schoolName',
+  RdXmXPgAKFQH: 'schoolCategory',
   Y7VXG0LshPrQ: 'address',
   SfKPMosQGSTf: 'city',
   Va3ptJEA35JY: 'state',
@@ -226,7 +247,7 @@ const typeformFieldNameMapping = {
   wV082U1xrwMG: 'numberOfRoles',
   qOS2tbjqxII6: 'jobType',
   rasnoPtNpNgy: 'schedule',
-  pfvKn6CnPjEo: 'payRange',
+  cSBLo66frmcG: 'payRange',
   zeQpEok1cRqO: 'supplementalPay',
   g1WUZd0wn6UH: 'otherBenefits',
   '77AzLt6BSUSA': 'startDate',
@@ -247,7 +268,6 @@ const typeformFieldTypeText = {
   R6dDb3zcCq5X: 'country',
   XHkxGkMTUn2Y: 'postalCode',
   xzm3zUEt2b4P: 'jobTitle',
-  pfvKn6CnPjEo: 'payRange',
   '77AzLt6BSUSA': 'startDate',
   TOuD0BPTX8Px: 'jobDescription',
   '0pWqNAqSmKiz': 'otherConsiderations',

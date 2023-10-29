@@ -50,6 +50,33 @@ export class JobListing {
   @Column()
   jobListingStatus: JobListingStatusEnum;
 
+  @Column()
+  payRange: string;
+
+  @Column()
+  jobType: string;
+
+  @Column()
+  schedule: string;
+
+  @Column()
+  supplementalPay: string;
+
+  @Column()
+  otherBenefits: string;
+
+  @Column()
+  certificationsRequired: string;
+
+  @Column()
+  typeOfWorkers: string;
+
+  @Column()
+  requiredLangaues: string;
+
+  @Column()
+  otherConsiderations: string;
+
   @ManyToOne(() => Corporate, (corporate) => corporate.jobListings, {
     nullable: false,
   })

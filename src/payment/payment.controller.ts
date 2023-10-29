@@ -8,14 +8,6 @@ import { Public } from 'src/users/public.decorator';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  /*
-  @Get()
-  async createCheckoutSession(@Body() paymentData: { userId: string }) {
-    const session = await this.paymentService.createCheckoutSession();
-    return { session };
-  }
-  */
-
   @Public()
   @Post('create-checkout-session')
   async createCheckoutSessionWithPost(@Body() paymentData: CreatePaymentDto) {
@@ -34,9 +26,6 @@ export class PaymentController {
       const subscriptionId = session.subscription as string;
       const clientReferenceId = session.client_reference_id as string;
 
-      //console.log('Subscription ID:', subscriptionId);
-      //console.log('Client Reference ID:', clientReferenceId);
-
       await this.paymentService.handleSubscription(
         subscriptionId,
         clientReferenceId,
@@ -46,6 +35,7 @@ export class PaymentController {
     }
   }
 
+  @Public()
   @Post('cancel')
   async cancelSubscription(@Body() body: { subscriptionId: string }) {
     try {

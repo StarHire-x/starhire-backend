@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment-dto';
 import { Stripe } from 'stripe';
@@ -34,6 +34,27 @@ export class PaymentController {
       );
 
       return 'Webhook received and processed';
+    }
+  }
+
+  @Public()
+  @Get(':subscriptionId/billing-cycle-details')
+  async getBillingCycleDetails(
+    @Param('subscriptionId') subscriptionId: string,
+  ) {
+    try {
+      const billingCycleDetails =
+        await this.paymentService.getSubCycleDetails(subscriptionId);
+      return {
+        success: true,
+        data: billingCycleDetails,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to retrieve billing cycle details',
+        error: error.message,
+      };
     }
   }
 

@@ -103,4 +103,25 @@ export class PaymentService {
       throw new Error('Failed to cancel subscription');
     }
   }
+
+  async getSubCycleDetails(subscriptionId: string) {
+    try {
+      const subscription =
+        await this.stripe.subscriptions.retrieve(subscriptionId);
+
+      const currentPeriodStart = new Date(
+        subscription.current_period_start * 1000,
+      );
+      const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+
+      return {
+        //nextBillingCycleStart: currentPeriodStart,
+        //nextBillingCycleEnd: currentPeriodEnd,
+        sub: subscription,
+      };
+    } catch (error) {
+      console.error('Error retrieving subscription:', error);
+      throw new Error('Failed to retrieve billing cycle details');
+    }
+  }
 }

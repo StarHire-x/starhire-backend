@@ -32,6 +32,9 @@ import { CreateJobPreferenceDto } from 'src/job-preference/dto/create-job-prefer
 import { ForumPost } from 'src/entities/forumPost.entity';
 import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
 import ForumPostEnum from 'src/enums/forumPost.enum';
+import { CommissionRate } from 'src/entities/commissionRate.entity';
+import { CommissionRateService } from 'src/commission-rate/commission-rate.service';
+import { CreateCommissionRateDto } from 'src/commission-rate/dto/create-commission-rate.dto';
 
 require('dotenv').config();
 
@@ -65,6 +68,9 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(JobPreference)
     private readonly jobPreferenceRepository: Repository<JobPreference>,
     private readonly jobPreferenceService: JobPreferenceService,
+    @InjectRepository(CommissionRate)
+    private readonly commissionRateRepository: Repository<CommissionRate>,
+    private readonly commissionRateService: CommissionRateService,
   ) {}
 
   async onModuleInit() {
@@ -72,6 +78,20 @@ export class DataInitService implements OnModuleInit {
   }
 
   async initializeData() {
+
+    // if there's any existing commission rate, don't data init commission rate
+    const existingCommissionRates = await this.commissionRateService.findAll();
+    if (existingCommissionRates.length > 0) {
+      return;
+    }
+
+    // 10% commission rate creation
+    const createCommissionRateDto: CreateCommissionRateDto = new CreateCommissionRateDto();
+    createCommissionRateDto.commissionRate = 10;
+
+    await this.commissionRateService.create(createCommissionRateDto);
+    console.log(`Commission Rate of ${createCommissionRateDto.commissionRate}% is created.`);
+
     // Admin account creation
     const hashedAdminPassword = await bcrypt.hash(process.env.ADMIN_PW, 5);
     const createAdministratorDto: CreateAdministratorDto =

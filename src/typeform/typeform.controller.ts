@@ -13,11 +13,6 @@ import { TypeformService } from './typeform.service';
 export class TypeformController {
   constructor(private readonly typeformService: TypeformService) {}
 
-  @Get()
-  findAll() {
-    return this.typeformService.findAllCorporate();
-  }
-
   @Get('/corporate/:email')
   async findCorporateInfoByEmail(@Param('email') email: string) {
     return await this.typeformService.getCorporateInfoByEmail(email);
@@ -28,8 +23,23 @@ export class TypeformController {
     return await this.typeformService.getCorporateResponseByEmail(email);
   }
 
+  @Get('/jobseeker/:email')
+  async findJobSeekerInfoByEmail(@Param('email') email: string) {
+    return await this.typeformService.getJobSeekerInfoByEmail(email);
+  }
+
+  @Get('/jobseeker/responses/:email')
+  async findJobSeekerResponseByEmail(@Param('email') email: string) {
+    return await this.typeformService.getJobseekerResponseByEmail(email);
+  }
+
   @Post('/corporate')
-  async handleTypeformSubmission(@Body('email') email: string) {
-    return this.typeformService.handleFormSubmit(email);
+  async handleTypeformSubmissionCorporate(@Body('email') email: string) {
+    return this.typeformService.handleFormSubmitCorporate(email);
+  }
+
+  @Post('/jobseeker')
+  async handleTypeformSubmissionJobseeker(@Body('email') email: string) {
+    return this.typeformService.handleFormSubmitJobseeker(email);
   }
 }

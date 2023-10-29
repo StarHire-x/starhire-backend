@@ -72,7 +72,7 @@ export class JobListing {
   typeOfWorkers: string;
 
   @Column()
-  requiredLangaues: string;
+  requiredLanguages: string;
 
   @Column()
   otherConsiderations: string;

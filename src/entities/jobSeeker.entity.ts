@@ -54,6 +54,51 @@ export class JobSeeker extends User {
   @Column()
   dateOfGraduation: Date;
 
+  @Column()
+  country: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  proficientLanguages: string;
+
+  @Column()
+  experience: string;
+
+  @Column()
+  certifications: string;
+
+  @Column()
+  recentRole: string;
+
+  @Column()
+  resume: string;
+
+  @Column()
+  startDate: Date;
+
+  @Column()
+  preferredRegions: string;
+
+  @Column()
+  preferredJobType: string;
+
+  @Column()
+  preferredSchedule: string;
+
+  @Column()
+  payRange: string;
+
+  @Column()
+  visaRequirements: string;
+
+  @Column()
+  ranking: string;
+
+  @Column()
+  otherInfo: string;
+
   @OneToMany(() => ForumComment, (forumComment) => forumComment.jobSeeker, {
     cascade: true,
   })

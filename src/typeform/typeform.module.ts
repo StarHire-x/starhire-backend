@@ -14,12 +14,14 @@ import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { Administrator } from 'src/entities/administrator.entity';
 import { EmailModule } from 'src/email/email.module';
 import { TwilioModule } from 'src/twilio/twilio.module';
+import { JobseekerTypeform } from 'src/entities/jobseekerTypeform.entity';
 
 @Module({
   imports: [
     HttpModule,
     TypeOrmModule.forFeature([
       CorporateTypeform,
+      JobseekerTypeform,
       Corporate,
       JobListing,
       JobSeeker,

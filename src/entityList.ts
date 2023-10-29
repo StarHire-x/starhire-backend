@@ -22,6 +22,7 @@ import { JobAssignment } from './entities/jobAssignment.entity';
 import { SavedJobListing } from './entities/savedJobListing.entity';
 import { ForumCategory } from './entities/forumCategory.entity';
 import { CorporateTypeform } from './entities/corporateTypeform.entity';
+import { JobseekerTypeform } from './entities/jobseekerTypeform.entity';
 
 export const entityList = [
   User,
@@ -48,4 +49,5 @@ export const entityList = [
   JobAssignment,
   SavedJobListing,
   CorporateTypeform,
+  JobseekerTypeform,
 ];

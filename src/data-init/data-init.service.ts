@@ -87,10 +87,10 @@ export class DataInitService implements OnModuleInit {
 
     // 10% commission rate creation
     const createCommissionRateDto: CreateCommissionRateDto = new CreateCommissionRateDto();
-    createCommissionRateDto.commissionRate = 0.1;
+    createCommissionRateDto.commissionRate = 10;
 
     await this.commissionRateService.create(createCommissionRateDto);
-    console.log(`Commission Rate of ${createCommissionRateDto.commissionRate * 100}% is created.`);
+    console.log(`Commission Rate of ${createCommissionRateDto.commissionRate}% is created.`);
 
     // Admin account creation
     const hashedAdminPassword = await bcrypt.hash(process.env.ADMIN_PW, 5);

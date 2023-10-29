@@ -1,15 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
+import InvoiceStatusEnum from 'src/enums/invoiceStatus.enum';
 
 class UpdateDto {
   invoiceDate: Date;
-
+  invoiceStatus: InvoiceStatusEnum;
   dueDate: Date;
-
   billingAddress: string;
-
   totalAmount: number;
-
-  isPaid: boolean;
 }
 
 export class UpdateInvoiceDto extends PartialType(UpdateDto) {}

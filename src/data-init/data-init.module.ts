@@ -25,6 +25,8 @@ import { Document } from 'src/entities/document.entity';
 import { DocumentService } from 'src/document/document.service';
 import { JobPreference } from 'src/entities/jobPreference.entity';
 import { JobPreferenceService } from 'src/job-preference/job-preference.service';
+import { CommissionRate } from 'src/entities/commissionRate.entity';
+import { CommissionRateService } from 'src/commission-rate/commission-rate.service';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { JobPreferenceService } from 'src/job-preference/job-preference.service'
       Ticket,
       Document,
       JobPreference,
+      CommissionRate
     ]),
     EmailModule,
     TwilioModule,
@@ -58,6 +61,7 @@ import { JobPreferenceService } from 'src/job-preference/job-preference.service'
     TicketService,
     DocumentService,
     JobPreferenceService,
+    CommissionRateService
   ],
 })
 export class DataInitModule {}

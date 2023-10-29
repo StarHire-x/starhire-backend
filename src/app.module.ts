@@ -35,6 +35,7 @@ import { TwilioService } from './twilio/twilio.service';
 import { TwilioModule } from './twilio/twilio.module';
 import { TypeformModule } from './typeform/typeform.module';
 import { PaymentModule } from './payment/payment.module';
+import { CommissionRateModule } from './commission-rate/commission-rate.module';
 
 require('dotenv').config();
 
@@ -81,6 +82,7 @@ require('dotenv').config();
     TwilioModule,
     TypeformModule,
     PaymentModule,
+    CommissionRateModule,
   ],
   controllers: [AppController, TwilioController],
   providers: [AppService, TwilioService],

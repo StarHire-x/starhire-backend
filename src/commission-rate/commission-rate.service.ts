@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCommissionRateDto } from './dto/create-commission-rate.dto';
 import { UpdateCommissionRateDto } from './dto/update-commission-rate.dto';
 import { Repository } from 'typeorm';
@@ -38,8 +43,24 @@ export class CommissionRateService {
     return `This action returns a #${id} commissionRate`;
   }
 
-  update(id: number, updateCommissionRateDto: UpdateCommissionRateDto) {
-    return `This action updates a #${id} commissionRate`;
+  async update(id: number, updateCommissionRateDto: UpdateCommissionRateDto) {
+    try {
+      const commissionRate = await this.commissionRateRepository.findOneBy({
+        commissionRateId: id,
+      });
+
+      if (!commissionRate) {
+        throw new NotFoundException('CommissionRate Id provided is not valid');
+      }
+
+      commissionRate.commissionRate = updateCommissionRateDto.commissionRate;
+      return await this.commissionRateRepository.save(commissionRate);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update this commission rate!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   remove(id: number) {

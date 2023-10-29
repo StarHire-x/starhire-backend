@@ -5,7 +5,7 @@ export class CommissionRate {
   @PrimaryGeneratedColumn()
   commissionRateId: number;
 
-  @Column()
+  @Column("float")
   commissionRate: number; //  e.g. 10% commission rate will be stored as 10
 
   constructor(entity: Partial<CommissionRate>) {

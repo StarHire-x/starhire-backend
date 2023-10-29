@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { CommissionRateService } from './commission-rate.service';
 import { CreateCommissionRateDto } from './dto/create-commission-rate.dto';
 import { UpdateCommissionRateDto } from './dto/update-commission-rate.dto';
@@ -22,7 +22,7 @@ export class CommissionRateController {
     return this.commissionRateService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateCommissionRateDto: UpdateCommissionRateDto) {
     return this.commissionRateService.update(+id, updateCommissionRateDto);
   }

@@ -36,17 +36,8 @@ export class PaymentService {
   // This method will only get called on successful payment using the webhook
   async handleSubscription(subscriptionId: string, clientReferenceId: string) {
     try {
-      /*
-      const subscription =
-        await this.stripe.subscriptions.retrieve(subscriptionId);
-
-      const customerId = subscription.customer;
-      console.log(customerId);
-      */
-
       console.log('sub ID = ' + subscriptionId);
       console.log('user ID = ' + clientReferenceId);
-
 
       return 'Subscription successfully processed';
     } catch (error) {

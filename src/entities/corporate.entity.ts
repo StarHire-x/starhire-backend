@@ -30,11 +30,6 @@ export class Corporate extends User {
   @Column()
   companyAddress: string;
 
-  /*
-  @Column({ default: 'Regular' })
-  corporatePromotionStatus: string;
-  */
-
   @Column({
     type: 'enum',
     enum: CorporatePromotionStatusEnum,

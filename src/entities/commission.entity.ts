@@ -9,6 +9,7 @@ import {
 import { JobApplication } from './jobApplication.entity';
 import { Recruiter } from './recruiter.entity';
 import { Administrator } from './administrator.entity';
+import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
 
 @Entity({ name: 'commissions' })
 export class Commission {
@@ -17,6 +18,9 @@ export class Commission {
 
   @Column()
   commissionDate: Date;
+
+  @Column()
+  commissionStatus: CommissionStatusEnum;
 
   @Column()
   commissionAmount: number;

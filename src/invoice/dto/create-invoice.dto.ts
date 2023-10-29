@@ -1,9 +1,11 @@
+import InvoiceStatusEnum from 'src/enums/invoiceStatus.enum';
+
 export class CreateInvoiceDto {
   invoiceDate: Date;
+  invoiceStatus: InvoiceStatusEnum;
   dueDate: Date;
   billingAddress: string;
   totalAmount: number;
-  isPaid: boolean;
   administratorId: string;
   corporateId: string;
   jobApplicationIds: number[];

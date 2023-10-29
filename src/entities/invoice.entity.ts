@@ -8,6 +8,7 @@ import {
 import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
 import { JobApplication } from './jobApplication.entity';
+import InvoiceStatusEnum from 'src/enums/invoiceStatus.enum';
 
 @Entity({ name: 'invoices' })
 export class Invoice {
@@ -18,6 +19,9 @@ export class Invoice {
   invoiceDate: Date;
 
   @Column()
+  invoiceStatus: InvoiceStatusEnum;
+
+  @Column()
   dueDate: Date;
 
   @Column()
@@ -25,9 +29,6 @@ export class Invoice {
 
   @Column()
   totalAmount: number;
-
-  @Column()
-  isPaid: boolean;
 
   @ManyToOne(() => Administrator, (administrator) => administrator.invoices, {
     nullable: false,

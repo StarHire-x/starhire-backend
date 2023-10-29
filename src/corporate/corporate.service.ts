@@ -160,8 +160,11 @@ export class CorporateService {
         rejected: 0,
         unverified: 0,
         archived: 0,
-      }
-      breakdown.approved = jobListings.filter((jobListing) => jobListing.jobListingStatus === JobListingStatusEnum.APPROVED).length
+      };
+      breakdown.approved = jobListings.filter(
+        (jobListing) =>
+          jobListing.jobListingStatus === JobListingStatusEnum.APPROVED,
+      ).length;
       breakdown.rejected = jobListings.filter(
         (jobListing) =>
           jobListing.jobListingStatus === JobListingStatusEnum.REJECTED,
@@ -219,7 +222,7 @@ export class CorporateService {
           chats: true,
           tickets: true,
           jobPreference: true,
-          invoices: true,
+          invoices: { jobApplications: { jobListing: true, recruiter: true } },
         },
       });
       if (!corporate) {

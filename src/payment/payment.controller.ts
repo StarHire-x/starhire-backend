@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment-dto';
 import { Stripe } from 'stripe';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('payment')
 export class PaymentController {
@@ -15,30 +16,36 @@ export class PaymentController {
   }
   */
 
+  @Public()
   @Post('create-checkout-session')
   async createCheckoutSessionWithPost(@Body() paymentData: CreatePaymentDto) {
-    const session = await this.paymentService.createCheckoutSessionW(
+    const session = await this.paymentService.createCheckoutSession(
       paymentData.userId,
     );
     return { session };
   }
 
+  @Public()
   @Post('stripe')
   async handleStripeWebhook(@Body() event: Stripe.Event) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      //const subscriptionId = session.subscription;
+
       const subscriptionId = session.subscription as string;
+      const clientReferenceId = session.client_reference_id as string;
 
-      // Now you have the subscription ID, you can process it as needed
-      //this.paymentService.processSubscription(subscriptionId);
+      //console.log('Subscription ID:', subscriptionId);
+      //console.log('Client Reference ID:', clientReferenceId);
 
-      // Respond to the webhook request with a 200 OK status
-      console.log(subscriptionId);
-      await this.paymentService.handleSubscription(subscriptionId);
+      await this.paymentService.handleSubscription(
+        subscriptionId,
+        clientReferenceId,
+      );
+
       return 'Webhook received and processed';
     }
   }
+
   @Post('cancel')
   async cancelSubscription(@Body() body: { subscriptionId: string }) {
     try {

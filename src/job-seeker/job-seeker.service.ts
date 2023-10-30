@@ -199,11 +199,10 @@ export class JobSeekerService {
       });
 
       if (!jobSeeker) {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker id not found',
-          data: [],
-        };
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const initialNotificationStatus = jobSeeker.notificationMode;

@@ -36,7 +36,7 @@ export class JobSeekerController {
 
   @Public()
   @Get('/similarity/:id')
-  findAllJobSeeker(@Param('id') id: number) {
+  findAllJobSeekerSimilarity(@Param('id') id: number) {
     try {
       return this.jobSeekerService.findAllWithSimilarity(id);
     } catch (error) {

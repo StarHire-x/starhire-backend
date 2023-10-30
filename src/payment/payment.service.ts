@@ -124,7 +124,7 @@ export class PaymentService {
         nextBillingCycleEnd: currentPeriodEnd,
       };
 
-      return { status: 200, data: responseData };
+      return { statusCode: 200, data: responseData };
     } catch (error) {
       console.error('Error retrieving subscription:', error);
       return { status: 500, error: 'Failed to retrieve billing cycle details' };

@@ -8,13 +8,12 @@ import { Public } from 'src/users/public.decorator';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Public()
+  //@Public()
   @Post('create-checkout-session')
   async createCheckoutSessionWithPost(@Body() paymentData: CreatePaymentDto) {
-    const session = await this.paymentService.createCheckoutSession(
-      paymentData.userId,
-    );
-    return { session };
+    console.log(paymentData);
+    return await this.paymentService.createCheckoutSession(paymentData.userId);
+    //return { session };
   }
 
   @Public()
@@ -38,17 +37,14 @@ export class PaymentController {
   }
 
   @Public()
-  @Get(':subscriptionId/billing-cycle-details')
+  @Get('billing-cycle-details/:subscriptionId')
   async getBillingCycleDetails(
     @Param('subscriptionId') subscriptionId: string,
   ) {
     try {
       const billingCycleDetails =
         await this.paymentService.getSubCycleDetails(subscriptionId);
-      return {
-        success: true,
-        data: billingCycleDetails,
-      };
+      return billingCycleDetails;
     } catch (error) {
       return {
         success: false,

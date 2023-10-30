@@ -33,8 +33,8 @@ export class PaymentService {
       ],
       client_reference_id: clientReferenceId,
       mode: 'subscription',
-      success_url: 'http://localhost:3001/payment',
-      cancel_url: 'http://localhost:3000' + '/pay/failed/checkout/session',
+      success_url: 'http://localhost:3001/payment/success',
+      cancel_url: 'http://localhost:3001/payment/failure',
     });
 
     //return session;

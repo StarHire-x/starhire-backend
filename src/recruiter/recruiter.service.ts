@@ -175,13 +175,22 @@ export class RecruiterService {
         }
       });
 
-      const duration = totalDuration / count;
+      let duration;
+
+      if(count === 0) {
+        duration = 0;
+      } else {
+        duration = totalDuration / count;
+      }
+
       const hours = Math.floor(duration / (1000 * 60 * 60));
       const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((duration % (1000 * 60)) / 1000);
 
-      const formattedDuration = `${hours}hrs ${minutes}mins`;
-
+      let formattedDuration = `${hours}hrs ${minutes}mins`;
+      if (formattedDuration === '0hrs 0mins') {
+        formattedDuration = 'N.A';
+      }
 
       const formatResponse = await Promise.all(
         pendingResponse.map(async (jobAssignment) => {

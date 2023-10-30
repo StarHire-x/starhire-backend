@@ -33,7 +33,7 @@ export class PaymentService {
       ],
       client_reference_id: clientReferenceId,
       mode: 'subscription',
-      success_url: 'https://www.google.com',
+      success_url: 'http://localhost:8080/payment',
       cancel_url: 'http://localhost:3000' + '/pay/failed/checkout/session',
     });
 

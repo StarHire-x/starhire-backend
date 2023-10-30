@@ -79,7 +79,11 @@ export class RecruiterService {
 
   async findAll() {
     try {
-      const recruiters = await this.recruiterRepository.find();
+      const recruiters = await this.recruiterRepository.find({
+        relations: {
+          jobApplications: {commission: true},
+        }
+      });
       if (recruiters.length > 0) {
         return {
           statusCode: HttpStatus.OK,

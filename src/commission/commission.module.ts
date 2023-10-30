@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Commission } from 'src/entities/commission.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
 import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Administrator } from 'src/entities/administrator.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Commission, Recruiter, JobApplication])],
+  imports: [TypeOrmModule.forFeature([Commission, Recruiter, Administrator, JobApplication])],
   controllers: [CommissionController],
   providers: [CommissionService],
 })

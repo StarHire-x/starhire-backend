@@ -92,7 +92,6 @@ export class PaymentService {
 
   async cancelSubscription(subscriptionId: string) {
     try {
-      // Cancel the subscription at the end of the billing period
       const canceledSubscription = await this.stripe.subscriptions.update(
         subscriptionId,
         {
@@ -100,7 +99,6 @@ export class PaymentService {
         },
       );
 
-      // Handle any additional logic in your application (e.g., updating user status)
 
       return 'Subscription successfully canceled';
     } catch (error) {

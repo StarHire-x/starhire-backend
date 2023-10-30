@@ -153,7 +153,14 @@ export class JobSeekerService {
           // reviews: true,
         },
       });
-      return jobSeeker;
+      if (jobSeeker) {
+        return jobSeeker;
+      } else {
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
@@ -192,11 +199,10 @@ export class JobSeekerService {
       });
 
       if (!jobSeeker) {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker id not found',
-          data: [],
-        };
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const initialNotificationStatus = jobSeeker.notificationMode;
@@ -346,73 +352,86 @@ export class JobSeekerService {
   };
 
   async calculateSimilarity(jobSeekers: any[], corporate: Corporate) {
-    const results = await Promise.all(jobSeekers.map(async (jobSeeker) => {
-      let userBenefits =
-        this.getValueOrDefault(jobSeeker.jobPreference?.benefitPreference) * 20;
-      let userWLBalance =
-        this.getValueOrDefault(
-          jobSeeker.jobPreference?.workLifeBalancePreference,
-        ) * 20;
-      let userSalary =
-        this.getValueOrDefault(jobSeeker.jobPreference?.salaryPreference) * 20;
+    const results = await Promise.all(
+      jobSeekers.map(async (jobSeeker) => {
+        let userBenefits =
+          this.getValueOrDefault(jobSeeker.jobPreference?.benefitPreference) *
+          20;
+        let userWLBalance =
+          this.getValueOrDefault(
+            jobSeeker.jobPreference?.workLifeBalancePreference,
+          ) * 20;
+        let userSalary =
+          this.getValueOrDefault(jobSeeker.jobPreference?.salaryPreference) *
+          20;
 
-      let corporatePreferenceRating = corporate.jobPreference;
+        let corporatePreferenceRating = corporate.jobPreference;
 
-      if (userBenefits === 0 && userWLBalance === 0 && userSalary === 0) {
-        jobSeeker.similarity = 0.0;
+        if (userBenefits === 0 && userWLBalance === 0 && userSalary === 0) {
+          jobSeeker.similarity = 0.0;
+          jobSeeker.corporatePreference = corporatePreferenceRating;
+          return jobSeeker;
+        }
+
+        let corporateBenefits =
+          this.getValueOrDefault(corporate.jobPreference?.benefitPreference) *
+          20;
+        let corporateWLBalance =
+          this.getValueOrDefault(
+            corporate.jobPreference?.workLifeBalancePreference,
+          ) * 20;
+        let corporateSalary =
+          this.getValueOrDefault(corporate.jobPreference?.salaryPreference) *
+          20;
+
+        let dotProduct =
+          userBenefits * corporateBenefits +
+          userWLBalance * corporateWLBalance +
+          userSalary * corporateSalary;
+
+        let userMagnitude = Math.sqrt(
+          Math.pow(userBenefits, 2) +
+            Math.pow(userWLBalance, 2) +
+            Math.pow(userSalary, 2),
+        );
+        let corporateMagnitude = Math.sqrt(
+          Math.pow(corporateBenefits, 2) +
+            Math.pow(corporateWLBalance, 2) +
+            Math.pow(corporateSalary, 2),
+        );
+
+        // Ensure we don't divide by zero and handle NaN case
+        let similarity: number;
+        if (userMagnitude === 0 || corporateMagnitude === 0) {
+          similarity = 0;
+        } else {
+          similarity = dotProduct / (userMagnitude * corporateMagnitude);
+        }
+
+        let percentageSimilarity = Number(
+          (((similarity + 1) / 2) * 100).toFixed(2),
+        );
+
+        jobSeeker.similarity = percentageSimilarity;
         jobSeeker.corporatePreference = corporatePreferenceRating;
         return jobSeeker;
-      }
-
-      let corporateBenefits =
-        this.getValueOrDefault(corporate.jobPreference?.benefitPreference) * 20;
-      let corporateWLBalance =
-        this.getValueOrDefault(
-          corporate.jobPreference?.workLifeBalancePreference,
-        ) * 20;
-      let corporateSalary =
-        this.getValueOrDefault(corporate.jobPreference?.salaryPreference) * 20;
-
-      let dotProduct =
-        userBenefits * corporateBenefits +
-        userWLBalance * corporateWLBalance +
-        userSalary * corporateSalary;
-
-      let userMagnitude = Math.sqrt(
-        Math.pow(userBenefits, 2) +
-          Math.pow(userWLBalance, 2) +
-          Math.pow(userSalary, 2),
-      );
-      let corporateMagnitude = Math.sqrt(
-        Math.pow(corporateBenefits, 2) +
-          Math.pow(corporateWLBalance, 2) +
-          Math.pow(corporateSalary, 2),
-      );
-
-      // Ensure we don't divide by zero and handle NaN case
-      let similarity: number;
-      if (userMagnitude === 0 || corporateMagnitude === 0) {
-        similarity = 0;
-      } else {
-        similarity = dotProduct / (userMagnitude * corporateMagnitude);
-      }
-
-      let percentageSimilarity = Number(
-        (((similarity + 1) / 2) * 100).toFixed(2),
-      );
-
-      jobSeeker.similarity = percentageSimilarity;
-      jobSeeker.corporatePreference = corporatePreferenceRating;
-      return jobSeeker;
-    }));
+      }),
+    );
     return results;
   }
 
   async remove(id: string) {
     try {
-      return await this.jobSeekerRepository.delete({
+      const result = await this.jobSeekerRepository.delete({
         userId: id,
       });
+      if (result.affected === 0) {
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return result;
     } catch (err) {
       throw new HttpException(
         'Failed to delete job seeker',

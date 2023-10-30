@@ -1,3 +1,3 @@
 export class CreatePaymentDto {
-    userId: string;
-  }
+  userId: string;
+}

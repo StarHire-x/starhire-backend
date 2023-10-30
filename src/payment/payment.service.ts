@@ -37,7 +37,12 @@ export class PaymentService {
       cancel_url: 'http://localhost:3000' + '/pay/failed/checkout/session',
     });
 
-    return session;
+    //return session;
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Checkout session created',
+      data: session.url,
+    };
   }
 
   // This method will only get called on successful payment using the webhook
@@ -114,14 +119,15 @@ export class PaymentService {
       );
       const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
 
-      return {
-        //nextBillingCycleStart: currentPeriodStart,
-        //nextBillingCycleEnd: currentPeriodEnd,
-        sub: subscription,
+      const responseData = {
+        nextBillingCycleStart: currentPeriodStart,
+        nextBillingCycleEnd: currentPeriodEnd,
       };
+
+      return { statusCode: 200, data: responseData };
     } catch (error) {
       console.error('Error retrieving subscription:', error);
-      throw new Error('Failed to retrieve billing cycle details');
+      return { status: 500, error: 'Failed to retrieve billing cycle details' };
     }
   }
 }

@@ -44,6 +44,19 @@ export class CommissionController {
     }
   }
 
+  @Get('/recruiter/:recruiterId/admin/:adminId')
+  findAllByRecruiterIdAndAdminId(@Param('recruiterId') recruiterId: string, @Param('adminId') adminId: string) {
+    try {
+      return this.commissionService.findAllByRecruiterIdAndAdminId(recruiterId, adminId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     try {

@@ -8,7 +8,7 @@ import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobApplication } from 'src/entities/jobApplication.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { JobListing } from 'src/entities/jobListing.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
@@ -18,6 +18,8 @@ import { Document } from 'src/entities/document.entity';
 import { EmailService } from 'src/email/email.service';
 import { TwilioService } from 'src/twilio/twilio.service';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
+import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
 
 @Injectable()
 export class JobApplicationService {
@@ -154,6 +156,39 @@ export class JobApplicationService {
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
     return await this.jobApplicationRepository.find();
+  }
+
+  async findAllYetCommissionedSuccessfulJobAppsByRecruiterId(userId: string) {
+    try {
+      const jobApplications = await this.jobApplicationRepository.find({
+        where: {
+          recruiter: { userId: userId },
+          jobApplicationStatus: JobApplicationStatusEnum.OFFER_ACCEPTED,
+          commission: IsNull(),
+        },
+        relations: {
+          jobListing: true,
+        },
+      });
+
+      if (jobApplications.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Existing job applications are found',
+          data: jobApplications,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'No job applications is found for recruiters',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job application',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   // Only the child entity (document) is eagerly loaded
@@ -359,7 +394,7 @@ export class JobApplicationService {
         },
         relations: { jobSeeker: true, jobListing: true },
       });
-    
+
       if (jobApplication) {
         return {
           statusCode: HttpStatus.OK,

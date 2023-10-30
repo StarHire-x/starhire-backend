@@ -61,7 +61,8 @@ export class PaymentController {
       const result = await this.paymentService.cancelSubscription(
         body.subscriptionId,
       );
-      return { success: true, message: result };
+      return result;
+      //return { success: true, message: result };
     } catch (error) {
       return { success: false, error: error.message };
     }

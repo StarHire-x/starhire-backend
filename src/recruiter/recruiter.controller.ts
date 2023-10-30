@@ -49,7 +49,6 @@ export class RecruiterController {
         throw new InternalServerErrorException('Internal server error');
       }
     }
-    
   }
 
   // GET /recruiter?id=1
@@ -71,6 +70,19 @@ export class RecruiterController {
   findOneRecruiter(@Param('id') id: string) {
     try {
       return this.recruiterService.findOne(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/matching/:id')
+  findRecruiterMatchingStatistics(@Param('id') id: string) {
+    try {
+      return this.recruiterService.findRecrutierMatchingStatistics(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);

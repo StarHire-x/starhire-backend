@@ -50,6 +50,7 @@ require('dotenv').config();
       database: process.env.DB_NAME,
       entities: entityList,
       synchronize: true,
+      timezone: '+08:00',
     }),
     UsersModule,
     JobApplicationModule,

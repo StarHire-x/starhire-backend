@@ -11,6 +11,8 @@ import { Commission } from 'src/entities/commission.entity';
 import { Repository } from 'typeorm';
 import { JobApplication } from 'src/entities/jobApplication.entity';
 import { Recruiter } from 'src/entities/recruiter.entity';
+import { Administrator } from 'src/entities/administrator.entity';
+import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
 
 @Injectable()
 export class CommissionService {
@@ -22,12 +24,18 @@ export class CommissionService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
+    @InjectRepository(Administrator)
+    private readonly adminRepository: Repository<Administrator>,
   ) {}
 
   async create(createCommissionDto: CreateCommissionDto) {
     try {
-      const { jobApplicationIds, recruiterId, ...dtoExcludingParentIds } =
-        createCommissionDto;
+      const {
+        jobApplicationIds,
+        recruiterId,
+        administratorId,
+        ...dtoExcludingParentIds
+      } = createCommissionDto;
 
       const jobApplications = [];
       for (let id of jobApplicationIds) {
@@ -49,11 +57,21 @@ export class CommissionService {
         throw new NotFoundException('Invalid Recruiter Id provided');
       }
 
+      const administrator = await this.adminRepository.findOne({
+        where: { userId: administratorId },
+      });
+      if (!administrator) {
+        throw new NotFoundException('Invalid Admin Id provided');
+      }
+
       const commission = new Commission({
         ...dtoExcludingParentIds,
         jobApplications,
         recruiter,
+        administrator,
       });
+      
+      commission.commissionStatus = CommissionStatusEnum.INDICATED_PAID;
       return await this.commissionRepository.save(commission);
     } catch (err) {
       throw new HttpException(

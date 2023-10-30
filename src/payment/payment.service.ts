@@ -95,12 +95,14 @@ export class PaymentService {
       const canceledSubscription = await this.stripe.subscriptions.update(
         subscriptionId,
         {
-          cancel_at_period_end: true,
+          cancel_at_period_end: false,
         },
       );
 
-
-      return 'Subscription successfully canceled';
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Subscription successfully canceled',
+      };
     } catch (error) {
       console.error('Error canceling subscription:', error);
       throw new Error('Failed to cancel subscription');

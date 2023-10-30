@@ -136,12 +136,23 @@ export class EventListingService {
 
   async update(id: number, updateEventListingDto: UpdateEventListingDto) {
     try {
-      const eventListing = await this.eventListingRepository.findOneBy({
-        eventListingId: id,
+      const eventListing = await this.eventListingRepository.findOne({
+        where: { eventListingId: id },
+        relations: { corporate: true },
       });
 
       if (!eventListing) {
         throw new NotFoundException('Event Listing Id provided is not valid');
+      }
+
+      const corporate = eventListing.corporate;
+
+      // If eventListingStatus is to be updated, ensure it is a valid enum
+      if (updateEventListingDto.eventListingStatus) {
+        const mappedStatus = mapEventListingStatusToEnum(
+          updateEventListingDto.eventListingStatus,
+        );
+        updateEventListingDto.eventListingStatus = mappedStatus;
       }
 
       Object.assign(eventListing, updateEventListingDto);

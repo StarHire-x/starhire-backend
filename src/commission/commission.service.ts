@@ -124,7 +124,7 @@ export class CommissionService {
       relations: {
         recruiter: true,
         administrator: true,
-        jobApplications: true,
+        jobApplications: { commission: true },
       },
     });
   }
@@ -149,6 +149,13 @@ export class CommissionService {
 
   async remove(id: number) {
     try {
+      const commissionToDelete = await this.findOne(id);
+      const jobApplications = commissionToDelete.jobApplications;
+      for (let i = 0; i < jobApplications.length; i++) {
+        const jobApplication = jobApplications[i];
+        jobApplication.commission = null;
+        await this.jobApplicationRepository.save(jobApplication);
+      }
       return await this.commissionRepository.delete({ commissionId: id });
     } catch (err) {
       throw new HttpException(

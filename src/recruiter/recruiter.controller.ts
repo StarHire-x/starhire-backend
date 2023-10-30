@@ -36,7 +36,7 @@ export class RecruiterController {
     }
   }
 
-  @Get()
+  @Get('/all')
   async findAllRecruiters() {
     try {
       const result = await this.recruiterService.findAll();

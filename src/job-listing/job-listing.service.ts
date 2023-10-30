@@ -288,6 +288,7 @@ export class JobListingService {
       jobAssignment.jobListingId = jobListingId;
       jobAssignment.jobSeekerId = jobSeekerId;
       jobAssignment.recruiterId = recruiterId;
+      jobAssignment.assignedTime = new Date();
       await this.jobAssignmentRepository.save(jobAssignment);
 
       if (jobListing && jobSeeker && recruiter) {

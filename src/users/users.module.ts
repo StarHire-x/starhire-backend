@@ -17,6 +17,7 @@ import { AuthGuard } from './auth.guard';
 import { EmailModule } from 'src/email/email.module';
 import { TwilioModule } from 'src/twilio/twilio.module';
 import { JobListing } from 'src/entities/jobListing.entity';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
 
 
 require("dotenv").config();
@@ -30,6 +31,7 @@ require("dotenv").config();
       Corporate,
       Administrator,
       JobListing,
+      JobAssignment,
     ]),
     JwtModule.register({
       global: true,

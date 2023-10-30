@@ -5,9 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Recruiter } from '../entities/recruiter.entity';
 import { EmailService } from 'src/email/email.service';
 import { TwilioService } from 'src/twilio/twilio.service';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobListing } from 'src/entities/jobListing.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Recruiter])],
+  imports: [TypeOrmModule.forFeature([Recruiter, JobAssignment, JobSeeker, JobListing])],
   controllers: [RecruiterController],
   providers: [RecruiterService, EmailService, TwilioService],
 })

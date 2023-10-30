@@ -3,6 +3,7 @@ import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
 export class CreateCommissionDto {
   commissionDate: Date;
   // commissionStatus: CommissionStatusEnum;
+  commissionRate: number;
   commissionAmount: number;
   // Parent entities
   jobApplicationIds: number[];

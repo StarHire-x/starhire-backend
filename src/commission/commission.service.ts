@@ -70,7 +70,7 @@ export class CommissionService {
         recruiter,
         administrator,
       });
-      
+
       commission.commissionStatus = CommissionStatusEnum.INDICATED_PAID;
       return await this.commissionRepository.save(commission);
     } catch (err) {
@@ -88,10 +88,44 @@ export class CommissionService {
     });
   }
 
+  async findAllByRecruiterIdAndAdminId(recruiterId: string, adminId: string) {
+    try {
+      const commissions = await this.commissionRepository.find({
+        where: {
+          recruiter: { userId: recruiterId },
+          administrator: { userId: adminId },
+        },
+        relations: { jobApplications: { jobListing: true } },
+      });
+
+      if (commissions.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Retrieved commissions',
+          data: commissions,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'No commission is found for recruiter and admin',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to retrieve commmissions by recruiter id',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     return await this.commissionRepository.findOne({
       where: { commissionId: id },
-      relations: { recruiter: true, jobApplications: true },
+      relations: {
+        recruiter: true,
+        administrator: true,
+        jobApplications: true,
+      },
     });
   }
 

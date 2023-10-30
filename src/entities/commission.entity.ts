@@ -22,6 +22,9 @@ export class Commission {
   @Column()
   commissionStatus: CommissionStatusEnum;
 
+  @Column('float')
+  commissionRate: number; //  e.g. 10% commission rate will be stored as 10
+
   @Column()
   commissionAmount: number;
 

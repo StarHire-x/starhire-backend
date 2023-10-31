@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Query } from '@nestjs/common';
 import Stripe from 'stripe';
 import { config } from 'dotenv';
 import { resolve } from 'path';
@@ -90,22 +90,45 @@ export class PaymentService {
     }
   }
 
-  async cancelSubscription(subscriptionId: string) {
+  async cancelSubscription(userId: string) {
     try {
-      const canceledSubscription = await this.stripe.subscriptions.update(
-        subscriptionId,
-        {
-          cancel_at_period_end: false,
-        },
-      );
+      const corporateResponse =
+        await this.corporateService.findByUserId(userId);
 
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Subscription successfully canceled',
-      };
+      if (corporateResponse && corporateResponse.data) {
+        const corporate = corporateResponse.data;
+
+        if (corporate) {
+          const corporateUpdateDto = new UpdateCorporateDto();
+          corporateUpdateDto.corporatePromotionStatus =
+            CorporatePromotionStatusEnum.REGULAR;
+
+          corporateUpdateDto.stripeSubId = null;
+          corporateUpdateDto.stripeCustId = null;
+
+          await this.corporateService.update(userId, corporateUpdateDto);
+
+          const canceledSubscription = await this.stripe.subscriptions.update(
+            corporate.stripeSubId,
+            {
+              cancel_at_period_end: false,
+            },
+          );
+        } else {
+          throw new Error('Corporate not found for the given user ID');
+        }
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Subscription successfully canceled',
+        };
+      }
     } catch (error) {
       console.error('Error canceling subscription:', error);
-      throw new Error('Failed to cancel subscription');
+      //throw new Error('Failed to cancel subscription');
+      return {
+        status: 500,
+        error: 'Failed to unsubscribe, contact our admins',
+      };
     }
   }
 

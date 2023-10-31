@@ -22,6 +22,8 @@ import NotificationModeEnum from 'src/enums/notificationMode.enum';
 import UserRoleEnum from 'src/enums/userRole.enum';
 import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
 import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import { JobListing } from 'src/entities/jobListing.entity';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 
 @Injectable()
 export class CorporateService {
@@ -30,6 +32,10 @@ export class CorporateService {
     private readonly corporateRepository: Repository<Corporate>,
     @InjectRepository(JobSeeker)
     private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(JobListing)
+    private readonly jobListingRepository: Repository<JobListing>,
+    @InjectRepository(JobApplication)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
     private emailService: EmailService,
     private twilioService: TwilioService,
   ) {}
@@ -493,6 +499,60 @@ export class CorporateService {
         'Failed to find corporate',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  async getJobApplicationsForCorporate(corporateId: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: corporateId },
+        relations: {
+          jobListings: true,
+        },
+      });
+
+      if (!corporate) {
+        throw new HttpException('Corporate is not found', HttpStatus.NOT_FOUND);
+      }
+
+      const formatResponse = await Promise.all(
+        corporate.jobListings.map(async (jl) => {
+          const jobListing = await this.jobListingRepository.findOne({
+            where: { jobListingId: jl.jobListingId },
+            relations: ['jobApplications', 'jobApplications.jobSeeker'],
+          });
+
+          console.log(jobListing.jobApplications);
+
+          const jobApplications = await Promise.all(
+            jobListing.jobApplications.map(async (ja) => {
+              return {
+                jobApplicationId: ja.jobApplicationId,
+                jobApplicationStatus: ja.jobApplicationStatus,
+                jobSeekerId: ja.jobSeeker.userId,
+                jobSeekerName: ja.jobSeeker.fullName,
+                jobSeekerProfilePic: ja.jobSeeker.profilePictureUrl,
+              };
+            }),
+          );
+
+          return {
+            jobListingId: jobListing.jobListingId,
+            jobListingTitle: jobListing.title,
+            jobApplications,
+          };
+        }),
+      );
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Statistics found',
+        data: {
+          formatResponse,
+        },
+      };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

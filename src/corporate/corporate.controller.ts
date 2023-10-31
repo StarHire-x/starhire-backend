@@ -149,6 +149,19 @@ export class CorporateController {
     }
   }
 
+  @Get('/jobApplications/:id')
+  getJobApplicationForCorporate(@Param('id') id: string) {
+    try {
+      return this.corporateService.getJobApplicationsForCorporate(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Put(':id')
   updateCorporate(
     @Param('id') id: string,

@@ -1,4 +1,4 @@
 export class EventRegistrationDetailDto {
-    eventListingId: number;
-    isActive: boolean;
+  eventListingId: number;
+  registrationDate: Date;
 }

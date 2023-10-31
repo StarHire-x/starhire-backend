@@ -111,7 +111,7 @@ export class PaymentService {
           const canceledSubscription = await this.stripe.subscriptions.update(
             corporate.stripeSubId,
             {
-              cancel_at_period_end: false,
+              cancel_at_period_end: true,
             },
           );
         } else {

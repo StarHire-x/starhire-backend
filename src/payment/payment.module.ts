@@ -7,9 +7,11 @@ import { Corporate } from 'src/entities/corporate.entity';
 import { TwilioService } from 'src/twilio/twilio.service';
 import { EmailService } from 'src/email/email.service';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobListing } from 'src/entities/jobListing.entity';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Corporate, JobSeeker])],
+  imports: [TypeOrmModule.forFeature([Corporate, JobSeeker, JobListing, JobApplication])],
   controllers: [PaymentController],
   providers: [PaymentService, CorporateService, EmailService, TwilioService],
 })

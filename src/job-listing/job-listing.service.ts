@@ -132,7 +132,7 @@ export class JobListingService {
     try {
       const corporate = await this.corporateRepository.findOne({
         where: { userId: id },
-        relations: { jobListings: true },
+        relations: { jobListings: {jobApplications : true} },
       });
 
       if (!corporate) {

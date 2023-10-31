@@ -3,17 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Put,
-  Query,
   Param,
   Delete,
-  ConflictException,
   HttpException,
   InternalServerErrorException,
-  NotFoundException,
   HttpStatus,
-  ParseIntPipe
 } from '@nestjs/common';
 import { EventRegistrationService } from './event-registration.service';
 import { CreateEventRegistrationDto } from './dto/create-event-registration.dto';
@@ -38,7 +33,7 @@ export class EventRegistrationController {
     }
   }
 
-  @Get('/all')
+  @Get()
   findAllEventRegistrations() {
     try {
       return this.eventRegistrationService.findAll();
@@ -71,7 +66,10 @@ export class EventRegistrationController {
     @Body() updateEventRegistrationDto: UpdateEventRegistrationDto,
   ) {
     try {
-      return this.eventRegistrationService.update(id, updateEventRegistrationDto);
+      return this.eventRegistrationService.update(
+        id,
+        updateEventRegistrationDto,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

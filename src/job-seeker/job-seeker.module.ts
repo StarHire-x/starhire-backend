@@ -19,6 +19,7 @@ import { TwilioService } from 'src/twilio/twilio.service';
 import { CorporateService } from 'src/corporate/corporate.service';
 import { Corporate } from 'src/entities/corporate.entity';
 import { EventListing } from 'src/entities/eventListing.entity';
+import { EventRegistration } from 'src/entities/eventRegistration.entity';
 
 @Module({
   imports: [

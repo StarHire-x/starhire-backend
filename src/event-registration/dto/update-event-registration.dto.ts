@@ -1,8 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateEventRegistrationDto } from './create-event-registration.dto';
 
-class UpdateDto {
-    isActive: boolean;
-}
+class UpdateDto {}
 
 export class UpdateEventRegistrationDto extends PartialType(UpdateDto) {}

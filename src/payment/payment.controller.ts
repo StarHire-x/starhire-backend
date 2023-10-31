@@ -56,13 +56,10 @@ export class PaymentController {
 
   @Public()
   @Post('cancel')
-  async cancelSubscription(@Body() body: { subscriptionId: string }) {
+  async cancelSubscription(@Body() body: { userId: string }) {
     try {
-      const result = await this.paymentService.cancelSubscription(
-        body.subscriptionId,
-      );
+      const result = await this.paymentService.cancelSubscription(body.userId);
       return result;
-      //return { success: true, message: result };
     } catch (error) {
       return { success: false, error: error.message };
     }

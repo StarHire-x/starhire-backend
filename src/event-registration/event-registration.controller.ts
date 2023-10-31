@@ -46,6 +46,26 @@ export class EventRegistrationController {
     }
   }
 
+  @Get('/existing/:jobSeekerId/:eventListingId')
+  // Check whether an existing event registration has already been created
+  async findExistingEventRegistration(
+    @Param('jobSeekerId') jobSeekerId: string,
+    @Param('eventListingId') eventListingId: number,
+  ) {
+    try {
+      return await this.eventRegistrationService.findEventRegistrationByJobSeekerEventListing(
+        jobSeekerId,
+        eventListingId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   // GET /event-registration/:id
   @Get(':id')
   findOne(@Param('id') id: number) {

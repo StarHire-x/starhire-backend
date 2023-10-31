@@ -71,6 +71,38 @@ export class EventRegistrationService {
     return await this.eventRegistrationRepository.find();
   }
 
+  async findEventRegistrationByJobSeekerEventListing(
+    jobSeekerId: string,
+    eventListingId: number,
+  ) {
+    try {
+      const eventRegistration = await this.eventRegistrationRepository.findOne({
+        where: {
+          jobSeeker: { userId: jobSeekerId },
+          eventListing: { eventListingId: eventListingId },
+        },
+        relations: { jobSeeker: true, eventListing: true },
+      });
+
+      if (eventRegistration) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Existing event registration found',
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Existing event registration not found',
+        };
+      }
+    } catch (error) {
+      throw new HttpException(
+        'No event registration found in event listing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     try {
       return await this.eventRegistrationRepository.findOne({

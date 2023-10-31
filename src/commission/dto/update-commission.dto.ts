@@ -5,6 +5,8 @@ class UpdateDto {
   commissionDate: Date;
   commissionStatus: CommissionStatusEnum;
   commissionAmount: number;
+  commissionRate: number;
+  paymentDocumentURL: string;
 }
 
 export class UpdateCommissionDto extends PartialType(UpdateDto) {}

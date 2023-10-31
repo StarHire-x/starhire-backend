@@ -28,6 +28,9 @@ export class Commission {
   @Column()
   commissionAmount: number;
 
+  @Column()
+  paymentDocumentURL: string;
+
   // @OneToOne(() => Invoice, { nullable: true })
   // @JoinColumn()
   // invoice: Invoice;

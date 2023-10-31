@@ -22,6 +22,7 @@ import { TwilioService } from 'src/twilio/twilio.service';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { JobSeeker } from 'src/entities/jobSeeker.entity';
 import { JobListing } from 'src/entities/jobListing.entity';
+import { JobApplication } from 'src/entities/jobApplication.entity';
 
 @Injectable()
 export class RecruiterService {
@@ -36,6 +37,8 @@ export class RecruiterService {
     private readonly jobSeekerRepository: Repository<JobSeeker>,
     @InjectRepository(JobListing)
     private readonly jobListingRepository: Repository<JobListing>,
+    @InjectRepository(JobApplication)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
   async create(createRecruiterDto: CreateRecruiterDto) {
@@ -123,7 +126,7 @@ export class RecruiterService {
         where: { recruiterId: userId },
       });
 
-      console.log(jobAssignments)
+      console.log(jobAssignments);
 
       let acceptanceRate;
 
@@ -181,7 +184,7 @@ export class RecruiterService {
 
       let duration;
 
-      if(count === 0) {
+      if (count === 0) {
         duration = 0;
       } else {
         duration = totalDuration / count;
@@ -216,7 +219,7 @@ export class RecruiterService {
             corporateName: jobListing.corporate.companyName,
             corporateProfilePic: jobListing.corporate.profilePictureUrl,
             jobListingId: jobListing.jobListingId,
-            jobListingTitle: jobListing.title, 
+            jobListingTitle: jobListing.title,
           };
         }),
       );
@@ -309,6 +312,84 @@ export class RecruiterService {
         },
       });
       return recruiter;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getJobApplicationsForRecruiter(recruiterId: string) {
+    try {
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId: recruiterId },
+        relations: {
+          jobApplications: true,
+        },
+      });
+
+      if (!recruiter) {
+        throw new HttpException('Recruiter Id not found', HttpStatus.NOT_FOUND);
+      }
+
+      const predefinedStatuses = {
+        'Total': recruiter.jobApplications.length,
+        'Submitted': 0,
+        'Processing': 0,
+        'To_Be_Submitted': 0,
+        'Waiting_For_Interview': 0,
+        'Offer_Rejected': 0,
+        'Offer_Accepted': 0,
+        'Rejected': 0,
+        'Offered': 0,
+      };
+
+      const statusCount = recruiter.jobApplications.reduce(
+        (acc, item) => {
+          if (acc.hasOwnProperty(item.jobApplicationStatus)) {
+            acc[item.jobApplicationStatus]++;
+          }
+          // Note: If the status doesn't match any predefined status, it's ignored.
+          return acc;
+        },
+        { ...predefinedStatuses },
+      );
+
+      const formatResponse = await Promise.all(
+        recruiter.jobApplications.map(async (jobApplication) => {
+          const jobApplicationRef = await this.jobApplicationRepository.findOne(
+            {
+              where: { jobApplicationId: jobApplication.jobApplicationId },
+              relations: ['jobSeeker', 'jobListing'],
+            },
+          );
+
+          const jobListing = await this.jobListingRepository.findOne({
+            where: { jobListingId: jobApplicationRef.jobListing.jobListingId },
+            relations: ['corporate'],
+          });
+
+          return {
+            jobApplicationId: jobApplication.jobApplicationId,
+            jobApplicationStatus: jobApplication.jobApplicationStatus,
+            jobSeekerId: jobApplicationRef.jobSeeker.userId,
+            jobSeekerName: jobApplicationRef.jobSeeker.fullName,
+            jobSeekerProfilePic: jobApplicationRef.jobSeeker.profilePictureUrl,
+            corporateId: jobListing.corporate.userId,
+            corporateName: jobListing.corporate.companyName,
+            corporateProfilePic: jobListing.corporate.profilePictureUrl,
+            jobListingId: jobListing.jobListingId,
+            jobListingTitle: jobListing.title,
+          };
+        }),
+      );
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Statistics found',
+        data: {
+          statusCount,
+          formatResponse,
+        },
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

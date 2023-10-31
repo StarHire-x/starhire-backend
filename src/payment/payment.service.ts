@@ -108,11 +108,16 @@ export class PaymentService {
 
           await this.corporateService.update(userId, corporateUpdateDto);
 
+          /*
           const canceledSubscription = await this.stripe.subscriptions.update(
             corporate.stripeSubId,
             {
               cancel_at_period_end: true,
             },
+          );
+          */
+          const subscription = await this.stripe.subscriptions.cancel(
+            corporate.stripeSubId,
           );
         } else {
           throw new Error('Corporate not found for the given user ID');

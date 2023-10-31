@@ -5,6 +5,7 @@ export class CreateCommissionDto {
   // commissionStatus: CommissionStatusEnum;
   commissionRate: number;
   commissionAmount: number;
+  paymentDocumentURL: string;
   // Parent entities
   jobApplicationIds: number[];
   recruiterId: string;

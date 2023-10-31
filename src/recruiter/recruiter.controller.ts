@@ -92,6 +92,19 @@ export class RecruiterController {
     }
   }
 
+  @Get('/jobApplications/:id')
+  findJobApplicationManagedByRecruiter(@Param('id') id: string) {
+    try {
+      return this.recruiterService.getJobApplicationsForRecruiter(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Put(':id')
   updateRecruiter(
     @Param('id') id: string,

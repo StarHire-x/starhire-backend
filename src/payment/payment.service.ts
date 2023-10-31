@@ -124,7 +124,11 @@ export class PaymentService {
       }
     } catch (error) {
       console.error('Error canceling subscription:', error);
-      throw new Error('Failed to cancel subscription');
+      //throw new Error('Failed to cancel subscription');
+      return {
+        status: 500,
+        error: 'Failed to unsubscribe, contact our admins',
+      };
     }
   }
 

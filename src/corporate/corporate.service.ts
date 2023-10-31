@@ -91,7 +91,7 @@ export class CorporateService {
   async findAll() {
     try {
       const corporates = await this.corporateRepository.find({
-        relations: { chats: true },
+        relations: { chats: true, jobListings: {jobApplications: {invoice: true}}},
       });
       if (corporates.length > 0) {
         return {

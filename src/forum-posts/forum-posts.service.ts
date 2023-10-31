@@ -8,11 +8,11 @@ import { CreateForumPostDto } from './dto/create-forum-post.dto';
 import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
-import { ForumPost } from 'src/entities/forumPost.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { mapForumCategoryToEnum } from 'src/common/mapStringToEnum';
-import { ForumCategory } from 'src/entities/forumCategory.entity';
-import ForumPostEnum from 'src/enums/forumPost.enum';
+import { ForumPost } from '../entities/forumPost.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { mapForumCategoryToEnum } from '../common/mapStringToEnum';
+import { ForumCategory } from '../entities/forumCategory.entity';
+import ForumPostEnum from '../enums/forumPost.enum';
 
 @Injectable()
 export class ForumPostsService {
@@ -73,7 +73,7 @@ export class ForumPostsService {
         createdAt: 'DESC',
       },
       relations: { jobSeeker: true, forumCategory: true },
-      loadRelationIds: {relations: ['forumComments']}, // to retrieve number of comments only, no need fetch the entire comment object
+      loadRelationIds: { relations: ['forumComments'] }, // to retrieve number of comments only, no need fetch the entire comment object
       where: [
         // {
         //   forumPostStatus: ForumPostEnum.Pending,
@@ -137,7 +137,7 @@ export class ForumPostsService {
           jobSeeker: true,
           forumCategory: true,
         },
-        loadRelationIds: {relations: ['forumComments']}, // to retrieve number of comments only, no need fetch the entire comment object
+        loadRelationIds: { relations: ['forumComments'] }, // to retrieve number of comments only, no need fetch the entire comment object
       });
       return response;
     } catch (err) {
@@ -185,7 +185,7 @@ export class ForumPostsService {
           },
         ],
         relations: { jobSeeker: true, forumCategory: true },
-        loadRelationIds: {relations: ['forumComments']}, // to retrieve number of comments only, no need fetch the entire comment object
+        loadRelationIds: { relations: ['forumComments'] }, // to retrieve number of comments only, no need fetch the entire comment object
       });
       return response;
     } catch (err) {

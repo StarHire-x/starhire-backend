@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import { Recruiter } from '../../entities/recruiter.entity';
+import JobListingStatusEnum from '../../enums/jobListingStatus.enum';
 
 class UpdateDto {
   title: string;

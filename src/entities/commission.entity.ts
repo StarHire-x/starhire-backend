@@ -9,7 +9,7 @@ import {
 import { JobApplication } from './jobApplication.entity';
 import { Recruiter } from './recruiter.entity';
 import { Administrator } from './administrator.entity';
-import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
+import CommissionStatusEnum from '../enums/commissionStatus.enum';
 
 @Entity({ name: 'commissions' })
 export class Commission {

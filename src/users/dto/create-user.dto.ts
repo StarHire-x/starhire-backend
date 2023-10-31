@@ -1,6 +1,6 @@
-import UserStatusEnum from 'src/enums/userStatus.enum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
+import UserStatusEnum from '../../enums/userStatus.enum';
+import NotificationModeEnum from '../../enums/notificationMode.enum';
+import UserRoleEnum from '../../enums/userRole.enum';
 
 export class CreateUserDto {
   // userId: number;

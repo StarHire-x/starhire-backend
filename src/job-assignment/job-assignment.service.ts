@@ -7,10 +7,10 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { JobListing } from '../entities/jobListing.entity';
+import { Recruiter } from '../entities/recruiter.entity';
 
 @Injectable()
 export class JobAssignmentService {

@@ -1,4 +1,4 @@
-import StarCategoryEnum from 'src/enums/starCategory.enum';
+import StarCategoryEnum from '../../enums/starCategory.enum';
 
 export class CreateReviewDto {
   description: string;

@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import StarCategoryEnum from 'src/enums/starCategory.enum';
+import StarCategoryEnum from '../../enums/starCategory.enum';
 
 export class UpdateDto {
   description: string;

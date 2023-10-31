@@ -1,4 +1,4 @@
-import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
+import EventListingStatusEnum from '../enums/eventListingStatus.enum';
 import {
   Column,
   Entity,

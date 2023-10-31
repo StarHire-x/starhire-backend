@@ -8,7 +8,7 @@ import {
 import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
 import { JobApplication } from './jobApplication.entity';
-import InvoiceStatusEnum from 'src/enums/invoiceStatus.enum';
+import InvoiceStatusEnum from '../enums/invoiceStatus.enum';
 
 @Entity({ name: 'invoices' })
 export class Invoice {

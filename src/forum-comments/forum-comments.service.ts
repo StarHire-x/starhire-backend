@@ -8,9 +8,9 @@ import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
 import { UpdateForumCommentDto } from './dto/update-forum-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ForumComment } from 'src/entities/forumComment.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { ForumPost } from 'src/entities/forumPost.entity';
+import { ForumComment } from '../entities/forumComment.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { ForumPost } from '../entities/forumPost.entity';
 
 @Injectable()
 export class ForumCommentsService {
@@ -70,11 +70,11 @@ export class ForumCommentsService {
   async findCommentsByForumPostId(forumPostId: number) {
     try {
       const comments = await this.forumCommentRepository.find({
-        where: {forumPost: {forumPostId: forumPostId}},
+        where: { forumPost: { forumPostId: forumPostId } },
         order: {
           createdAt: 'DESC',
         },
-        relations: {jobSeeker: true}
+        relations: { jobSeeker: true },
       });
 
       return comments;

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateJobSeekerDto } from './dto/create-job-seeker.dto';
 import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -16,14 +16,14 @@ import {
   mapUserRoleToEnum,
   mapUserStatusToEnum,
   mapVisibilityToEnum,
-} from 'src/common/mapStringToEnum';
-import { Public } from 'src/users/public.decorator';
-import { EmailService } from 'src/email/email.service';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import { TwilioService } from 'src/twilio/twilio.service';
-import { Corporate } from 'src/entities/corporate.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
+} from '../common/mapStringToEnum';
+import { Public } from '../users/public.decorator';
+import { EmailService } from '../email/email.service';
+import UserRoleEnum from '../enums/userRole.enum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import { TwilioService } from '../twilio/twilio.service';
+import { Corporate } from '../entities/corporate.entity';
+import { JobListing } from '../entities/jobListing.entity';
 
 @Injectable()
 export class JobSeekerService {
@@ -42,6 +42,17 @@ export class JobSeekerService {
     try {
       const jobSeeker = new JobSeeker({ ...createJobSeekerDto });
 
+      const jobSeekerFind = await this.jobSeekerRepository.findOne({
+        where: { email: jobSeeker.email },
+      });
+
+      if (jobSeekerFind) {
+        throw new HttpException(
+          'Job seeker already created',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       // Convert all ENUM values
       if (jobSeeker.status) {
         jobSeeker.status = mapUserStatusToEnum(jobSeeker.status);
@@ -59,6 +70,7 @@ export class JobSeekerService {
           jobSeeker.highestEducationStatus,
         );
       }
+
       await this.jobSeekerRepository.save(jobSeeker);
       if (jobSeeker) {
         return {
@@ -66,12 +78,7 @@ export class JobSeekerService {
           message: 'Job seeker created',
           data: jobSeeker,
         };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker failed to be created',
-        };
-      }
+      } 
     } catch (err) {
       throw new HttpException(
         'Failed to create job seeker',
@@ -94,10 +101,10 @@ export class JobSeekerService {
           data: jobSeeker,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker not found',
-        };
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
     } catch (err) {
       throw new HttpException(
@@ -125,10 +132,10 @@ export class JobSeekerService {
           data: jobSeeker,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker not found',
-        };
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
     } catch (err) {
       throw new HttpException(
@@ -182,10 +189,10 @@ export class JobSeekerService {
           data: jobSeeker.following.length,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Following not found',
-        };
+        throw new HttpException(
+          'Job seeker id not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
@@ -281,11 +288,10 @@ export class JobSeekerService {
           data: jobSeekers,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker not found',
-          data: [],
-        };
+        throw new HttpException(
+          'Job seeker not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
     } catch {
       throw new HttpException(
@@ -333,11 +339,7 @@ export class JobSeekerService {
           data: jobSeekerWithSimilarity,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker not found',
-          data: [],
-        };
+        throw new HttpException('Job seeker not found', HttpStatus.NOT_FOUND);
       }
     } catch {
       throw new HttpException(

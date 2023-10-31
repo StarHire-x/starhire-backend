@@ -9,13 +9,13 @@ import {
 } from '@nestjs/common';
 import { QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Ticket } from 'src/entities/ticket.entity';
-import { Administrator } from 'src/entities/administrator.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Document } from 'src/entities/document.entity';
-import { mapTicketCategoryToEnum } from 'src/common/mapStringToEnum';
+import { Ticket } from '../entities/ticket.entity';
+import { Administrator } from '../entities/administrator.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Document } from '../entities/document.entity';
+import { mapTicketCategoryToEnum } from '../common/mapStringToEnum';
 
 @Injectable()
 export class TicketService {

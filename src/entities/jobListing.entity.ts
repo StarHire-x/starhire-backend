@@ -1,4 +1,4 @@
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
 import {
   Column,
   CreateDateColumn,

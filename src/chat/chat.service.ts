@@ -7,11 +7,11 @@ import {
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Chat } from 'src/entities/chat.entity';
+import { Chat } from '../entities/chat.entity';
 import { Repository } from 'typeorm';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 
 @Injectable()
 export class ChatService {
@@ -181,7 +181,7 @@ export class ChatService {
     try {
       const currentChat = await this.chatRepository.findOne({
         where: {
-          chatId: chatId
+          chatId: chatId,
         },
         relations: {
           chatMessages: true,

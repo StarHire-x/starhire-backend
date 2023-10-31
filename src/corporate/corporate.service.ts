@@ -9,19 +9,19 @@ import {
 } from '@nestjs/common';
 import { QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Corporate } from 'src/entities/corporate.entity';
+import { Corporate } from '../entities/corporate.entity';
 import {
   mapNotificationModeToEnum,
   mapUserRoleToEnum,
   mapUserStatusToEnum,
-} from 'src/common/mapStringToEnum';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { EmailService } from 'src/email/email.service';
-import { TwilioService } from 'src/twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+} from '../common/mapStringToEnum';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import UserRoleEnum from '../enums/userRole.enum';
+import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
 
 @Injectable()
 export class CorporateService {

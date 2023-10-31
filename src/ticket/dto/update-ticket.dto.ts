@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { UpdateDocumentDto } from 'src/document/dto/update-document.dto';
-import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import { UpdateDocumentDto } from '../../document/dto/update-document.dto';
+import TicketCategoryEnum from '../../enums/ticketCategory.enum';
 
 class UpdateDto {
   adminId: string; // can update adminId once admin picks up this ticket, initially will be null upon ticket creation

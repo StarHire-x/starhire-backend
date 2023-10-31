@@ -3,14 +3,14 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CorporateTypeform } from 'src/entities/corporateTypeform.entity';
+import { CorporateTypeform } from '../entities/corporateTypeform.entity';
 import { Repository } from 'typeorm';
-import { Corporate } from 'src/entities/corporate.entity';
-import { JobListingService } from 'src/job-listing/job-listing.service';
-import { CreateJobListingDto } from 'src/job-listing/dto/create-job-listing.dto';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import { JobseekerTypeform } from 'src/entities/jobseekerTypeform.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { JobListingService } from '../job-listing/job-listing.service';
+import { CreateJobListingDto } from '../job-listing/dto/create-job-listing.dto';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
+import { JobseekerTypeform } from '../entities/jobseekerTypeform.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 
 @Injectable()
 export class TypeformService {

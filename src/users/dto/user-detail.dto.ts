@@ -1,7 +1,7 @@
-import UserStatusEnum from "src/enums/userStatus.enum";
-import NotificationModeEnum from "src/enums/notificationMode.enum";
-import UserRoleEnum from "src/enums/userRole.enum";
-import { CreateTicketDto } from "src/ticket/dto/create-ticket.dto";
+import UserStatusEnum from '../../enums/userStatus.enum';
+import NotificationModeEnum from '../../enums/notificationMode.enum';
+import UserRoleEnum from '../../enums/userRole.enum';
+import { CreateTicketDto } from '../../ticket/dto/create-ticket.dto';
 
 export class UserDetailDto {
   userName: string;

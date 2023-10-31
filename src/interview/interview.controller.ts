@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+} from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
-import { Interview } from 'src/entities/interview.entity';
-import { Public } from 'src/users/public.decorator';
+import { Interview } from '../entities/interview.entity';
+import { Public } from '../users/public.decorator';
 
 @Controller('interview')
 export class InterviewController {

@@ -7,7 +7,7 @@ import {
 import { CreateCommissionRateDto } from './dto/create-commission-rate.dto';
 import { UpdateCommissionRateDto } from './dto/update-commission-rate.dto';
 import { Repository } from 'typeorm';
-import { CommissionRate } from 'src/entities/commissionRate.entity';
+import { CommissionRate } from '../entities/commissionRate.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()

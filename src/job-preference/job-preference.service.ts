@@ -7,12 +7,12 @@ import {
 } from '@nestjs/common';
 import { CreateJobPreferenceDto } from './dto/create-job-preference.dto';
 import { UpdateJobPreferenceDto } from './dto/update-job-preference.dto';
-import { JobPreference } from 'src/entities/jobPreference.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobPreference } from '../entities/jobPreference.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Corporate } from 'src/entities/corporate.entity';
-import UserRoleEnum from 'src/enums/userRole.enum';
+import { Corporate } from '../entities/corporate.entity';
+import UserRoleEnum from '../enums/userRole.enum';
 
 @Injectable()
 export class JobPreferenceService {

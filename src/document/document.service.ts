@@ -7,10 +7,10 @@ import {
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Document } from 'src/entities/document.entity';
+import { Document } from '../entities/document.entity';
 import { Repository } from 'typeorm';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { Ticket } from 'src/entities/ticket.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { Ticket } from '../entities/ticket.entity';
 
 @Injectable()
 export class DocumentService {

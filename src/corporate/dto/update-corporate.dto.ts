@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateCorporateDto } from './create-corporate.dto';
-import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
+import CorporatePromotionStatusEnum from '../../enums/corporatePromotionStatus.enum';
 
 export class UpdateCorporateDto extends PartialType(CreateCorporateDto) {
   corporatePromotionStatus: CorporatePromotionStatusEnum;

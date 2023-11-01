@@ -20,6 +20,7 @@ import VisibilityEnum from '../enums/visibility.enum';
 import CommissionStatusEnum from '../enums/commissionStatus.enum';
 import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
 import InvoiceStatusEnum from '../enums/invoiceStatus.enum';
+import { Recruiter } from '../entities/recruiter.entity';
 
 describe('CorporateService', () => {
   let corporateService: CorporateService;
@@ -115,7 +116,7 @@ describe('CorporateService', () => {
         companyAddress: '123 Main St, Anytown, USA',
       };
 
-      const corporate: Corporate = {
+      const corporate = new Corporate({
         userId: 'corporateTest',
         userName: 'corporateTest',
         email: 'corporateTest@gmail.com',
@@ -125,25 +126,12 @@ describe('CorporateService', () => {
         notificationMode: NotificationModeEnum.EMAIL,
         createdAt: new Date(),
         role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+      });
+
+      corporate.companyName = 'corporateTest Pte Ltd';
+      corporate.companyRegistrationId = 1234567890;
+      corporate.profilePictureUrl = 'https://example.com/profile-picture.jpg';
+      corporate.companyAddress = '123 Main St, Anytown, USA';
 
       jest.spyOn(corporateRepository, 'save').mockResolvedValueOnce(corporate);
 
@@ -185,64 +173,12 @@ describe('CorporateService', () => {
   describe('findByEmail', () => {
     it('should return all job seekers', async () => {
       const corporates: Corporate[] = [
-        {
+        new Corporate({
           userId: 'corporateTest',
-          userName: 'corporateTest',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
-        {
+        }),
+        new Corporate({
           userId: 'corporateTest2',
-          userName: 'corporateTest2',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
+        }),
       ];
 
       jest.spyOn(corporateRepository, 'find').mockResolvedValue(corporates);
@@ -264,99 +200,37 @@ describe('CorporateService', () => {
 
   describe('findAllJobStatistics', () => {
     it('should fill all job statistics', async () => {
+      const jobApplication = new JobApplication({
+        jobApplicationId: 1,
+        jobApplicationStatus: JobApplicationStatusEnum.OFFERED,
+      });
+
+      const jobListing = new JobListing({
+        jobListingId: 1,
+        title: 'Software Engineer',
+        jobListingStatus: JobListingStatusEnum.APPROVED,
+      });
+
+      jobListing.jobApplications = [jobApplication]
+
       const corporates: Corporate[] = [
-        {
+        new Corporate({
           userId: 'corporateTest',
-          userName: 'corporateTest',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
-        {
+        }),
+        new Corporate({
           userId: 'corporateTest2',
-          userName: 'corporateTest2',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [
-            {
-              jobListingId: 1,
-              title: 'Software Engineer',
-              overview: 'Develop and maintain software applications.',
-              responsibilities:
-                'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-              requirements:
-                '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-              requiredDocuments: 'Resume, Cover Letter',
-              jobLocation: 'New York, NY',
-              listingDate: new Date(),
-              averageSalary: 80000,
-              jobStartDate: new Date('2024-01-01'),
-              jobListingStatus: JobListingStatusEnum.APPROVED,
-              payRange: '70,000 - 90,000',
-              jobType: 'Full-time',
-              schedule: 'Monday to Friday',
-              supplementalPay: 'Bonus pay',
-              otherBenefits: 'Health insurance, 401(k)',
-              certificationsRequired: 'None',
-              typeOfWorkers: 'Permanent',
-              requiredLanguages: 'English',
-              otherConsiderations: 'Must be eligible to work in the U.S.',
-              corporate: undefined,
-              jobApplications: [],
-              jobSeekers: [],
-              savedBy: [],
-            },
-          ],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
+        }),
       ];
 
+      corporates[0].companyName = 'corporateTest Pte Ltd';
+      corporates[1].companyName = 'corporateTest2 Pte Ltd';
+
+      corporates[0].jobListings = [jobListing];
+      corporates[1].jobListings = [];
+
       const calculation = {
-        labels: ['corporateTest Pte Ltd'],
-        values: [1],
+        labels: ['corporateTest Pte Ltd', 'corporateTest2 Pte Ltd'],
+        values: [1,0],
       };
 
       jest.spyOn(corporateRepository, 'find').mockResolvedValue(corporates);
@@ -378,180 +252,44 @@ describe('CorporateService', () => {
 
   describe('findBreakdownJobStatistics', () => {
     it('should find breakdown of job statistics', async () => {
+      const jobListing = new JobListing({
+        jobListingId: 1,
+        title: 'Software Engineer',
+        jobListingStatus: JobListingStatusEnum.APPROVED,
+      });
+
+      const jobListing2 = new JobListing({
+        jobListingId: 2,
+        title: 'Software Engineer',
+        jobListingStatus: JobListingStatusEnum.REJECTED,
+      });
+
+      const jobListing3 = new JobListing({
+        jobListingId: 3,
+        title: 'Software Engineer',
+        jobListingStatus: JobListingStatusEnum.UNVERIFIED,
+      });
+
+      const jobListing4 = new JobListing({
+        jobListingId: 4,
+        title: 'Software Engineer',
+        jobListingStatus: JobListingStatusEnum.ARCHIVED,
+      });
+
       const corporates: Corporate[] = [
-        {
+        new Corporate({
           userId: 'corporateTest',
-          userName: 'corporateTest',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [
-            {
-              jobListingId: 3,
-              title: 'Data Engineer',
-              overview: 'Develop and maintain software applications.',
-              responsibilities:
-                'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-              requirements:
-                '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-              requiredDocuments: 'Resume, Cover Letter',
-              jobLocation: 'New York, NY',
-              listingDate: new Date(),
-              averageSalary: 80000,
-              jobStartDate: new Date('2024-01-01'),
-              jobListingStatus: JobListingStatusEnum.UNVERIFIED,
-              payRange: '70,000 - 90,000',
-              jobType: 'Full-time',
-              schedule: 'Monday to Friday',
-              supplementalPay: 'Bonus pay',
-              otherBenefits: 'Health insurance, 401(k)',
-              certificationsRequired: 'None',
-              typeOfWorkers: 'Permanent',
-              requiredLanguages: 'English',
-              otherConsiderations: 'Must be eligible to work in the U.S.',
-              corporate: undefined,
-              jobApplications: [],
-              jobSeekers: [],
-              savedBy: [],
-            },
-            {
-              jobListingId: 4,
-              title: 'Data Engineer 2',
-              overview: 'Develop and maintain software applications.',
-              responsibilities:
-                'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-              requirements:
-                '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-              requiredDocuments: 'Resume, Cover Letter',
-              jobLocation: 'New York, NY',
-              listingDate: new Date(),
-              averageSalary: 80000,
-              jobStartDate: new Date('2024-01-01'),
-              jobListingStatus: JobListingStatusEnum.ARCHIVED,
-              payRange: '70,000 - 90,000',
-              jobType: 'Full-time',
-              schedule: 'Monday to Friday',
-              supplementalPay: 'Bonus pay',
-              otherBenefits: 'Health insurance, 401(k)',
-              certificationsRequired: 'None',
-              typeOfWorkers: 'Permanent',
-              requiredLanguages: 'English',
-              otherConsiderations: 'Must be eligible to work in the U.S.',
-              corporate: undefined,
-              jobApplications: [],
-              jobSeekers: [],
-              savedBy: [],
-            },
-          ],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
-        {
+        }),
+        new Corporate({
           userId: 'corporateTest2',
-          userName: 'corporateTest2',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest2 Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [
-            {
-              jobListingId: 1,
-              title: 'Software Engineer',
-              overview: 'Develop and maintain software applications.',
-              responsibilities:
-                'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-              requirements:
-                '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-              requiredDocuments: 'Resume, Cover Letter',
-              jobLocation: 'New York, NY',
-              listingDate: new Date(),
-              averageSalary: 80000,
-              jobStartDate: new Date('2024-01-01'),
-              jobListingStatus: JobListingStatusEnum.APPROVED,
-              payRange: '70,000 - 90,000',
-              jobType: 'Full-time',
-              schedule: 'Monday to Friday',
-              supplementalPay: 'Bonus pay',
-              otherBenefits: 'Health insurance, 401(k)',
-              certificationsRequired: 'None',
-              typeOfWorkers: 'Permanent',
-              requiredLanguages: 'English',
-              otherConsiderations: 'Must be eligible to work in the U.S.',
-              corporate: undefined,
-              jobApplications: [],
-              jobSeekers: [],
-              savedBy: [],
-            },
-            {
-              jobListingId: 2,
-              title: 'Software Engineer 2',
-              overview: 'Develop and maintain software applications.',
-              responsibilities:
-                'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-              requirements:
-                '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-              requiredDocuments: 'Resume, Cover Letter',
-              jobLocation: 'New York, NY',
-              listingDate: new Date(),
-              averageSalary: 80000,
-              jobStartDate: new Date('2024-01-01'),
-              jobListingStatus: JobListingStatusEnum.REJECTED,
-              payRange: '70,000 - 90,000',
-              jobType: 'Full-time',
-              schedule: 'Monday to Friday',
-              supplementalPay: 'Bonus pay',
-              otherBenefits: 'Health insurance, 401(k)',
-              certificationsRequired: 'None',
-              typeOfWorkers: 'Permanent',
-              requiredLanguages: 'English',
-              otherConsiderations: 'Must be eligible to work in the U.S.',
-              corporate: undefined,
-              jobApplications: [],
-              jobSeekers: [],
-              savedBy: [],
-            },
-          ],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
+        }),
       ];
+
+      corporates[0].companyName = 'corporateTest Pte Ltd';
+      corporates[1].companyName = 'corporateTest2 Pte Ltd';
+
+      corporates[0].jobListings = [jobListing3, jobListing4];
+      corporates[1].jobListings = [jobListing, jobListing2];
 
       const calculation = {
         'corporateTest Pte Ltd': {
@@ -590,94 +328,24 @@ describe('CorporateService', () => {
 
   describe('findBreakdownJobStatisticsOneCorporate', () => {
     it('should find breakdown of job statistics by one corporate', async () => {
-      const corporate: Corporate = {
-        userId: 'corporateTest',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [
-          {
-            jobListingId: 3,
-            title: 'Data Engineer',
-            overview: 'Develop and maintain software applications.',
-            responsibilities:
-              'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-            requirements:
-              '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-            requiredDocuments: 'Resume, Cover Letter',
-            jobLocation: 'New York, NY',
-            listingDate: new Date(),
-            averageSalary: 80000,
-            jobStartDate: new Date('2024-01-01'),
-            jobListingStatus: JobListingStatusEnum.UNVERIFIED,
-            payRange: '70,000 - 90,000',
-            jobType: 'Full-time',
-            schedule: 'Monday to Friday',
-            supplementalPay: 'Bonus pay',
-            otherBenefits: 'Health insurance, 401(k)',
-            certificationsRequired: 'None',
-            typeOfWorkers: 'Permanent',
-            requiredLanguages: 'English',
-            otherConsiderations: 'Must be eligible to work in the U.S.',
-            corporate: undefined,
-            jobApplications: [],
-            jobSeekers: [],
-            savedBy: [],
-          },
-          {
-            jobListingId: 4,
-            title: 'Data Engineer 2',
-            overview: 'Develop and maintain software applications.',
-            responsibilities:
-              'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-            requirements:
-              '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-            requiredDocuments: 'Resume, Cover Letter',
-            jobLocation: 'New York, NY',
-            listingDate: new Date(),
-            averageSalary: 80000,
-            jobStartDate: new Date('2024-01-01'),
-            jobListingStatus: JobListingStatusEnum.ARCHIVED,
-            payRange: '70,000 - 90,000',
-            jobType: 'Full-time',
-            schedule: 'Monday to Friday',
-            supplementalPay: 'Bonus pay',
-            otherBenefits: 'Health insurance, 401(k)',
-            certificationsRequired: 'None',
-            typeOfWorkers: 'Permanent',
-            requiredLanguages: 'English',
-            otherConsiderations: 'Must be eligible to work in the U.S.',
-            corporate: undefined,
-            jobApplications: [],
-            jobSeekers: [],
-            savedBy: [],
-          },
-        ],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+      const jobListing3 = new JobListing({
+        jobListingId: 3,
+        title: 'Software Engineer',
+        jobListingStatus: JobListingStatusEnum.UNVERIFIED,
+      });
 
-      const corporateId = 'corporateTest';
+      const jobListing4 = new JobListing({
+        jobListingId: 4,
+        title: 'Software Engineer',
+        jobListingStatus: JobListingStatusEnum.ARCHIVED,
+      });
+
+      const corporate = new Corporate({
+        userId: 'corporateTest',
+      });
+
+      corporate.companyName = 'corporateTest Pte Ltd';
+      corporate.jobListings = [jobListing3, jobListing4];
 
       const calculation = {
         approved: 0,
@@ -689,7 +357,7 @@ describe('CorporateService', () => {
       jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
       const result =
         await corporateService.findBreakdownJobStatisticsOneCorporate(
-          corporateId,
+          'corporateId',
         );
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
@@ -712,35 +380,9 @@ describe('CorporateService', () => {
   describe('findOne', () => {
     it('should find one corporate', async () => {
       const corporateId = 'corporateTest';
-      const corporate: Corporate = {
+      const corporate = new Corporate({
         userId: 'corporateTest',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+      });
 
       jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
       const result = await corporateService.findOne(corporateId);
@@ -777,35 +419,11 @@ describe('CorporateService', () => {
   describe('findByEmail', () => {
     it('should find one corporate by email', async () => {
       const email = 'corporateTest@gmail.com';
-      const corporate: Corporate = {
+      const corporate = new Corporate({
         userId: 'corporateTest',
-        userName: 'corporateTest',
         email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+      });
+
 
       jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
       const result = await corporateService.findByEmail(email);
@@ -828,35 +446,9 @@ describe('CorporateService', () => {
   describe('findByUserId', () => {
     it('should find a corporate by user ID', async () => {
       const userId = 'sampleUserId';
-      const corporate: Corporate = {
+      const corporate = new Corporate({
         userId: 'sampleUserId',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+      });
 
       jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
 
@@ -894,112 +486,18 @@ describe('CorporateService', () => {
   describe('findAllCorporatesSocial', () => {
     it('should find all corporate followers', async () => {
       const corporates: Corporate[] = [
-        {
+        new Corporate({
           userId: 'corporateTest',
-          userName: 'corporateTest',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [
-            {
-              userId: 'testingJohn',
-              userName: 'johndoe',
-              email: 'johndoe@example.com',
-              password: 'securepassword',
-              contactNo: '555-1234',
-              status: UserStatusEnum.ACTIVE,
-              notificationMode: NotificationModeEnum.EMAIL,
-              createdAt: new Date(),
-              role: UserRoleEnum.JOBSEEKER,
-              resumePdf: 'sample-resume.pdf',
-              fullName: 'John Doe',
-              dateOfBirth: new Date(),
-              highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-              profilePictureUrl: 'https://example.com/profile-picture.jpg',
-              homeAddress: '123 Main St, Anytown, USA',
-              instituteName: 'University of Example',
-              dateOfGraduation: new Date(),
-              visibility: VisibilityEnum.PUBLIC,
-              country: '',
-              description: '',
-              proficientLanguages: '',
-              experience: '',
-              certifications: '',
-              recentRole: '',
-              resume: '',
-              startDate: undefined,
-              preferredRegions: '',
-              preferredJobType: '',
-              preferredSchedule: '',
-              payRange: '',
-              visaRequirements: '',
-              ranking: '',
-              otherInfo: '',
-              forumComments: [],
-              jobApplications: [],
-              eventRegistrations: [],
-              forumPosts: [],
-              chats: [],
-              jobPreference: undefined,
-              jobExperiences: [],
-              tickets: [],
-              reviews: [],
-              jobListings: [],
-              savedJobListings: [],
-              following: [],
-            },
-          ],
-          invoices: [],
-        },
-        {
+        }),
+        new Corporate({
           userId: 'corporateTest2',
-          userName: 'corporateTest2',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest2 Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
+        })
+      ];
+
+      corporates[0].followers = [
+        new JobSeeker({
+          userId: 'testingJohn',
+        }),
       ];
 
       jest.spyOn(corporateRepository, 'find').mockResolvedValue(corporates);
@@ -1033,35 +531,10 @@ describe('CorporateService', () => {
     });
 
     it('should throw an error when jobSeekerId is invalid', async () => {
-      const corporateMock = {
-        userId: 'corporateTest',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+      const corporateMock = new Corporate({
+          userId: 'corporateTest',
+      });
+
       jest
         .spyOn(corporateRepository, 'findOne')
         .mockResolvedValueOnce(corporateMock)
@@ -1078,82 +551,14 @@ describe('CorporateService', () => {
     });
 
     it('should allow job seeker to follow corporate', async () => {
-      const corporateMock = {
+      const corporateMock = new Corporate({
         userId: 'corporateTest',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
-      const jobSeekerMock = {
+      });
+      corporateMock.followers = []
+      const jobSeekerMock = new JobSeeker({
         userId: 'testingJohn',
-        userName: 'johndoe',
-        email: 'johndoe@example.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
-      };
+      });
+      jobSeekerMock.following = []
 
       jest
         .spyOn(corporateRepository, 'findOne')
@@ -1202,83 +607,11 @@ describe('CorporateService', () => {
     });
 
     it('should throw an error when jobSeekerId is invalid', async () => {
-      const corporateMock = {
+      const corporateMock = new Corporate({
         userId: 'corporateTest',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [
-          {
-            userId: 'testingJohn',
-            userName: 'johndoe',
-            email: 'johndoe@example.com',
-            password: 'securepassword',
-            contactNo: '555-1234',
-            status: UserStatusEnum.ACTIVE,
-            notificationMode: NotificationModeEnum.EMAIL,
-            createdAt: new Date(),
-            role: UserRoleEnum.JOBSEEKER,
-            resumePdf: 'sample-resume.pdf',
-            fullName: 'John Doe',
-            dateOfBirth: new Date(),
-            highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-            profilePictureUrl: 'https://example.com/profile-picture.jpg',
-            homeAddress: '123 Main St, Anytown, USA',
-            instituteName: 'University of Example',
-            dateOfGraduation: new Date(),
-            visibility: VisibilityEnum.PUBLIC,
-            country: '',
-            description: '',
-            proficientLanguages: '',
-            experience: '',
-            certifications: '',
-            recentRole: '',
-            resume: '',
-            startDate: undefined,
-            preferredRegions: '',
-            preferredJobType: '',
-            preferredSchedule: '',
-            payRange: '',
-            visaRequirements: '',
-            ranking: '',
-            otherInfo: '',
-            forumComments: [],
-            jobApplications: [],
-            eventRegistrations: [],
-            forumPosts: [],
-            chats: [],
-            jobPreference: undefined,
-            jobExperiences: [],
-            tickets: [],
-            reviews: [],
-            jobListings: [],
-            savedJobListings: [],
-            following: [],
-          },
-        ],
-        invoices: [],
-      };
+      });
+      corporateMock.followers = [];
+
       jest
         .spyOn(corporateRepository, 'findOne')
         .mockResolvedValueOnce(corporateMock)
@@ -1295,160 +628,16 @@ describe('CorporateService', () => {
     });
 
     it('should allow job seeker to unfollow corporate', async () => {
-      const corporateMock = {
+      const corporateMock = new Corporate({
         userId: 'corporateTest',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [
-          {
-            userId: 'testingJohn',
-            userName: 'johndoe',
-            email: 'johndoe@example.com',
-            password: 'securepassword',
-            contactNo: '555-1234',
-            status: UserStatusEnum.ACTIVE,
-            notificationMode: NotificationModeEnum.EMAIL,
-            createdAt: new Date(),
-            role: UserRoleEnum.JOBSEEKER,
-            resumePdf: 'sample-resume.pdf',
-            fullName: 'John Doe',
-            dateOfBirth: new Date(),
-            highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-            profilePictureUrl: 'https://example.com/profile-picture.jpg',
-            homeAddress: '123 Main St, Anytown, USA',
-            instituteName: 'University of Example',
-            dateOfGraduation: new Date(),
-            visibility: VisibilityEnum.PUBLIC,
-            country: '',
-            description: '',
-            proficientLanguages: '',
-            experience: '',
-            certifications: '',
-            recentRole: '',
-            resume: '',
-            startDate: undefined,
-            preferredRegions: '',
-            preferredJobType: '',
-            preferredSchedule: '',
-            payRange: '',
-            visaRequirements: '',
-            ranking: '',
-            otherInfo: '',
-            forumComments: [],
-            jobApplications: [],
-            eventRegistrations: [],
-            forumPosts: [],
-            chats: [],
-            jobPreference: undefined,
-            jobExperiences: [],
-            tickets: [],
-            reviews: [],
-            jobListings: [],
-            savedJobListings: [],
-            following: [],
-          },
-        ],
-        invoices: [],
-      };
-      const jobSeekerMock: JobSeeker = {
+      });
+      
+      const jobSeekerMock = new JobSeeker({
         userId: 'testingJohn',
-        userName: 'johndoe',
-        email: 'johndoe@example.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [
-          {
-            userId: 'corporateTest',
-            userName: 'corporateTest',
-            email: 'corporateTest@gmail.com',
-            password: 'securepassword',
-            contactNo: '555-1234',
-            status: UserStatusEnum.ACTIVE,
-            notificationMode: NotificationModeEnum.EMAIL,
-            createdAt: new Date(),
-            role: UserRoleEnum.CORPORATE,
-            companyName: 'corporateTest Pte Ltd',
-            companyRegistrationId: 1234567890,
-            profilePictureUrl: 'https://example.com/profile-picture.jpg',
-            companyAddress: '123 Main St, Anytown, USA',
-            schoolCategory: '',
-            postalCode: '',
-            regions: '',
-            corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-            stripeSubId: '',
-            stripeCustId: '',
-            eventListings: [],
-            jobListings: [],
-            chats: [],
-            tickets: [],
-            jobPreference: undefined,
-            reviews: [],
-            followers: [],
-            invoices: [],
-          },
-        ],
-      };
+      });
+
+      corporateMock.followers = [jobSeekerMock];
+      jobSeekerMock.following = [corporateMock];
 
       jest
         .spyOn(corporateRepository, 'findOne')
@@ -1497,64 +686,21 @@ describe('CorporateService', () => {
     });
 
     it('should update corporate without changing notification mode', async () => {
-      const existingCorporate = {
+      const existingCorporate = new Corporate({
         userId: 'existingId',
         userName: 'corporateTest',
         email: 'corporateTest@gmail.com',
         password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
-      const updatedCorporate = {
+        contactNo: '55551234',
+      });
+
+      const updatedCorporate = new Corporate({
         userId: 'existingId',
         userName: 'corporateTest',
         email: 'corporateTest@gmail.com',
         password: 'securepassword',
-        contactNo: '555-12345',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+        contactNo: '555512345',
+      });
 
       jest
         .spyOn(corporateRepository, 'findOneBy')
@@ -1621,36 +767,18 @@ describe('CorporateService', () => {
   describe('getAllPromotionRequest', () => {
     it('should return corporates when found', async () => {
       const corporates: Corporate[] = [
-        {
+        new Corporate({
           userId: 'corporateTest',
-          userName: 'corporateTest',
-          email: 'corporateTest@gmail.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.CORPORATE,
-          companyName: 'corporateTest Pte Ltd',
-          companyRegistrationId: 1234567890,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          companyAddress: '123 Main St, Anytown, USA',
-          schoolCategory: '',
-          postalCode: '',
-          regions: '',
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REQUESTED,
-          stripeSubId: '',
-          stripeCustId: '',
-          eventListings: [],
-          jobListings: [],
-          chats: [],
-          tickets: [],
-          jobPreference: undefined,
-          reviews: [],
-          followers: [],
-          invoices: [],
-        },
-      ];
+        }),
+        new Corporate({
+          userId: 'corporateTest2',
+        }),
+      ]
+      corporates[0].corporatePromotionStatus =
+        CorporatePromotionStatusEnum.REQUESTED;
+      
+      corporates[1].corporatePromotionStatus =
+        CorporatePromotionStatusEnum.REGULAR;
 
       jest.spyOn(corporateRepository, 'find').mockResolvedValue(corporates);
 
@@ -1686,182 +814,37 @@ describe('CorporateService', () => {
 
   describe('getJobApplicationsForCorporate', () => {
     it('should return job applications for the given corporate', async () => {
-      const corporateId = 'sampleCorporateId';
+      const jobApplication = new JobApplication({
+        jobApplicationId: 1,
+        jobApplicationStatus: JobApplicationStatusEnum.OFFERED,
+      });
 
-      const mockCorporate = {
-        userId: corporateId,
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        jobListings: [
-          {
-            jobListingId: 1,
-            title: 'Software Engineer',
-            overview: 'Develop and maintain software applications.',
-            responsibilities:
-              'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-            requirements:
-              '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-            requiredDocuments: 'Resume, Cover Letter',
-            jobLocation: 'New York, NY',
-            listingDate: new Date(),
-            averageSalary: 80000,
-            jobStartDate: new Date('2024-01-01'),
-            jobListingStatus: JobListingStatusEnum.APPROVED,
-            payRange: '70,000 - 90,000',
-            jobType: 'Full-time',
-            schedule: 'Monday to Friday',
-            supplementalPay: 'Bonus pay',
-            otherBenefits: 'Health insurance, 401(k)',
-            certificationsRequired: 'None',
-            typeOfWorkers: 'Permanent',
-            requiredLanguages: 'English',
-            otherConsiderations: 'Must be eligible to work in the U.S.',
-            corporate: undefined,
-            jobApplications: [],
-            jobSeekers: [],
-            savedBy: [],
-          },
-        ],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-      };
+      const jobSeeker = new JobSeeker({
+        userId: 'jobseeker',
+        fullName: 'jobseeker',
+        profilePictureUrl: 'profile.jpg',
+      });
 
-      const mockJobListing: JobListing = {
+      const recruiter = new Recruiter({
+        userId: 'recrutier1',
+        fullName: 'john',
+        profilePictureUrl: 'sample.jpg',
+      });
+
+      const mockJobListing = new JobListing({
         jobListingId: 1,
         title: 'Software Engineer',
-        overview: 'Develop and maintain software applications.',
-        responsibilities:
-          'Write clean, maintainable code; participate in code reviews; collaborate with cross-functional teams.',
-        requirements:
-          '3+ years of software development experience; proficiency in JavaScript and TypeScript.',
-        requiredDocuments: 'Resume, Cover Letter',
-        jobLocation: 'New York, NY',
         listingDate: new Date('2023-11-15'),
-        averageSalary: 80000,
-        jobStartDate: new Date('2024-01-01'),
-        jobListingStatus: JobListingStatusEnum.APPROVED,
-        payRange: '70,000 - 90,000',
-        jobType: 'Full-time',
-        schedule: 'Monday to Friday',
-        supplementalPay: 'Bonus pay',
-        otherBenefits: 'Health insurance, 401(k)',
-        certificationsRequired: 'None',
-        typeOfWorkers: 'Permanent',
-        requiredLanguages: 'English',
-        otherConsiderations: 'Must be eligible to work in the U.S.',
-        corporate: undefined,
-        jobApplications: [
-          {
-            jobApplicationId: 1,
-            jobApplicationStatus: JobApplicationStatusEnum.OFFERED, // Example status from the enum, replace with an actual value if different
-            availableStartDate: new Date('2023-11-15'),
-            availableEndDate: new Date('2023-12-15'),
-            remarks: 'Looking for a challenging role in software development.',
-            submissionDate: new Date('2023-11-01'),
-            documents: [],
-            jobListing: undefined,
-            jobSeeker: {
-              resumePdf: '',
-              userId: 'jobseeker',
-              fullName: 'jobseeker',
-              dateOfBirth: undefined,
-              highestEducationStatus: HighestEducationStatusEnum.NO_SCHOOL,
-              visibility: VisibilityEnum.PUBLIC,
-              profilePictureUrl: 'profile.jpg',
-              homeAddress: '',
-              instituteName: '',
-              dateOfGraduation: undefined,
-              country: '',
-              description: '',
-              proficientLanguages: '',
-              experience: '',
-              certifications: '',
-              recentRole: '',
-              resume: '',
-              startDate: undefined,
-              preferredRegions: '',
-              preferredJobType: '',
-              preferredSchedule: '',
-              payRange: '',
-              visaRequirements: '',
-              ranking: '',
-              otherInfo: '',
-              forumComments: [],
-              jobApplications: [],
-              eventRegistrations: [],
-              forumPosts: [],
-              chats: [],
-              jobPreference: undefined,
-              jobExperiences: [],
-              tickets: [],
-              reviews: [],
-              jobListings: [],
-              savedJobListings: [],
-              following: [],
-              password: '',
-              email: '',
-              contactNo: '',
-              status: UserStatusEnum.ACTIVE,
-              notificationMode: NotificationModeEnum.EMAIL,
-              role: UserRoleEnum.JOBSEEKER,
-              createdAt: undefined,
-              userName: '',
-            },
-            commission: undefined,
-            recruiter: {
-              userId: 'recrutier1',
-              fullName: 'john',
-              profilePictureUrl: 'sample.jpg',
-              jobApplications: [],
-              commissions: [],
-              chats: [],
-              tickets: [],
-              userName: '',
-              password: '',
-              email: '',
-              contactNo: '',
-              status: UserStatusEnum.ACTIVE,
-              notificationMode: NotificationModeEnum.EMAIL,
-              role: UserRoleEnum.JOBSEEKER,
-              createdAt: undefined,
-            },
-            invoice: {
-              invoiceId: 0,
-              invoiceDate: undefined,
-              invoiceStatus: InvoiceStatusEnum.NOT_PAID,
-              dueDate: undefined,
-              billingAddress: '',
-              totalAmount: 0,
-              administrator: undefined,
-              corporate: undefined,
-              jobApplications: [],
-            },
-          },
-        ],
-        jobSeekers: [],
-        savedBy: [],
-      };
+      });
+
+      const mockCorporate = new Corporate({
+        userId: 'sampleCorporateId',
+      });
+      jobApplication.jobSeeker = jobSeeker;
+      jobApplication.recruiter = recruiter;
+      mockJobListing.jobApplications = [jobApplication];
+      mockCorporate.jobListings = [mockJobListing];
+
       jest
         .spyOn(corporateRepository, 'findOne')
         .mockResolvedValue(mockCorporate);
@@ -1870,7 +853,9 @@ describe('CorporateService', () => {
         .mockResolvedValue(mockJobListing);
 
       const result =
-        await corporateService.getJobApplicationsForCorporate(corporateId);
+        await corporateService.getJobApplicationsForCorporate(
+          'sampleCorporateId',
+        );
 
       // Expected response based on the mock data
       const expectedResponse = {
@@ -1931,96 +916,26 @@ describe('CorporateService', () => {
 
   describe('findAllJobListingStatsByCorporate', () => {
     it('should return user statistics for given userId', async () => {
-      
-    
-      const corporateMock = {
-        userId: 'corporateTest',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
-        companyRegistrationId: 1234567890,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        companyAddress: '123 Main St, Anytown, USA',
-        schoolCategory: '',
-        postalCode: '',
-        regions: '',
-        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
-        stripeSubId: '',
-        stripeCustId: '',
-        eventListings: [],
-        chats: [],
-        tickets: [],
-        jobPreference: undefined,
-        reviews: [],
-        followers: [],
-        invoices: [],
-        jobListings: [
-          {
-            jobListingId: 1,
-            listingDate: new Date('2023-09-01'),
-            title: '',
-            overview: '',
-            responsibilities: '',
-            requirements: '',
-            requiredDocuments: '',
-            jobLocation: '',
-            averageSalary: 0,
-            jobStartDate: undefined,
-            jobListingStatus: JobListingStatusEnum.APPROVED,
-            payRange: '',
-            jobType: '',
-            schedule: '',
-            supplementalPay: '',
-            otherBenefits: '',
-            certificationsRequired: '',
-            typeOfWorkers: '',
-            requiredLanguages: '',
-            otherConsiderations: '',
-            corporate: undefined,
-            jobApplications: [],
-            jobSeekers: [],
-            savedBy: [],
-          },
-          {
-            jobListingId: 2,
-            listingDate: new Date('2023-09-02'),
-            title: '',
-            overview: '',
-            responsibilities: '',
-            requirements: '',
-            requiredDocuments: '',
-            jobLocation: '',
-            averageSalary: 0,
-            jobStartDate: undefined,
-            jobListingStatus: JobListingStatusEnum.APPROVED,
-            payRange: '',
-            jobType: '',
-            schedule: '',
-            supplementalPay: '',
-            otherBenefits: '',
-            certificationsRequired: '',
-            typeOfWorkers: '',
-            requiredLanguages: '',
-            otherConsiderations: '',
-            corporate: undefined,
-            jobApplications: [],
-            jobSeekers: [],
-            savedBy: [],
-          },
-        ],
-      };
-      
+      const jobListing = new JobListing({
+        jobListingId: 1,
+        listingDate: new Date('2023-09-01'),
+        jobListingStatus: JobListingStatusEnum.APPROVED,
+      });
 
-      // Use mockJobListings in your mock
-      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(
-        corporateMock
-      );
+      const jobListing2 = new JobListing({
+        jobListingId: 2,
+        listingDate: new Date('2023-09-02'),
+        jobListingStatus: JobListingStatusEnum.APPROVED,
+      });
+
+      const corporateMock = new Corporate({
+        userId: 'corporateTest',
+      })
+
+      corporateMock.jobListings = [jobListing, jobListing2]
+      jest
+        .spyOn(corporateRepository, 'findOne')
+        .mockResolvedValue(corporateMock);
 
       const result =
         await corporateService.findAllJobListingStatsByCorporate(

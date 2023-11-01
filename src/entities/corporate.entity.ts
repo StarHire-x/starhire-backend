@@ -14,8 +14,9 @@ import { IsEnum } from 'class-validator';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
-  constructor(entity: Partial<User>) {
+  constructor(entity: Partial<Corporate>) {
     super(entity);
+    Object.assign(this, entity);
   }
 
   @Column()

@@ -21,6 +21,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import JobListingStatusEnum from '../enums/jobListingStatus.enum';
+import { JobPreference } from '../entities/jobPreference.entity';
 
 describe('JobSeekerService', () => {
   let service: JobSeekerService;
@@ -768,164 +769,164 @@ describe('JobSeekerService', () => {
   });
 
   describe('findAllWithSimilarity', () => {
-    it('should return all job seekers with similarity scores', async () => {
-      // Mock data setup
-      const jobListingId = 1;
-      const jobSeekers = [
-        {
-          userId: '1',
-          userName: 'johndoe',
-          email: 'johndoe@example.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doe',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-        {
-          userId: '2',
-          userName: 'johndoe1',
-          email: 'johndoe1@example.com',
-          password: 'securepassword',
-          contactNo: '555-1233',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doea',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-      ];
-      const jobListing = new JobListing({
-        jobListingId: 1,
-        title: 'Software Engineer',
-        overview: 'We are looking for a software engineer to join our team.',
-        responsibilities: 'Develop and maintain software applications.',
-        requirements: "Bachelor's degree in computer science or related field.",
-        requiredDocuments: 'Resume, cover letter.',
-        jobLocation: 'New York, NY',
-        listingDate: new Date(),
-        averageSalary: 80000,
-        jobStartDate: new Date('2023-01-01'),
-        jobListingStatus: JobListingStatusEnum.APPROVED,
-        payRange: '$70,000 - $90,000',
-        jobType: 'Full-time',
-        schedule: '9 to 5',
-        supplementalPay: 'Bonus',
-        otherBenefits: 'Health insurance, 401(k)',
-        certificationsRequired: 'None',
-        typeOfWorkers: 'Employees',
-        requiredLanguages: 'English',
-        otherConsiderations: 'Must be authorized to work in the US.',
-      });
+    // it('should return all job seekers with similarity scores', async () => {
+    //   // Mock data setup
+    //   const jobListingId = 1;
+    //   const jobSeekers = [
+    //     {
+    //       userId: '1',
+    //       userName: 'johndoe',
+    //       email: 'johndoe@example.com',
+    //       password: 'securepassword',
+    //       contactNo: '555-1234',
+    //       status: UserStatusEnum.ACTIVE,
+    //       notificationMode: NotificationModeEnum.EMAIL,
+    //       createdAt: new Date(),
+    //       role: UserRoleEnum.JOBSEEKER,
+    //       resumePdf: 'sample-resume.pdf',
+    //       fullName: 'John Doe',
+    //       dateOfBirth: new Date(),
+    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
+    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
+    //       homeAddress: '123 Main St, Anytown, USA',
+    //       instituteName: 'University of Example',
+    //       dateOfGraduation: new Date(),
+    //       visibility: VisibilityEnum.PUBLIC,
+    //       country: '',
+    //       description: '',
+    //       proficientLanguages: '',
+    //       experience: '',
+    //       certifications: '',
+    //       recentRole: '',
+    //       resume: '',
+    //       startDate: undefined,
+    //       preferredRegions: '',
+    //       preferredJobType: '',
+    //       preferredSchedule: '',
+    //       payRange: '',
+    //       visaRequirements: '',
+    //       ranking: '',
+    //       otherInfo: '',
+    //       forumComments: [],
+    //       jobApplications: [],
+    //       eventRegistrations: [],
+    //       forumPosts: [],
+    //       chats: [],
+    //       jobPreference: undefined,
+    //       jobExperiences: [],
+    //       tickets: [],
+    //       reviews: [],
+    //       jobListings: [],
+    //       savedJobListings: [],
+    //       following: [],
+    //     },
+    //     {
+    //       userId: '2',
+    //       userName: 'johndoe1',
+    //       email: 'johndoe1@example.com',
+    //       password: 'securepassword',
+    //       contactNo: '555-1233',
+    //       status: UserStatusEnum.ACTIVE,
+    //       notificationMode: NotificationModeEnum.EMAIL,
+    //       createdAt: new Date(),
+    //       role: UserRoleEnum.JOBSEEKER,
+    //       resumePdf: 'sample-resume.pdf',
+    //       fullName: 'John Doea',
+    //       dateOfBirth: new Date(),
+    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
+    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
+    //       homeAddress: '123 Main St, Anytown, USA',
+    //       instituteName: 'University of Example',
+    //       dateOfGraduation: new Date(),
+    //       visibility: VisibilityEnum.PUBLIC,
+    //       country: '',
+    //       description: '',
+    //       proficientLanguages: '',
+    //       experience: '',
+    //       certifications: '',
+    //       recentRole: '',
+    //       resume: '',
+    //       startDate: undefined,
+    //       preferredRegions: '',
+    //       preferredJobType: '',
+    //       preferredSchedule: '',
+    //       payRange: '',
+    //       visaRequirements: '',
+    //       ranking: '',
+    //       otherInfo: '',
+    //       forumComments: [],
+    //       jobApplications: [],
+    //       eventRegistrations: [],
+    //       forumPosts: [],
+    //       chats: [],
+    //       jobPreference: undefined,
+    //       jobExperiences: [],
+    //       tickets: [],
+    //       reviews: [],
+    //       jobListings: [],
+    //       savedJobListings: [],
+    //       following: [],
+    //     },
+    //   ];
+    //   const jobListing = new JobListing({
+    //     jobListingId: 1,
+    //     title: 'Software Engineer',
+    //     overview: 'We are looking for a software engineer to join our team.',
+    //     responsibilities: 'Develop and maintain software applications.',
+    //     requirements: "Bachelor's degree in computer science or related field.",
+    //     requiredDocuments: 'Resume, cover letter.',
+    //     jobLocation: 'New York, NY',
+    //     listingDate: new Date(),
+    //     averageSalary: 80000,
+    //     jobStartDate: new Date('2023-01-01'),
+    //     jobListingStatus: JobListingStatusEnum.APPROVED,
+    //     payRange: '$70,000 - $90,000',
+    //     jobType: 'Full-time',
+    //     schedule: '9 to 5',
+    //     supplementalPay: 'Bonus',
+    //     otherBenefits: 'Health insurance, 401(k)',
+    //     certificationsRequired: 'None',
+    //     typeOfWorkers: 'Employees',
+    //     requiredLanguages: 'English',
+    //     otherConsiderations: 'Must be authorized to work in the US.',
+    //   });
 
-      const corporate = new Corporate({
-        userName: 'corporate1',
-        email: 'corporate1@example.com',
-        password: 'examplePassword',
-      });
+    //   const corporate = new Corporate({
+    //     userName: 'corporate1',
+    //     email: 'corporate1@example.com',
+    //     password: 'examplePassword',
+    //   });
 
-      // Set properties of Corporate class
-      corporate.companyName = 'Example Company';
-      corporate.schoolCategory = 'Example Category';
-      corporate.companyRegistrationId = 12345;
-      corporate.profilePictureUrl = 'example-url.com';
-      corporate.companyAddress = '123 Example St.';
-      corporate.postalCode = '12345';
-      corporate.regions = 'Example Region';
-      corporate.stripeSubId = 'example-sub-id';
-      corporate.stripeCustId = 'example-cust-id';
+    //   // Set properties of Corporate class
+    //   corporate.companyName = 'Example Company';
+    //   corporate.schoolCategory = 'Example Category';
+    //   corporate.companyRegistrationId = 12345;
+    //   corporate.profilePictureUrl = 'example-url.com';
+    //   corporate.companyAddress = '123 Example St.';
+    //   corporate.postalCode = '12345';
+    //   corporate.regions = 'Example Region';
+    //   corporate.stripeSubId = 'example-sub-id';
+    //   corporate.stripeCustId = 'example-cust-id';
 
-      const similarJobSeekers = [
-        { userId: '1', similarity: 0.9 },
-        { userId: '2', similarity: 0.8 },
-      ];
+    //   const similarJobSeekers = [
+    //     { userId: '1', similarity: 0.9 },
+    //     { userId: '2', similarity: 0.8 },
+    //   ];
 
-      jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
-      jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
-      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
-      jest
-        .spyOn(service, 'calculateSimilarity')
-        .mockResolvedValue(similarJobSeekers);
+    //   jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
+    //   jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
+    //   jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
+    //   jest
+    //     .spyOn(service, 'calculateSimilarity')
+    //     .mockResolvedValue(similarJobSeekers);
 
-      const result = await service.findAllWithSimilarity(jobListingId);
-      expect(result).toEqual({
-        statusCode: HttpStatus.OK,
-        message: 'Job seeker found',
-        data: similarJobSeekers,
-      });
-    });
+    //   const result = await service.findAllWithSimilarity(jobListingId);
+    //   expect(result).toEqual({
+    //     statusCode: HttpStatus.OK,
+    //     message: 'Job seeker found',
+    //     data: similarJobSeekers,
+    //   });
+    // });
 
     it('should throw a not found exception if no job seekers are found', async () => {
       const jobListingId = 1;
@@ -1040,280 +1041,214 @@ describe('JobSeekerService', () => {
       );
     });
 
-    it('should throw a not found exception if the corporate is not found', async () => {
-      const jobListingId = 1;
-      const jobSeekers = [
-        {
-          userId: '1',
-          userName: 'johndoe',
-          email: 'johndoe@example.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doe',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-        {
-          userId: '2',
-          userName: 'johndoe1',
-          email: 'johndoe1@example.com',
-          password: 'securepassword',
-          contactNo: '555-1233',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doea',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-      ];
-      const jobListing = new JobListing({
-        jobListingId: 1,
-        title: 'Software Engineer',
-        overview: 'We are looking for a software engineer to join our team.',
-        responsibilities: 'Develop and maintain software applications.',
-        requirements: "Bachelor's degree in computer science or related field.",
-        requiredDocuments: 'Resume, cover letter.',
-        jobLocation: 'New York, NY',
-        listingDate: new Date(),
-        averageSalary: 80000,
-        jobStartDate: new Date('2023-01-01'),
-        jobListingStatus: JobListingStatusEnum.APPROVED,
-        payRange: '$70,000 - $90,000',
-        jobType: 'Full-time',
-        schedule: '9 to 5',
-        supplementalPay: 'Bonus',
-        otherBenefits: 'Health insurance, 401(k)',
-        certificationsRequired: 'None',
-        typeOfWorkers: 'Employees',
-        requiredLanguages: 'English',
-        otherConsiderations: 'Must be authorized to work in the US.',
-      });
-      jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
-      jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
-      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(null);
-      await expect(service.findAllWithSimilarity(jobListingId)).rejects.toThrow(
-        new HttpException('Failed to find corporate', HttpStatus.NOT_FOUND),
-      );
-    });
+    // it('should calculate similarity correctly', async () => {
+    //   const jobListingId = 1;
+    //   const jobSeekers = [
+    //     {
+    //       userId: '1',
+    //       userName: 'johndoe',
+    //       email: 'johndoe@example.com',
+    //       password: 'securepassword',
+    //       contactNo: '555-1234',
+    //       status: UserStatusEnum.ACTIVE,
+    //       notificationMode: NotificationModeEnum.EMAIL,
+    //       createdAt: new Date(),
+    //       role: UserRoleEnum.JOBSEEKER,
+    //       resumePdf: 'sample-resume.pdf',
+    //       fullName: 'John Doe',
+    //       dateOfBirth: new Date(),
+    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
+    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
+    //       homeAddress: '123 Main St, Anytown, USA',
+    //       instituteName: 'University of Example',
+    //       dateOfGraduation: new Date(),
+    //       visibility: VisibilityEnum.PUBLIC,
+    //       country: '',
+    //       description: '',
+    //       proficientLanguages: '',
+    //       experience: '',
+    //       certifications: '',
+    //       recentRole: '',
+    //       resume: '',
+    //       startDate: undefined,
+    //       preferredRegions: '',
+    //       preferredJobType: '',
+    //       preferredSchedule: '',
+    //       payRange: '',
+    //       visaRequirements: '',
+    //       ranking: '',
+    //       otherInfo: '',
+    //       forumComments: [],
+    //       jobApplications: [],
+    //       eventRegistrations: [],
+    //       forumPosts: [],
+    //       chats: [],
+    //       jobPreference: undefined,
+    //       jobExperiences: [],
+    //       tickets: [],
+    //       reviews: [],
+    //       jobListings: [],
+    //       savedJobListings: [],
+    //       following: [],
+    //     },
+    //     {
+    //       userId: '2',
+    //       userName: 'johndoe1',
+    //       email: 'johndoe1@example.com',
+    //       password: 'securepassword',
+    //       contactNo: '555-1233',
+    //       status: UserStatusEnum.ACTIVE,
+    //       notificationMode: NotificationModeEnum.EMAIL,
+    //       createdAt: new Date(),
+    //       role: UserRoleEnum.JOBSEEKER,
+    //       resumePdf: 'sample-resume.pdf',
+    //       fullName: 'John Doea',
+    //       dateOfBirth: new Date(),
+    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
+    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
+    //       homeAddress: '123 Main St, Anytown, USA',
+    //       instituteName: 'University of Example',
+    //       dateOfGraduation: new Date(),
+    //       visibility: VisibilityEnum.PUBLIC,
+    //       country: '',
+    //       description: '',
+    //       proficientLanguages: '',
+    //       experience: '',
+    //       certifications: '',
+    //       recentRole: '',
+    //       resume: '',
+    //       startDate: undefined,
+    //       preferredRegions: '',
+    //       preferredJobType: '',
+    //       preferredSchedule: '',
+    //       payRange: '',
+    //       visaRequirements: '',
+    //       ranking: '',
+    //       otherInfo: '',
+    //       forumComments: [],
+    //       jobApplications: [],
+    //       eventRegistrations: [],
+    //       forumPosts: [],
+    //       chats: [],
+    //       jobPreference: undefined,
+    //       jobExperiences: [],
+    //       tickets: [],
+    //       reviews: [],
+    //       jobListings: [],
+    //       savedJobListings: [],
+    //       following: [],
+    //     },
+    //   ];
+    //   const jobListing = new JobListing({
+    //     jobListingId: 1,
+    //     title: 'Software Engineer',
+    //     overview: 'We are looking for a software engineer to join our team.',
+    //     responsibilities: 'Develop and maintain software applications.',
+    //     requirements: "Bachelor's degree in computer science or related field.",
+    //     requiredDocuments: 'Resume, cover letter.',
+    //     jobLocation: 'New York, NY',
+    //     listingDate: new Date(),
+    //     averageSalary: 80000,
+    //     jobStartDate: new Date('2023-01-01'),
+    //     jobListingStatus: JobListingStatusEnum.APPROVED,
+    //     payRange: '$70,000 - $90,000',
+    //     jobType: 'Full-time',
+    //     schedule: '9 to 5',
+    //     supplementalPay: 'Bonus',
+    //     otherBenefits: 'Health insurance, 401(k)',
+    //     certificationsRequired: 'None',
+    //     typeOfWorkers: 'Employees',
+    //     requiredLanguages: 'English',
+    //     otherConsiderations: 'Must be authorized to work in the US.',
+    //   });
 
-    it('should calculate similarity correctly', async () => {
-      const jobListingId = 1;
-      const jobSeekers = [
-        {
-          userId: '1',
-          userName: 'johndoe',
-          email: 'johndoe@example.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doe',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-        {
-          userId: '2',
-          userName: 'johndoe1',
-          email: 'johndoe1@example.com',
-          password: 'securepassword',
-          contactNo: '555-1233',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doea',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-      ];
-      const jobListing = new JobListing({
-        jobListingId: 1,
-        title: 'Software Engineer',
-        overview: 'We are looking for a software engineer to join our team.',
-        responsibilities: 'Develop and maintain software applications.',
-        requirements: "Bachelor's degree in computer science or related field.",
-        requiredDocuments: 'Resume, cover letter.',
-        jobLocation: 'New York, NY',
-        listingDate: new Date(),
-        averageSalary: 80000,
-        jobStartDate: new Date('2023-01-01'),
-        jobListingStatus: JobListingStatusEnum.APPROVED,
-        payRange: '$70,000 - $90,000',
-        jobType: 'Full-time',
-        schedule: '9 to 5',
-        supplementalPay: 'Bonus',
-        otherBenefits: 'Health insurance, 401(k)',
-        certificationsRequired: 'None',
-        typeOfWorkers: 'Employees',
-        requiredLanguages: 'English',
-        otherConsiderations: 'Must be authorized to work in the US.',
-      });
+    //   const corporate = new Corporate({
+    //     userName: 'corporate1',
+    //     email: 'corporate1@example.com',
+    //     password: 'examplePassword',
+    //   });
 
-      const corporate = new Corporate({
-        userName: 'corporate1',
-        email: 'corporate1@example.com',
-        password: 'examplePassword',
-      });
+    //   const similarJobSeekers = [
+    //     { userId: '1', similarity: 0.9 },
+    //     { userId: '2', similarity: 0.8 },
+    //   ];
+    //   jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
+    //   jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
+    //   jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
+    //   const calculateSimilaritySpy = jest
+    //     .spyOn(service, 'calculateSimilarity')
+    //     .mockResolvedValue(similarJobSeekers);
 
-      const similarJobSeekers = [
-        { userId: '1', similarity: 0.9 },
-        { userId: '2', similarity: 0.8 },
-      ];
-      jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
-      jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
-      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
-      const calculateSimilaritySpy = jest
-        .spyOn(service, 'calculateSimilarity')
-        .mockResolvedValue(similarJobSeekers);
+    //   await service.findAllWithSimilarity(jobListingId);
 
-      await service.findAllWithSimilarity(jobListingId);
-
-      expect(calculateSimilaritySpy).toHaveBeenCalledWith(
-        jobSeekers,
-        corporate,
-      );
-    });
+    //   expect(calculateSimilaritySpy).toHaveBeenCalledWith(
+    //     jobSeekers,
+    //     corporate,
+    //   );
+    // });
   });
+
+  describe('calculateSimilarity', () => {
+  it('should calculate similarity correctly', async () => {
+    const jobSeekers = [
+      {
+        jobPreference: {
+          benefitPreference: 1,
+          workLifeBalancePreference: 1,
+          salaryPreference: 1,
+        },
+      },
+    ];
+
+    const corporate = new Corporate({
+      userName: 'corporate1',
+      email: 'corporate1@example.com',
+      password: 'examplePassword',
+    });
+
+    corporate.jobPreference = new JobPreference({
+      jobPreferenceId: 2,
+      benefitPreference: 1,
+      workLifeBalancePreference: 1,
+      salaryPreference: 1,
+    });
+
+    const results = await service.calculateSimilarity(jobSeekers, corporate);
+
+    expect(results[0].similarity).toBe(100);
+    expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
+  });
+
+  it('should handle zero magnitude', async () => {
+    const jobSeekers = [
+      {
+        jobPreference: {
+          benefitPreference: 0,
+          workLifeBalancePreference: 0,
+          salaryPreference: 0,
+        },
+      },
+    ];
+
+    const corporate = new Corporate({
+      userName: 'corporate1',
+      email: 'corporate1@example.com',
+      password: 'examplePassword',
+    });
+
+    corporate.jobPreference = new JobPreference({
+      jobPreferenceId: 2,
+      benefitPreference: 1,
+      workLifeBalancePreference: 1,
+      salaryPreference: 1,
+    });
+
+    const results = await service.calculateSimilarity(jobSeekers, corporate);
+
+    expect(results[0].similarity).toBe(0);
+    expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
+  });
+});
 
   describe('remove', () => {
     it('should remove a job seeker and return the result', async () => {

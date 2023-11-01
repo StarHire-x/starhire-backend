@@ -295,6 +295,7 @@ export class JobSeekerService {
           jobExperiences: true,
         },
       });
+
       if (jobSeekers.length === 0) {
         throw new HttpException(
           'Failed to find job seeker',

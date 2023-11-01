@@ -258,7 +258,7 @@ export class JobSeekerService {
       }
     } catch (err) {
       throw new HttpException(
-        'Failed to update job seeker',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -281,15 +281,11 @@ export class JobSeekerService {
           data: jobSeekers,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker not found',
-          data: [],
-        };
+        throw new HttpException('Job seeker not found', HttpStatus.NOT_FOUND);
       }
-    } catch {
+    } catch (err) {
       throw new HttpException(
-        'Failed to find job seeker',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -434,7 +430,7 @@ export class JobSeekerService {
       return result;
     } catch (err) {
       throw new HttpException(
-        'Failed to delete job seeker',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }

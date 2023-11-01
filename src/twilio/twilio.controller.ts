@@ -1,6 +1,12 @@
-import { Controller, HttpException, HttpStatus, InternalServerErrorException, Post } from '@nestjs/common';
+import {
+  Controller,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+  Post,
+} from '@nestjs/common';
 import { TwilioService } from './twilio.service';
-import { Public } from 'src/users/public.decorator';
+import { Public } from '../users/public.decorator';
 
 @Controller('twilio')
 export class TwilioController {

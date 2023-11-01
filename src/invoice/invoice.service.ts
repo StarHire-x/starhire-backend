@@ -5,10 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Administrator } from 'src/entities/administrator.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Invoice } from 'src/entities/invoice.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Administrator } from '../entities/administrator.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Invoice } from '../entities/invoice.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
 import { Repository } from 'typeorm';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
@@ -87,7 +87,7 @@ export class InvoiceService {
         relations: {
           administrator: true,
           corporate: true,
-          jobApplications: {invoice: true},
+          jobApplications: { invoice: true },
         },
       });
     } catch (err) {

@@ -7,11 +7,11 @@ import {
 import { CreateEventListingDto } from './dto/create-event-listing.dto';
 import { UpdateEventListingDto } from './dto/update-event-listing.dto';
 import { Repository } from 'typeorm';
-import { EventListing } from 'src/entities/eventListing.entity';
+import { EventListing } from '../entities/eventListing.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventRegistration } from 'src/entities/eventRegistration.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { mapEventListingStatusToEnum } from 'src/common/mapStringToEnum';
+import { EventRegistration } from '../entities/eventRegistration.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { mapEventListingStatusToEnum } from '../common/mapStringToEnum';
 
 @Injectable()
 export class EventListingService {

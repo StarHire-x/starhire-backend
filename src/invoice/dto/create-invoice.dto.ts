@@ -1,4 +1,4 @@
-import InvoiceStatusEnum from 'src/enums/invoiceStatus.enum';
+import InvoiceStatusEnum from '../../enums/invoiceStatus.enum';
 
 export class CreateInvoiceDto {
   invoiceDate: Date;

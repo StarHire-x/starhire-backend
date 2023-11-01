@@ -1,7 +1,7 @@
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { Review } from 'src/entities/review.entity';
-import { mapStarCategoryToEnum } from 'src/common/mapStringToEnum';
+import { Review } from '../entities/review.entity';
+import { mapStarCategoryToEnum } from '../common/mapStringToEnum';
 import {
   HttpException,
   HttpStatus,
@@ -9,9 +9,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Corporate } from 'src/entities/corporate.entity';
+import { Corporate } from '../entities/corporate.entity';
 
 @Injectable()
 export class ReviewService {

@@ -9,21 +9,21 @@ import {
 } from '@nestjs/common';
 import { QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Corporate } from 'src/entities/corporate.entity';
+import { Corporate } from '../entities/corporate.entity';
 import {
   mapNotificationModeToEnum,
   mapUserRoleToEnum,
   mapUserStatusToEnum,
-} from 'src/common/mapStringToEnum';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { EmailService } from 'src/email/email.service';
-import { TwilioService } from 'src/twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
+} from '../common/mapStringToEnum';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import UserRoleEnum from '../enums/userRole.enum';
+import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
 
 @Injectable()
 export class CorporateService {
@@ -97,7 +97,10 @@ export class CorporateService {
   async findAll() {
     try {
       const corporates = await this.corporateRepository.find({
-        relations: { chats: true, jobListings: {jobApplications: {invoice: true}}},
+        relations: {
+          chats: true,
+          jobListings: { jobApplications: { invoice: true } },
+        },
       });
       if (corporates.length > 0) {
         return {

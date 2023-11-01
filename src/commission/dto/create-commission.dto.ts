@@ -1,4 +1,4 @@
-import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
+import CommissionStatusEnum from '../../enums/commissionStatus.enum';
 
 export class CreateCommissionDto {
   commissionDate: Date;

@@ -6,7 +6,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { IsEnum } from 'class-validator';
-import StarCategoryEnum from 'src/enums/starCategory.enum';
+import StarCategoryEnum from '../enums/starCategory.enum';
 import { Corporate } from './corporate.entity';
 import { JobSeeker } from './jobSeeker.entity';
 

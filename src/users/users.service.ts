@@ -7,21 +7,21 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
-import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
-import { CorporateService } from 'src/corporate/corporate.service';
-import { AdministratorService } from 'src/administrator/admin.service';
-import { RecruiterService } from 'src/recruiter/recruiter.service';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import { mapUserRoleToEnum } from 'src/common/mapStringToEnum';
+import { User } from '../entities/user.entity';
+import { JobSeekerService } from '../job-seeker/job-seeker.service';
+import { CorporateService } from '../corporate/corporate.service';
+import { AdministratorService } from '../administrator/admin.service';
+import { RecruiterService } from '../recruiter/recruiter.service';
+import UserRoleEnum from '../enums/userRole.enum';
+import { mapUserRoleToEnum } from '../common/mapStringToEnum';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import UserStatusEnum from 'src/enums/userStatus.enum';
+import UserStatusEnum from '../enums/userStatus.enum';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Administrator } from 'src/entities/administrator.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Corporate } from 'src/entities/corporate.entity';
+import { Administrator } from '../entities/administrator.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Corporate } from '../entities/corporate.entity';
 import { Number } from 'twilio/lib/twiml/VoiceResponse';
 
 @Injectable()

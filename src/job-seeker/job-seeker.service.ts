@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateJobSeekerDto } from './dto/create-job-seeker.dto';
 import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -16,14 +16,14 @@ import {
   mapUserRoleToEnum,
   mapUserStatusToEnum,
   mapVisibilityToEnum,
-} from 'src/common/mapStringToEnum';
-import { Public } from 'src/users/public.decorator';
-import { EmailService } from 'src/email/email.service';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import { TwilioService } from 'src/twilio/twilio.service';
-import { Corporate } from 'src/entities/corporate.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
+} from '../common/mapStringToEnum';
+import { Public } from '../users/public.decorator';
+import { EmailService } from '../email/email.service';
+import UserRoleEnum from '../enums/userRole.enum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import { TwilioService } from '../twilio/twilio.service';
+import { Corporate } from '../entities/corporate.entity';
+import { JobListing } from '../entities/jobListing.entity';
 
 @Injectable()
 export class JobSeekerService {

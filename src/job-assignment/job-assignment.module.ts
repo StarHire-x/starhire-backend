@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { JobAssignment } from '../entities/jobAssignment.entity';
 import { JobAssignmentService } from './job-assignment.service';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { JobListing } from '../entities/jobListing.entity';
 import { JobAssignmentController } from './job-assignment.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JobAssignment, JobListing, JobSeeker, Recruiter])],
+  imports: [
+    TypeOrmModule.forFeature([JobAssignment, JobListing, JobSeeker, Recruiter]),
+  ],
   controllers: [JobAssignmentController],
   providers: [JobAssignmentService],
 })

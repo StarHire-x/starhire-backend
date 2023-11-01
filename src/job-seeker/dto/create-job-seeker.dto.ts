@@ -1,7 +1,7 @@
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
+import { CreateUserDto } from '../../users/dto/create-user.dto';
+import HighestEducationStatusEnum from '../../enums/highestEducationStatus.enum';
 import { PartialType } from '@nestjs/mapped-types';
-import VisibilityEnum from 'src/enums/visibility.enum';
+import VisibilityEnum from '../../enums/visibility.enum';
 
 export class CreateJobSeekerDto extends PartialType(CreateUserDto) {
   resumePdf: string;

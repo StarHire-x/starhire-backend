@@ -1,11 +1,16 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsEnum } from 'class-validator';
-import UserStatusEnum from 'src/enums/userStatus.enum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
+import UserStatusEnum from '../enums/userStatus.enum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import UserRoleEnum from '../enums/userRole.enum';
 
 export abstract class User {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   userId: string;
 
   @Column({ unique: true })

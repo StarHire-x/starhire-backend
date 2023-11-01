@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { CreateChatMessageDto } from './dto/create-chat-message.dto';
 import { UpdateChatMessageDto } from './dto/update-chat-message.dto';
-import { ChatMessage } from 'src/entities/chatMessage.entity';
+import { ChatMessage } from '../entities/chatMessage.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Chat } from 'src/entities/chat.entity';
+import { Chat } from '../entities/chat.entity';
 
 @Injectable()
 export class ChatMessageService {

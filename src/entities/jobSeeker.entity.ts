@@ -1,7 +1,7 @@
 import { Column, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { Entity } from 'typeorm';
 import { User } from './user.entity';
-import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
+import HighestEducationStatusEnum from '../enums/highestEducationStatus.enum';
 import { IsEnum, IsOptional } from 'class-validator';
 import { ForumComment } from './forumComment.entity';
 import { JobApplication } from './jobApplication.entity';
@@ -13,7 +13,7 @@ import { Review } from './review.entity';
 import { JobExperience } from './jobExperience.entity';
 import { JobListing } from './jobListing.entity';
 import { SavedJobListing } from './savedJobListing.entity';
-import VisibilityEnum from 'src/enums/visibility.enum';
+import VisibilityEnum from '../enums/visibility.enum';
 import { Corporate } from './corporate.entity';
 import { Interview } from './interview.entity';
 import { EventRegistration } from './eventRegistration.entity';

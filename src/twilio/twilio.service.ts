@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as twilio from 'twilio';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Administrator } from 'src/entities/administrator.entity';
+import UserRoleEnum from '../enums/userRole.enum';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Administrator } from '../entities/administrator.entity';
 
 @Injectable()
 export class TwilioService {

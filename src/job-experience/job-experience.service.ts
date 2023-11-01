@@ -7,9 +7,9 @@ import {
 import { CreateJobExperienceDto } from './dto/create-job-experience.dto';
 import { UpdateJobExperienceDto } from './dto/update-job-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobExperience } from 'src/entities/jobExperience.entity';
+import { JobExperience } from '../entities/jobExperience.entity';
 import { Repository } from 'typeorm';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 
 @Injectable()
 export class JobExperienceService {
@@ -22,7 +22,7 @@ export class JobExperienceService {
 
   async create(createJobExperienceDto: CreateJobExperienceDto) {
     try {
-      console.log("Hello")
+      console.log('Hello');
       const { jobSeekerId, ...dtoExcludeRelationship } = createJobExperienceDto;
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,

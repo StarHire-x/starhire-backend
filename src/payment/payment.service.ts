@@ -3,12 +3,12 @@ import Stripe from 'stripe';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 config({ path: resolve(__dirname, '.env') });
-import { Corporate } from 'src/entities/corporate.entity';
+import { Corporate } from '../entities/corporate.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CorporateService } from 'src/corporate/corporate.service';
-import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
-import { UpdateCorporateDto } from 'src/corporate/dto/update-corporate.dto';
+import { CorporateService } from '../corporate/corporate.service';
+import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
+import { UpdateCorporateDto } from '../corporate/dto/update-corporate.dto';
 
 @Injectable()
 export class PaymentService {

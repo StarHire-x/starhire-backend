@@ -119,9 +119,6 @@ export class RecruiterService {
         ],
       });
 
-      console.log('Hello');
-      console.log(recruiter.jobApplications);
-
       const jobAssignments = await this.jobAssignmentRepository.find({
         where: { recruiterId: userId },
       });
@@ -147,6 +144,8 @@ export class RecruiterService {
         });
       });
 
+      console.log(pendingResponse);
+
       const acceptedResponse = jobAssignments.filter((jobAssignment) => {
         return recruiter.jobApplications.some((jobApplication) => {
           return (
@@ -156,6 +155,8 @@ export class RecruiterService {
           );
         });
       });
+
+      console.log(acceptedResponse);
 
       let totalDuration = 0; // in milliseconds
       let count = acceptedResponse.length;
@@ -232,6 +233,9 @@ export class RecruiterService {
         },
         response: formatResponse,
       };
+
+      console.log(result.stats);
+      console.log(result.response);
 
       return {
         statusCode: HttpStatus.OK,
@@ -460,12 +464,13 @@ export class RecruiterService {
 
   async remove(id: string) {
     try {
-      return await this.recruiterRepository.delete({ userId: id });
+      const result = await this.recruiterRepository.delete({ userId: id });
+      if (result.affected === 0) {
+        throw new HttpException('Recruiter id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (err) {
-      throw new HttpException(
-        'Failed to delete a recruiter',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

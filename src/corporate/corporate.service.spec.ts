@@ -15,11 +15,7 @@ import UserRoleEnum from '../enums/userRole.enum';
 import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
 import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import JobListingStatusEnum from '../enums/jobListingStatus.enum';
-import HighestEducationStatusEnum from '../enums/highestEducationStatus.enum';
-import VisibilityEnum from '../enums/visibility.enum';
-import CommissionStatusEnum from '../enums/commissionStatus.enum';
 import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
-import InvoiceStatusEnum from '../enums/invoiceStatus.enum';
 import { Recruiter } from '../entities/recruiter.entity';
 
 describe('CorporateService', () => {

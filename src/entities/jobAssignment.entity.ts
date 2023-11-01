@@ -16,7 +16,7 @@ export class JobAssignment {
   @Column()
   assignedTime: Date;
 
-  // constructor(entity: Partial<JobAssignment>) {
-  //   Object.assign(this, entity);
-  // }
+  constructor(entity: Partial<JobAssignment>) {
+    Object.assign(this, entity);
+  }
 }

@@ -345,7 +345,7 @@ export class JobSeekerService {
     }
   }
 
-  getValueOrDefault = (value, defaultValue = 0) => {
+  private getValueOrDefault = (value, defaultValue = 0) => {
     return value == null ? defaultValue : value; // using '==' will check for both null and undefined
   };
 

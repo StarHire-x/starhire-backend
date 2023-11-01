@@ -109,102 +109,117 @@ export class CorporateService {
           data: corporates,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Corporate not found',
-          data: [],
-        };
+        throw new HttpException(
+          'Failed to find corporate',
+          HttpStatus.NOT_FOUND,
+        );
       }
-    } catch {
-      throw new HttpException(
-        'Failed to find corporate',
-        HttpStatus.BAD_REQUEST,
-      );
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.NOT_FOUND);
     }
   }
 
   async findAllJobStatistics() {
-    const corporates = await this.corporateRepository.find({
-      relations: { jobListings: true },
-    });
+    try {
+       const corporates = await this.corporateRepository.find({
+         relations: { jobListings: true },
+       });
 
-    const statistics = {};
+       if(corporates.length === 0) {
+        throw new HttpException("No corporate found", HttpStatus.NOT_FOUND)
+       }
 
-    for (const data of corporates) {
-      const jobListings = data.jobListings;
-      statistics[data.companyName] = jobListings.length;
+       const statistics = {};
+
+       for (const data of corporates) {
+         const jobListings = data.jobListings;
+         statistics[data.companyName] = jobListings.length;
+       }
+
+       const labels = Object.keys(statistics);
+       const values = Object.values(statistics);
+
+       const result = {
+         labels: labels,
+         values: values,
+       };
+
+       return {
+         statusCode: HttpStatus.OK,
+         message: 'Statistics retrieved',
+         data: result,
+       };
+
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.NOT_FOUND);
     }
-
-    const labels = Object.keys(statistics);
-    const values = Object.values(statistics);
-
-    const result = {
-      labels: labels,
-      values: values,
-    };
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Statistics retrieved',
-      data: result,
-    };
+   
   }
 
   async findBreakdownJobStatistics() {
-    const corporates = await this.corporateRepository.find({
-      relations: { jobListings: true },
-    });
+    try {
+      const corporates = await this.corporateRepository.find({
+        relations: { jobListings: true },
+      });
 
-    const statistics = {};
+      if (corporates.length === 0) {
+        throw new HttpException('No corporate found', HttpStatus.NOT_FOUND);
+      }
 
-    let approvedCount = 0;
-    let rejectedCount = 0;
-    let unverifiedCount = 0;
-    let archivedCount = 0;
+      const statistics = {};
 
-    for (const data of corporates) {
-      const jobListings = data.jobListings;
-      const breakdown = {
-        approved: 0,
-        rejected: 0,
-        unverified: 0,
-        archived: 0,
+      let approvedCount = 0;
+      let rejectedCount = 0;
+      let unverifiedCount = 0;
+      let archivedCount = 0;
+
+      for (const data of corporates) {
+        const jobListings = data.jobListings;
+        const breakdown = {
+          approved: 0,
+          rejected: 0,
+          unverified: 0,
+          archived: 0,
+        };
+        breakdown.approved = jobListings.filter(
+          (jobListing) =>
+            jobListing.jobListingStatus === JobListingStatusEnum.APPROVED,
+        ).length;
+        breakdown.rejected = jobListings.filter(
+          (jobListing) =>
+            jobListing.jobListingStatus === JobListingStatusEnum.REJECTED,
+        ).length;
+        breakdown.unverified = jobListings.filter(
+          (jobListing) =>
+            jobListing.jobListingStatus === JobListingStatusEnum.UNVERIFIED,
+        ).length;
+        breakdown.archived = jobListings.filter(
+          (jobListing) =>
+            jobListing.jobListingStatus === JobListingStatusEnum.ARCHIVED,
+        ).length;
+        approvedCount += breakdown.approved;
+        rejectedCount += breakdown.rejected;
+        unverifiedCount += breakdown.unverified;
+        archivedCount += breakdown.archived;
+        statistics[data.companyName] = breakdown;
+      }
+
+      statistics['total'] = {
+        approved: approvedCount,
+        rejected: rejectedCount,
+        unverified: unverifiedCount,
+        archived: archivedCount,
       };
-      breakdown.approved = jobListings.filter(
-        (jobListing) =>
-          jobListing.jobListingStatus === JobListingStatusEnum.APPROVED,
-      ).length;
-      breakdown.rejected = jobListings.filter(
-        (jobListing) =>
-          jobListing.jobListingStatus === JobListingStatusEnum.REJECTED,
-      ).length;
-      breakdown.unverified = jobListings.filter(
-        (jobListing) =>
-          jobListing.jobListingStatus === JobListingStatusEnum.UNVERIFIED,
-      ).length;
-      breakdown.archived = jobListings.filter(
-        (jobListing) =>
-          jobListing.jobListingStatus === JobListingStatusEnum.ARCHIVED,
-      ).length;
-      approvedCount += breakdown.approved;
-      rejectedCount += breakdown.rejected;
-      unverifiedCount += breakdown.unverified;
-      archivedCount += breakdown.archived;
-      statistics[data.companyName] = breakdown;
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Statistics retrieved',
+        data: statistics,
+      };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.NOT_FOUND);
     }
-
-    statistics['total'] = {
-      approved: approvedCount,
-      rejected: rejectedCount,
-      unverified: unverifiedCount,
-      archived: archivedCount,
-    };
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Statistics retrieved',
-      data: statistics,
-    };
+    
   }
 
   async findBreakdownJobStatisticsOneCorporate(corporateId: string) {
@@ -241,6 +256,8 @@ export class CorporateService {
         (jobListing) =>
           jobListing.jobListingStatus === JobListingStatusEnum.ARCHIVED,
       ).length;
+
+      console.log(breakdown);
 
       return {
         statusCode: HttpStatus.OK,
@@ -298,14 +315,14 @@ export class CorporateService {
           data: corporate,
         };
       } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Corporate not found',
-        };
+        throw new HttpException(
+          'Failed to find corporate',
+          HttpStatus.BAD_REQUEST,
+        );
       }
     } catch (err) {
       throw new HttpException(
-        'Failed to find corporate',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -373,7 +390,10 @@ export class CorporateService {
       //console.log(corporate);
 
       if (!corporate) {
-        throw new NotFoundException('Corporate Id provided is not valid');
+        throw new HttpException(
+          'Corporate Id provided is not valid',
+          HttpStatus.BAD_REQUEST
+        );
       }
 
       const jobSeeker = await this.jobSeekerRepository.findOne({
@@ -382,7 +402,10 @@ export class CorporateService {
       });
 
       if (!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid');
+        throw new HttpException(
+          'Job Seeker Id provided is not valid',
+          HttpStatus.BAD_REQUEST
+        );
       }
 
       if (corporate && jobSeeker) {
@@ -395,7 +418,7 @@ export class CorporateService {
       }
     } catch (error) {
       throw new HttpException(
-        'Job seeker following process failed',
+        error.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -409,7 +432,7 @@ export class CorporateService {
       });
 
       if (!corporate) {
-        throw new NotFoundException('Corporate Id provided is not valid');
+        throw new HttpException('Corporate Id provided is not valid', HttpStatus.BAD_REQUEST);
       }
 
       const jobSeeker = await this.jobSeekerRepository.findOne({
@@ -417,7 +440,7 @@ export class CorporateService {
       });
 
       if (!jobSeeker) {
-        throw new NotFoundException('Job Seeker Id provided is not valid');
+        throw new HttpException('Job Seeker Id provided is not valid', HttpStatus.BAD_REQUEST);
       }
 
       if (corporate && jobSeeker) {
@@ -434,8 +457,8 @@ export class CorporateService {
       }
     } catch (error) {
       throw new HttpException(
-        'Unfollowing process failed',
-        HttpStatus.BAD_REQUEST,
+        error.message,
+        HttpStatus.BAD_REQUEST
       );
     }
   }
@@ -505,12 +528,16 @@ export class CorporateService {
 
   async remove(id: string) {
     try {
-      return await this.corporateRepository.delete({ userId: id });
+      const result = await this.corporateRepository.delete({ userId: id });
+      if (result.affected === 0) {
+        throw new HttpException(
+          'Corporate id not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return result;
     } catch (err) {
-      throw new HttpException(
-        'Failed to delete a corporate',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -592,6 +619,8 @@ export class CorporateService {
         }),
       );
 
+      console.log(formatResponse);
+
       return {
         statusCode: HttpStatus.OK,
         message: 'Statistics found',
@@ -604,7 +633,7 @@ export class CorporateService {
     }
   }
 
-  obtainDateByDayWeeksMonth() {
+  private obtainDateByDayWeeksMonth() {
     const startDate = new Date('2023-08-27');
     const today = new Date();
 
@@ -676,7 +705,7 @@ export class CorporateService {
     };
   }
 
-  formatDateByMonth(isoString) {
+  private formatDateByMonth(isoString) {
     const months = [
       'Jan',
       'Feb',
@@ -698,7 +727,7 @@ export class CorporateService {
     return `${month}-${year}`;
   }
 
-  formatDateByDay(isoString) {
+  private formatDateByDay(isoString) {
     const months = [
       'Jan',
       'Feb',
@@ -721,7 +750,7 @@ export class CorporateService {
     return `${day}-${month}-${year}`;
   }
 
-  formatDateByWeek(isoString, reference) {
+  private formatDateByWeek(isoString, reference) {
     const targetDate = new Date(isoString);
 
     for (let range of reference) {
@@ -737,7 +766,7 @@ export class CorporateService {
     return 'Date out of range';
   }
 
-  parseDate(dateString) {
+  private parseDate(dateString) {
     const [day, month, year] = dateString.split('-');
     const months = {
       JAN: 0,

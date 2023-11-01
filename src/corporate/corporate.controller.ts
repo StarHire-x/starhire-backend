@@ -17,7 +17,7 @@ import {
 import { CorporateService } from './corporate.service';
 import { CreateCorporateDto } from './dto/create-corporate.dto';
 import { UpdateCorporateDto } from './dto/update-corporate.dto';
-import { Public } from 'src/users/public.decorator';
+import { Public } from '../users/public.decorator';
 
 @Controller('corporate')
 export class CorporateController {
@@ -78,7 +78,9 @@ export class CorporateController {
   @Get('/getSingleBreakdown/:id')
   async getACorporateJobListingBreakdown(@Param('id') corporateId: string) {
     try {
-      return await this.corporateService.findBreakdownJobStatisticsOneCorporate(corporateId);
+      return await this.corporateService.findBreakdownJobStatisticsOneCorporate(
+        corporateId,
+      );
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -223,32 +225,6 @@ export class CorporateController {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 // import { CorporateService } from './corporate.service';

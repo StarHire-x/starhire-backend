@@ -6,21 +6,21 @@ import {
 } from '@nestjs/common';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
-import { JobListing } from 'src/entities/jobListing.entity';
+import { JobListing } from '../entities/jobListing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
-import { Corporate } from 'src/entities/corporate.entity';
-import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
-import { EmailService } from 'src/email/email.service';
-import { TwilioService } from 'src/twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import { Administrator } from 'src/entities/administrator.entity';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
+import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
+import { Corporate } from '../entities/corporate.entity';
+import { mapJobListingStatusToEnum } from '../common/mapStringToEnum';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import { Administrator } from '../entities/administrator.entity';
 
 @Injectable()
 export class JobListingService {
@@ -132,7 +132,7 @@ export class JobListingService {
     try {
       const corporate = await this.corporateRepository.findOne({
         where: { userId: id },
-        relations: { jobListings: {jobApplications : true} },
+        relations: { jobListings: { jobApplications: true } },
       });
 
       if (!corporate) {

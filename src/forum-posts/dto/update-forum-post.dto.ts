@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import ForumPostEnum from 'src/enums/forumPost.enum';
+import ForumPostEnum from '../../enums/forumPost.enum';
 
 class UpdateDto {
   forumPostTitle: string;

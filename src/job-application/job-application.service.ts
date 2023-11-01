@@ -7,19 +7,19 @@ import {
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobApplication } from 'src/entities/jobApplication.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
 import { IsNull, Repository } from 'typeorm';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { mapJobApplicationStatusToEnum } from 'src/common/mapStringToEnum';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
-import { Document } from 'src/entities/document.entity';
-import { EmailService } from 'src/email/email.service';
-import { TwilioService } from 'src/twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
-import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { mapJobApplicationStatusToEnum } from '../common/mapStringToEnum';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { Document } from '../entities/document.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
+import CommissionStatusEnum from '../enums/commissionStatus.enum';
 
 @Injectable()
 export class JobApplicationService {

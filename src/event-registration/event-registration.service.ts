@@ -3,10 +3,10 @@ import { CreateEventRegistrationDto } from './dto/create-event-registration.dto'
 import { UpdateEventRegistrationDto } from './dto/update-event-registration.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventRegistration } from 'src/entities/eventRegistration.entity';
+import { EventRegistration } from '../entities/eventRegistration.entity';
 import { Repository } from 'typeorm';
-import { EventListing } from 'src/entities/eventListing.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { EventListing } from '../entities/eventListing.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 
 @Injectable()
 export class EventRegistrationService {

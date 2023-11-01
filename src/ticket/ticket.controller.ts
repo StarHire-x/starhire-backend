@@ -18,7 +18,7 @@ import {
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { Public } from 'src/users/public.decorator';
+import { Public } from '../users/public.decorator';
 
 @Controller('ticket')
 export class TicketController {

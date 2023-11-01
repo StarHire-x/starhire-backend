@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ForumCategoriesController } from './forum-categories.controller';
 import { ForumCategoriesService } from './forum-categories.service';
-import { ForumCategory } from 'src/entities/forumCategory.entity';
+import { ForumCategory } from '../entities/forumCategory.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

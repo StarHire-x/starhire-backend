@@ -4,19 +4,19 @@ import { CreateEmailDto } from './dto/create-email.dto';
 
 import { JobListingService } from '../job-listing/job-listing.service';
 import UserRoleEnum from '../enums/userRole.enum';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { Administrator } from 'src/entities/administrator.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { JobListing } from '../entities/jobListing.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { Administrator } from '../entities/administrator.entity';
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService, // We should not be calling other service classes to avoid cyclic dependency
-  ) // private readonly jobListingService: JobListingService,
-  {}
+    // private readonly jobListingService: JobListingService,
+  ) {}
 
   async resetPassword(createEmailDto: CreateEmailDto) {
     try {

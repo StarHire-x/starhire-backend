@@ -1,4 +1,4 @@
-import { Recruiter } from 'src/entities/recruiter.entity';
+import { Recruiter } from '../entities/recruiter.entity';
 import { CreateRecruiterDto } from './dto/create-recruiter.dto';
 import { UpdateRecruiterDto } from './dto/update-recruiter.dto';
 import {
@@ -14,15 +14,15 @@ import {
   mapNotificationModeToEnum,
   mapUserRoleToEnum,
   mapUserStatusToEnum,
-} from 'src/common/mapStringToEnum';
-import { EmailService } from 'src/email/email.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import { TwilioService } from 'src/twilio/twilio.service';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
+} from '../common/mapStringToEnum';
+import { EmailService } from '../email/email.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import UserRoleEnum from '../enums/userRole.enum';
+import { TwilioService } from '../twilio/twilio.service';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
 
 @Injectable()
 export class RecruiterService {
@@ -84,8 +84,8 @@ export class RecruiterService {
     try {
       const recruiters = await this.recruiterRepository.find({
         relations: {
-          jobApplications: {commission: true},
-        }
+          jobApplications: { commission: true },
+        },
       });
       if (recruiters.length > 0) {
         return {
@@ -331,15 +331,15 @@ export class RecruiterService {
       }
 
       const predefinedStatuses = {
-        'Total': recruiter.jobApplications.length,
-        'Submitted': 0,
-        'Processing': 0,
-        'To_Be_Submitted': 0,
-        'Waiting_For_Interview': 0,
-        'Offer_Rejected': 0,
-        'Offer_Accepted': 0,
-        'Rejected': 0,
-        'Offered': 0,
+        Total: recruiter.jobApplications.length,
+        Submitted: 0,
+        Processing: 0,
+        To_Be_Submitted: 0,
+        Waiting_For_Interview: 0,
+        Offer_Rejected: 0,
+        Offer_Accepted: 0,
+        Rejected: 0,
+        Offered: 0,
       };
 
       const statusCount = recruiter.jobApplications.reduce(

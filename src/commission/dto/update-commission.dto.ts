@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
+import CommissionStatusEnum from '../../enums/commissionStatus.enum';
 
 class UpdateDto {
   commissionDate: Date;

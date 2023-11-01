@@ -1,4 +1,4 @@
-import { CreateChatMessageDto } from 'src/chat-message/dto/create-chat-message.dto';
+import { CreateChatMessageDto } from '../../chat-message/dto/create-chat-message.dto';
 
 export class CreateChatDto {
   lastUpdatedAt: Date;

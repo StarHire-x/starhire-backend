@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { IsEnum } from 'class-validator';
-import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import TicketCategoryEnum from '../enums/ticketCategory.enum';
 import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
 import { Recruiter } from './recruiter.entity';

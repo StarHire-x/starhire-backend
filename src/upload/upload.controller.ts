@@ -1,8 +1,16 @@
-import { Controller, FileTypeValidator, Get, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  FileTypeValidator,
+  Get,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
-import { Public } from 'src/users/public.decorator';
-
+import { Public } from '../users/public.decorator';
 
 @Controller('upload')
 export class UploadController {
@@ -23,7 +31,7 @@ export class UploadController {
     file: Express.Multer.File,
   ) {
     console.log(file);
-    console.log("File Upload Controller");
+    console.log('File Upload Controller');
     return await this.uploadService.upload(file.originalname, file.buffer);
   }
 }

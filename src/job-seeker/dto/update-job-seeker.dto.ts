@@ -1,5 +1,5 @@
 import { CreateJobSeekerDto } from './create-job-seeker.dto';
-import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
+import HighestEducationStatusEnum from '../../enums/highestEducationStatus.enum';
 import { PartialType } from '@nestjs/mapped-types';
 
 // class UpdateDto {
@@ -12,7 +12,7 @@ import { PartialType } from '@nestjs/mapped-types';
 //   instituteName: string;
 //   dateOfGraduation: Date;
 //   jobListings: [];
-//   status: 
+//   status:
 // }
 
 export class UpdateJobSeekerDto extends PartialType(CreateJobSeekerDto) {}

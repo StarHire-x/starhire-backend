@@ -7,12 +7,12 @@ import {
 import { CreateCommissionDto } from './dto/create-commission.dto';
 import { UpdateCommissionDto } from './dto/update-commission.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Commission } from 'src/entities/commission.entity';
+import { Commission } from '../entities/commission.entity';
 import { Repository } from 'typeorm';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { Administrator } from 'src/entities/administrator.entity';
-import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { Administrator } from '../entities/administrator.entity';
+import CommissionStatusEnum from '../enums/commissionStatus.enum';
 
 @Injectable()
 export class CommissionService {

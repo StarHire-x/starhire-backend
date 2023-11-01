@@ -1,4 +1,4 @@
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
+import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
 import {
   Column,
   Entity,

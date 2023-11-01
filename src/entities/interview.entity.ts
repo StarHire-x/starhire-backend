@@ -9,7 +9,7 @@ import { JobSeeker } from './jobSeeker.entity';
 import { Corporate } from './corporate.entity';
 import { Recruiter } from './recruiter.entity';
 import { JobApplication } from './jobApplication.entity';
-// import InterviewStatusEnum from 'src/enums/InterviewStatus.enum';
+// import InterviewStatusEnum from '../enums/InterviewStatus.enum';
 
 @Entity({ name: 'interviews' })
 export class Interview {

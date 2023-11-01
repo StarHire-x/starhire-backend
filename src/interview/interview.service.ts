@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
-import { Interview } from 'src/entities/interview.entity';
-//import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Interview } from '../entities/interview.entity';
+//import { JobApplication } from '../entities/jobApplication.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JobApplicationService } from 'src/job-application/job-application.service';
-import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
-import { RecruiterService } from 'src/recruiter/recruiter.service';
-import { CorporateService } from 'src/corporate/corporate.service';
+import { JobApplicationService } from '../job-application/job-application.service';
+import { JobSeekerService } from '../job-seeker/job-seeker.service';
+import { RecruiterService } from '../recruiter/recruiter.service';
+import { CorporateService } from '../corporate/corporate.service';
 
 @Injectable()
 export class InterviewService {

@@ -1,5 +1,5 @@
-import ForumCategoryEnum from 'src/enums/forumCategory.enum';
-import ForumPostEnum from 'src/enums/forumPost.enum';
+import ForumCategoryEnum from '../../enums/forumCategory.enum';
+import ForumPostEnum from '../../enums/forumPost.enum';
 
 export class CreateForumPostDto {
   forumPostTitle: string;

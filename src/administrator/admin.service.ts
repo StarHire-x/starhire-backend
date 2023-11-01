@@ -7,13 +7,16 @@ import {
 import { CreateAdministratorDto } from './dto/create-admin.dto';
 import { UpdateAdministratorDto } from './dto/update-admin.dto';
 import { Repository } from 'typeorm';
-import { Administrator } from 'src/entities/administrator.entity';
+import { Administrator } from '../entities/administrator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmailService } from 'src/email/email.service';
-import { mapNotificationModeToEnum, mapUserStatusToEnum } from 'src/common/mapStringToEnum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import { TwilioService } from 'src/twilio/twilio.service';
+import { EmailService } from '../email/email.service';
+import {
+  mapNotificationModeToEnum,
+  mapUserStatusToEnum,
+} from '../common/mapStringToEnum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import UserRoleEnum from '../enums/userRole.enum';
+import { TwilioService } from '../twilio/twilio.service';
 
 @Injectable()
 export class AdministratorService {

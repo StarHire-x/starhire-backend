@@ -9,8 +9,9 @@ import { Interview } from './interview.entity';
 
 @Entity({ name: 'recruiters' })
 export class Recruiter extends User {
-  constructor(entity: Partial<User>) {
+  constructor(entity: Partial<Recruiter>) {
     super(entity);
+    Object.assign(this, entity);
   }
 
   @Column()

@@ -843,7 +843,7 @@ export class CorporateService {
       };
     } catch (err) {
       throw new HttpException(
-        'Unfollowing process failed',
+        'Error in Database',
         HttpStatus.BAD_REQUEST,
       );
     }

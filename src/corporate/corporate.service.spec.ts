@@ -761,6 +761,17 @@ describe('CorporateService', () => {
         ),
       );
     });
+
+    it('should throw an error when the database operation fails', async () => {
+      const corporateId = 'corporateTest';
+      jest
+        .spyOn(corporateRepository, 'findOne')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(corporateService.findOne(corporateId)).rejects.toThrow(
+        new HttpException('Database error', HttpStatus.BAD_REQUEST),
+      );
+    });
   });
 
   describe('findByEmail', () => {
@@ -810,6 +821,72 @@ describe('CorporateService', () => {
       jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(null);
       await expect(corporateService.findByEmail(email)).rejects.toThrow(
         new HttpException('Failed to find corporate', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
+
+  describe('findByUserId', () => {
+    it('should find a corporate by user ID', async () => {
+      const userId = 'sampleUserId';
+      const corporate: Corporate = {
+        userId: 'sampleUserId',
+        userName: 'corporateTest',
+        email: 'corporateTest@gmail.com',
+        password: 'securepassword',
+        contactNo: '555-1234',
+        status: UserStatusEnum.ACTIVE,
+        notificationMode: NotificationModeEnum.EMAIL,
+        createdAt: new Date(),
+        role: UserRoleEnum.CORPORATE,
+        companyName: 'corporateTest Pte Ltd',
+        companyRegistrationId: 1234567890,
+        profilePictureUrl: 'https://example.com/profile-picture.jpg',
+        companyAddress: '123 Main St, Anytown, USA',
+        schoolCategory: '',
+        postalCode: '',
+        regions: '',
+        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
+        stripeSubId: '',
+        stripeCustId: '',
+        eventListings: [],
+        jobListings: [],
+        chats: [],
+        tickets: [],
+        jobPreference: undefined,
+        reviews: [],
+        followers: [],
+        invoices: [],
+      };
+
+      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
+
+      const result = await corporateService.findByUserId(userId);
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Corporate found',
+        data: corporate,
+      });
+    });
+
+    it('should return not found if no corporate with the provided user ID is found', async () => {
+      const userId = 'sampleUserId';
+      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(null);
+
+      const result = await corporateService.findByUserId(userId);
+      expect(result).toEqual({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Corporate not found',
+      });
+    });
+
+    it('should throw an error when the database operation fails', async () => {
+      const userId = 'sampleUserId';
+      jest
+        .spyOn(corporateRepository, 'findOne')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(corporateService.findByUserId(userId)).rejects.toThrow(
+        new HttpException('Failed to find corporate', HttpStatus.BAD_REQUEST),
       );
     });
   });
@@ -1848,6 +1925,135 @@ describe('CorporateService', () => {
         corporateService.getJobApplicationsForCorporate(corporateId),
       ).rejects.toThrow(
         new HttpException('Sample error', HttpStatus.BAD_REQUEST),
+      );
+    });
+  });
+
+  describe('findAllJobListingStatsByCorporate', () => {
+    it('should return user statistics for given userId', async () => {
+      
+    
+      const corporateMock = {
+        userId: 'corporateTest',
+        userName: 'corporateTest',
+        email: 'corporateTest@gmail.com',
+        password: 'securepassword',
+        contactNo: '555-1234',
+        status: UserStatusEnum.ACTIVE,
+        notificationMode: NotificationModeEnum.EMAIL,
+        createdAt: new Date(),
+        role: UserRoleEnum.CORPORATE,
+        companyName: 'corporateTest Pte Ltd',
+        companyRegistrationId: 1234567890,
+        profilePictureUrl: 'https://example.com/profile-picture.jpg',
+        companyAddress: '123 Main St, Anytown, USA',
+        schoolCategory: '',
+        postalCode: '',
+        regions: '',
+        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
+        stripeSubId: '',
+        stripeCustId: '',
+        eventListings: [],
+        chats: [],
+        tickets: [],
+        jobPreference: undefined,
+        reviews: [],
+        followers: [],
+        invoices: [],
+        jobListings: [
+          {
+            jobListingId: 1,
+            listingDate: new Date('2023-09-01'),
+            title: '',
+            overview: '',
+            responsibilities: '',
+            requirements: '',
+            requiredDocuments: '',
+            jobLocation: '',
+            averageSalary: 0,
+            jobStartDate: undefined,
+            jobListingStatus: JobListingStatusEnum.APPROVED,
+            payRange: '',
+            jobType: '',
+            schedule: '',
+            supplementalPay: '',
+            otherBenefits: '',
+            certificationsRequired: '',
+            typeOfWorkers: '',
+            requiredLanguages: '',
+            otherConsiderations: '',
+            corporate: undefined,
+            jobApplications: [],
+            jobSeekers: [],
+            savedBy: [],
+          },
+          {
+            jobListingId: 2,
+            listingDate: new Date('2023-09-02'),
+            title: '',
+            overview: '',
+            responsibilities: '',
+            requirements: '',
+            requiredDocuments: '',
+            jobLocation: '',
+            averageSalary: 0,
+            jobStartDate: undefined,
+            jobListingStatus: JobListingStatusEnum.APPROVED,
+            payRange: '',
+            jobType: '',
+            schedule: '',
+            supplementalPay: '',
+            otherBenefits: '',
+            certificationsRequired: '',
+            typeOfWorkers: '',
+            requiredLanguages: '',
+            otherConsiderations: '',
+            corporate: undefined,
+            jobApplications: [],
+            jobSeekers: [],
+            savedBy: [],
+          },
+        ],
+      };
+      
+
+      // Use mockJobListings in your mock
+      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(
+        corporateMock
+      );
+
+      const result =
+        await corporateService.findAllJobListingStatsByCorporate(
+          'corporateTest',
+        );
+
+      // Assertions
+      expect(result).toHaveProperty('statusCode', HttpStatus.OK);
+      expect(result).toHaveProperty('message', 'User statistics retrieved');
+      expect(result.data).toHaveProperty('month');
+      expect(result.data).toHaveProperty('day');
+      expect(result.data).toHaveProperty('week');
+    });
+
+    it('should throw a not found exception if no user data is found', async () => {
+      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(
+        corporateService.findAllJobListingStatsByCorporate('invalidUserId'),
+      ).rejects.toThrow(
+        new HttpException('Error in Database', HttpStatus.NOT_FOUND),
+      );
+    });
+
+    it('should throw a bad request exception on any other error', async () => {
+      jest
+        .spyOn(corporateRepository, 'findOne')
+        .mockRejectedValue(new Error('Some error'));
+
+      await expect(
+        corporateService.findAllJobListingStatsByCorporate('testUserId'),
+      ).rejects.toThrow(
+        new HttpException('Error in Database', HttpStatus.BAD_REQUEST),
       );
     });
   });

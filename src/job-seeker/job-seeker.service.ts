@@ -257,10 +257,7 @@ export class JobSeekerService {
         };
       }
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -284,10 +281,7 @@ export class JobSeekerService {
         throw new HttpException('Job seeker not found', HttpStatus.NOT_FOUND);
       }
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -301,45 +295,53 @@ export class JobSeekerService {
           jobExperiences: true,
         },
       });
-      if (jobSeekers.length > 0) {
-        const jobListing = await this.jobListingRepository.findOne({
-          where: { jobListingId: jobListingId },
-          relations: {
-            corporate: true,
-          },
-        });
 
-        const corporate = await this.corporateRepository.findOne({
-          where: { userId: jobListing.corporate.userId },
-          relations: {
-            jobPreference: true,
-          },
-        });
-
-        const jobSeekerWithSimilarity = await this.calculateSimilarity(
-          jobSeekers,
-          corporate,
+      if (jobSeekers.length === 0) {
+        throw new HttpException(
+          'Failed to find job seeker',
+          HttpStatus.NOT_FOUND,
         );
-
-        console.log(jobSeekerWithSimilarity);
-
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Job seeker found',
-          data: jobSeekerWithSimilarity,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker not found',
-          data: [],
-        };
       }
-    } catch {
-      throw new HttpException(
-        'Failed to find job seeker',
-        HttpStatus.BAD_REQUEST,
+      const jobListing = await this.jobListingRepository.findOne({
+        where: { jobListingId: jobListingId },
+        relations: {
+          corporate: true,
+        },
+      });
+
+      if (!jobListing) {
+        throw new HttpException(
+          'Failed to find job listing',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: jobListing.corporate.userId },
+        relations: {
+          jobPreference: true,
+        },
+      });
+
+      if (!corporate) {
+        throw new HttpException(
+          'Failed to find corporate',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const jobSeekerWithSimilarity = await this.calculateSimilarity(
+        jobSeekers,
+        corporate,
       );
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job seeker found',
+        data: jobSeekerWithSimilarity,
+      };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -429,10 +431,7 @@ export class JobSeekerService {
       }
       return result;
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

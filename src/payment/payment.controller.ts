@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param , Req, Res } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment-dto';
 import { Stripe } from 'stripe';
@@ -8,7 +8,7 @@ import { Public } from '../users/public.decorator';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  //@Public()
+  @Public()
   @Post('create-checkout-session')
   async createCheckoutSessionWithPost(@Body() paymentData: CreatePaymentDto) {
     console.log(paymentData);
@@ -19,20 +19,31 @@ export class PaymentController {
   @Public()
   @Post('stripe')
   async handleStripeWebhook(@Body() event: Stripe.Event) {
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session;
+    try {
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object as Stripe.Checkout.Session;
+          const subscriptionId = session.subscription as string;
+          const clientReferenceId = session.client_reference_id as string;
+          const stripeCustId = session.customer as string;
 
-      const subscriptionId = session.subscription as string;
-      const clientReferenceId = session.client_reference_id as string;
-      const stripeCustId = session.customer as string;
+          await this.paymentService.handleSubscription(
+            subscriptionId,
+            clientReferenceId,
+            stripeCustId,
+          );
+          return 'Webhook received and processed';
 
-      await this.paymentService.handleSubscription(
-        subscriptionId,
-        clientReferenceId,
-        stripeCustId,
-      );
-
-      return 'Webhook received and processed';
+        case 'customer.subscription.deleted':
+          const stripeCustomerId = event.data.object.customer as string;
+          console.log('I am the delete web hook ' + stripeCustomerId);
+          await this.paymentService.deleteSubscription(stripeCustomerId);
+          return 'Webhook received and processed';
+        default:
+          return 'Webhook received but not processed';
+      }
+    } catch (error) {
+      return 'Error processing webhook: ' + error.message;
     }
   }
 

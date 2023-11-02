@@ -848,4 +848,27 @@ export class CorporateService {
       );
     }
   }
+
+  async findCorporateByStripeCustId(stripeCustId: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { stripeCustId: stripeCustId },
+      });
+
+      if (corporate) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Corporate with given CustID found',
+          data: corporate,
+        };
+      } else {
+        throw new HttpException(
+          'Corporate with the specified Stripe Customer ID not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.NOT_FOUND);
+    }
+  }
 }

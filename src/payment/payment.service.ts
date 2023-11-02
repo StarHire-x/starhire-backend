@@ -17,31 +17,40 @@ export class PaymentService {
 
   constructor(corporateService: CorporateService) {
     this.stripe = new Stripe(process.env.STRIPE_API_KEY, {
-      // @ts-ignore
-      apiVersion: '2020-08-27',
+      //@ts-ignore
+      apiVersion: '2022-11-15',
     });
     this.corporateService = corporateService;
   }
 
   async createCheckoutSession(clientReferenceId) {
-    const session = await this.stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: 'price_1O52FfHN833uAyuLXi83NFEv',
-          quantity: 1,
-        },
-      ],
-      client_reference_id: clientReferenceId,
-      mode: 'subscription',
-      success_url: 'http://localhost:3001/payment/success',
-      cancel_url: 'http://localhost:3001/payment/failure',
-    });
+    const corporateResponse =
+      await this.corporateService.findByUserId(clientReferenceId);
 
-    //return session;
+    if (corporateResponse && corporateResponse.data) {
+      const session = await this.stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price: 'price_1O52FfHN833uAyuLXi83NFEv',
+            quantity: 1,
+          },
+        ],
+        client_reference_id: clientReferenceId,
+        mode: 'subscription',
+        success_url: 'http://localhost:3001/payment/success',
+        cancel_url: 'http://localhost:3001/payment/failure',
+      });
+
+      //return session;
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Checkout session created',
+        data: session.url,
+      };
+    }
     return {
-      statusCode: HttpStatus.OK,
-      message: 'Checkout session created',
-      data: session.url,
+      statusCode: HttpStatus.BAD_REQUEST,
+      message: 'Unable to create checkout session!!',
     };
   }
 
@@ -99,24 +108,7 @@ export class PaymentService {
         const corporate = corporateResponse.data;
 
         if (corporate) {
-          const corporateUpdateDto = new UpdateCorporateDto();
-          corporateUpdateDto.corporatePromotionStatus =
-            CorporatePromotionStatusEnum.REGULAR;
-
-          corporateUpdateDto.stripeSubId = null;
-          corporateUpdateDto.stripeCustId = null;
-
-          await this.corporateService.update(userId, corporateUpdateDto);
-
-          /*
-          const canceledSubscription = await this.stripe.subscriptions.update(
-            corporate.stripeSubId,
-            {
-              cancel_at_period_end: true,
-            },
-          );
-          */
-          const subscription = await this.stripe.subscriptions.cancel(
+          const canceledSubscription = await this.stripe.subscriptions.cancel(
             corporate.stripeSubId,
           );
         } else {
@@ -127,12 +119,56 @@ export class PaymentService {
           message: 'Subscription successfully canceled',
         };
       }
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        error: 'Failed to unsubscribe, contact our admins33',
+      };
+    } catch (error) {
+      console.error('Error canceling subscription:', error);
+      return {
+        status: 500,
+        error:
+          'Failed to unsubscribe, There is not such Subscription: ' +
+          error.message,
+      };
+    }
+  }
+
+  async deleteSubscription(stripeCustId: string) {
+    try {
+      const corporateResponse =
+        await this.corporateService.findCorporateByStripeCustId(stripeCustId);
+
+      if (corporateResponse && corporateResponse.data) {
+        const corporate = corporateResponse.data;
+
+        const corporateUpdateDto = new UpdateCorporateDto();
+
+        corporateUpdateDto.corporatePromotionStatus =
+          CorporatePromotionStatusEnum.REGULAR;
+
+        corporateUpdateDto.stripeSubId = null;
+        corporateUpdateDto.stripeCustId = null;
+
+        await this.corporateService.update(
+          corporate.userId,
+          corporateUpdateDto,
+        );
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Subscription successfully canceled',
+        };
+      }
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        error: 'Failed to unsubscribe, contact our admins 11',
+      };
     } catch (error) {
       console.error('Error canceling subscription:', error);
       //throw new Error('Failed to cancel subscription');
       return {
         status: 500,
-        error: 'Failed to unsubscribe, contact our admins',
+        error: 'Failed to unsubscribe, contact our admins22',
       };
     }
   }

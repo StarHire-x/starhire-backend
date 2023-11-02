@@ -60,7 +60,7 @@ export class JobAssignmentService {
         );
       }
 
-      const jobAssignment = new JobAssignment();
+      const jobAssignment = new JobAssignment({});
       jobAssignment.jobListingId = jobListing.jobListingId;
       jobAssignment.jobSeekerId = jobSeeker.userId;
       jobAssignment.recruiterId = recruiter.userId;

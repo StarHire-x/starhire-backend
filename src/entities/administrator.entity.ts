@@ -34,7 +34,8 @@ export class Administrator extends User {
   })
   commissions: Commission[];
 
-  constructor(entity: Partial<User>) {
+  constructor(entity: Partial<Administrator>) {
     super(entity);
+    Object.assign(this, entity);
   }
 }

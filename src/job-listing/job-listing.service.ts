@@ -284,7 +284,7 @@ export class JobListingService {
       jobSeeker.jobListings.push(jobListing);
       await this.jobSeekerRepository.save(jobSeeker);
 
-      const jobAssignment = new JobAssignment();
+      const jobAssignment = new JobAssignment({});
       jobAssignment.jobListingId = jobListingId;
       jobAssignment.jobSeekerId = jobSeekerId;
       jobAssignment.recruiterId = recruiterId;

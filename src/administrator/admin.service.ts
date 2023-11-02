@@ -207,14 +207,15 @@ export class AdministratorService {
 
   async remove(id: string) {
     try {
-      return await this.administratorRepository.delete({
+      const result = await this.administratorRepository.delete({
         userId: id,
       });
+      if (result.affected === 0) {
+        throw new HttpException('Admin id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (error) {
-      throw new HttpException(
-        'Failed to delete administrator',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

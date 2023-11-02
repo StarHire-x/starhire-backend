@@ -8,6 +8,8 @@ import { Recruiter } from '../entities/recruiter.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { JobSeeker } from '../entities/jobSeeker.entity';
 import { Document } from '../entities/document.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
 
 @Module({
   imports: [
@@ -21,6 +23,6 @@ import { Document } from '../entities/document.entity';
     ]),
   ],
   controllers: [TicketController],
-  providers: [TicketService],
+  providers: [TicketService, EmailService, TwilioService],
 })
 export class TicketModule {}

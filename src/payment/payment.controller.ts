@@ -75,4 +75,20 @@ export class PaymentController {
       return { success: false, error: error.message };
     }
   }
+
+  @Public()
+  @Get('all-invoices/:customerId')
+  async getAllInvoiceFromACustomer(@Param('customerId') customerId: string) {
+    try {
+      const invoices =
+        await this.paymentService.getAllInvoiceFromACustomer(customerId);
+      return invoices;
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to retrieve Invoices',
+        error: error.message,
+      };
+    }
+  }
 }

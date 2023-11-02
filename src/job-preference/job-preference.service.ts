@@ -35,9 +35,9 @@ export class JobPreferenceService {
           userId: jobSeekerId,
         });
 
-        if (!jobSeeker) {
-          throw new NotFoundException('Job Seeker Id provided is not valid');
-        }
+        // if (!jobSeeker) {
+        //   throw new NotFoundException('Job Seeker Id provided is not valid');
+        // }
         if (jobSeeker.jobPreference) {
           throw new ConflictException(
             'Job Seeker already has a Job Preference!',
@@ -62,9 +62,9 @@ export class JobPreferenceService {
           userId: corporateId,
         });
 
-        if (!corporate) {
-          throw new NotFoundException('Corporate Id provided is not valid');
-        }
+        // if (!corporate) {
+        //   throw new NotFoundException('Corporate Id provided is not valid');
+        // }
         if (corporate.jobPreference) {
           throw new ConflictException(
             'Corporate already has a Job Preference!',
@@ -89,7 +89,27 @@ export class JobPreferenceService {
   }
 
   async findAll() {
-    return await this.jobPreferenceRepository.find();
+    try {
+      const jobPreference = await this.jobPreferenceRepository.find();
+      if (jobPreference.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Job Preference found',
+          data: jobPreference,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Job Preference not found',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException(
+        'Failed to find Job Preference',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: number) {
@@ -169,29 +189,39 @@ export class JobPreferenceService {
   }
 
   async update(id: number, updateJobPreference: UpdateJobPreferenceDto) {
-    const jobPreference = await this.findOne(id);
+    try {
+      const jobPreference = await this.findOne(id);
 
-    if (!jobPreference) {
-      throw new NotFoundException('Job Preference Id provided is not valid');
+      if (!jobPreference) {
+        throw new NotFoundException('Job Preference Id provided is not valid');
+      }
+
+      const { jobSeekerId, corporateId, ...dtoExcludeRelationship } =
+        updateJobPreference;
+
+      Object.assign(jobPreference, dtoExcludeRelationship);
+
+      await this.jobPreferenceRepository.save(jobPreference);
+
+      return {
+        statusCode: 200,
+        message: 'Job preference updated',
+        data: jobPreference,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-
-    const { jobSeekerId, corporateId, ...dtoExcludeRelationship } =
-      updateJobPreference;
-
-    Object.assign(jobPreference, dtoExcludeRelationship);
-
-    await this.jobPreferenceRepository.save(jobPreference);
-
-    return {
-      statusCode: 200,
-      message: 'Job preference updated',
-      data: jobPreference,
-    };
   }
 
   async remove(id: number) {
     try {
-      return await this.jobPreferenceRepository.delete({ jobPreferenceId: id });
+      const result = await this.jobPreferenceRepository.delete({
+        jobPreferenceId: id,
+      });
+      if (result.affected === 0) {
+        throw new HttpException('Job Preference id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

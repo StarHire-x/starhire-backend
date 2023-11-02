@@ -291,6 +291,20 @@ export class JobListingService {
       jobAssignment.assignedTime = new Date();
       await this.jobAssignmentRepository.save(jobAssignment);
 
+      if (jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyJobSeekerOnMatchedJobListing(
+          jobSeeker,
+          jobListing,
+          recruiter,
+        );
+      } else if (jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyJobSeekerOnMatchedJobListing(
+          jobSeeker,
+          jobListing,
+          recruiter,
+        );
+      }
+
       if (jobListing && jobSeeker && recruiter) {
         return {
           statusCode: HttpStatus.OK,

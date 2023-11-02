@@ -48,7 +48,15 @@ export class JobExperienceService {
   }
 
   async findAll() {
-    return await this.jobExperienceRepository.find();
+    try {
+      const jobExperiences = await this.jobExperienceRepository.find();
+      return jobExperiences;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to fetch job experiences',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findOne(id: number) {
@@ -111,11 +119,11 @@ export class JobExperienceService {
 
   async remove(id: number) {
     try {
-      await this.jobExperienceRepository.delete({ jobExperienceId: id });
-      return {
-        statusCode: 200,
-        message: 'Job experience is deleted',
-      };
+      const result = await this.jobExperienceRepository.delete({ jobExperienceId: id });
+      if (result.affected === 0) {
+        throw new HttpException('Job experience id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

@@ -229,13 +229,7 @@ export class TicketService {
       } else if (ticket.corporate.notificationMode === NotificationModeEnum.SMS) {
         this.twilioService.notifyTicketResolution(ticket.corporate, ticket);
       }
-    } else if (ticket.recruiter) {
-      if (ticket.recruiter.notificationMode === NotificationModeEnum.EMAIL) {
-        this.emailService.notifyTicketResolution(ticket.recruiter, ticket);
-      } else if (ticket.recruiter.notificationMode === NotificationModeEnum.SMS) {
-        this.twilioService.notifyTicketResolution(ticket.recruiter, ticket);
-      }
-    }
+    } 
     
     return await this.ticketRepository.save(ticket);
   }

@@ -180,12 +180,6 @@ export class EmailService {
 
   async notifyTicketResolution(user: any, ticket: Ticket) {
     let loginLink = 'http://www.localhost:3001/login';
-    if (
-      user.role === UserRoleEnum.RECRUITER ||
-      user.role === UserRoleEnum.ADMINISTRATOR
-    ) {
-      loginLink = 'http://www.localhost:3000/login';
-    }
 
     try {
       await this.mailerService.sendMail({

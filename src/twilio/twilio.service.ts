@@ -8,6 +8,7 @@ import { JobSeeker } from '../entities/jobSeeker.entity';
 import { Recruiter } from '../entities/recruiter.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { Administrator } from '../entities/administrator.entity';
+import { Ticket } from '../entities/ticket.entity';
 
 @Injectable()
 export class TwilioService {
@@ -155,6 +156,36 @@ Log in to view the changes: ${loginLink}`;
     }
   }
 
+  async notifyTicketResolution(user: any, ticket: Ticket) {
+    let loginLink = 'http://www.localhost:3001/login';
+    
+    if (!user.contactNo) {
+      return;
+    }
+
+    const message = `Hello ${user.userName},
+Administrator has resolved your ticket with the title ${ticket.ticketName} of the category 
+${ticket.ticketCategory} with the description ${ticket.ticketDescription}
+Log in to view the changes: ${loginLink}`;
+
+    try {
+      //to refers to the whatsapp number , body refer to message
+      await this.client.messages.create({
+        to: `whatsapp:+65${user.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: user,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async notifyJobSeekerOnApplicationStatus(
     jobSeeker: JobSeeker,
     jobApplication: JobApplication,
@@ -263,6 +294,72 @@ Log in for details: ${loginLink}`;
         statusCode: HttpStatus.OK,
         message: 'SMS successfully sent',
         data: corporate,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyCorporateOnNewApplication(
+    corporate: Corporate,
+    jobSeeker: JobSeeker,
+    jobApplication: JobApplication,
+    jobListing: JobListing,
+    recruiter: Recruiter,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!corporate.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${corporate.companyName},
+There is a new job application by ${jobSeeker.fullName} for ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName} 
+Log in for details: ${loginLink}`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${corporate.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: corporate,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyJobSeekerOnMatchedJobListing(
+    jobSeeker: JobSeeker,
+    jobListing: JobListing,
+    recruiter: Recruiter,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!jobSeeker.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${jobSeeker.fullName},
+You have been matched by recruiter ${recruiter.fullName} for the role of ${jobListing.title}
+Log in for details: ${loginLink}`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${jobSeeker.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: jobSeeker,
       };
     } catch (error) {
       throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);

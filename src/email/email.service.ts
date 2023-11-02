@@ -10,6 +10,7 @@ import { JobListing } from '../entities/jobListing.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { Recruiter } from '../entities/recruiter.entity';
 import { Administrator } from '../entities/administrator.entity';
+import { Ticket } from '../entities/ticket.entity';
 
 @Injectable()
 export class EmailService {
@@ -177,6 +178,37 @@ export class EmailService {
     }
   }
 
+  async notifyTicketResolution(user: any, ticket: Ticket) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject: `Ticket Status ${ticket.ticketId} Update for User: ${user.userName}`,
+        html: `Dear <Strong>${user.userName}</Strong>,<br><br>
+             Administrator has resolved your ticket with the title ${ticket.ticketName} of the category 
+             ${ticket.ticketCategory} with the description ${ticket.ticketDescription}<br>
+
+             Please <a href="${loginLink}">Login</a> to your account to see the changes <br><br>
+
+             For further enquiries, please contact our Admin support staff <br><br>
+             Thank you for using our service!<br><br>
+             Best regards,<br>
+             StarHire`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: user,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   // inform job seeker of job application status - havent add to method yet
   async notifyJobSeekerOnApplicationStatus(
     jobSeeker: JobSeeker,
@@ -260,7 +292,7 @@ export class EmailService {
     jobListing: JobListing,
     recruiter: Recruiter,
   ) {
-    let loginLink = 'http://www.localhost:3000/login';
+    let loginLink = 'http://www.localhost:3001/login';
 
     try {
       await this.mailerService.sendMail({
@@ -283,6 +315,82 @@ export class EmailService {
         statusCode: HttpStatus.OK,
         message: 'Notification status email sent successfully',
         data: corporate,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async notifyCorporateOnNewApplication(
+    corporate: Corporate,
+    jobSeeker: JobSeeker,
+    jobApplication: JobApplication,
+    jobListing: JobListing,
+    recruiter: Recruiter,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: corporate.email,
+        subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.fullName}`,
+        html: `Dear <strong>${corporate.companyName}</strong>,<br><br>
+         
+         We want to inform you that there is a new job application status of ${jobSeeker.fullName} for the position of ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName}
+
+         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
+         
+         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
+
+         Thank you for choosing StarHire.<br><br>
+
+         Warm regards,<br>
+         The StarHire Team`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: corporate,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async notifyJobSeekerOnMatchedJobListing(
+    jobSeeker: JobSeeker,
+    jobListing: JobListing,
+    recruiter: Recruiter,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: jobSeeker.email,
+        subject: `Congratulation you have been matched!`,
+        html: `Dear <strong>${jobSeeker.fullName}</strong>,<br><br>
+         
+         We want to inform you that you have been matched by recruiter ${recruiter.fullName} for the position of ${jobListing.title}
+
+         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
+         
+         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
+
+         Thank you for choosing StarHire.<br><br>
+
+         Warm regards,<br>
+         The StarHire Team`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: jobSeeker,
       };
     } catch (err) {
       throw new HttpException(

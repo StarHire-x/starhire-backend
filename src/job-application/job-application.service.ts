@@ -240,6 +240,8 @@ export class JobApplicationService {
         relations: { jobSeeker: true, recruiter: true, jobListing: true },
       });
 
+      const originalStatus = jobApplication.jobApplicationStatus;
+
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobApplication.jobListing.jobListingId },
         relations: { corporate: true },
@@ -311,21 +313,57 @@ export class JobApplicationService {
       }
 
       if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
-        this.emailService.notifyCorporateOnApplicationStatus(
-          corporate,
-          jobSeeker,
-          jobApplication,
-          jobListing,
-          recruiter,
-        );
+        if (
+          jobApplication.jobApplicationStatus ===
+            JobApplicationStatusEnum.PROCESSING
+        ) {
+          this.emailService.notifyCorporateOnNewApplication(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        } else if (
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.SUBMITTED &&
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.TO_BE_SUBMITTED
+        ) {
+          this.emailService.notifyCorporateOnApplicationStatus(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        }
       } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
-        this.twilioService.notifyCorporateOnApplicationStatus(
-          corporate,
-          jobSeeker,
-          jobApplication,
-          jobListing,
-          recruiter,
-        );
+        if (
+          jobApplication.jobApplicationStatus ===
+            JobApplicationStatusEnum.PROCESSING
+        ) {
+          this.twilioService.notifyCorporateOnNewApplication(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        } else if (
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.SUBMITTED &&
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.TO_BE_SUBMITTED
+        ) {
+          this.twilioService.notifyCorporateOnApplicationStatus(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        }
       }
 
       return {

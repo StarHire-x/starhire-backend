@@ -16,6 +16,9 @@ import { Corporate } from '../entities/corporate.entity';
 import { JobSeeker } from '../entities/jobSeeker.entity';
 import { Document } from '../entities/document.entity';
 import { mapTicketCategoryToEnum } from '../common/mapStringToEnum';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
 
 @Injectable()
 export class TicketService {
@@ -33,6 +36,8 @@ export class TicketService {
     private readonly jobSeekerRepository: Repository<JobSeeker>,
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createTicketDto: CreateTicketDto) {
@@ -203,6 +208,7 @@ export class TicketService {
   async resolveTicket(id: number): Promise<Ticket> {
     const ticket = await this.ticketRepository.findOne({
       where: { ticketId: id },
+      relations: { jobSeeker: true, corporate: true, recruiter: true }
     });
 
     if (!ticket) {
@@ -210,6 +216,21 @@ export class TicketService {
     }
 
     ticket.isResolved = true;
+
+    if(ticket.jobSeeker) {
+      if(ticket.jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyTicketResolution(ticket.jobSeeker, ticket);
+      } else if(ticket.jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyTicketResolution(ticket.jobSeeker, ticket);
+      }
+    } else if (ticket.corporate) {
+      if (ticket.corporate.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyTicketResolution(ticket.corporate, ticket);
+      } else if (ticket.corporate.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyTicketResolution(ticket.corporate, ticket);
+      }
+    } 
+    
     return await this.ticketRepository.save(ticket);
   }
 }

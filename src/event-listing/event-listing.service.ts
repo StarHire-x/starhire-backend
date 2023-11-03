@@ -118,7 +118,7 @@ export class EventListingService {
     try {
       const eventListing = await this.eventListingRepository.findOne({
         where: { eventListingId: eventListingId },
-        relations: ['eventRegistrations'],
+        relations: { eventRegistrations: { jobSeeker: true } },
       });
 
       console.log('Event Registrations: ', eventListing);

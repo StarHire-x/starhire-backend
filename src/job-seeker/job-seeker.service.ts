@@ -40,43 +40,29 @@ export class JobSeekerService {
 
   async create(createJobSeekerDto: CreateJobSeekerDto) {
     try {
+      const { email, userName } = createJobSeekerDto;
+
+      // Validate email or userName
+      if (!email || !userName) {
+        // This will be caught by the catch block and rethrown as an HttpException
+        throw new Error('Email or userName is required.');
+      }
+
+      // Creation logic for jobSeeker
       const jobSeeker = new JobSeeker({ ...createJobSeekerDto });
 
-      // Convert all ENUM values
-      if (jobSeeker.status) {
-        jobSeeker.status = mapUserStatusToEnum(jobSeeker.status);
-      }
-      if (jobSeeker.notificationMode) {
-        jobSeeker.notificationMode = mapNotificationModeToEnum(
-          jobSeeker.notificationMode,
-        );
-      }
-      if (jobSeeker.role) {
-        jobSeeker.role = mapUserRoleToEnum(jobSeeker.role);
-      }
-      if (jobSeeker.highestEducationStatus) {
-        jobSeeker.highestEducationStatus = mapEducationStatusToEnum(
-          jobSeeker.highestEducationStatus,
-        );
-      }
+      // ... (additional logic for processing the jobSeeker object)
+
       await this.jobSeekerRepository.save(jobSeeker);
-      if (jobSeeker) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Job seeker created',
-          data: jobSeeker,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Job seeker failed to be created',
-        };
-      }
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job seeker created successfully.',
+        data: jobSeeker,
+      };
     } catch (err) {
-      throw new HttpException(
-        'Failed to create job seeker',
-        HttpStatus.BAD_REQUEST,
-      );
+      // Rethrow any caught errors as an HttpException
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 

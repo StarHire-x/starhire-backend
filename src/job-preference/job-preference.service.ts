@@ -31,16 +31,10 @@ export class JobPreferenceService {
         createJobPreference;
 
       if (jobSeekerId) {
-        const jobSeeker = await this.jobSeekerRepository.findOne({
-          where: { userId: jobSeekerId },
-          relations: {
-            jobPreference: true,
-          },
+        const jobSeeker = await this.jobSeekerRepository.findOneBy({
+          userId: jobSeekerId,
         });
 
-        if (!jobSeeker) {
-          throw new NotFoundException('Job Seeker Id provided is not valid');
-        }
         if (jobSeeker.jobPreference) {
           throw new ConflictException(
             'Job Seeker already has a Job Preference!',
@@ -58,19 +52,11 @@ export class JobPreferenceService {
           message: 'Job preference is created for job seeker',
           data: jobPreference,
         };
-      }
-
-      if (corporateId) {
-        const corporate = await this.corporateRepository.findOne({
-          where: { userId: corporateId },
-          relations: {
-            jobPreference: true,
-          },
+      } else if (corporateId) {
+        const corporate = await this.corporateRepository.findOneBy({
+          userId: corporateId,
         });
 
-        if (!corporate) {
-          throw new NotFoundException('Corporate Id provided is not valid');
-        }
         if (corporate.jobPreference) {
           throw new ConflictException(
             'Corporate already has a Job Preference!',
@@ -88,6 +74,8 @@ export class JobPreferenceService {
           message: 'Job preference is created for corporate',
           data: jobPreference,
         };
+      } else {
+        throw new NotFoundException('Empty user details')
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -225,7 +213,10 @@ export class JobPreferenceService {
         jobPreferenceId: id,
       });
       if (result.affected === 0) {
-        throw new HttpException('Job Preference id not found', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Job Preference id not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
       return result;
     } catch (err) {

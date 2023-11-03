@@ -189,6 +189,20 @@ describe('JobPreferenceService', () => {
         jobPreferenceService.create(createJobPreferenceDto),
       ).rejects.toThrow('Corporate already has a Job Preference!');
     });
+
+    it('should throw an error if both corporate id and jobseeker id empty', async () => {
+      const createJobPreferenceDto: CreateJobPreferenceDto = {
+        jobSeekerId: '',
+        corporateId: '',
+        benefitPreference: 3,
+        salaryPreference: 3,
+        workLifeBalancePreference: 4,
+      };
+
+      await expect(
+        jobPreferenceService.create(createJobPreferenceDto),
+      ).rejects.toThrow('Empty user details');
+    });
   });
 
   describe('findAll', () => {

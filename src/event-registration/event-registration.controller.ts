@@ -66,6 +66,23 @@ export class EventRegistrationController {
     }
   }
 
+  @Get('event-listing/:eventlistingId')
+  findAllEventRegistrationsByEventListingId(
+    @Param('eventlistingId') eventListingId: number,
+  ) {
+    try {
+      return this.eventRegistrationService.findAllByEventListingId(
+        eventListingId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   // GET /event-registration/:id
   @Get(':id')
   findOne(@Param('id') id: number) {

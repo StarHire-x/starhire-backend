@@ -103,6 +103,24 @@ export class EventRegistrationService {
     }
   }
 
+  async findAllByEventListingId(
+    eventListingId: number,
+  ): Promise<EventRegistration[]> {
+    try {
+      return await this.eventRegistrationRepository.find({
+        where: {
+          eventListing: { eventListingId: eventListingId },
+        },
+        relations: { jobSeeker: true }, // to retrieve jobSeeker details with job application
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find event registration by event listing id.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     try {
       return await this.eventRegistrationRepository.findOne({

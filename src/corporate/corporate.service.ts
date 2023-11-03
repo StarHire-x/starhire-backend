@@ -7,7 +7,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Not, QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Corporate } from '../entities/corporate.entity';
 import {
@@ -121,39 +121,37 @@ export class CorporateService {
 
   async findAllJobStatistics() {
     try {
-       const corporates = await this.corporateRepository.find({
-         relations: { jobListings: true },
-       });
+      const corporates = await this.corporateRepository.find({
+        relations: { jobListings: true },
+      });
 
-       if(corporates.length === 0) {
-        throw new HttpException("No corporate found", HttpStatus.NOT_FOUND)
-       }
+      if (corporates.length === 0) {
+        throw new HttpException('No corporate found', HttpStatus.NOT_FOUND);
+      }
 
-       const statistics = {};
+      const statistics = {};
 
-       for (const data of corporates) {
-         const jobListings = data.jobListings;
-         statistics[data.companyName] = jobListings.length;
-       }
+      for (const data of corporates) {
+        const jobListings = data.jobListings;
+        statistics[data.companyName] = jobListings.length;
+      }
 
-       const labels = Object.keys(statistics);
-       const values = Object.values(statistics);
+      const labels = Object.keys(statistics);
+      const values = Object.values(statistics);
 
-       const result = {
-         labels: labels,
-         values: values,
-       };
+      const result = {
+        labels: labels,
+        values: values,
+      };
 
-       return {
-         statusCode: HttpStatus.OK,
-         message: 'Statistics retrieved',
-         data: result,
-       };
-
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Statistics retrieved',
+        data: result,
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.NOT_FOUND);
     }
-   
   }
 
   async findBreakdownJobStatistics() {
@@ -219,7 +217,6 @@ export class CorporateService {
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.NOT_FOUND);
     }
-    
   }
 
   async findBreakdownJobStatisticsOneCorporate(corporateId: string) {
@@ -321,10 +318,7 @@ export class CorporateService {
         );
       }
     } catch (err) {
-      throw new HttpException(
-        err.message,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -392,7 +386,7 @@ export class CorporateService {
       if (!corporate) {
         throw new HttpException(
           'Corporate Id provided is not valid',
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -404,7 +398,7 @@ export class CorporateService {
       if (!jobSeeker) {
         throw new HttpException(
           'Job Seeker Id provided is not valid',
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -417,10 +411,7 @@ export class CorporateService {
         };
       }
     } catch (error) {
-      throw new HttpException(
-        error.message,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -432,7 +423,10 @@ export class CorporateService {
       });
 
       if (!corporate) {
-        throw new HttpException('Corporate Id provided is not valid', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Corporate Id provided is not valid',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const jobSeeker = await this.jobSeekerRepository.findOne({
@@ -440,7 +434,10 @@ export class CorporateService {
       });
 
       if (!jobSeeker) {
-        throw new HttpException('Job Seeker Id provided is not valid', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Job Seeker Id provided is not valid',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       if (corporate && jobSeeker) {
@@ -456,10 +453,7 @@ export class CorporateService {
         };
       }
     } catch (error) {
-      throw new HttpException(
-        error.message,
-        HttpStatus.BAD_REQUEST
-      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -530,10 +524,7 @@ export class CorporateService {
     try {
       const result = await this.corporateRepository.delete({ userId: id });
       if (result.affected === 0) {
-        throw new HttpException(
-          'Corporate id not found',
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException('Corporate id not found', HttpStatus.NOT_FOUND);
       }
       return result;
     } catch (err) {
@@ -541,31 +532,54 @@ export class CorporateService {
     }
   }
 
-  async getAllPromotionRequest() {
+  async getAllPremimumUsers() {
     try {
       const corporates = await this.corporateRepository.find({
         where: {
-          corporatePromotionStatus: CorporatePromotionStatusEnum.REQUESTED,
+          corporatePromotionStatus: CorporatePromotionStatusEnum.PREMIUM,
         },
       });
       if (corporates.length > 0) {
         return {
           statusCode: HttpStatus.OK,
-          message: 'Corporate found',
+          message: 'Premium Users found',
           data: corporates,
         };
       } else {
         return {
           statusCode: HttpStatus.NOT_FOUND,
-          message: 'Corporate not found',
+          message: 'There are currently no Premium users',
           data: [],
         };
       }
     } catch {
-      throw new HttpException(
-        'Failed to find corporate',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getAllNonPremiumUsers() {
+    try {
+      const nonPremiumUsers = await this.corporateRepository.find({
+        where: {
+          corporatePromotionStatus: Not(CorporatePromotionStatusEnum.PREMIUM), // Use Not() to negate the condition
+        },
+      });
+
+      if (nonPremiumUsers.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Non-Premium Users found',
+          data: nonPremiumUsers,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'There are currently no non-Premium users',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -842,10 +856,7 @@ export class CorporateService {
         data: userStatistics,
       };
     } catch (err) {
-      throw new HttpException(
-        'Error in Database',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Error in Database', HttpStatus.BAD_REQUEST);
     }
   }
 

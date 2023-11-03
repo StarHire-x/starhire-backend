@@ -42,9 +42,15 @@ export class CorporateController {
   }
 
   @Public() //rmb to remove this, only for testing convinence
-  @Get('/PromotionRequests')
-  getRequestedCorporates() {
-    return this.corporateService.getAllPromotionRequest();
+  @Get('/premium-users')
+  getAllPremiumUsers() {
+    return this.corporateService.getAllPremimumUsers();
+  }
+
+  @Public() //rmb to remove this, only for testing convinence
+  @Get('/non-premium-users')
+  getAllNonPremiumUsers() {
+    return this.corporateService.getAllNonPremiumUsers();
   }
 
   @Public()
@@ -225,4 +231,3 @@ export class CorporateController {
     }
   }
 }
-

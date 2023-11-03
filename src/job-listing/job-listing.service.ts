@@ -123,7 +123,6 @@ export class JobListingService {
         jobSeekers: true,
       },
     });
-    //console.log(t);
     return t;
   }
 
@@ -451,12 +450,6 @@ export class JobListingService {
       });
 
       if (jobListing) {
-        /*
-        const processingJobApplications = jobListing.jobApplications.filter(
-          (jobApplication) =>
-            jobApplication.jobApplicationStatus === 'Processing',
-        );
-        */
         const processingJobApplications = jobListing.jobApplications.filter(
           (jobApplication) =>
             jobApplication.jobApplicationStatus !==
@@ -476,7 +469,7 @@ export class JobListingService {
     } catch (err) {
       console.log(err);
       throw new HttpException(
-        'Failed to find job Listing',
+        'Failed to find job listing',
         HttpStatus.BAD_REQUEST,
       );
     }

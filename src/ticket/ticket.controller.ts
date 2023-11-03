@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
@@ -12,8 +11,6 @@ import {
   InternalServerErrorException,
   HttpStatus,
   ParseIntPipe,
-  Query,
-  ConflictException,
 } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';

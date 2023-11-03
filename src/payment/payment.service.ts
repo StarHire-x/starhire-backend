@@ -194,4 +194,21 @@ export class PaymentService {
       return { status: 500, error: 'Failed to retrieve billing cycle details' };
     }
   }
+
+  async getAllInvoiceFromACustomer(customerId: string) {
+    try {
+      const invoices = await this.stripe.invoices.list({
+        customer: customerId,
+      });
+
+      const invoiceUrls = invoices.data.map(
+        (invoice) => invoice.hosted_invoice_url,
+      );
+
+      console.log(invoiceUrls);
+      return { statusCode: 200, data: invoices };
+    } catch (error) {
+      throw new Error(`Error listing invoices: ${error.message}`);
+    }
+  }
 }

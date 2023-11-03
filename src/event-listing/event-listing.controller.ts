@@ -8,7 +8,6 @@ import {
   Delete,
   InternalServerErrorException,
   HttpException,
-  NotFoundException,
   HttpStatus,
 } from '@nestjs/common';
 import { EventListingService } from './event-listing.service';

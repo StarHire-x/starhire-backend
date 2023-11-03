@@ -9,9 +9,6 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
-  Req,
-  UseGuards,
-  NotFoundException,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';

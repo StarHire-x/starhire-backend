@@ -123,7 +123,6 @@ export class JobListingService {
         jobSeekers: true,
       },
     });
-    //console.log(t);
     return t;
   }
 

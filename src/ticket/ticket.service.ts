@@ -1,13 +1,12 @@
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import {
-  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from '../entities/ticket.entity';
 import { Administrator } from '../entities/administrator.entity';
@@ -208,7 +207,7 @@ export class TicketService {
   async resolveTicket(id: number): Promise<Ticket> {
     const ticket = await this.ticketRepository.findOne({
       where: { ticketId: id },
-      relations: { jobSeeker: true, corporate: true, recruiter: true }
+      relations: { jobSeeker: true, corporate: true, recruiter: true },
     });
 
     if (!ticket) {
@@ -217,20 +216,24 @@ export class TicketService {
 
     ticket.isResolved = true;
 
-    if(ticket.jobSeeker) {
-      if(ticket.jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+    if (ticket.jobSeeker) {
+      if (ticket.jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
         this.emailService.notifyTicketResolution(ticket.jobSeeker, ticket);
-      } else if(ticket.jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+      } else if (
+        ticket.jobSeeker.notificationMode === NotificationModeEnum.SMS
+      ) {
         this.twilioService.notifyTicketResolution(ticket.jobSeeker, ticket);
       }
     } else if (ticket.corporate) {
       if (ticket.corporate.notificationMode === NotificationModeEnum.EMAIL) {
         this.emailService.notifyTicketResolution(ticket.corporate, ticket);
-      } else if (ticket.corporate.notificationMode === NotificationModeEnum.SMS) {
+      } else if (
+        ticket.corporate.notificationMode === NotificationModeEnum.SMS
+      ) {
         this.twilioService.notifyTicketResolution(ticket.corporate, ticket);
       }
-    } 
-    
+    }
+
     return await this.ticketRepository.save(ticket);
   }
 }

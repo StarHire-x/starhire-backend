@@ -7,7 +7,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Not, QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Corporate } from '../entities/corporate.entity';
 import {
@@ -549,6 +549,32 @@ export class CorporateService {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'There are currently no Premium users',
+          data: [],
+        };
+      }
+    } catch {
+      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getAllNonPremiumUsers() {
+    try {
+      const nonPremiumUsers = await this.corporateRepository.find({
+        where: {
+          corporatePromotionStatus: Not(CorporatePromotionStatusEnum.PREMIUM), // Use Not() to negate the condition
+        },
+      });
+
+      if (nonPremiumUsers.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Non-Premium Users found',
+          data: nonPremiumUsers,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'There are currently no non-Premium users',
           data: [],
         };
       }

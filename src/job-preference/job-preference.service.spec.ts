@@ -191,356 +191,356 @@ describe('JobPreferenceService', () => {
     });
   });
 
-   describe('findAll', () => {
-     it('should return all job preference if there are any', async () => {
-       const jobPreference1 = new JobPreference({
-         jobPreferenceId: 1,
-       });
-       const jobPreference2 = new JobPreference({
-         jobPreferenceId: 2,
-       });
-       const jobPreferences = [jobPreference1, jobPreference2];
+  describe('findAll', () => {
+    it('should return all job preference if there are any', async () => {
+      const jobPreference1 = new JobPreference({
+        jobPreferenceId: 1,
+      });
+      const jobPreference2 = new JobPreference({
+        jobPreferenceId: 2,
+      });
+      const jobPreferences = [jobPreference1, jobPreference2];
 
-       jest.spyOn(jobPreferenceRepository, 'find').mockResolvedValueOnce(jobPreferences);
+      jest
+        .spyOn(jobPreferenceRepository, 'find')
+        .mockResolvedValueOnce(jobPreferences);
 
-       const result = await jobPreferenceService.findAll();
+      const result = await jobPreferenceService.findAll();
 
-       expect(result).toEqual({
-         statusCode: HttpStatus.OK,
-         message: 'Job Preference found',
-         data: jobPreferences,
-       });
-     });
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Job Preference found',
+        data: jobPreferences,
+      });
+    });
 
-     it('should return not found if there are no job preference', async () => {
-       jest.spyOn(jobPreferenceRepository, 'find').mockResolvedValueOnce([]);
+    it('should return not found if there are no job preference', async () => {
+      jest.spyOn(jobPreferenceRepository, 'find').mockResolvedValueOnce([]);
 
-       const result = await jobPreferenceService.findAll();
+      const result = await jobPreferenceService.findAll();
 
-       expect(result).toEqual({
-         statusCode: HttpStatus.NOT_FOUND,
-         message: 'Job Preference not found',
-         data: [],
-       });
-     });
+      expect(result).toEqual({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Job Preference not found',
+        data: [],
+      });
+    });
 
-     it('should throw an error if finding job preference fails', async () => {
-       jest
-         .spyOn(jobPreferenceRepository, 'find')
-         .mockRejectedValueOnce(new Error('Failed to find admin'));
+    it('should throw an error if finding job preference fails', async () => {
+      jest
+        .spyOn(jobPreferenceRepository, 'find')
+        .mockRejectedValueOnce(new Error('Failed to find admin'));
 
-       await expect(jobPreferenceService.findAll()).rejects.toThrow(
-         'Failed to find Job Preference',
-       );
-     });
-   });
+      await expect(jobPreferenceService.findAll()).rejects.toThrow(
+        'Failed to find Job Preference',
+      );
+    });
+  });
 
-   describe('findOne', () => {
-     it('should return job preference if id exists', async () => {
-       const id = 1;
-       const admin = new JobPreference({ jobPreferenceId: id });
-       jest.spyOn(jobPreferenceRepository, 'findOne').mockResolvedValue(admin);
+  describe('findOne', () => {
+    it('should return job preference if id exists', async () => {
+      const id = 1;
+      const admin = new JobPreference({ jobPreferenceId: id });
+      jest.spyOn(jobPreferenceRepository, 'findOne').mockResolvedValue(admin);
 
-       const result = await jobPreferenceService.findOne(id);
+      const result = await jobPreferenceService.findOne(id);
 
-       expect(result).toEqual(admin);
-     });
+      expect(result).toEqual(admin);
+    });
 
-     it('should throw error if findOne fails', async () => {
-       const id = 1;
-       jest
-         .spyOn(jobPreferenceRepository, 'findOne')
-         .mockRejectedValue(new Error('Failed to find administrator'));
+    it('should throw error if findOne fails', async () => {
+      const id = 0;
+      jest
+        .spyOn(jobPreferenceRepository, 'findOne')
+        .mockRejectedValue(new Error('Failed to find job preference'));
 
-       await expect(jobPreferenceService.findOne(id)).rejects.toThrow(
-         new HttpException(
-           'Failed to find administrator',
-           HttpStatus.BAD_REQUEST,
-         ),
-       );
-     });
+      await expect(jobPreferenceService.findOne(id)).rejects.toThrow(
+        new HttpException(
+          'Failed to find job preference',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
 
-     it('should throw an error if job preference with given id is not found', async () => {
-       const id = 1;
+    it('should throw an error if job preference with given id is not found', async () => {
+      const id = 3;
 
-       jest
-         .spyOn(jobPreferenceRepository, 'findOne')
-         .mockResolvedValueOnce(null);
+      jest
+        .spyOn(jobPreferenceRepository, 'findOne')
+        .mockResolvedValueOnce(null);
 
-       await expect(jobPreferenceService.findOne(id)).rejects.toThrow(
-         'Job preference not found',
-       );
-     });
-   });
+      await expect(jobPreferenceService.findOne(id)).rejects.toThrow(
+        'Job preference not found',
+      );
+    });
+  });
 
-   describe('findByJobSeekerId', () => {
-     it('should find and return a job preference by job seeker id', async () => {
-       const jobSeekerId = '1';
-       const jobPreference = new JobPreference({
+  describe('findByJobSeekerId', () => {
+    it('should find and return a job preference by job seeker id', async () => {
+      const jobSeekerId = '1';
+      const jobPreference = new JobPreference({
         jobPreferenceId: 1,
         benefitPreference: 3,
         salaryPreference: 3,
         workLifeBalancePreference: 4,
-       });
-       const jobSeeker = new JobSeeker({ userId: jobSeekerId, jobPreference });
+      });
+      const jobSeeker = new JobSeeker({ userId: jobSeekerId, jobPreference });
 
-       jest
-         .spyOn(jobSeekerRepository, 'findOne')
-         .mockResolvedValueOnce(jobSeeker);
+      jest
+        .spyOn(jobSeekerRepository, 'findOne')
+        .mockResolvedValueOnce(jobSeeker);
 
-       const result = await jobPreferenceService.findByJobSeekerId(jobSeekerId);
+      const result = await jobPreferenceService.findByJobSeekerId(jobSeekerId);
 
-       expect(result).toEqual({
-         statusCode: HttpStatus.OK,
-         message: 'Job preference is found',
-         data: jobPreference,
-       });
-     });
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is found',
+        data: jobPreference,
+      });
+    });
 
-     it('should throw an error if job seeker with given id is not found', async () => {
-       const jobSeekerId = '1';
+    it('should throw an error if job seeker with given id is not found', async () => {
+      const jobSeekerId = '1';
 
-       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValueOnce(null);
 
-       await expect(
-         jobPreferenceService.findByJobSeekerId(jobSeekerId),
-       ).rejects.toThrow('Job Seeker Id provided is not valid');
-     });
+      await expect(
+        jobPreferenceService.findByJobSeekerId(jobSeekerId),
+      ).rejects.toThrow('Job Seeker Id provided is not valid');
+    });
 
-     it('should throw an error if job seeker has no job preference', async () => {
-       const jobSeekerId = '1';
-       const jobSeeker = new JobSeeker({ userId: jobSeekerId });
+    it('should throw an error if job seeker has no job preference', async () => {
+      const jobSeekerId = '3';
+      const jobSeeker = new JobSeeker({ userId: jobSeekerId });
 
-       jest
-         .spyOn(jobSeekerRepository, 'findOne')
-         .mockResolvedValueOnce(jobSeeker);
+      jest
+        .spyOn(jobSeekerRepository, 'findOne')
+        .mockResolvedValueOnce(jobSeeker);
 
-       await expect(
-         jobPreferenceService.findByJobSeekerId(jobSeekerId),
-       ).rejects.toThrow('Job Seeker has no existing job preference');
-     });
-   });
+      await expect(
+        jobPreferenceService.findByJobSeekerId(jobSeekerId),
+      ).rejects.toThrow('Job Seeker has no existing job preference');
+    });
+  });
 
-   describe('findPreferenceByUserId', () => {
-     it('should find and return a job preference by job seeker id', async () => {
-       const userId = '1';
-       const role = UserRoleEnum.JOBSEEKER;
-       const jobPreference = new JobPreference({
-         jobPreferenceId: 1,
-         benefitPreference: 3,
-         salaryPreference: 3,
-         workLifeBalancePreference: 4,
-       });
-       const jobSeeker = new JobSeeker({ userId: userId, role, jobPreference });
+  describe('findPreferenceByUserId', () => {
+    it('should find and return a job preference by job seeker id', async () => {
+      const userId = '1';
+      const role = UserRoleEnum.JOBSEEKER;
+      const jobPreference = new JobPreference({
+        jobPreferenceId: 1,
+        benefitPreference: 3,
+        salaryPreference: 3,
+        workLifeBalancePreference: 4,
+      });
+      const jobSeeker = new JobSeeker({ userId: userId, role, jobPreference });
 
-       jest
-         .spyOn(jobSeekerRepository, 'findOne')
-         .mockResolvedValueOnce(jobSeeker);
+      jest
+        .spyOn(jobSeekerRepository, 'findOne')
+        .mockResolvedValueOnce(jobSeeker);
 
-       const result = await jobPreferenceService.findPreferenceByUserId(
-         userId,
-         role,
-       );
+      const result = await jobPreferenceService.findPreferenceByUserId(
+        userId,
+        role,
+      );
 
-       expect(result).toEqual({
-         statusCode: HttpStatus.OK,
-         message: 'Job preference is found',
-         data: jobPreference,
-       });
-     });
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is found',
+        data: jobPreference,
+      });
+    });
 
-     it('should find and return a job preference by corporate id', async () => {
-       const userId = '1';
-       const role = UserRoleEnum.CORPORATE;
-       const jobPreference = new JobPreference({
-         jobPreferenceId: 1,
-         benefitPreference: 3,
-         salaryPreference: 3,
-         workLifeBalancePreference: 4,
-       });
-       const corporate = new Corporate({ userId: userId, role, jobPreference });
+    it('should find and return a job preference by corporate id', async () => {
+      const userId = '1';
+      const role = UserRoleEnum.CORPORATE;
+      const jobPreference = new JobPreference({
+        jobPreferenceId: 1,
+        benefitPreference: 3,
+        salaryPreference: 3,
+        workLifeBalancePreference: 4,
+      });
+      const corporate = new Corporate({ userId: userId, role, jobPreference });
 
-       jest
-         .spyOn(corporateRepository, 'findOne')
-         .mockResolvedValueOnce(corporate);
+      jest
+        .spyOn(corporateRepository, 'findOne')
+        .mockResolvedValueOnce(corporate);
 
-       const result = await jobPreferenceService.findPreferenceByUserId(
-         userId,
-         role,
-       );
+      const result = await jobPreferenceService.findPreferenceByUserId(
+        userId,
+        role,
+      );
 
-       expect(result).toEqual({
-         statusCode: HttpStatus.OK,
-         message: 'Job preference is found',
-         data: jobPreference,
-       });
-     });
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Job preference is found',
+        data: jobPreference,
+      });
+    });
 
-     it('should throw an error if job seeker with given id is not found', async () => {
-       const userId = '1';
-       const role = UserRoleEnum.JOBSEEKER;
+    it('should throw an error if job seeker with given id is not found', async () => {
+      const userId = '1';
+      const role = UserRoleEnum.JOBSEEKER;
 
-       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValueOnce(null);
 
-       await expect(
-         jobPreferenceService.findPreferenceByUserId(userId, role),
-       ).rejects.toThrow('Job Seeker Id provided is not valid');
-     });
+      await expect(
+        jobPreferenceService.findPreferenceByUserId(userId, role),
+      ).rejects.toThrow('Job Seeker Id provided is not valid');
+    });
 
-     it('should throw an error if corporate with given id is not found', async () => {
-       const userId = '1';
-       const role = UserRoleEnum.CORPORATE;
+    it('should throw an error if corporate with given id is not found', async () => {
+      const userId = '1';
+      const role = UserRoleEnum.CORPORATE;
 
-       jest.spyOn(corporateRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(corporateRepository, 'findOne').mockResolvedValueOnce(null);
 
-       await expect(
-         jobPreferenceService.findPreferenceByUserId(userId, role),
-       ).rejects.toThrow('Corporate Id provided is not valid');
-     });
+      await expect(
+        jobPreferenceService.findPreferenceByUserId(userId, role),
+      ).rejects.toThrow('Corporate Id provided is not valid');
+    });
 
-     it('should throw an error if job seeker has no job preference', async () => {
-       const userId = '1';
-       const role = UserRoleEnum.JOBSEEKER;
-       const jobSeeker = new JobSeeker({ userId: userId, role });
+    it('should throw an error if job seeker has no job preference', async () => {
+      const userId = '1';
+      const role = UserRoleEnum.JOBSEEKER;
+      const jobSeeker = new JobSeeker({ userId: userId, role });
 
-       jest
-         .spyOn(jobSeekerRepository, 'findOne')
-         .mockResolvedValueOnce(jobSeeker);
+      jest
+        .spyOn(jobSeekerRepository, 'findOne')
+        .mockResolvedValueOnce(jobSeeker);
 
-       await expect(
-         jobPreferenceService.findPreferenceByUserId(userId, role),
-       ).rejects.toThrow('Job Seeker has no existing job preference');
-     });
+      await expect(
+        jobPreferenceService.findPreferenceByUserId(userId, role),
+      ).rejects.toThrow('Job Seeker has no existing job preference');
+    });
 
-     it('should throw an error if corporate has no job preference', async () => {
-       const userId = '1';
-       const role = UserRoleEnum.CORPORATE;
-       const corporate = new Corporate({ userId: userId, role });
+    it('should throw an error if corporate has no job preference', async () => {
+      const userId = '1';
+      const role = UserRoleEnum.CORPORATE;
+      const corporate = new Corporate({ userId: userId, role });
 
-       jest
-         .spyOn(corporateRepository, 'findOne')
-         .mockResolvedValueOnce(corporate);
+      jest
+        .spyOn(corporateRepository, 'findOne')
+        .mockResolvedValueOnce(corporate);
 
-       await expect(
-         jobPreferenceService.findPreferenceByUserId(userId, role),
-       ).rejects.toThrow('Corporate has no existing job preference');
-     });
-   });
+      await expect(
+        jobPreferenceService.findPreferenceByUserId(userId, role),
+      ).rejects.toThrow('Corporate has no existing job preference');
+    });
+  });
 
-   describe('update', () => {
-     it('should update a job preference and return the updated job preference', async () => {
-       const id = 1;
-       const updateJobPreferenceDto: UpdateJobPreferenceDto = {
-         jobSeekerId: '1',
-         corporateId: '',
-         benefitPreference: 4,
-         salaryPreference: 3,
-         workLifeBalancePreference: 3,
-       };
+  describe('update', () => {
+    it('should update a job preference and return the updated job preference', async () => {
+      const id = 1;
+      const updateJobPreferenceDto: UpdateJobPreferenceDto = {
+        jobSeekerId: '1',
+        corporateId: '',
+        benefitPreference: 4,
+        salaryPreference: 3,
+        workLifeBalancePreference: 3,
+      };
 
-       const jobPreference = new JobPreference({
-         benefitPreference: 4,
-         salaryPreference: 3,
-         workLifeBalancePreference: 3,
-       });
+      const jobPreference = new JobPreference({
+        benefitPreference: 4,
+        salaryPreference: 3,
+        workLifeBalancePreference: 3,
+      });
 
-       jest
-         .spyOn(jobPreferenceService, 'findOne')
-         .mockResolvedValueOnce(jobPreference);
-       jest
-         .spyOn(jobPreferenceRepository, 'save')
-         .mockResolvedValueOnce(jobPreference);
+      jest
+        .spyOn(jobPreferenceService, 'findOne')
+        .mockResolvedValueOnce(jobPreference);
+      jest
+        .spyOn(jobPreferenceRepository, 'save')
+        .mockResolvedValueOnce(jobPreference);
 
-       const result = await jobPreferenceService.update(
-         id,
-         updateJobPreferenceDto,
-       );
+      const result = await jobPreferenceService.update(
+        id,
+        updateJobPreferenceDto,
+      );
 
-       expect(result).toEqual({
-         statusCode: 200,
-         message: 'Job preference updated',
-         data: jobPreference,
-       });
-     });
+      expect(result).toEqual({
+        statusCode: 200,
+        message: 'Job preference updated',
+        data: jobPreference,
+      });
+    });
 
-     it('should throw an error if job preference id is not valid', async () => {
-       const id = 1;
-       const updateJobPreferenceDto: UpdateJobPreferenceDto = {
-         jobSeekerId: '1',
-         corporateId: '',
-         benefitPreference: 4,
-         salaryPreference: 3,
-         workLifeBalancePreference: 3,
-       };
+    it('should throw an error if job preference id is not valid', async () => {
+      const id = 1;
+      const updateJobPreferenceDto: UpdateJobPreferenceDto = {
+        jobSeekerId: '1',
+        corporateId: '',
+        benefitPreference: 4,
+        salaryPreference: 3,
+        workLifeBalancePreference: 3,
+      };
 
-       jest.spyOn(jobPreferenceService, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(jobPreferenceService, 'findOne').mockResolvedValueOnce(null);
 
-       await expect(
-         jobPreferenceService.update(id, updateJobPreferenceDto),
-       ).rejects.toThrow('Job Preference Id provided is not valid');
-     });
+      await expect(
+        jobPreferenceService.update(id, updateJobPreferenceDto),
+      ).rejects.toThrow('Job Preference Id provided is not valid');
+    });
 
-     it('should throw an error if updating fails', async () => {
-       const id = 1;
-       const updateJobPreferenceDto: UpdateJobPreferenceDto = {
-         jobSeekerId: '1',
-         corporateId: '',
-         benefitPreference: 4,
-         salaryPreference: 3,
-         workLifeBalancePreference: 3,
-       };
+    it('should throw an error if updating fails', async () => {
+      const id = 1;
+      const updateJobPreferenceDto: UpdateJobPreferenceDto = {
+        jobSeekerId: '1',
+        corporateId: '',
+        benefitPreference: 4,
+        salaryPreference: 3,
+        workLifeBalancePreference: 3,
+      };
 
-       const jobPreference = new JobPreference({
-         benefitPreference: 4,
-         salaryPreference: 3,
-         workLifeBalancePreference: 3,
-       });
+      const jobPreference = new JobPreference({
+        benefitPreference: 4,
+        salaryPreference: 3,
+        workLifeBalancePreference: 3,
+      });
 
-       jest
-         .spyOn(jobPreferenceService, 'findOne')
-         .mockResolvedValueOnce(jobPreference);
-       jest
-         .spyOn(jobPreferenceRepository, 'save')
-         .mockRejectedValueOnce(new Error('Failed to update job preference'));
+      jest
+        .spyOn(jobPreferenceService, 'findOne')
+        .mockResolvedValueOnce(jobPreference);
+      jest
+        .spyOn(jobPreferenceRepository, 'save')
+        .mockRejectedValueOnce(new Error('Failed to update job preference'));
 
-       await expect(
-         jobPreferenceService.update(id, updateJobPreferenceDto),
-       ).rejects.toThrow('Failed to update job preference');
-     });
-   });
+      await expect(
+        jobPreferenceService.update(id, updateJobPreferenceDto),
+      ).rejects.toThrow('Failed to update job preference');
+    });
+  });
 
-   describe('remove', () => {
-     it('should remove a job preference and return the result', async () => {
-       const id = 1;
-       const result = new DeleteResult();
-       result.affected = 1;
-       result.raw = {};
-       jest.spyOn(jobPreferenceRepository, 'delete').mockResolvedValue(result);
-       const response = await jobPreferenceService.remove(id);
-       expect(response).toEqual(result);
-     });
+  describe('remove', () => {
+    it('should remove a job preference and return the result', async () => {
+      const id = 1;
+      const result = new DeleteResult();
+      result.affected = 1;
+      result.raw = {};
+      jest.spyOn(jobPreferenceRepository, 'delete').mockResolvedValue(result);
+      const response = await jobPreferenceService.remove(id);
+      expect(response).toEqual(result);
+    });
 
-     it('should throw a not found exception if job preference is not found', async () => {
-       const id = 1;
-       const result = new DeleteResult();
-       result.affected = 0;
-       result.raw = {};
-       jest.spyOn(jobPreferenceRepository, 'delete').mockResolvedValue(result);
-       await expect(jobPreferenceService.remove(id)).rejects.toThrow(
-         new HttpException('Job Preference id not found', HttpStatus.NOT_FOUND),
-       );
-     });
+    it('should throw a not found exception if job preference is not found', async () => {
+      const id = 1;
+      const result = new DeleteResult();
+      result.affected = 0;
+      result.raw = {};
+      jest.spyOn(jobPreferenceRepository, 'delete').mockResolvedValue(result);
+      await expect(jobPreferenceService.remove(id)).rejects.toThrow(
+        new HttpException('Job Preference id not found', HttpStatus.NOT_FOUND),
+      );
+    });
 
-     it('should throw a bad request exception if there is a database error', async () => {
-       const id = 1;
-       jest
-         .spyOn(jobPreferenceRepository, 'delete')
-         .mockRejectedValue(new Error('Database error'));
-       await expect(jobPreferenceService.remove(id)).rejects.toThrow(
-         new HttpException('Database error', HttpStatus.BAD_REQUEST),
-       );
-     });
-   });
-
-
+    it('should throw a bad request exception if there is a database error', async () => {
+      const id = 1;
+      jest
+        .spyOn(jobPreferenceRepository, 'delete')
+        .mockRejectedValue(new Error('Database error'));
+      await expect(jobPreferenceService.remove(id)).rejects.toThrow(
+        new HttpException('Database error', HttpStatus.BAD_REQUEST),
+      );
+    });
+  });
 });

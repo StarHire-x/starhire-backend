@@ -121,11 +121,13 @@ export class EventListingService {
         relations: ['eventRegistrations'],
       });
 
+      console.log('Event Registrations: ', eventListing);
+
       if (eventListing) {
         return {
           statusCode: HttpStatus.OK,
           message: 'Event Registrations found',
-          data: eventListing,
+          data: eventListing.eventRegistrations,
         };
       } else {
         return {

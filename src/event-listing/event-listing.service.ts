@@ -114,6 +114,34 @@ export class EventListingService {
     }
   }
 
+  async findAllEventRegistrationsByEventListingId(eventListingId: number) {
+    try {
+      const eventListing = await this.eventListingRepository.findOne({
+        where: { eventListingId: eventListingId },
+        relations: ['eventRegistrations'],
+      });
+
+      if (eventListing) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Event Registrations found',
+          data: eventListing,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Unable to find event registrations',
+        };
+      }
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find event listings',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     try {
       // For this part, we want the relationship with other entities to show, at most 1 level, no need to be too detail

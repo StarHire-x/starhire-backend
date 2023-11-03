@@ -31,13 +31,16 @@ export class JobPreferenceService {
         createJobPreference;
 
       if (jobSeekerId) {
-        const jobSeeker = await this.jobSeekerRepository.findOneBy({
-          userId: jobSeekerId,
+        const jobSeeker = await this.jobSeekerRepository.findOne({
+          where: { userId: jobSeekerId },
+          relations: {
+            jobPreference: true,
+          },
         });
 
-        // if (!jobSeeker) {
-        //   throw new NotFoundException('Job Seeker Id provided is not valid');
-        // }
+        if (!jobSeeker) {
+          throw new NotFoundException('Job Seeker Id provided is not valid');
+        }
         if (jobSeeker.jobPreference) {
           throw new ConflictException(
             'Job Seeker already has a Job Preference!',
@@ -58,13 +61,16 @@ export class JobPreferenceService {
       }
 
       if (corporateId) {
-        const corporate = await this.corporateRepository.findOneBy({
-          userId: corporateId,
+        const corporate = await this.corporateRepository.findOne({
+          where: { userId: corporateId },
+          relations: {
+            jobPreference: true,
+          },
         });
 
-        // if (!corporate) {
-        //   throw new NotFoundException('Corporate Id provided is not valid');
-        // }
+        if (!corporate) {
+          throw new NotFoundException('Corporate Id provided is not valid');
+        }
         if (corporate.jobPreference) {
           throw new ConflictException(
             'Corporate already has a Job Preference!',

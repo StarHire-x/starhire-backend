@@ -43,8 +43,14 @@ export class CorporateController {
 
   @Public() //rmb to remove this, only for testing convinence
   @Get('/premium-users')
-  getRequestedCorporates() {
+  getAllPremiumUsers() {
     return this.corporateService.getAllPremimumUsers();
+  }
+
+  @Public() //rmb to remove this, only for testing convinence
+  @Get('/non-premium-users')
+  getAllNonPremiumUsers() {
+    return this.corporateService.getAllNonPremiumUsers();
   }
 
   @Public()

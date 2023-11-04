@@ -13,6 +13,7 @@ import {
 import { EventListingService } from './event-listing.service';
 import { CreateEventListingDto } from './dto/create-event-listing.dto';
 import { UpdateEventListingDto } from './dto/update-event-listing.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('event-listing')
 export class EventListingController {
@@ -32,6 +33,7 @@ export class EventListingController {
     }
   }
 
+  //@Public()
   @Get()
   findAllEventListings() {
     try {

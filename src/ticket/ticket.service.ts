@@ -122,7 +122,7 @@ export class TicketService {
 
   async findAll() {
     try {
-      return await this.ticketRepository.find({
+      const response = await this.ticketRepository.find({
         relations: {
           corporate: true,
           recruiter: true,
@@ -131,6 +131,7 @@ export class TicketService {
           documents: true,
         },
       });
+      return response;
     } catch (error) {
       throw new HttpException('Failed to find ticket', HttpStatus.BAD_REQUEST);
     }
@@ -139,7 +140,7 @@ export class TicketService {
   async findOne(id: number) {
     try {
       // For this part, we want the relationship with other entities to show, at most 1 level, no need to be too detail
-      return await this.ticketRepository.findOne({
+      const response = this.ticketRepository.findOne({
         where: { ticketId: id },
         relations: {
           documents: true,
@@ -149,6 +150,7 @@ export class TicketService {
           jobSeeker: true,
         },
       });
+      return response;
     } catch (error) {
       throw new HttpException('Failed to find ticket', HttpStatus.BAD_REQUEST);
     }

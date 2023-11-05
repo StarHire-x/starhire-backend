@@ -59,36 +59,33 @@ export class ForumPostsService {
         message: 'Forum post has been created',
       };
     } catch (err) {
-      throw new HttpException(
-        'Failed to create new forum post',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   // Note: No child entities are returned, since it is not specified in the relations field
   async findAll() {
-    return this.forumPostRepository.find({
-      order: {
-        createdAt: 'DESC',
-      },
-      relations: { jobSeeker: true, forumCategory: true },
-      loadRelationIds: { relations: ['forumComments'] }, // to retrieve number of comments only, no need fetch the entire comment object
-      where: [
-        // {
-        //   forumPostStatus: ForumPostEnum.Pending,
-        //   forumCategory: { isArchived: false },
-        // },
-        {
-          forumPostStatus: ForumPostEnum.Reported,
-          forumCategory: { isArchived: false },
+    try {
+      return await this.forumPostRepository.find({
+        order: {
+          createdAt: 'DESC',
         },
-        {
-          forumPostStatus: ForumPostEnum.Active,
-          forumCategory: { isArchived: false },
-        },
-      ],
-    });
+        relations: { jobSeeker: true, forumCategory: true },
+        loadRelationIds: { relations: ['forumComments'] },
+        where: [
+          {
+            forumPostStatus: ForumPostEnum.Reported,
+            forumCategory: { isArchived: false },
+          },
+          {
+            forumPostStatus: ForumPostEnum.Active,
+            forumCategory: { isArchived: false },
+          },
+        ],
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   // Note: Associated parent and child entities will be returned as well, since they are specified in the relations field
@@ -142,7 +139,7 @@ export class ForumPostsService {
       return response;
     } catch (err) {
       throw new HttpException(
-        'Failed to find forum post',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -190,7 +187,7 @@ export class ForumPostsService {
       return response;
     } catch (err) {
       throw new HttpException(
-        'Failed to retrieve forum posts',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -215,7 +212,7 @@ export class ForumPostsService {
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(
-        'Failed to delete a forum post',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -236,7 +233,7 @@ export class ForumPostsService {
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(
-        'Failed to update this forum post to Reported',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -259,7 +256,7 @@ export class ForumPostsService {
       return await this.forumPostRepository.save(forumPost);
     } catch (err) {
       throw new HttpException(
-        'Failed to update forum post',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }

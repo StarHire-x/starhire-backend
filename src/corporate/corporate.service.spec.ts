@@ -17,6 +17,7 @@ import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import JobListingStatusEnum from '../enums/jobListingStatus.enum';
 import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
 import { Recruiter } from '../entities/recruiter.entity';
+import { UpdateCorporateDto } from './dto/update-corporate.dto';
 
 describe('CorporateService', () => {
   let corporateService: CorporateService;
@@ -682,6 +683,13 @@ describe('CorporateService', () => {
     });
 
     it('should update corporate without changing notification mode', async () => {
+      const updateCorporateDto = new UpdateCorporateDto({
+        userName: 'corporateTest',
+        email: 'corporateTest@gmail.com',
+        password: 'securepassword',
+        contactNo: 55551234,
+      });
+
       const existingCorporate = new Corporate({
         userId: 'existingId',
         userName: 'corporateTest',
@@ -690,38 +698,48 @@ describe('CorporateService', () => {
         contactNo: '55551234',
       });
 
-      const updatedCorporate = new Corporate({
-        userId: 'existingId',
-        userName: 'corporateTest',
-        email: 'corporateTest@gmail.com',
-        password: 'securepassword',
-        contactNo: '555512345',
-      });
-
       jest
         .spyOn(corporateRepository, 'findOneBy')
         .mockResolvedValue(existingCorporate);
       jest
         .spyOn(corporateRepository, 'save')
-        .mockResolvedValue({ ...existingCorporate, ...updatedCorporate });
+        .mockResolvedValue(existingCorporate);
 
       const result = await corporateService.update(
         'existingId',
-        updatedCorporate,
+        updateCorporateDto,
       );
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
         message: 'Corporate updated',
-        data: { ...existingCorporate, ...updatedCorporate },
+        data: existingCorporate,
       });
     });
 
-    it('should throw an error when an unexpected error occurs', async () => {
-      jest.spyOn(corporateRepository, 'findOneBy').mockImplementation(() => {
-        throw new Error('Unexpected error');
+    it('should handle errors during the update process', async () => {
+      const updateCorporateDto = new UpdateCorporateDto({
+        userName: 'corporateTest',
+        email: 'corporateTest@gmail.com',
+        password: 'securepassword',
+        contactNo: 55551234,
+      });
+      
+      const corporate = new Corporate({
+        userId: 'existingId',
+        userName: 'corporateTest',
+        email: 'corporateTest@gmail.com',
+        password: 'securepassword',
+        contactNo: '55551234',
+      });
+      
+      jest.spyOn(corporateRepository, 'findOneBy').mockResolvedValue(corporate);
+      jest.spyOn(corporateRepository, 'save').mockImplementation(() => {
+        throw new Error('Database error');
       });
 
-      await expect(corporateService.update('existingId', null)).rejects.toThrow(
+      await expect(
+        corporateService.update('existingId', updateCorporateDto)
+      ).rejects.toThrow(
         new HttpException('Failed to update corporate', HttpStatus.BAD_REQUEST),
       );
     });
@@ -760,50 +778,88 @@ describe('CorporateService', () => {
     });
   });
 
-  describe('getAllPromotionRequest', () => {
-    it('should return corporates when found', async () => {
-      const corporates: Corporate[] = [
-        new Corporate({
-          userId: 'corporateTest',
-        }),
-        new Corporate({
-          userId: 'corporateTest2',
-        }),
-      ]
-      corporates[0].corporatePromotionStatus =
-        CorporatePromotionStatusEnum.REQUESTED;
+  describe('getAllPremimumUsers', () => {
+    it('should return all premium users when they exist', async () => {
+      const corporate = new Corporate({
+        userId: 'existingId',
+        corporatePromotionStatus: CorporatePromotionStatusEnum.PREMIUM
+      });
       
-      corporates[1].corporatePromotionStatus =
-        CorporatePromotionStatusEnum.REGULAR;
+      const mockCorporates = [corporate];
+      jest.spyOn(corporateRepository, 'find').mockResolvedValue(mockCorporates);
 
-      jest.spyOn(corporateRepository, 'find').mockResolvedValue(corporates);
-
-      const result = await corporateService.getAllPromotionRequest();
+      const result = await corporateService.getAllPremimumUsers();
 
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
-        message: 'Corporate found',
-        data: corporates,
+        message: 'Premium Users found',
+        data: mockCorporates,
       });
     });
 
-    it('should return NOT_FOUND when no corporates are found', async () => {
+    it('should return a not found message when there are no premium users', async () => {
       jest.spyOn(corporateRepository, 'find').mockResolvedValue([]);
 
-      const result = await corporateService.getAllPromotionRequest();
+      const result = await corporateService.getAllPremimumUsers();
 
       expect(result).toEqual({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'Corporate not found',
+        message: 'There are currently no Premium users',
         data: [],
       });
     });
 
-    it('should throw an exception if there is an error during retrieval', async () => {
-      jest.spyOn(corporateRepository, 'find').mockRejectedValue(new Error());
+    it('should throw an HttpException if there is an error', async () => {
+      const error = new Error('Database error');
+      jest.spyOn(corporateRepository, 'find').mockRejectedValue(error);
 
-      await expect(corporateService.getAllPromotionRequest()).rejects.toThrow(
-        new HttpException('Failed to find corporate', HttpStatus.BAD_REQUEST),
+      await expect(corporateService.getAllPremimumUsers()).rejects.toThrow(
+        new HttpException(error.message, HttpStatus.BAD_REQUEST),
+      );
+    });
+  });
+
+  describe('getAllNonPremiumUsers', () => {
+    it('should return all non-premium users when they exist', async () => {
+      const corporate = new Corporate({
+        userId: 'existingId',
+        corporatePromotionStatus: CorporatePromotionStatusEnum.REGULAR,
+      });
+      
+      const mockNonPremiumUsers = [
+        corporate
+      ];
+      jest
+        .spyOn(corporateRepository, 'find')
+        .mockResolvedValue(mockNonPremiumUsers);
+
+      const result = await corporateService.getAllNonPremiumUsers();
+
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Non-Premium Users found',
+        data: mockNonPremiumUsers,
+      });
+    });
+
+    it('should return a not found message when there are no non-premium users', async () => {
+      jest.spyOn(corporateRepository, 'find').mockResolvedValue([]);
+
+      const result = await corporateService.getAllNonPremiumUsers();
+
+      expect(result).toEqual({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'There are currently no non-Premium users',
+        data: [],
+      });
+    });
+
+    it('should throw an HttpException if there is an error', async () => {
+      const error = new Error('Database error');
+      jest.spyOn(corporateRepository, 'find').mockRejectedValue(error);
+
+      await expect(corporateService.getAllNonPremiumUsers()).rejects.toThrow(
+        new HttpException(error.message, HttpStatus.BAD_REQUEST),
       );
     });
   });
@@ -965,6 +1021,54 @@ describe('CorporateService', () => {
         corporateService.findAllJobListingStatsByCorporate('testUserId'),
       ).rejects.toThrow(
         new HttpException('Error in Database', HttpStatus.BAD_REQUEST),
+      );
+    });
+  });
+
+  describe('CorporateService - findCorporateByStripeCustId', () => {
+    it('should return corporate when found by Stripe Customer ID', async () => {
+      const stripeCustId = 'valid_cust_id';
+      const expectedCorporate = new Corporate({
+        userId: 'corporate_id',
+        stripeCustId: stripeCustId,
+      });
+
+      jest
+        .spyOn(corporateRepository, 'findOne')
+        .mockResolvedValue(expectedCorporate);
+
+      const result =
+        await corporateService.findCorporateByStripeCustId(stripeCustId);
+
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Corporate with given CustID found',
+        data: expectedCorporate,
+      });
+    });
+
+    it('should throw NotFoundException when corporate with given Stripe Customer ID is not found', async () => {
+      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(
+        corporateService.findCorporateByStripeCustId('invalid_cust_id'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Corporate with the specified Stripe Customer ID not found',
+          HttpStatus.NOT_FOUND,
+        ),
+      );
+    });
+
+    it('should throw an error when an unexpected error occurs', async () => {
+      jest.spyOn(corporateRepository, 'findOne').mockImplementation(() => {
+        throw new Error('Unexpected error');
+      });
+
+      await expect(
+        corporateService.findCorporateByStripeCustId('any_cust_id'),
+      ).rejects.toThrow(
+        new HttpException('Unexpected error', HttpStatus.NOT_FOUND),
       );
     });
   });

@@ -69,23 +69,16 @@ export class CorporateService {
       // }
 
       await this.corporateRepository.save(corporate);
-      if (corporate) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Corporate created',
-          data: corporate,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Corporate not created',
-        };
-      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Corporate created',
+        data: corporate,
+      };
     } catch (error) {
-      const { response } = error;
-      if (response?.statusCode === 409) {
-        throw new ConflictException(response.message);
-      }
+      // const { response } = error;
+      // if (response?.statusCode === 409) {
+      //   throw new ConflictException(response.message);
+      // }
 
       throw new HttpException(
         'Failed to create new corporate',
@@ -552,8 +545,8 @@ export class CorporateService {
           data: [],
         };
       }
-    } catch {
-      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -578,8 +571,8 @@ export class CorporateService {
           data: [],
         };
       }
-    } catch {
-      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 

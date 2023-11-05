@@ -31,18 +31,11 @@ export class AdministratorService {
     try {
       const admin = new Administrator({ ...createAdministratorDto });
       await this.administratorRepository.save(admin);
-      if (admin) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Admin created',
-          data: admin,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Admin not created',
-        };
-      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Admin created',
+        data: admin,
+      };
     } catch (error) {
       throw new HttpException(
         'Failed to create new administrator',

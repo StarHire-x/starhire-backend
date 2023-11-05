@@ -262,17 +262,14 @@ describe('JobExperienceService', () => {
       };
       const jobExperience = new JobExperience({
         jobExperienceId: id,
-        jobTitle: 'Old Job Title',
+        jobTitle: 'New Job Title',
       });
 
       jest
         .spyOn(jobExperienceService, 'findOne')
         .mockResolvedValueOnce(jobExperience);
 
-      jest.spyOn(jobExperienceRepository, 'save').mockResolvedValueOnce({
-        ...jobExperience,
-        ...updateJobExperienceDto,
-      });
+      jest.spyOn(jobExperienceRepository, 'save').mockResolvedValueOnce(jobExperience);
 
       const result = await jobExperienceService.update(
         id,

@@ -265,10 +265,14 @@ export class ForumPostsService {
   // Note: Associated child entities(forum comments) will be removed as well, since cascade is set to true in the entity class
   async remove(id: number) {
     try {
-      return await this.forumPostRepository.delete({ forumPostId: id });
+      const result = await this.forumPostRepository.delete({ forumPostId: id });
+      if (result.affected === 0) {
+        throw new HttpException('Forum post id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (err) {
       throw new HttpException(
-        'Failed to delete forum post',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }

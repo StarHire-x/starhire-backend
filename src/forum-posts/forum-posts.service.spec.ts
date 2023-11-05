@@ -3,11 +3,12 @@ import { ForumPostsService } from './forum-posts.service';
 import { ForumCategory } from '../entities/forumCategory.entity';
 import { ForumPost } from '../entities/forumPost.entity';
 import { JobSeeker } from '../entities/jobSeeker.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import ForumPostEnum from '../enums/forumPost.enum';
 import { HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { ForumComment } from '../entities/forumComment.entity';
+import { UpdateForumPostDto } from './dto/update-forum-post.dto';
 
 describe('ForumPostsService', () => {
   let forumPostService: ForumPostsService;
@@ -578,59 +579,123 @@ describe('ForumPostsService', () => {
      });
    });
 
-    // describe('update', () => {
-    //   const forumPostId = 1;
-    //   const mockForumPost = new ForumPost({
-    //     /* Initialize with expected properties */
-    //   });
+  describe('update', () => {
 
-    //   it('should successfully update a forum post', async () => {
-    //     const updateForumPostDto =
-    //       new UpdateForumPostDto(/* fill with valid update data */);
-    //     jest
-    //       .spyOn(forumPostRepository, 'findOneBy')
-    //       .mockResolvedValue(mockForumPost);
-    //     jest
-    //       .spyOn(forumPostRepository, 'save')
-    //       .mockImplementation(async (post) => post);
+    it('should successfully update a forum post', async () => {
+      const forumPostId = 1;
+      const userId = '1';
+      const jobSeeker = new JobSeeker({ userId: userId });
+      const mockForumPost = new ForumPost({
+        forumPostId: forumPostId,
+        jobSeeker: jobSeeker,
+        forumPostStatus: ForumPostEnum.Inactive,
+      });
 
-    //     const result = await service.update(forumPostId, updateForumPostDto);
+      const updateForumPostDto = new UpdateForumPostDto({
+        jobSeeker: jobSeeker,
+        forumPostStatus: ForumPostEnum.Active,
+      });
 
-    //     expect(forumPostRepository.findOneBy).toHaveBeenCalledWith({
-    //       forumPostId,
-    //     });
-    //     expect(forumPostRepository.save).toHaveBeenCalledWith({
-    //       ...mockForumPost,
-    //       ...updateForumPostDto,
-    //     });
-    //     expect(result).toMatchObject(updateForumPostDto); // assuming you are updating fields included in UpdateForumPostDto
-    //   });
+      const post = new ForumPost({
+        forumPostId: forumPostId,
+        jobSeeker: jobSeeker,
+        forumPostStatus: ForumPostEnum.Active,
+      });
 
-    //   it('should throw NotFoundException if the forum post is not found', async () => {
-    //     jest.spyOn(forumPostRepository, 'findOneBy').mockResolvedValue(null);
+      jest
+        .spyOn(forumPostRepository, 'findOneBy')
+        .mockResolvedValue(mockForumPost);
+      jest
+        .spyOn(forumPostRepository, 'save')
+        .mockResolvedValue(post);
 
-    //     await expect(
-    //       service.update(forumPostId, new UpdateForumPostDto()),
-    //     ).rejects.toThrow(
-    //       new NotFoundException('Forum Post Id provided is not valid'),
-    //     );
-    //   });
+      const result = await forumPostService.update(
+        forumPostId,
+        updateForumPostDto,
+      );
 
-    //   it('should throw HttpException if there is an error during the update', async () => {
-    //     const updateForumPostDto =
-    //       new UpdateForumPostDto(/* fill with valid update data */);
-    //     jest
-    //       .spyOn(forumPostRepository, 'findOneBy')
-    //       .mockResolvedValue(mockForumPost);
-    //     jest
-    //       .spyOn(forumPostRepository, 'save')
-    //       .mockRejectedValue(new Error('Unexpected error'));
+      expect(result).toMatchObject(updateForumPostDto); // assuming you are updating fields included in UpdateForumPostDto
+    });
 
-    //     await expect(
-    //       service.update(forumPostId, updateForumPostDto),
-    //     ).rejects.toThrow(
-    //       new HttpException('Unexpected error', HttpStatus.BAD_REQUEST),
-    //     );
-    //   });
-    // });
+    it('should throw NotFoundException if the forum post is not found', async () => {
+      const forumPostId = 1;
+      const userId = '1';
+      const jobSeeker = new JobSeeker({ userId: userId });
+
+      const updateForumPostDto = new UpdateForumPostDto({
+        jobSeeker: jobSeeker,
+        forumPostStatus: ForumPostEnum.Active,
+      });
+
+      jest.spyOn(forumPostRepository, 'findOneBy').mockResolvedValue(null);
+
+      await expect(
+        forumPostService.update(forumPostId, updateForumPostDto),
+      ).rejects.toThrow(
+        new NotFoundException('Forum Post Id provided is not valid'),
+      );
+    });
+
+    it('should throw HttpException if there is an error during the update', async () => {
+      const forumPostId = 1;
+      const userId = '1';
+      const jobSeeker = new JobSeeker({ userId: userId });
+      const mockForumPost = new ForumPost({
+        forumPostId: forumPostId,
+        jobSeeker: jobSeeker,
+        forumPostStatus: ForumPostEnum.Inactive,
+      });
+
+      const updateForumPostDto = new UpdateForumPostDto({
+        jobSeeker: jobSeeker,
+        forumPostStatus: ForumPostEnum.Active,
+      });
+
+      jest
+        .spyOn(forumPostRepository, 'findOneBy')
+        .mockResolvedValue(mockForumPost);
+      jest
+        .spyOn(forumPostRepository, 'save')
+        .mockRejectedValue(new Error('Database save error'));
+
+      await expect(
+        forumPostService.update(forumPostId, updateForumPostDto),
+      ).rejects.toThrow(
+        new HttpException('Database save error', HttpStatus.BAD_REQUEST),
+      );
+    });
+  });
+
+   describe('remove', () => {
+     it('should remove a forum post and return the result', async () => {
+       const id = 1;
+       const result = new DeleteResult();
+       result.affected = 1;
+       result.raw = {};
+       jest.spyOn(forumPostRepository, 'delete').mockResolvedValue(result);
+       const response = await forumPostService.remove(id);
+       expect(response).toEqual(result);
+     });
+
+     it('should throw a not found exception if forum post is not found', async () => {
+       const id = 1;
+       const result = new DeleteResult();
+       result.affected = 0;
+       result.raw = {};
+       jest.spyOn(forumPostRepository, 'delete').mockResolvedValue(result);
+       await expect(forumPostService.remove(id)).rejects.toThrow(
+         new HttpException('Forum post id not found', HttpStatus.NOT_FOUND),
+       );
+     });
+
+     it('should throw a bad request exception if there is a database error', async () => {
+       const id = 1;
+       jest
+         .spyOn(forumPostRepository, 'delete')
+         .mockRejectedValue(new Error('Database error'));
+       await expect(forumPostService.remove(id)).rejects.toThrow(
+         new HttpException('Database error', HttpStatus.BAD_REQUEST),
+       );
+     });
+   });
 });

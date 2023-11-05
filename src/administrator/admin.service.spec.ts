@@ -301,7 +301,7 @@ describe('AdministratorsService', () => {
     it('should update admin and return updated admin', async () => {
       const id = '1234';
       const updatedAdmin = new UpdateAdministratorDto({
-        notificationMode: 'EMAIL',
+        notificationMode: 'SMS',
       });
       const admin = new Administrator({
         userId: id,

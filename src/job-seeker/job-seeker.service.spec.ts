@@ -22,9 +22,10 @@ import {
 } from '@nestjs/common';
 import JobListingStatusEnum from '../enums/jobListingStatus.enum';
 import { JobPreference } from '../entities/jobPreference.entity';
+import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
 
 describe('JobSeekerService', () => {
-  let service: JobSeekerService;
+  let jobSeekerService: JobSeekerService;
   let jobSeekerRepository: Repository<JobSeeker>;
   let corporateRepository: Repository<Corporate>;
   let jobListingRepository: Repository<JobListing>;
@@ -58,7 +59,7 @@ describe('JobSeekerService', () => {
       ],
     }).compile();
 
-    service = module.get<JobSeekerService>(JobSeekerService);
+    jobSeekerService = module.get<JobSeekerService>(JobSeekerService);
     jobSeekerRepository = module.get<Repository<JobSeeker>>(
       getRepositoryToken(JobSeeker),
     );
@@ -73,7 +74,7 @@ describe('JobSeekerService', () => {
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(jobSeekerService).toBeDefined();
     expect(jobSeekerRepository).toBeDefined();
     expect(emailService).toBeDefined();
     expect(twilioService).toBeDefined();
@@ -101,7 +102,7 @@ describe('JobSeekerService', () => {
         visibility: VisibilityEnum.PUBLIC,
       };
 
-      const jobSeeker: JobSeeker = {
+      const jobSeeker = new JobSeeker({
         userId: 'testingJohn',
         userName: 'johndoe',
         email: 'johndoe@example.com',
@@ -120,42 +121,15 @@ describe('JobSeekerService', () => {
         instituteName: 'University of Example',
         dateOfGraduation: new Date(),
         visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
-      };
+      });
 
       jest.spyOn(jobSeekerRepository, 'save').mockResolvedValueOnce(jobSeeker);
 
-      const result = await service.create(createJobSeekerDto);
+      const result = await jobSeekerService.create(createJobSeekerDto);
 
       expect(result).toEqual({
         statusCode: 200,
-        message: 'Job seeker created',
+        message: 'Job seeker created successfully.',
         data: createJobSeekerDto,
       });
     });
@@ -185,7 +159,7 @@ describe('JobSeekerService', () => {
         .spyOn(jobSeekerRepository, 'save')
         .mockRejectedValueOnce(new Error('Failed to create job seeker'));
 
-      await expect(service.create(createJobSeekerDto)).rejects.toThrow(
+      await expect(jobSeekerService.create(createJobSeekerDto)).rejects.toThrow(
         'Failed to create job seeker',
       );
     });
@@ -195,59 +169,16 @@ describe('JobSeekerService', () => {
     it('should find a job seeker by email and return the job seeker', async () => {
       const email = 'test@example.com';
 
-      const jobSeeker: JobSeeker = {
+      const jobSeeker = new JobSeeker({
         userId: 'testingJohn',
-        userName: 'johndoe',
-        email: 'johndoe@example.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
-      };
+        email: email,
+      });
 
       jest
         .spyOn(jobSeekerRepository, 'findOne')
         .mockResolvedValueOnce(jobSeeker);
 
-      const result = await service.findByEmail(email);
+      const result = await jobSeekerService.findByEmail(email);
 
       expect(result).toEqual({
         statusCode: 200,
@@ -261,7 +192,7 @@ describe('JobSeekerService', () => {
 
       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValueOnce(null);
 
-      const result = await service.findByEmail(email);
+      const result = await jobSeekerService.findByEmail(email);
 
       expect(result).toEqual({
         statusCode: 404,
@@ -276,7 +207,7 @@ describe('JobSeekerService', () => {
         .spyOn(jobSeekerRepository, 'findOne')
         .mockRejectedValueOnce(new Error('Failed to find job seeker'));
 
-      await expect(service.findByEmail(email)).rejects.toThrow(
+      await expect(jobSeekerService.findByEmail(email)).rejects.toThrow(
         'Failed to find job seeker',
       );
     });
@@ -285,55 +216,11 @@ describe('JobSeekerService', () => {
   describe('findByUserId', () => {
     it('should return a job seeker if found', async () => {
       const userId = 'someUserId';
-      const jobSeeker = {
-        userId: 'testingJohn',
-        userName: 'johndoe',
-        email: 'johndoe@example.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
-      };
+      const jobSeeker = new JobSeeker({
+        userId: userId,
+      });
       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValue(jobSeeker);
-      const result = await service.findByUserId(userId);
+      const result = await jobSeekerService.findByUserId(userId);
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
         message: 'Job seeker found',
@@ -344,7 +231,7 @@ describe('JobSeekerService', () => {
     it('should return a not found message if job seeker is not found', async () => {
       const userId = 'someUserId';
       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValue(null);
-      const result = await service.findByUserId(userId);
+      const result = await jobSeekerService.findByUserId(userId);
       expect(result).toEqual({
         statusCode: HttpStatus.NOT_FOUND,
         message: 'Job seeker not found',
@@ -355,62 +242,18 @@ describe('JobSeekerService', () => {
   describe('findOne', () => {
     it('should return a job seeker if found', async () => {
       const userId = 'someUserId';
-      const jobSeeker = {
-        userId: 'testingJohn',
-        userName: 'johndoe',
-        email: 'johndoe@example.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
-      };
+      const jobSeeker = new JobSeeker({
+        userId: userId,
+      });
       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValue(jobSeeker);
-      const result = await service.findOne(userId);
+      const result = await jobSeekerService.findOne(userId);
       expect(result).toEqual(jobSeeker);
     });
 
     it('should throw a not found exception if job seeker is not found', async () => {
       const userId = 'someUserId';
       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValue(null);
-      await expect(service.findOne(userId)).rejects.toThrow(
+      await expect(jobSeekerService.findOne(userId)).rejects.toThrow(
         new HttpException('Job seeker id not found', HttpStatus.NOT_FOUND),
       );
     });
@@ -419,55 +262,12 @@ describe('JobSeekerService', () => {
   describe('findMyFollowings', () => {
     it('should return the number of followings if job seeker is found', async () => {
       const userId = 'someUserId';
-      const jobSeeker = {
-        userId: 'testingJohn',
-        userName: 'johndoe',
-        email: 'johndoe@example.com',
-        password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
+      const jobSeeker = new JobSeeker({
+        userId: userId,
         following: [],
-      };
+      });
       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValue(jobSeeker);
-      const result = await service.findMyFollowings(userId);
+      const result = await jobSeekerService.findMyFollowings(userId);
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
         message: 'Number of followings found',
@@ -478,7 +278,7 @@ describe('JobSeekerService', () => {
     it('should return a not found message if job seeker is not found', async () => {
       const userId = 'someUserId';
       jest.spyOn(jobSeekerRepository, 'findOne').mockResolvedValue(null);
-      const result = await service.findMyFollowings(userId);
+      const result = await jobSeekerService.findMyFollowings(userId);
       expect(result).toEqual({
         statusCode: HttpStatus.NOT_FOUND,
         message: 'Following not found',
@@ -489,107 +289,36 @@ describe('JobSeekerService', () => {
   describe('update', () => {
     it('should update a job seeker and return the updated job seeker', async () => {
       const id = 'someUserId';
-      const updatedJobSeeker = {
-        userId: 'testingJohn',
+      const updatedJobSeekerDto: UpdateJobSeekerDto = {
         userName: 'johndoe',
         email: 'johndoe@example.com',
         password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
+        contactNo: '55541234',
       };
-      const initialJobSeeker = {
-        userId: 'testingJohn',
+
+      const initialJobSeeker = new JobSeeker({
+        userId: id,
         userName: 'johndoe',
         email: 'johndoe@example.com',
         password: 'securepassword',
-        contactNo: '555-12345',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
-      };
+        contactNo: '555412345',
+      });
+
+      const updatedJobSeeker = new JobSeeker({
+        userId: id,
+        userName: 'johndoe',
+        email: 'johndoe@example.com',
+        password: 'securepassword',
+        contactNo: '55541234',
+      });
+
       jest
         .spyOn(jobSeekerRepository, 'findOneBy')
         .mockResolvedValue(initialJobSeeker);
       jest
         .spyOn(jobSeekerRepository, 'save')
         .mockResolvedValue(updatedJobSeeker);
-      const result = await service.update(id, updatedJobSeeker);
+      const result = await jobSeekerService.update(id, updatedJobSeekerDto);
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
         message: 'Job seeker updated',
@@ -599,55 +328,16 @@ describe('JobSeekerService', () => {
 
     it('should throw a not found exception if job seeker is not found', async () => {
       const id = 'someUserId';
-      const updatedJobSeeker = {
-        userId: 'testingJohn',
-        userName: 'updatedName',
+      const updatedJobSeekerDto: UpdateJobSeekerDto = {
+        userName: 'johndoe',
         email: 'johndoe@example.com',
         password: 'securepassword',
-        contactNo: '555-1234',
-        status: UserStatusEnum.ACTIVE,
-        notificationMode: NotificationModeEnum.EMAIL,
-        createdAt: new Date(),
-        role: UserRoleEnum.JOBSEEKER,
-        resumePdf: 'sample-resume.pdf',
-        fullName: 'John Doe',
-        dateOfBirth: new Date(),
-        highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-        profilePictureUrl: 'https://example.com/profile-picture.jpg',
-        homeAddress: '123 Main St, Anytown, USA',
-        instituteName: 'University of Example',
-        dateOfGraduation: new Date(),
-        visibility: VisibilityEnum.PUBLIC,
-        country: '',
-        description: '',
-        proficientLanguages: '',
-        experience: '',
-        certifications: '',
-        recentRole: '',
-        resume: '',
-        startDate: undefined,
-        preferredRegions: '',
-        preferredJobType: '',
-        preferredSchedule: '',
-        payRange: '',
-        visaRequirements: '',
-        ranking: '',
-        otherInfo: '',
-        forumComments: [],
-        jobApplications: [],
-        eventRegistrations: [],
-        forumPosts: [],
-        chats: [],
-        jobPreference: undefined,
-        jobExperiences: [],
-        tickets: [],
-        reviews: [],
-        jobListings: [],
-        savedJobListings: [],
-        following: [],
+        contactNo: '55541234',
       };
       jest.spyOn(jobSeekerRepository, 'findOneBy').mockResolvedValue(null);
-      await expect(service.update(id, updatedJobSeeker)).rejects.toThrow(
+      await expect(
+        jobSeekerService.update(id, updatedJobSeekerDto),
+      ).rejects.toThrow(
         new HttpException('Job seeker id not found', HttpStatus.NOT_FOUND),
       );
     });
@@ -655,104 +345,25 @@ describe('JobSeekerService', () => {
 
   describe('findAll', () => {
     it('should return all job seekers', async () => {
-      const jobSeekers = [
-        {
-          userId: 'testingJohn',
-          userName: 'johndoe',
-          email: 'johndoe@example.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doe',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-        {
-          userId: 'testingJohn1',
-          userName: 'johndoe',
-          email: 'johndoe@example.com',
-          password: 'securepassword',
-          contactNo: '555-1234',
-          status: UserStatusEnum.ACTIVE,
-          notificationMode: NotificationModeEnum.EMAIL,
-          createdAt: new Date(),
-          role: UserRoleEnum.JOBSEEKER,
-          resumePdf: 'sample-resume.pdf',
-          fullName: 'John Doe',
-          dateOfBirth: new Date(),
-          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-          profilePictureUrl: 'https://example.com/profile-picture.jpg',
-          homeAddress: '123 Main St, Anytown, USA',
-          instituteName: 'University of Example',
-          dateOfGraduation: new Date(),
-          visibility: VisibilityEnum.PUBLIC,
-          country: '',
-          description: '',
-          proficientLanguages: '',
-          experience: '',
-          certifications: '',
-          recentRole: '',
-          resume: '',
-          startDate: undefined,
-          preferredRegions: '',
-          preferredJobType: '',
-          preferredSchedule: '',
-          payRange: '',
-          visaRequirements: '',
-          ranking: '',
-          otherInfo: '',
-          forumComments: [],
-          jobApplications: [],
-          eventRegistrations: [],
-          forumPosts: [],
-          chats: [],
-          jobPreference: undefined,
-          jobExperiences: [],
-          tickets: [],
-          reviews: [],
-          jobListings: [],
-          savedJobListings: [],
-          following: [],
-        },
-      ];
+      const jobSeeker1 = new JobSeeker({
+        userId: 'testingJohn',
+        chats: [],
+        jobPreference: undefined,
+        jobListings: [],
+        jobExperiences: [],
+      });
+
+      const jobSeeker2 = new JobSeeker({
+        userId: 'testingJohn1',
+        chats: [],
+        jobPreference: undefined,
+        jobListings: [],
+        jobExperiences: [],
+      });
+      
+      const jobSeekers = [jobSeeker1, jobSeeker2];
       jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
-      const result = await service.findAll();
+      const result = await jobSeekerService.findAll();
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
         message: 'Job seeker found',
@@ -761,177 +372,135 @@ describe('JobSeekerService', () => {
     });
 
     it('should throw a not found exception if no job seekers are found', async () => {
-      jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue([]);
-      await expect(service.findAll()).rejects.toThrow(
+      jest
+        .spyOn(jobSeekerRepository, 'find')
+        .mockRejectedValue(
+          new HttpException('Job seeker not found', HttpStatus.NOT_FOUND),
+        );
+      await expect(jobSeekerService.findAll()).rejects.toThrow(
         new HttpException('Job seeker not found', HttpStatus.NOT_FOUND),
       );
     });
   });
 
   describe('findAllWithSimilarity', () => {
-    // it('should return all job seekers with similarity scores', async () => {
-    //   // Mock data setup
-    //   const jobListingId = 1;
-    //   const jobSeekers = [
-    //     {
-    //       userId: '1',
-    //       userName: 'johndoe',
-    //       email: 'johndoe@example.com',
-    //       password: 'securepassword',
-    //       contactNo: '555-1234',
-    //       status: UserStatusEnum.ACTIVE,
-    //       notificationMode: NotificationModeEnum.EMAIL,
-    //       createdAt: new Date(),
-    //       role: UserRoleEnum.JOBSEEKER,
-    //       resumePdf: 'sample-resume.pdf',
-    //       fullName: 'John Doe',
-    //       dateOfBirth: new Date(),
-    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
-    //       homeAddress: '123 Main St, Anytown, USA',
-    //       instituteName: 'University of Example',
-    //       dateOfGraduation: new Date(),
-    //       visibility: VisibilityEnum.PUBLIC,
-    //       country: '',
-    //       description: '',
-    //       proficientLanguages: '',
-    //       experience: '',
-    //       certifications: '',
-    //       recentRole: '',
-    //       resume: '',
-    //       startDate: undefined,
-    //       preferredRegions: '',
-    //       preferredJobType: '',
-    //       preferredSchedule: '',
-    //       payRange: '',
-    //       visaRequirements: '',
-    //       ranking: '',
-    //       otherInfo: '',
-    //       forumComments: [],
-    //       jobApplications: [],
-    //       eventRegistrations: [],
-    //       forumPosts: [],
-    //       chats: [],
-    //       jobPreference: undefined,
-    //       jobExperiences: [],
-    //       tickets: [],
-    //       reviews: [],
-    //       jobListings: [],
-    //       savedJobListings: [],
-    //       following: [],
-    //     },
-    //     {
-    //       userId: '2',
-    //       userName: 'johndoe1',
-    //       email: 'johndoe1@example.com',
-    //       password: 'securepassword',
-    //       contactNo: '555-1233',
-    //       status: UserStatusEnum.ACTIVE,
-    //       notificationMode: NotificationModeEnum.EMAIL,
-    //       createdAt: new Date(),
-    //       role: UserRoleEnum.JOBSEEKER,
-    //       resumePdf: 'sample-resume.pdf',
-    //       fullName: 'John Doea',
-    //       dateOfBirth: new Date(),
-    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
-    //       homeAddress: '123 Main St, Anytown, USA',
-    //       instituteName: 'University of Example',
-    //       dateOfGraduation: new Date(),
-    //       visibility: VisibilityEnum.PUBLIC,
-    //       country: '',
-    //       description: '',
-    //       proficientLanguages: '',
-    //       experience: '',
-    //       certifications: '',
-    //       recentRole: '',
-    //       resume: '',
-    //       startDate: undefined,
-    //       preferredRegions: '',
-    //       preferredJobType: '',
-    //       preferredSchedule: '',
-    //       payRange: '',
-    //       visaRequirements: '',
-    //       ranking: '',
-    //       otherInfo: '',
-    //       forumComments: [],
-    //       jobApplications: [],
-    //       eventRegistrations: [],
-    //       forumPosts: [],
-    //       chats: [],
-    //       jobPreference: undefined,
-    //       jobExperiences: [],
-    //       tickets: [],
-    //       reviews: [],
-    //       jobListings: [],
-    //       savedJobListings: [],
-    //       following: [],
-    //     },
-    //   ];
-    //   const jobListing = new JobListing({
-    //     jobListingId: 1,
-    //     title: 'Software Engineer',
-    //     overview: 'We are looking for a software engineer to join our team.',
-    //     responsibilities: 'Develop and maintain software applications.',
-    //     requirements: "Bachelor's degree in computer science or related field.",
-    //     requiredDocuments: 'Resume, cover letter.',
-    //     jobLocation: 'New York, NY',
-    //     listingDate: new Date(),
-    //     averageSalary: 80000,
-    //     jobStartDate: new Date('2023-01-01'),
-    //     jobListingStatus: JobListingStatusEnum.APPROVED,
-    //     payRange: '$70,000 - $90,000',
-    //     jobType: 'Full-time',
-    //     schedule: '9 to 5',
-    //     supplementalPay: 'Bonus',
-    //     otherBenefits: 'Health insurance, 401(k)',
-    //     certificationsRequired: 'None',
-    //     typeOfWorkers: 'Employees',
-    //     requiredLanguages: 'English',
-    //     otherConsiderations: 'Must be authorized to work in the US.',
-    //   });
+    it('should return all job seekers with similarity scores', async () => {
+      // Mock data setup
+      const jobListingId = 1;
 
-    //   const corporate = new Corporate({
-    //     userName: 'corporate1',
-    //     email: 'corporate1@example.com',
-    //     password: 'examplePassword',
-    //   });
+      const jobPreference1 = new JobPreference({
+        jobPreferenceId: 1,
+        benefitPreference: 3,
+        salaryPreference: 4,
+        workLifeBalancePreference: 3
+      });
 
-    //   // Set properties of Corporate class
-    //   corporate.companyName = 'Example Company';
-    //   corporate.schoolCategory = 'Example Category';
-    //   corporate.companyRegistrationId = 12345;
-    //   corporate.profilePictureUrl = 'example-url.com';
-    //   corporate.companyAddress = '123 Example St.';
-    //   corporate.postalCode = '12345';
-    //   corporate.regions = 'Example Region';
-    //   corporate.stripeSubId = 'example-sub-id';
-    //   corporate.stripeCustId = 'example-cust-id';
+      const jobPreference2 = new JobPreference({
+        jobPreferenceId: 2,
+        benefitPreference: 1,
+        salaryPreference: 4,
+        workLifeBalancePreference: 5,
+      });
 
-    //   const similarJobSeekers = [
-    //     { userId: '1', similarity: 0.9 },
-    //     { userId: '2', similarity: 0.8 },
-    //   ];
+      const jobPreference3 = new JobPreference({
+        jobPreferenceId: 3,
+        benefitPreference: 4,
+        salaryPreference: 4,
+        workLifeBalancePreference: 2,
+      });
 
-    //   jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
-    //   jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
-    //   jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
-    //   jest
-    //     .spyOn(service, 'calculateSimilarity')
-    //     .mockResolvedValue(similarJobSeekers);
+      const corporate = new Corporate({
+        userId: 'corporate1',
+        jobPreference: jobPreference3,
+      });
 
-    //   const result = await service.findAllWithSimilarity(jobListingId);
-    //   expect(result).toEqual({
-    //     statusCode: HttpStatus.OK,
-    //     message: 'Job seeker found',
-    //     data: similarJobSeekers,
-    //   });
-    // });
+      const jobListing = new JobListing({
+        jobListingId: 1,
+        corporate: corporate,
+      });
+
+      const jobSeeker1 = new JobSeeker({
+        userId: '1',
+        userName: 'johndoe',
+        jobPreference: jobPreference1,
+        jobListings: [jobListing],
+      });
+
+      const jobSeeker2 = new JobSeeker({
+        userId: '2',
+        userName: 'johndoe2',
+        jobPreference: jobPreference2,
+        jobListings: [jobListing],
+      });
+
+      const jobSeekers = [jobSeeker1, jobSeeker2];
+      
+
+      const similarJobSeekers = [
+        {
+          userId: '1',
+          userName: 'johndoe',
+          jobPreference: {
+            jobPreferenceId: 1,
+            benefitPreference: 3,
+            salaryPreference: 4,
+            workLifeBalancePreference: 3,
+          },
+          jobListings: [
+            {
+              jobListingId: 1,
+              corporate: corporate,
+            },
+          ],
+          similarity: 98.59,
+          corporatePreference: {
+            benefitPreference: 4,
+            jobPreferenceId: 3,
+            salaryPreference: 4,
+            workLifeBalancePreference: 2,
+          },
+        },
+        {
+          userId: '2',
+          userName: 'johndoe2',
+          jobPreference: {
+            jobPreferenceId: 2,
+            benefitPreference: 1,
+            salaryPreference: 4,
+            workLifeBalancePreference: 5,
+          },
+          jobListings: [
+            {
+              jobListingId: 1,
+              corporate: corporate,
+            },
+          ],
+          similarity: 88.58,
+          corporatePreference: {
+            benefitPreference: 4,
+            jobPreferenceId: 3,
+            salaryPreference: 4,
+            workLifeBalancePreference: 2,
+          },
+        },
+      ];
+
+      jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
+      jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
+      jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
+
+      const result = await jobSeekerService.findAllWithSimilarity(jobListingId);
+      expect(result).toEqual({
+        statusCode: HttpStatus.OK,
+        message: 'Job seeker found',
+        data: similarJobSeekers,
+      });
+    });
 
     it('should throw a not found exception if no job seekers are found', async () => {
       const jobListingId = 1;
       jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue([]);
-      await expect(service.findAllWithSimilarity(jobListingId)).rejects.toThrow(
+      await expect(jobSeekerService.findAllWithSimilarity(jobListingId)).rejects.toThrow(
         new HttpException('Failed to find job seeker', HttpStatus.NOT_FOUND),
       );
     });
@@ -1036,219 +605,76 @@ describe('JobSeekerService', () => {
        ];
       jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
       jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(null);
-      await expect(service.findAllWithSimilarity(jobListingId)).rejects.toThrow(
+      await expect(jobSeekerService.findAllWithSimilarity(jobListingId)).rejects.toThrow(
         new HttpException('Failed to find job listing', HttpStatus.NOT_FOUND),
       );
     });
-
-    // it('should calculate similarity correctly', async () => {
-    //   const jobListingId = 1;
-    //   const jobSeekers = [
-    //     {
-    //       userId: '1',
-    //       userName: 'johndoe',
-    //       email: 'johndoe@example.com',
-    //       password: 'securepassword',
-    //       contactNo: '555-1234',
-    //       status: UserStatusEnum.ACTIVE,
-    //       notificationMode: NotificationModeEnum.EMAIL,
-    //       createdAt: new Date(),
-    //       role: UserRoleEnum.JOBSEEKER,
-    //       resumePdf: 'sample-resume.pdf',
-    //       fullName: 'John Doe',
-    //       dateOfBirth: new Date(),
-    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
-    //       homeAddress: '123 Main St, Anytown, USA',
-    //       instituteName: 'University of Example',
-    //       dateOfGraduation: new Date(),
-    //       visibility: VisibilityEnum.PUBLIC,
-    //       country: '',
-    //       description: '',
-    //       proficientLanguages: '',
-    //       experience: '',
-    //       certifications: '',
-    //       recentRole: '',
-    //       resume: '',
-    //       startDate: undefined,
-    //       preferredRegions: '',
-    //       preferredJobType: '',
-    //       preferredSchedule: '',
-    //       payRange: '',
-    //       visaRequirements: '',
-    //       ranking: '',
-    //       otherInfo: '',
-    //       forumComments: [],
-    //       jobApplications: [],
-    //       eventRegistrations: [],
-    //       forumPosts: [],
-    //       chats: [],
-    //       jobPreference: undefined,
-    //       jobExperiences: [],
-    //       tickets: [],
-    //       reviews: [],
-    //       jobListings: [],
-    //       savedJobListings: [],
-    //       following: [],
-    //     },
-    //     {
-    //       userId: '2',
-    //       userName: 'johndoe1',
-    //       email: 'johndoe1@example.com',
-    //       password: 'securepassword',
-    //       contactNo: '555-1233',
-    //       status: UserStatusEnum.ACTIVE,
-    //       notificationMode: NotificationModeEnum.EMAIL,
-    //       createdAt: new Date(),
-    //       role: UserRoleEnum.JOBSEEKER,
-    //       resumePdf: 'sample-resume.pdf',
-    //       fullName: 'John Doea',
-    //       dateOfBirth: new Date(),
-    //       highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-    //       profilePictureUrl: 'https://example.com/profile-picture.jpg',
-    //       homeAddress: '123 Main St, Anytown, USA',
-    //       instituteName: 'University of Example',
-    //       dateOfGraduation: new Date(),
-    //       visibility: VisibilityEnum.PUBLIC,
-    //       country: '',
-    //       description: '',
-    //       proficientLanguages: '',
-    //       experience: '',
-    //       certifications: '',
-    //       recentRole: '',
-    //       resume: '',
-    //       startDate: undefined,
-    //       preferredRegions: '',
-    //       preferredJobType: '',
-    //       preferredSchedule: '',
-    //       payRange: '',
-    //       visaRequirements: '',
-    //       ranking: '',
-    //       otherInfo: '',
-    //       forumComments: [],
-    //       jobApplications: [],
-    //       eventRegistrations: [],
-    //       forumPosts: [],
-    //       chats: [],
-    //       jobPreference: undefined,
-    //       jobExperiences: [],
-    //       tickets: [],
-    //       reviews: [],
-    //       jobListings: [],
-    //       savedJobListings: [],
-    //       following: [],
-    //     },
-    //   ];
-    //   const jobListing = new JobListing({
-    //     jobListingId: 1,
-    //     title: 'Software Engineer',
-    //     overview: 'We are looking for a software engineer to join our team.',
-    //     responsibilities: 'Develop and maintain software applications.',
-    //     requirements: "Bachelor's degree in computer science or related field.",
-    //     requiredDocuments: 'Resume, cover letter.',
-    //     jobLocation: 'New York, NY',
-    //     listingDate: new Date(),
-    //     averageSalary: 80000,
-    //     jobStartDate: new Date('2023-01-01'),
-    //     jobListingStatus: JobListingStatusEnum.APPROVED,
-    //     payRange: '$70,000 - $90,000',
-    //     jobType: 'Full-time',
-    //     schedule: '9 to 5',
-    //     supplementalPay: 'Bonus',
-    //     otherBenefits: 'Health insurance, 401(k)',
-    //     certificationsRequired: 'None',
-    //     typeOfWorkers: 'Employees',
-    //     requiredLanguages: 'English',
-    //     otherConsiderations: 'Must be authorized to work in the US.',
-    //   });
-
-    //   const corporate = new Corporate({
-    //     userName: 'corporate1',
-    //     email: 'corporate1@example.com',
-    //     password: 'examplePassword',
-    //   });
-
-    //   const similarJobSeekers = [
-    //     { userId: '1', similarity: 0.9 },
-    //     { userId: '2', similarity: 0.8 },
-    //   ];
-    //   jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
-    //   jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(jobListing);
-    //   jest.spyOn(corporateRepository, 'findOne').mockResolvedValue(corporate);
-    //   const calculateSimilaritySpy = jest
-    //     .spyOn(service, 'calculateSimilarity')
-    //     .mockResolvedValue(similarJobSeekers);
-
-    //   await service.findAllWithSimilarity(jobListingId);
-
-    //   expect(calculateSimilaritySpy).toHaveBeenCalledWith(
-    //     jobSeekers,
-    //     corporate,
-    //   );
-    // });
   });
 
-  describe('calculateSimilarity', () => {
-  it('should calculate similarity correctly', async () => {
-    const jobSeekers = [
-      {
-        jobPreference: {
-          benefitPreference: 1,
-          workLifeBalancePreference: 1,
-          salaryPreference: 1,
-        },
-      },
-    ];
+//   describe('calculateSimilarity', () => {
+//   it('should calculate similarity correctly', async () => {
+//     const jobSeekers = [
+//       {
+//         jobPreference: {
+//           benefitPreference: 1,
+//           workLifeBalancePreference: 1,
+//           salaryPreference: 1,
+//         },
+//       },
+//     ];
 
-    const corporate = new Corporate({
-      userName: 'corporate1',
-      email: 'corporate1@example.com',
-      password: 'examplePassword',
-    });
+//     const corporate = new Corporate({
+//       userName: 'corporate1',
+//       email: 'corporate1@example.com',
+//       password: 'examplePassword',
+//     });
 
-    corporate.jobPreference = new JobPreference({
-      jobPreferenceId: 2,
-      benefitPreference: 1,
-      workLifeBalancePreference: 1,
-      salaryPreference: 1,
-    });
+//     corporate.jobPreference = new JobPreference({
+//       jobPreferenceId: 2,
+//       benefitPreference: 1,
+//       workLifeBalancePreference: 1,
+//       salaryPreference: 1,
+//     });
 
-    const results = await service.calculateSimilarity(jobSeekers, corporate);
+//     const results = await jobSeekerService.calculateSimilarity(jobSeekers, corporate);
 
-    expect(results[0].similarity).toBe(100);
-    expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
-  });
+//     expect(results[0].similarity).toBe(100);
+//     expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
+//   });
 
-  it('should handle zero magnitude', async () => {
-    const jobSeekers = [
-      {
-        jobPreference: {
-          benefitPreference: 0,
-          workLifeBalancePreference: 0,
-          salaryPreference: 0,
-        },
-      },
-    ];
+//   it('should handle zero magnitude', async () => {
+//     const jobSeekers = [
+//       {
+//         jobPreference: {
+//           benefitPreference: 0,
+//           workLifeBalancePreference: 0,
+//           salaryPreference: 0,
+//         },
+//       },
+//     ];
 
-    const corporate = new Corporate({
-      userName: 'corporate1',
-      email: 'corporate1@example.com',
-      password: 'examplePassword',
-    });
+//     const corporate = new Corporate({
+//       userName: 'corporate1',
+//       email: 'corporate1@example.com',
+//       password: 'examplePassword',
+//     });
 
-    corporate.jobPreference = new JobPreference({
-      jobPreferenceId: 2,
-      benefitPreference: 1,
-      workLifeBalancePreference: 1,
-      salaryPreference: 1,
-    });
+//     corporate.jobPreference = new JobPreference({
+//       jobPreferenceId: 2,
+//       benefitPreference: 1,
+//       workLifeBalancePreference: 1,
+//       salaryPreference: 1,
+//     });
 
-    const results = await service.calculateSimilarity(jobSeekers, corporate);
+//     const results = await jobSeekerService.calculateSimilarity(
+//       jobSeekers,
+//       corporate,
+//     );
 
-    expect(results[0].similarity).toBe(0);
-    expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
-  });
-});
+//     expect(results[0].similarity).toBe(0);
+//     expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
+//   });
+// });
 
   describe('remove', () => {
     it('should remove a job seeker and return the result', async () => {
@@ -1257,7 +683,7 @@ describe('JobSeekerService', () => {
       result.affected = 1;
       result.raw = {};
       jest.spyOn(jobSeekerRepository, 'delete').mockResolvedValue(result);
-      const response = await service.remove(id);
+      const response = await jobSeekerService.remove(id);
       expect(response).toEqual(result);
     });
 
@@ -1267,7 +693,7 @@ describe('JobSeekerService', () => {
       result.affected = 0;
       result.raw = {};
       jest.spyOn(jobSeekerRepository, 'delete').mockResolvedValue(result);
-      await expect(service.remove(id)).rejects.toThrow(
+      await expect(jobSeekerService.remove(id)).rejects.toThrow(
         new HttpException('Job seeker id not found', HttpStatus.NOT_FOUND),
       );
     });
@@ -1277,11 +703,8 @@ describe('JobSeekerService', () => {
       jest
         .spyOn(jobSeekerRepository, 'delete')
         .mockRejectedValue(new Error('Database error'));
-      await expect(service.remove(id)).rejects.toThrow(
-        new HttpException(
-          'Database error',
-          HttpStatus.BAD_REQUEST,
-        ),
+      await expect(jobSeekerService.remove(id)).rejects.toThrow(
+        new HttpException('Database error', HttpStatus.BAD_REQUEST),
       );
     });
   });

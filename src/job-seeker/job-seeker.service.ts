@@ -40,14 +40,6 @@ export class JobSeekerService {
 
   async create(createJobSeekerDto: CreateJobSeekerDto) {
     try {
-      const { email, userName } = createJobSeekerDto;
-
-      // Validate email or userName
-      if (!email || !userName) {
-        // This will be caught by the catch block and rethrown as an HttpException
-        throw new Error('Email or userName is required.');
-      }
-
       // Creation logic for jobSeeker
       const jobSeeker = new JobSeeker({ ...createJobSeekerDto });
 
@@ -257,15 +249,11 @@ export class JobSeekerService {
           jobExperiences: true,
         },
       });
-      if (jobSeekers.length > 0) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Job seeker found',
-          data: jobSeekers,
-        };
-      } else {
-        throw new HttpException('Job seeker not found', HttpStatus.NOT_FOUND);
-      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Job seeker found',
+        data: jobSeekers,
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
@@ -321,6 +309,8 @@ export class JobSeekerService {
         corporate,
       );
 
+      console.log(jobSeekerWithSimilarity);
+
       return {
         statusCode: HttpStatus.OK,
         message: 'Job seeker found',
@@ -335,7 +325,7 @@ export class JobSeekerService {
     return value == null ? defaultValue : value; // using '==' will check for both null and undefined
   };
 
-  async calculateSimilarity(jobSeekers: any[], corporate: Corporate) {
+  private async calculateSimilarity(jobSeekers: any[], corporate: Corporate) {
     const results = await Promise.all(
       jobSeekers.map(async (jobSeeker) => {
         let userBenefits =

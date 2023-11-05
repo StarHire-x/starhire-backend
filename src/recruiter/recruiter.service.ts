@@ -60,18 +60,11 @@ export class RecruiterService {
 
       await this.recruiterRepository.save(recruiter);
 
-      if (recruiter) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Recruiter created',
-          data: recruiter,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Recruiter failed to be created',
-        };
-      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Recruiter created',
+        data: recruiter,
+      };
     } catch (err) {
       throw new HttpException(
         'Failed to create recruiter',
@@ -108,7 +101,7 @@ export class RecruiterService {
     }
   }
 
-  async findRecrutierMatchingStatistics(userId: string) {
+  async findRecruiterMatchingStatistics(userId: string) {
     try {
       const recruiter = await this.recruiterRepository.findOne({
         where: { userId },
@@ -144,8 +137,6 @@ export class RecruiterService {
         });
       });
 
-      console.log(pendingResponse);
-
       const acceptedResponse = jobAssignments.filter((jobAssignment) => {
         return recruiter.jobApplications.some((jobApplication) => {
           return (
@@ -155,8 +146,6 @@ export class RecruiterService {
           );
         });
       });
-
-      console.log(acceptedResponse);
 
       let totalDuration = 0; // in milliseconds
       let count = acceptedResponse.length;
@@ -243,10 +232,7 @@ export class RecruiterService {
         data: result,
       };
     } catch (err) {
-      throw new HttpException(
-        'Failed to find recruiter',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 

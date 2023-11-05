@@ -82,7 +82,7 @@ export class RecruiterController {
   @Get('/matching/:id')
   findRecruiterMatchingStatistics(@Param('id') id: string) {
     try {
-      return this.recruiterService.findRecrutierMatchingStatistics(id);
+      return this.recruiterService.findRecruiterMatchingStatistics(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);

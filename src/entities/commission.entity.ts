@@ -39,7 +39,7 @@ export class Commission {
     () => Administrator,
     (administrator) => administrator.commissions,
     {
-      nullable: true,
+      nullable: false,
     },
   )
   administrator: Administrator;

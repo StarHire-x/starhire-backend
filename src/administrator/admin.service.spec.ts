@@ -301,7 +301,7 @@ describe('AdministratorsService', () => {
     it('should update admin and return updated admin', async () => {
       const id = '1234';
       const updatedAdmin = new UpdateAdministratorDto({
-        notificationMode: 'EMAIL',
+        notificationMode: 'SMS',
       });
       const admin = new Administrator({
         userId: id,
@@ -311,14 +311,14 @@ describe('AdministratorsService', () => {
       jest.spyOn(adminRepository, 'findOneBy').mockResolvedValue(admin);
       jest
         .spyOn(adminRepository, 'save')
-        .mockResolvedValue({ ...admin, ...updatedAdmin });
+        .mockResolvedValue(admin);
 
       const result = await adminService.update(id, updatedAdmin);
 
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
         message: 'Administrator updated',
-        data: { ...admin, ...updatedAdmin },
+        data: admin,
       });
     });
 

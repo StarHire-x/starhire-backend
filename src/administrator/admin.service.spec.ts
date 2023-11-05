@@ -311,14 +311,14 @@ describe('AdministratorsService', () => {
       jest.spyOn(adminRepository, 'findOneBy').mockResolvedValue(admin);
       jest
         .spyOn(adminRepository, 'save')
-        .mockResolvedValue({ ...admin, ...updatedAdmin });
+        .mockResolvedValue(admin);
 
       const result = await adminService.update(id, updatedAdmin);
 
       expect(result).toEqual({
         statusCode: HttpStatus.OK,
         message: 'Administrator updated',
-        data: { ...admin, ...updatedAdmin },
+        data: admin,
       });
     });
 

@@ -22,7 +22,10 @@ export class EventListing {
   location: string;
 
   @Column()
-  eventDate: Date;
+  eventStartDateAndTime: Date;
+
+  @Column()
+  eventEndDateAndTime: Date;
 
   @Column('varchar', { length: 4000 })
   details: string;

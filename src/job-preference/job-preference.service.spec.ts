@@ -455,6 +455,7 @@ describe('JobPreferenceService', () => {
       };
 
       const jobPreference = new JobPreference({
+        jobPreferenceId: 1,
         benefitPreference: 4,
         salaryPreference: 3,
         workLifeBalancePreference: 3,

@@ -168,7 +168,7 @@ describe('CorporateService', () => {
   });
 
   describe('findByEmail', () => {
-    it('should return all job seekers', async () => {
+    it('should return all corporate', async () => {
       const corporates: Corporate[] = [
         new Corporate({
           userId: 'corporateTest',
@@ -196,7 +196,7 @@ describe('CorporateService', () => {
   });
 
   describe('findAllJobStatistics', () => {
-    it('should fill all job statistics', async () => {
+    it('should find all job statistics', async () => {
       const jobApplication = new JobApplication({
         jobApplicationId: 1,
         jobApplicationStatus: JobApplicationStatusEnum.OFFERED,
@@ -1025,7 +1025,7 @@ describe('CorporateService', () => {
     });
   });
 
-  describe('CorporateService - findCorporateByStripeCustId', () => {
+  describe('findCorporateByStripeCustId', () => {
     it('should return corporate when found by Stripe Customer ID', async () => {
       const stripeCustId = 'valid_cust_id';
       const expectedCorporate = new Corporate({

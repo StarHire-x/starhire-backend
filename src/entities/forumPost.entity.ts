@@ -11,7 +11,6 @@ import { JobSeeker } from './jobSeeker.entity';
 import { ForumCategory } from './forumCategory.entity';
 import ForumPostEnum from '../enums/forumPost.enum';
 import { IsEnum } from 'class-validator';
-import { Ticket } from './ticket.entity';
 
 @Entity({ name: 'forumPosts' })
 export class ForumPost {

@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Commission } from './commission.entity';
 import { JobApplication } from './jobApplication.entity';

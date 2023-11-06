@@ -2,10 +2,8 @@ import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Document } from './document.entity';

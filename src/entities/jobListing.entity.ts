@@ -12,7 +12,6 @@ import {
 import { JobApplication } from './jobApplication.entity';
 import { Corporate } from './corporate.entity';
 import { JobSeeker } from './jobSeeker.entity';
-import { Recruiter } from './recruiter.entity';
 import { SavedJobListing } from './savedJobListing.entity';
 
 @Entity({ name: 'jobListings' })

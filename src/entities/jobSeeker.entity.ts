@@ -147,7 +147,6 @@ export class JobSeeker extends User {
   })
   tickets: Ticket[];
 
-
   @ManyToMany(() => JobListing, (jobListing) => jobListing.jobSeekers, {
     cascade: true,
     nullable: true, // optional
@@ -167,10 +166,6 @@ export class JobSeeker extends User {
   @ManyToMany(() => Corporate, (corporate) => corporate.followers, {
     nullable: true,
   })
-  /*
-  @OneToMany(() => Interview, (interview) => interview.jobSeeker)
-  interviews: Interview[];
-  */
   @JoinTable({ name: 'jobseeker_corporate' })
   following: Corporate[];
 

@@ -13,13 +13,7 @@ import NotificationModeEnum from '../enums/notificationMode.enum';
 import UserStatusEnum from '../enums/userStatus.enum';
 import { Corporate } from '../entities/corporate.entity';
 import { JobListing } from '../entities/jobListing.entity';
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import JobListingStatusEnum from '../enums/jobListingStatus.enum';
 import { JobPreference } from '../entities/jobPreference.entity';
 import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
@@ -360,7 +354,7 @@ describe('JobSeekerService', () => {
         jobListings: [],
         jobExperiences: [],
       });
-      
+
       const jobSeekers = [jobSeeker1, jobSeeker2];
       jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
       const result = await jobSeekerService.findAll();
@@ -392,7 +386,7 @@ describe('JobSeekerService', () => {
         jobPreferenceId: 1,
         benefitPreference: 3,
         salaryPreference: 4,
-        workLifeBalancePreference: 3
+        workLifeBalancePreference: 3,
       });
 
       const jobPreference2 = new JobPreference({
@@ -434,7 +428,6 @@ describe('JobSeekerService', () => {
       });
 
       const jobSeekers = [jobSeeker1, jobSeeker2];
-      
 
       const similarJobSeekers = [
         {
@@ -500,181 +493,185 @@ describe('JobSeekerService', () => {
     it('should throw a not found exception if no job seekers are found', async () => {
       const jobListingId = 1;
       jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue([]);
-      await expect(jobSeekerService.findAllWithSimilarity(jobListingId)).rejects.toThrow(
+      await expect(
+        jobSeekerService.findAllWithSimilarity(jobListingId),
+      ).rejects.toThrow(
         new HttpException('Failed to find job seeker', HttpStatus.NOT_FOUND),
       );
     });
 
     it('should throw a not found exception if the job listing is not found', async () => {
       const jobListingId = 1;
-       const jobSeekers = [
-         {
-           userId: '1',
-           userName: 'johndoe',
-           email: 'johndoe@example.com',
-           password: 'securepassword',
-           contactNo: '555-1234',
-           status: UserStatusEnum.ACTIVE,
-           notificationMode: NotificationModeEnum.EMAIL,
-           createdAt: new Date(),
-           role: UserRoleEnum.JOBSEEKER,
-           resumePdf: 'sample-resume.pdf',
-           fullName: 'John Doe',
-           dateOfBirth: new Date(),
-           highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-           profilePictureUrl: 'https://example.com/profile-picture.jpg',
-           homeAddress: '123 Main St, Anytown, USA',
-           instituteName: 'University of Example',
-           dateOfGraduation: new Date(),
-           visibility: VisibilityEnum.PUBLIC,
-           country: '',
-           description: '',
-           proficientLanguages: '',
-           experience: '',
-           certifications: '',
-           recentRole: '',
-           resume: '',
-           startDate: undefined,
-           preferredRegions: '',
-           preferredJobType: '',
-           preferredSchedule: '',
-           payRange: '',
-           visaRequirements: '',
-           ranking: '',
-           otherInfo: '',
-           forumComments: [],
-           jobApplications: [],
-           eventRegistrations: [],
-           forumPosts: [],
-           chats: [],
-           jobPreference: undefined,
-           jobExperiences: [],
-           tickets: [],
-           reviews: [],
-           jobListings: [],
-           savedJobListings: [],
-           following: [],
-         },
-         {
-           userId: '2',
-           userName: 'johndoe1',
-           email: 'johndoe1@example.com',
-           password: 'securepassword',
-           contactNo: '555-1233',
-           status: UserStatusEnum.ACTIVE,
-           notificationMode: NotificationModeEnum.EMAIL,
-           createdAt: new Date(),
-           role: UserRoleEnum.JOBSEEKER,
-           resumePdf: 'sample-resume.pdf',
-           fullName: 'John Doea',
-           dateOfBirth: new Date(),
-           highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
-           profilePictureUrl: 'https://example.com/profile-picture.jpg',
-           homeAddress: '123 Main St, Anytown, USA',
-           instituteName: 'University of Example',
-           dateOfGraduation: new Date(),
-           visibility: VisibilityEnum.PUBLIC,
-           country: '',
-           description: '',
-           proficientLanguages: '',
-           experience: '',
-           certifications: '',
-           recentRole: '',
-           resume: '',
-           startDate: undefined,
-           preferredRegions: '',
-           preferredJobType: '',
-           preferredSchedule: '',
-           payRange: '',
-           visaRequirements: '',
-           ranking: '',
-           otherInfo: '',
-           forumComments: [],
-           jobApplications: [],
-           eventRegistrations: [],
-           forumPosts: [],
-           chats: [],
-           jobPreference: undefined,
-           jobExperiences: [],
-           tickets: [],
-           reviews: [],
-           jobListings: [],
-           savedJobListings: [],
-           following: [],
-         },
-       ];
+      const jobSeekers = [
+        {
+          userId: '1',
+          userName: 'johndoe',
+          email: 'johndoe@example.com',
+          password: 'securepassword',
+          contactNo: '555-1234',
+          status: UserStatusEnum.ACTIVE,
+          notificationMode: NotificationModeEnum.EMAIL,
+          createdAt: new Date(),
+          role: UserRoleEnum.JOBSEEKER,
+          resumePdf: 'sample-resume.pdf',
+          fullName: 'John Doe',
+          dateOfBirth: new Date(),
+          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
+          profilePictureUrl: 'https://example.com/profile-picture.jpg',
+          homeAddress: '123 Main St, Anytown, USA',
+          instituteName: 'University of Example',
+          dateOfGraduation: new Date(),
+          visibility: VisibilityEnum.PUBLIC,
+          country: '',
+          description: '',
+          proficientLanguages: '',
+          experience: '',
+          certifications: '',
+          recentRole: '',
+          resume: '',
+          startDate: undefined,
+          preferredRegions: '',
+          preferredJobType: '',
+          preferredSchedule: '',
+          payRange: '',
+          visaRequirements: '',
+          ranking: '',
+          otherInfo: '',
+          forumComments: [],
+          jobApplications: [],
+          eventRegistrations: [],
+          forumPosts: [],
+          chats: [],
+          jobPreference: undefined,
+          jobExperiences: [],
+          tickets: [],
+          reviews: [],
+          jobListings: [],
+          savedJobListings: [],
+          following: [],
+        },
+        {
+          userId: '2',
+          userName: 'johndoe1',
+          email: 'johndoe1@example.com',
+          password: 'securepassword',
+          contactNo: '555-1233',
+          status: UserStatusEnum.ACTIVE,
+          notificationMode: NotificationModeEnum.EMAIL,
+          createdAt: new Date(),
+          role: UserRoleEnum.JOBSEEKER,
+          resumePdf: 'sample-resume.pdf',
+          fullName: 'John Doea',
+          dateOfBirth: new Date(),
+          highestEducationStatus: HighestEducationStatusEnum.BACHELOR,
+          profilePictureUrl: 'https://example.com/profile-picture.jpg',
+          homeAddress: '123 Main St, Anytown, USA',
+          instituteName: 'University of Example',
+          dateOfGraduation: new Date(),
+          visibility: VisibilityEnum.PUBLIC,
+          country: '',
+          description: '',
+          proficientLanguages: '',
+          experience: '',
+          certifications: '',
+          recentRole: '',
+          resume: '',
+          startDate: undefined,
+          preferredRegions: '',
+          preferredJobType: '',
+          preferredSchedule: '',
+          payRange: '',
+          visaRequirements: '',
+          ranking: '',
+          otherInfo: '',
+          forumComments: [],
+          jobApplications: [],
+          eventRegistrations: [],
+          forumPosts: [],
+          chats: [],
+          jobPreference: undefined,
+          jobExperiences: [],
+          tickets: [],
+          reviews: [],
+          jobListings: [],
+          savedJobListings: [],
+          following: [],
+        },
+      ];
       jest.spyOn(jobSeekerRepository, 'find').mockResolvedValue(jobSeekers);
       jest.spyOn(jobListingRepository, 'findOne').mockResolvedValue(null);
-      await expect(jobSeekerService.findAllWithSimilarity(jobListingId)).rejects.toThrow(
+      await expect(
+        jobSeekerService.findAllWithSimilarity(jobListingId),
+      ).rejects.toThrow(
         new HttpException('Failed to find job listing', HttpStatus.NOT_FOUND),
       );
     });
   });
 
-//   describe('calculateSimilarity', () => {
-//   it('should calculate similarity correctly', async () => {
-//     const jobSeekers = [
-//       {
-//         jobPreference: {
-//           benefitPreference: 1,
-//           workLifeBalancePreference: 1,
-//           salaryPreference: 1,
-//         },
-//       },
-//     ];
+  //   describe('calculateSimilarity', () => {
+  //   it('should calculate similarity correctly', async () => {
+  //     const jobSeekers = [
+  //       {
+  //         jobPreference: {
+  //           benefitPreference: 1,
+  //           workLifeBalancePreference: 1,
+  //           salaryPreference: 1,
+  //         },
+  //       },
+  //     ];
 
-//     const corporate = new Corporate({
-//       userName: 'corporate1',
-//       email: 'corporate1@example.com',
-//       password: 'examplePassword',
-//     });
+  //     const corporate = new Corporate({
+  //       userName: 'corporate1',
+  //       email: 'corporate1@example.com',
+  //       password: 'examplePassword',
+  //     });
 
-//     corporate.jobPreference = new JobPreference({
-//       jobPreferenceId: 2,
-//       benefitPreference: 1,
-//       workLifeBalancePreference: 1,
-//       salaryPreference: 1,
-//     });
+  //     corporate.jobPreference = new JobPreference({
+  //       jobPreferenceId: 2,
+  //       benefitPreference: 1,
+  //       workLifeBalancePreference: 1,
+  //       salaryPreference: 1,
+  //     });
 
-//     const results = await jobSeekerService.calculateSimilarity(jobSeekers, corporate);
+  //     const results = await jobSeekerService.calculateSimilarity(jobSeekers, corporate);
 
-//     expect(results[0].similarity).toBe(100);
-//     expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
-//   });
+  //     expect(results[0].similarity).toBe(100);
+  //     expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
+  //   });
 
-//   it('should handle zero magnitude', async () => {
-//     const jobSeekers = [
-//       {
-//         jobPreference: {
-//           benefitPreference: 0,
-//           workLifeBalancePreference: 0,
-//           salaryPreference: 0,
-//         },
-//       },
-//     ];
+  //   it('should handle zero magnitude', async () => {
+  //     const jobSeekers = [
+  //       {
+  //         jobPreference: {
+  //           benefitPreference: 0,
+  //           workLifeBalancePreference: 0,
+  //           salaryPreference: 0,
+  //         },
+  //       },
+  //     ];
 
-//     const corporate = new Corporate({
-//       userName: 'corporate1',
-//       email: 'corporate1@example.com',
-//       password: 'examplePassword',
-//     });
+  //     const corporate = new Corporate({
+  //       userName: 'corporate1',
+  //       email: 'corporate1@example.com',
+  //       password: 'examplePassword',
+  //     });
 
-//     corporate.jobPreference = new JobPreference({
-//       jobPreferenceId: 2,
-//       benefitPreference: 1,
-//       workLifeBalancePreference: 1,
-//       salaryPreference: 1,
-//     });
+  //     corporate.jobPreference = new JobPreference({
+  //       jobPreferenceId: 2,
+  //       benefitPreference: 1,
+  //       workLifeBalancePreference: 1,
+  //       salaryPreference: 1,
+  //     });
 
-//     const results = await jobSeekerService.calculateSimilarity(
-//       jobSeekers,
-//       corporate,
-//     );
+  //     const results = await jobSeekerService.calculateSimilarity(
+  //       jobSeekers,
+  //       corporate,
+  //     );
 
-//     expect(results[0].similarity).toBe(0);
-//     expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
-//   });
-// });
+  //     expect(results[0].similarity).toBe(0);
+  //     expect(results[0].corporatePreference).toEqual(corporate.jobPreference);
+  //   });
+  // });
 
   describe('remove', () => {
     it('should remove a job seeker and return the result', async () => {

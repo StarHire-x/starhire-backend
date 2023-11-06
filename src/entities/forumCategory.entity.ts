@@ -15,7 +15,7 @@ export class ForumCategory {
   @Column()
   forumGuidelines: string;
 
-  @OneToMany(() => ForumPost, (forumPost) => forumPost.forumCategory) // Establish one-to-many relationship
+  @OneToMany(() => ForumPost, (forumPost) => forumPost.forumCategory)
   forumPosts: ForumPost[];
 
   constructor(entity: Partial<ForumCategory>) {

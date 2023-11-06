@@ -1,11 +1,8 @@
 import {
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  EntityManager,
   OneToMany,
 } from 'typeorm';
-import { IsEnum } from 'class-validator';
 import { User } from './user.entity';
 import { Ticket } from './ticket.entity';
 import { Invoice } from './invoice.entity';

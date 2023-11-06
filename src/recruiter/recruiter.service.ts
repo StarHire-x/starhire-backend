@@ -1,14 +1,8 @@
 import { Recruiter } from '../entities/recruiter.entity';
 import { CreateRecruiterDto } from './dto/create-recruiter.dto';
 import { UpdateRecruiterDto } from './dto/update-recruiter.dto';
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { QueryFailedError, Repository } from 'typeorm';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   mapNotificationModeToEnum,
@@ -298,7 +292,6 @@ export class RecruiterService {
           commissions: true,
           jobApplications: true,
           chats: true,
-          tickets: true,
         },
       });
       return recruiter;

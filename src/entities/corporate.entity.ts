@@ -4,13 +4,11 @@ import { EventListing } from './eventListing.entity';
 import { JobListing } from './jobListing.entity';
 import { Chat } from './chat.entity';
 import { Ticket } from './ticket.entity';
-import { Review } from './review.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { JobPreference } from './jobPreference.entity';
 import { Invoice } from './invoice.entity';
 import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
 import { IsEnum } from 'class-validator';
-//import { Interview } from './interview.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -80,10 +78,6 @@ export class Corporate extends User {
   })
   jobPreference: JobPreference;
 
-  // TODO: Relationship with Review entity
-  @OneToMany(() => Review, (review) => review.corporate)
-  reviews: Review[];
-
   @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.following, {
     nullable: true,
     cascade: true,
@@ -94,8 +88,4 @@ export class Corporate extends User {
     nullable: true,
   })
   invoices: Invoice[];
-  /*
-  @OneToMany(() => Interview, (interview) => interview.corporate)
-  interviews: Interview[];
-  */
 }

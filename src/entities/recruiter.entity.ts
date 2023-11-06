@@ -4,8 +4,6 @@ import { Commission } from './commission.entity';
 import { JobApplication } from './jobApplication.entity';
 import { Chat } from './chat.entity';
 import { Ticket } from './ticket.entity';
-import { JobListing } from './jobListing.entity';
-import { Interview } from './interview.entity';
 
 @Entity({ name: 'recruiters' })
 export class Recruiter extends User {

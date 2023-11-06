@@ -9,13 +9,11 @@ import { ForumPost } from './forumPost.entity';
 import { Chat } from './chat.entity';
 import { JobPreference } from './jobPreference.entity';
 import { Ticket } from './ticket.entity';
-import { Review } from './review.entity';
 import { JobExperience } from './jobExperience.entity';
 import { JobListing } from './jobListing.entity';
 import { SavedJobListing } from './savedJobListing.entity';
 import VisibilityEnum from '../enums/visibility.enum';
 import { Corporate } from './corporate.entity';
-import { Interview } from './interview.entity';
 import { EventRegistration } from './eventRegistration.entity';
 
 @Entity({ name: 'jobSeekers' })
@@ -149,10 +147,6 @@ export class JobSeeker extends User {
   })
   tickets: Ticket[];
 
-  @OneToMany(() => Review, (review) => review.jobSeeker, {
-    cascade: true,
-  })
-  reviews: Review[];
 
   @ManyToMany(() => JobListing, (jobListing) => jobListing.jobSeekers, {
     cascade: true,

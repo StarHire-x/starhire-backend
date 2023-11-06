@@ -4,7 +4,6 @@ import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
 import NotificationModeEnum from '../enums/notificationMode.enum';
 import JobListingStatusEnum from '../enums/jobListingStatus.enum';
 import EventListingStatusEnum from '../enums/eventListingStatus.enum';
-import StarCategoryEnum from '../enums/starCategory.enum';
 import TicketCategoryEnum from '../enums/ticketCategory.enum';
 import UserRoleEnum from '../enums/userRole.enum';
 import UserStatusEnum from '../enums/userStatus.enum';
@@ -105,21 +104,6 @@ export function mapEventListingStatusToEnum(
       return EventListingStatusEnum.EXPIRED;
     default:
       return EventListingStatusEnum.UPCOMING;
-  }
-}
-
-export function mapStarCategoryToEnum(status: string): StarCategoryEnum {
-  switch (status) {
-    case 'ONE_STAR':
-      return StarCategoryEnum.ONE_STAR;
-    case 'TWO_STAR':
-      return StarCategoryEnum.TWO_STAR;
-    case 'THREE_STAR':
-      return StarCategoryEnum.THREE_STAR;
-    case 'FOUR_STAR':
-      return StarCategoryEnum.FOUR_STAR;
-    default:
-      return StarCategoryEnum.FIVE_STAR;
   }
 }
 

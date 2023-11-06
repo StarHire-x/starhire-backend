@@ -16,7 +16,6 @@ import { Chat } from './entities/chat.entity';
 import { ChatMessage } from './entities/chatMessage.entity';
 import { Commission } from './entities/commission.entity';
 import { Invoice } from './entities/invoice.entity';
-import { Review } from './entities/review.entity';
 import { JobExperience } from './entities/jobExperience.entity';
 import { JobAssignment } from './entities/jobAssignment.entity';
 import { SavedJobListing } from './entities/savedJobListing.entity';
@@ -46,10 +45,9 @@ export const entityList = [
   ChatMessage,
   Commission,
   Invoice,
-  Review,
   JobAssignment,
   SavedJobListing,
   CorporateTypeform,
   JobseekerTypeform,
-  CommissionRate
+  CommissionRate,
 ];

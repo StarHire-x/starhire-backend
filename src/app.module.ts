@@ -21,7 +21,6 @@ import { EventRegistrationModule } from './event-registration/event-registration
 import { RecruiterModule } from './recruiter/recruiter.module';
 import { CorporateModule } from './corporate/corporate.module';
 import { TicketModule } from './ticket/ticket.module';
-import { ReviewModule } from './review/review.module';
 import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
@@ -71,7 +70,6 @@ require('dotenv').config();
     RecruiterModule,
     CorporateModule,
     TicketModule,
-    ReviewModule,
     UploadModule,
     ConfigModule.forRoot({ isGlobal: true }),
     EmailModule,

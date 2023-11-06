@@ -10,13 +10,11 @@ import { Chat } from '../entities/chat.entity';
 import { JobPreference } from '../entities/jobPreference.entity';
 import { JobExperience } from '../entities/jobExperience.entity';
 import { Ticket } from '../entities/ticket.entity';
-import { Review } from '../entities/review.entity';
 import { JobListing } from '../entities/jobListing.entity';
 import { EmailModule } from '../email/email.module';
 import { EmailService } from '../email/email.service';
 import { APP_GUARD } from '@nestjs/core';
 import { TwilioService } from '../twilio/twilio.service';
-import { CorporateService } from '../corporate/corporate.service';
 import { Corporate } from '../entities/corporate.entity';
 import { EventListing } from '../entities/eventListing.entity';
 import { EventRegistration } from '../entities/eventRegistration.entity';
@@ -33,7 +31,6 @@ import { EventRegistration } from '../entities/eventRegistration.entity';
       JobExperience,
       JobListing,
       Ticket,
-      Review,
       JobListing,
       Corporate,
     ]),

@@ -37,8 +37,10 @@ export class PaymentService {
         ],
         client_reference_id: clientReferenceId,
         mode: 'subscription',
-        success_url: 'http://localhost:3001/payment/success',
-        cancel_url: 'http://localhost:3001/payment/failure',
+        //success_url: 'http://localhost:3001/payment/success',
+        //cancel_url: 'http://localhost:3001/payment/failure',
+        success_url: `${process.env.FRONTEND_CLIENT}/payment/success`,
+        cancel_url: `${process.env.FRONTEND_CLIENT}/payment/failure`,
       });
 
       //return session;

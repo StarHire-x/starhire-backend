@@ -163,7 +163,7 @@ describe('RecruiterService', () => {
       );
     });
 
-    it('should handle unknown ENUM values gracefully', async () => {
+    it('should throw an error if unknown ENUM values are inputted', async () => {
       const createRecruiterDto = {
         userName: 'recruiterTest',
         email: 'recruiter@gmail.com',

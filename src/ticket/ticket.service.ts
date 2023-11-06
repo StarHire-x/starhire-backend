@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from '../entities/ticket.entity';
 import { Administrator } from '../entities/administrator.entity';
-import { Recruiter } from '../entities/recruiter.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { JobSeeker } from '../entities/jobSeeker.entity';
 import { Document } from '../entities/document.entity';
@@ -27,8 +26,6 @@ export class TicketService {
     // Parent entities
     @InjectRepository(Administrator)
     private readonly adminRepository: Repository<Administrator>,
-    @InjectRepository(Recruiter)
-    private readonly recruiterRepository: Repository<Recruiter>,
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
     @InjectRepository(JobSeeker)
@@ -56,12 +53,6 @@ export class TicketService {
           where: { userId: adminId },
         }));
 
-      const recruiter =
-        recruiterId &&
-        (await this.recruiterRepository.findOne({
-          where: { userId: recruiterId },
-        }));
-
       const corporate =
         corporateId &&
         (await this.corporateRepository.findOne({
@@ -74,18 +65,9 @@ export class TicketService {
           where: { userId: jobSeekerId },
         }));
 
-      // Ensure 1 of the 3 normal type users is provided
-      // Admin ID can be null upon ticket creation until an Admin picks up the ticket
-      /*
-      if (!recruiter && !corporate && !jobSeeker) {
-        throw new NotFoundException('Normal User Ids provided is not valid');
-      }
-      */
-
       const ticket = new Ticket({
         ...ticketWithoutParentId,
         administrator,
-        recruiter,
         corporate,
         jobSeeker,
       });
@@ -125,7 +107,6 @@ export class TicketService {
       const response = await this.ticketRepository.find({
         relations: {
           corporate: true,
-          recruiter: true,
           administrator: true,
           jobSeeker: true,
           documents: true,
@@ -145,7 +126,6 @@ export class TicketService {
         relations: {
           documents: true,
           corporate: true,
-          recruiter: true,
           administrator: true,
           jobSeeker: true,
         },
@@ -209,7 +189,7 @@ export class TicketService {
   async resolveTicket(id: number): Promise<Ticket> {
     const ticket = await this.ticketRepository.findOne({
       where: { ticketId: id },
-      relations: { jobSeeker: true, corporate: true, recruiter: true },
+      relations: { jobSeeker: true, corporate: true },
     });
 
     if (!ticket) {

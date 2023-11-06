@@ -4,7 +4,6 @@ import { TicketController } from './ticket.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Ticket } from '../entities/ticket.entity';
 import { Administrator } from '../entities/administrator.entity';
-import { Recruiter } from '../entities/recruiter.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { JobSeeker } from '../entities/jobSeeker.entity';
 import { Document } from '../entities/document.entity';
@@ -16,7 +15,6 @@ import { TwilioService } from '../twilio/twilio.service';
     TypeOrmModule.forFeature([
       Ticket,
       Administrator,
-      Recruiter,
       Corporate,
       JobSeeker,
       Document,

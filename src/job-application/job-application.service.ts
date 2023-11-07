@@ -315,7 +315,7 @@ export class JobApplicationService {
       if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
         if (
           jobApplication.jobApplicationStatus ===
-            JobApplicationStatusEnum.PROCESSING
+          JobApplicationStatusEnum.PROCESSING
         ) {
           this.emailService.notifyCorporateOnNewApplication(
             corporate,
@@ -341,7 +341,7 @@ export class JobApplicationService {
       } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
         if (
           jobApplication.jobApplicationStatus ===
-            JobApplicationStatusEnum.PROCESSING
+          JobApplicationStatusEnum.PROCESSING
         ) {
           this.twilioService.notifyCorporateOnNewApplication(
             corporate,
@@ -400,18 +400,30 @@ export class JobApplicationService {
         relations: { jobApplications: true },
       });
 
-      if (jobSeeker.jobApplications.length > 0) {
+      if (!jobSeeker) {
         return {
-          statusCode: HttpStatus.OK,
-          message: 'Existing job application is found',
-          data: jobSeeker.jobApplications,
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Invalid Job Seeker ID provided',
         };
-      } else {
+      }
+
+      if (jobSeeker.jobApplications.length === 0) {
         return {
           statusCode: HttpStatus.NOT_FOUND,
           message: 'No job application is found for job seeker',
         };
       }
+
+      const jobApplications = await this.jobApplicationRepository.find({
+        where: { jobSeeker: jobSeeker },
+        relations: { jobListing: true },
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Existing job application is found',
+        data: jobApplications,
+      };
     } catch (error) {
       throw new HttpException(
         'No Job application is found',

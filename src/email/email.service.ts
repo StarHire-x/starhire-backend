@@ -11,6 +11,7 @@ import { Corporate } from '../entities/corporate.entity';
 import { Recruiter } from '../entities/recruiter.entity';
 import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
+import { Invoice } from '../entities/invoice.entity';
 
 @Injectable()
 export class EmailService {
@@ -399,4 +400,39 @@ export class EmailService {
       );
     }
   }
+
+  // async notifyCorporateOfInvoice(corporate: Corporate, invoice: Invoice) {
+  //   let loginLink = 'http://www.localhost:3001/login';
+
+  //   try {
+  //     await this.mailerService.sendMail({
+  //       to: corporate.email,
+  //       subject: `Incoming invoice ID: ${invoice.invoiceId}`,
+  //       html: `Dear <Strong>${corporate.companyName}</Strong>,<br><br>
+  //              We want to inform you about an incoming invoice with regards to job application.<br>
+
+  //              Your Job Listing ID: <strong>${
+  //                jobListing.jobListingId
+  //              }</strong>, <strong>${jobListing.title}</strong><br><br>
+  //              has been <strong>${jobListing.jobListingStatus.toUpperCase()}</strong> <br><br>
+
+  //              Please <a href="http://www.localhost:3001/login">Login</a> to your account to see the changes <br><br>
+
+  //              For further enquiries please contact our Admin support staff <br><br>
+  //              Thank you for using our service!<br><br>
+  //              Best regards,<br>
+  //              StarHire`,
+  //     });
+  //     return {
+  //       statusCode: HttpStatus.OK,
+  //       message: 'Notification status email sent successfully',
+  //       data: corporate,
+  //     };
+  //   } catch (err) {
+  //     throw new HttpException(
+  //       'Failed to send Notification status email',
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
 }

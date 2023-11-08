@@ -21,7 +21,7 @@ export class JobApplication {
   @Column()
   jobApplicationStatus: JobApplicationStatusEnum;
 
-  @Column()
+  @Column({ nullable: true })
   availableStartDate: Date;
 
   @Column({ nullable: true })

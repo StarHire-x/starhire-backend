@@ -17,6 +17,7 @@ import { TwilioService } from '../twilio/twilio.service';
 import NotificationModeEnum from '../enums/notificationMode.enum';
 import { PdfService } from '../pdf/pdf.service';
 import { UploadService } from '../upload/upload.service';
+import InvoiceStatusEnum from '../enums/invoiceStatus.enum';
 
 @Injectable()
 export class InvoiceService {
@@ -152,6 +153,91 @@ export class InvoiceService {
         err.message,
         // HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  async getAllCorporateInvoices() {
+    try {
+      const allCorporate = await this.corporateRepository.find({
+        relations: {invoices: true}
+      });
+
+      const allInvoices = await this.invoiceRepository.find({
+        relations: {corporate: true}
+      })
+      
+      const overallStatistics = {
+        notPaidSum: 0,
+        notPaidCount: 0,
+        indicatedPaidSum: 0,
+        indicatedPaidCount: 0,
+        confirmedPaidSum: 0,
+        confirmedPaidCount: 0,
+      };
+
+      const formattedResponse = await Promise.all(
+        allCorporate.map((corporate) => {
+          const invoices = corporate.invoices;
+
+          const statistics = {
+            notPaidSum: 0,
+            notPaidCount: 0,
+            indicatedPaidSum: 0,
+            indicatedPaidCount: 0,
+            confirmedPaidSum: 0,
+            confirmedPaidCount: 0,
+          };
+
+          const formattedInvoice = invoices.map((invoice) => {
+            if(invoice.invoiceStatus === InvoiceStatusEnum.NOT_PAID) {
+              statistics.notPaidCount += 1;
+              statistics.notPaidSum += invoice.totalAmount;
+            } else if (invoice.invoiceStatus === InvoiceStatusEnum.INDICATED_PAID) {
+              statistics.indicatedPaidCount += 1;
+              statistics.indicatedPaidSum += invoice.totalAmount;
+            } else if (invoice.invoiceStatus === InvoiceStatusEnum.CONFIRMED_PAID) {
+              statistics.confirmedPaidCount += 1;
+              statistics.confirmedPaidSum += invoice.totalAmount;
+            }
+            return {
+              invoiceId: invoice.invoiceId,
+              invoiceDate: invoice.invoiceDate,
+              invoiceStatus: invoice.invoiceStatus,
+              dueDate: invoice.dueDate,
+              billingAddress: invoice.billingAddress,
+              totalAmount: invoice.totalAmount,
+              invoiceLink: invoice.invoiceLink,
+              corporateId: corporate.userId,
+              companyName: corporate.companyName,
+              profilePictureUrl: corporate.profilePictureUrl,
+            };
+          });
+
+          overallStatistics.notPaidSum += statistics.notPaidSum;
+          overallStatistics.notPaidCount += statistics.notPaidCount;
+          overallStatistics.indicatedPaidCount += statistics.indicatedPaidCount;
+          overallStatistics.indicatedPaidSum += statistics.indicatedPaidSum;
+          overallStatistics.confirmedPaidCount += statistics.confirmedPaidCount;
+          overallStatistics.confirmedPaidSum += statistics.confirmedPaidSum;
+
+          return {
+            corporateId: corporate.userId,
+            companyName: corporate.companyName,
+            invoices: formattedInvoice,
+            statistics,
+          };
+        }
+      ))
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'User statistics retrieved',
+        data: {
+          overallStatistics: overallStatistics,
+          formattedResponse: formattedResponse,
+        }
+      };
+    } catch (err) {
+      throw new HttpException('Error in Database', HttpStatus.BAD_REQUEST);
     }
   }
 }

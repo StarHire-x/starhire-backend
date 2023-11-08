@@ -14,7 +14,9 @@ import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { EmailService } from '../email/email.service';
 import { TwilioService } from '../twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import { PdfService } from '../pdf/pdf.service';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class InvoiceService {
@@ -29,6 +31,8 @@ export class InvoiceService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
     private emailService: EmailService,
     private twilioService: TwilioService,
+    private pdfService: PdfService,
+    private uploadService: UploadService,
   ) {}
   async create(createInvoiceDto: CreateInvoiceDto) {
     try {
@@ -72,12 +76,21 @@ export class InvoiceService {
         corporate: corporate,
         jobApplications: jobApplications,
       });
-      return await this.invoiceRepository.save(invoice);
+
+      //Generate the pdf invoice
+      // await this.invoiceRepository.save(invoice);
+      // const fileName = `invoice${invoice.invoiceId}.pdf`;
+      // const pdfBuffer = await this.pdfService.createInvoice(invoice);
+      // const s3Link = await this.uploadService.upload(fileName, pdfBuffer);
+      // invoice.invoiceLink = s3Link.url;
+
       // if(corporate.notificationMode === NotificationModeEnum.EMAIL) {
       //   this.emailService.notifyCorporateOfInvoice(corporate,invoice);
       // } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
       //   this.twilioService.notifyCorporateOfInvoice(corporate,invoice);
       // }
+
+      return await this.invoiceRepository.save(invoice);
     } catch (err) {
       throw new HttpException(
         'Failed to create new invoice',

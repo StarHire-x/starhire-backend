@@ -8,6 +8,8 @@ import { InvoiceController } from './invoice.controller';
 import { InvoiceService } from './invoice.service';
 import { EmailService } from '../email/email.service';
 import { TwilioService } from '../twilio/twilio.service';
+import { UploadService } from '../upload/upload.service';
+import { PdfService } from '../pdf/pdf.service';
 
 @Module({
   imports: [
@@ -19,6 +21,6 @@ import { TwilioService } from '../twilio/twilio.service';
     ]),
   ],
   controllers: [InvoiceController],
-  providers: [InvoiceService, EmailService, TwilioService],
+  providers: [InvoiceService, EmailService, TwilioService, UploadService, PdfService],
 })
 export class InvoiceModule {}

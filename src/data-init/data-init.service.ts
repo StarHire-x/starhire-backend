@@ -514,18 +514,23 @@ export class DataInitService implements OnModuleInit {
     // job listing 1 creation
     const createJobListingDto: CreateJobListingDto = new CreateJobListingDto();
     createJobListingDto.title = 'English Child Care Teacher';
-    createJobListingDto.overview =
+    createJobListingDto.description =
       'Looking for an L1 and L2 teachers for Tots and K1 class. Must have a DPT/ACEY.';
-    createJobListingDto.responsibilities =
-      "Take a class of 14 children with a Chinese teacher as a partner. Update parents on children's activities, curriculum, progress and well being. Works well with the other staff - team player.";
-    createJobListingDto.requirements =
-      'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
-    createJobListingDto.jobLocation = 'Hillview, Singapore';
-    createJobListingDto.averageSalary = 3000;
+    createJobListingDto.experienceRequired = '1-2 Years';
+    createJobListingDto.address = '1 Hillview Rise';
+    createJobListingDto.postalCode = '667970';
+    createJobListingDto.listingDate = new Date();
     createJobListingDto.jobStartDate = new Date('2024-10-09');
-    createJobListingDto.requiredDocuments =
-      'Early Childhood Graduation Cert,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingDto.payRange = '$2500 - 3500';
+    createJobListingDto.jobType = 'Full Time';
+    createJobListingDto.schedule = 'Monday to Friday';
+    createJobListingDto.supplementalPay = 'Overtime Pay';
+    createJobListingDto.otherBenefits = 'Health Insurance';
+    createJobListingDto.certificationsRequired = 'EY1';
+    createJobListingDto.typeOfWorkers = 'Local Employee';
+    createJobListingDto.requiredLanguages = 'English';
+    createJobListingDto.otherConsiderations = '';
     createJobListingDto.corporateId = createdCorporateThree.userId;
 
     await this.jobListingService.create(createJobListingDto);
@@ -537,18 +542,23 @@ export class DataInitService implements OnModuleInit {
     const createJobListingTwoDto: CreateJobListingDto =
       new CreateJobListingDto();
     createJobListingTwoDto.title = 'Chinese Child Care Teacher';
-    createJobListingTwoDto.overview =
+    createJobListingTwoDto.description =
       'Looking for an L1 and L2 teachers for Tots and K1 class. Must have a DPT/ACEY.';
-    createJobListingTwoDto.responsibilities =
-      "Take a class of 14 children with an English teacher as a partner Update parents on children's activities, curriculum, progress and well being. Works well with the other staff - team player.";
-    createJobListingTwoDto.requirements =
-      'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
-    createJobListingTwoDto.jobLocation = 'Kallang, Singapore';
-    createJobListingTwoDto.averageSalary = 2800;
-    createJobListingTwoDto.jobStartDate = new Date('2024-10-16');
-    createJobListingTwoDto.requiredDocuments =
-      'Early Childhood Graduation Cert,Chinese Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
+    createJobListingTwoDto.experienceRequired = '1-2 Years';
+    createJobListingTwoDto.address = '223 Mountbatten Road';
+    createJobListingTwoDto.postalCode = '398008';
+    createJobListingTwoDto.listingDate = new Date();
+    createJobListingTwoDto.jobStartDate = new Date('2024-11-11');
     createJobListingTwoDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingTwoDto.payRange = '$3500 - $4500_$4500 - $5500';
+    createJobListingTwoDto.jobType = 'Full Time_Part Time';
+    createJobListingTwoDto.schedule = 'Monday to Friday';
+    createJobListingTwoDto.supplementalPay = 'Overtime Pay_Signing Bonus';
+    createJobListingTwoDto.otherBenefits = 'Health Insurance_Dental Insurance';
+    createJobListingTwoDto.certificationsRequired = 'EY1_EY2';
+    createJobListingTwoDto.typeOfWorkers = 'Local Employee';
+    createJobListingTwoDto.requiredLanguages = 'English_Mandarin';
+    createJobListingTwoDto.otherConsiderations = '';
     createJobListingTwoDto.corporateId = createdCorporateThree.userId;
 
     await this.jobListingService.create(createJobListingTwoDto);
@@ -560,18 +570,24 @@ export class DataInitService implements OnModuleInit {
     const createJobListingThreeDto: CreateJobListingDto =
       new CreateJobListingDto();
     createJobListingThreeDto.title = 'Infant Care Assistant Teacher';
-    createJobListingThreeDto.overview =
+    createJobListingThreeDto.description =
       'Looking for a few infant care assistant teachers';
-    createJobListingThreeDto.responsibilities =
-      'Attends to the basic needs of children from 2 months to 17 months (Infant Care). Ensures children’s safety & well-being while under the centre’s care. Implements centre’s programmes and new initiatives.';
-    createJobListingThreeDto.requirements =
-      'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
-    createJobListingThreeDto.jobLocation = 'Yishun, Singapore';
-    createJobListingThreeDto.averageSalary = 3200;
-    createJobListingThreeDto.jobStartDate = new Date('2024-10-23');
-    createJobListingThreeDto.requiredDocuments =
-      'Early Childhood Graduation Cert,Resume';
+    createJobListingThreeDto.experienceRequired =
+      'Less than 1 year (or new grad)';
+    createJobListingThreeDto.address = '52 Sims Place';
+    createJobListingThreeDto.postalCode = '380052';
+    createJobListingThreeDto.listingDate = new Date();
+    createJobListingThreeDto.jobStartDate = new Date('2024-12-12');
     createJobListingThreeDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingThreeDto.payRange = '$2500 - $3500';
+    createJobListingThreeDto.jobType = 'Full Time';
+    createJobListingThreeDto.schedule = 'Monday to Friday';
+    createJobListingThreeDto.supplementalPay = 'Overtime Pay';
+    createJobListingThreeDto.otherBenefits = 'Food Provided_Flexible Schedule';
+    createJobListingThreeDto.certificationsRequired = 'L1_L2';
+    createJobListingThreeDto.typeOfWorkers = 'Local Employee';
+    createJobListingThreeDto.requiredLanguages = 'English_Mandarin';
+    createJobListingThreeDto.otherConsiderations = '';
     createJobListingThreeDto.corporateId = createdCorporateThree.userId;
 
     await this.jobListingService.create(createJobListingThreeDto);
@@ -583,18 +599,25 @@ export class DataInitService implements OnModuleInit {
     const createJobListingFourDto: CreateJobListingDto =
       new CreateJobListingDto();
     createJobListingFourDto.title = 'Preschool Educator';
-    createJobListingFourDto.overview = 'Looking for a few Preschool Educators';
-    createJobListingFourDto.responsibilities =
-      'Taking care of young childrens.';
-    createJobListingFourDto.requirements =
-      'Passionate in nurturing and educating the young children. Has good communications and interpersonal skills. Accredited L1/L2 / ACEY by ECDA. Has at lease one year of relevant working experience. Students completing ACEY or Diploma may be considered. Singaporean only';
-    createJobListingFourDto.jobLocation = 'Sembawang, Singapore';
-    createJobListingFourDto.averageSalary = 5200;
-    createJobListingFourDto.jobStartDate = new Date('2024-10-30');
-    createJobListingFourDto.requiredDocuments =
-      'Early Childhood Graduation Cert,Resume';
-    createJobListingFourDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
-    createJobListingFourDto.corporateId = createdCorporateTwo.userId;
+    createJobListingFourDto.description =
+      'Looking for a few Preschool Educators';
+    createJobListingFourDto.experienceRequired =
+      'Less than 1 year (or new grad)';
+    createJobListingFourDto.address = '195 Kim Keat Ave';
+    createJobListingFourDto.postalCode = '310195';
+    createJobListingFourDto.listingDate = new Date();
+    createJobListingFourDto.jobStartDate = new Date('2024-12-12');
+    createJobListingFourDto.jobListingStatus = JobListingStatusEnum.APPROVED;
+    createJobListingFourDto.payRange = '$2500 - $3500';
+    createJobListingFourDto.jobType = 'Full Time';
+    createJobListingFourDto.schedule = 'Monday to Friday';
+    createJobListingFourDto.supplementalPay = 'Overtime Pay';
+    createJobListingFourDto.otherBenefits = 'Food Provided_Flexible Schedule';
+    createJobListingFourDto.certificationsRequired = 'L1_L2';
+    createJobListingFourDto.typeOfWorkers = 'Local Employee';
+    createJobListingFourDto.requiredLanguages = 'English_Mandarin';
+    createJobListingFourDto.otherConsiderations = '';
+    createJobListingFourDto.corporateId = createdCorporateThree.userId;
 
     await this.jobListingService.create(createJobListingFourDto);
     console.log(
@@ -604,45 +627,29 @@ export class DataInitService implements OnModuleInit {
     const createJobListingFiveDto: CreateJobListingDto =
       new CreateJobListingDto();
     createJobListingFiveDto.title = 'Tamil Assistant Teacher';
-    createJobListingFiveDto.overview =
+    createJobListingFiveDto.description =
       'Looking for a few tamil assistant teachers';
-    createJobListingFiveDto.responsibilities =
-      'Attends to the basic needs of children from 2 months to 17 months (Infant Care). Teach them Tamil and also ensures children’s safety & well-being while under the centre’s care. Implements centre’s programmes and new initiatives.';
-    createJobListingFiveDto.requirements =
-      'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
-    createJobListingFiveDto.jobLocation = 'Tengah, Singapore';
-    createJobListingFiveDto.averageSalary = 3000;
-    createJobListingFiveDto.jobStartDate = new Date('2024-10-23');
-    createJobListingFiveDto.requiredDocuments =
-      'Early Childhood Graduation Cert,Resume,Tamil Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
+    createJobListingFiveDto.experienceRequired =
+      'Less than 1 year (or new grad)';
+    createJobListingFiveDto.address = '52 Sims Place';
+    createJobListingFiveDto.postalCode = '380052';
+    createJobListingFiveDto.listingDate = new Date();
+    createJobListingFiveDto.jobStartDate = new Date('2024-12-12');
     createJobListingFiveDto.jobListingStatus = JobListingStatusEnum.APPROVED;
-    createJobListingFiveDto.corporateId = createdCorporateTwo.userId;
+    createJobListingFiveDto.payRange = '$2500 - $3500';
+    createJobListingFiveDto.jobType = 'Full Time';
+    createJobListingFiveDto.schedule = 'Monday to Friday';
+    createJobListingFiveDto.supplementalPay = 'Overtime Pay';
+    createJobListingFiveDto.otherBenefits = 'Food Provided_Flexible Schedule';
+    createJobListingFiveDto.certificationsRequired = 'L1_L2';
+    createJobListingFiveDto.typeOfWorkers = 'Local Employee';
+    createJobListingFiveDto.requiredLanguages = 'English_Mandarin';
+    createJobListingFiveDto.otherConsiderations = '';
+    createJobListingFiveDto.corporateId = createdCorporateThree.userId;
 
     await this.jobListingService.create(createJobListingFiveDto);
     console.log(
       `job listing ${createJobListingFiveDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
-    );
-
-    const createJobListingSixDto: CreateJobListingDto =
-      new CreateJobListingDto();
-    createJobListingSixDto.title = 'English Assistant Teacher';
-    createJobListingSixDto.overview =
-      'Looking for a few english assistant teachers';
-    createJobListingSixDto.responsibilities =
-      'Attends to the basic needs of children from 2 months to 17 months (Infant Care). Teach them English and also ensures children’s safety & well-being while under the centre’s care. Implements centre’s programmes and new initiatives.';
-    createJobListingSixDto.requirements =
-      'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
-    createJobListingSixDto.jobLocation = 'Woodland, Singapore';
-    createJobListingSixDto.averageSalary = 2800;
-    createJobListingSixDto.jobStartDate = new Date('2024-10-23');
-    createJobListingSixDto.requiredDocuments =
-      'Early Childhood Graduation Cert,Resume,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
-    createJobListingSixDto.jobListingStatus = JobListingStatusEnum.APPROVED;
-    createJobListingSixDto.corporateId = createdCorporate.userId;
-
-    await this.jobListingService.create(createJobListingSixDto);
-    console.log(
-      `job listing ${createJobListingSixDto.title} is created by corporate username ${createdCorporate.userName}`,
     );
 
     // if there's any existing forum categories, don't data init forum categories

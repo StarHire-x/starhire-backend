@@ -23,25 +23,19 @@ export class JobListing {
   title: string;
 
   @Column('varchar', { length: 3000 })
-  overview: string;
+  description: string;
 
   @Column('varchar', { length: 4000 })
-  responsibilities: string;
-
-  @Column('varchar', { length: 4000 })
-  requirements: string;
+  experienceRequired: string;
 
   @Column()
-  requiredDocuments: string;
+  address: string;
 
   @Column()
-  jobLocation: string;
+  postalCode: string;
 
   @CreateDateColumn()
   listingDate: Date;
-
-  @Column()
-  averageSalary: number;
 
   @Column()
   jobStartDate: Date;

@@ -2,14 +2,13 @@ import JobListingStatusEnum from '../../enums/jobListingStatus.enum';
 
 export class CreateJobListingDto {
   title: string;
-  overview: string;
-  responsibilities: string;
-  requirements: string;
-  requiredDocuments: string;
-  jobLocation: string;
+  description: string;
+  experienceRequired: string;
+  address: string;
+  postalCode: string;
   listingDate: Date;
-  averageSalary: number;
   jobStartDate: Date;
+  jobListingStatus: JobListingStatusEnum;
   payRange: string;
   jobType: string;
   schedule: string;
@@ -19,6 +18,5 @@ export class CreateJobListingDto {
   typeOfWorkers: string;
   requiredLanguages: string;
   otherConsiderations: string;
-  jobListingStatus: JobListingStatusEnum;
   corporateId: string; // Parent relationship
 }

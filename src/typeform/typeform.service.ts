@@ -258,12 +258,10 @@ export class TypeformService {
 
     const dto: CreateJobListingDto = new CreateJobListingDto();
     dto.title = corporateTypeformInfo.jobTitle || '';
-    dto.overview = corporateTypeformInfo.jobDescription || '';
-    dto.responsibilities = '';
-    dto.requirements = corporateTypeformInfo.experienceRequired || '';
-    dto.requiredDocuments = '';
-    dto.jobLocation = corporateTypeformInfo.address || '';
-    dto.averageSalary = 0;
+    dto.description = corporateTypeformInfo.jobDescription || '';
+    dto.experienceRequired = corporateTypeformInfo.experienceRequired || '';
+    dto.address = corporateTypeformInfo.address || '';
+    dto.postalCode = corporateTypeformInfo.postalCode || '';
     dto.jobStartDate = corporateTypeformInfo.startDate || null;
     dto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
     dto.corporateId = corporateAccount.userId;

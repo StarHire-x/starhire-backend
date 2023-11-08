@@ -382,23 +382,18 @@ export class JobListingService {
   }
 
   async findAllByJobSeeker(id: string): Promise<JobListing[]> {
-    try {
-      const jobListings = await this.jobListingRepository
-        .createQueryBuilder('jobListing')
-        .innerJoinAndSelect('jobListing.jobSeekers', 'jobSeeker')
-        .innerJoinAndSelect('jobListing.corporate', 'corporate')
-        .where('jobSeeker.userId = :userId', { userId: id })
-        .getMany();
+    const jobListings = await this.jobListingRepository
+      .createQueryBuilder('jobListing')
+      .innerJoinAndSelect('jobListing.jobSeekers', 'jobSeeker')
+      .innerJoinAndSelect('jobListing.corporate', 'corporate')
+      .where('jobSeeker.userId = :userId', { userId: id })
+      .getMany();
 
-      if (!jobListings.length) {
-        throw new NotFoundException(`No job listings found for user ID ${id}`);
-      }
-
-      return jobListings;
-    } catch (error) {
-      console.error('Error in findAllByJobSeeker: ', error);
-      throw error; // Handle database or any other errors, you can further refine this part
+    if (!jobListings.length) {
+      throw new NotFoundException(`No job listings found for user ID ${id}`);
     }
+
+    return jobListings;
   }
 
   // Note: Associated child entities(job Applications) will be removed as well, since cascade is set to true in the entity class

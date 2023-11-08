@@ -54,7 +54,7 @@ export class InvoiceService {
       const administrator = await this.administratorRepository.findOne({
         where: { userId: administratorId },
       });
-      if (!corporate) {
+      if (!administrator) {
         throw new NotFoundException('Administrator Id provided is not valid');
       }
 
@@ -102,6 +102,33 @@ export class InvoiceService {
 
   async findAll() {
     return await this.invoiceRepository.find();
+  }
+
+  async findAllByCorporateId(corporateId: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: corporateId },
+      });
+      if (!corporate) {
+        throw new NotFoundException('Corporate Id provided is not valid');
+      }
+
+      return await this.invoiceRepository.find({
+        order: {
+          invoiceId: 'ASC',
+        },
+        where: { corporate: corporate },
+        relations: {
+          administrator: true,
+          jobApplications: { jobListing: true, jobSeeker: true },
+        },
+      });
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find invoices',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOne(id: number) {

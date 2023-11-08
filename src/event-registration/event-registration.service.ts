@@ -172,4 +172,20 @@ export class EventRegistrationService {
       );
     }
   }
+
+  async findRegisteredEvents(userId: string) {
+    const allEvents = await this.eventRegistrationRepository.find({
+      relations: ['jobSeeker', 'eventListing'],
+    });
+
+    const filteredEventListings = allEvents
+      .filter((event) => event.jobSeeker.userId === userId)
+      .map((event) => event.eventListing);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Event registrations found!',
+      data: filteredEventListings,
+    };
+  }
 }

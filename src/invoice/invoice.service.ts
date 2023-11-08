@@ -113,6 +113,9 @@ export class InvoiceService {
       }
 
       return await this.invoiceRepository.find({
+        order: {
+          invoiceId: 'ASC',
+        },
         where: { corporate: corporate },
         relations: {
           administrator: true,

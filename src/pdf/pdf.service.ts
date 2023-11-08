@@ -7,24 +7,19 @@ import * as path from 'path';
 
 @Injectable()
 export class PdfService {
-  async createInvoice(invoice, filePath): Promise<Buffer> {
+  async createInvoice(invoice): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const doc = new PDFDocument({ size: 'A4', margin: 50 });
       let buffers: Buffer[] = [];
-      const stream = fs.createWriteStream(filePath);
 
       doc.on('data', buffers.push.bind(buffers));
       doc.on('end', () => {
         const pdfData = Buffer.concat(buffers);
-        fs.writeFileSync(filePath, pdfData); // Write the PDF data to a file
         resolve(pdfData); // Resolve the promise with the PDF data
       });
       doc.on('error', (error) => {
         reject(error); // Reject the promise on error
       });
-
-      // Pipe the document to a blob
-      doc.pipe(stream);
 
       // Call your methods to add content to the PDF here
       this.generateHeader(doc);

@@ -55,8 +55,7 @@ export class PdfController {
   
     try {
       const pdfBuffer = await this.pdfService.createInvoice(
-        invoiceData,
-        fileName,
+        invoiceData
       );
       // THIS PART WILL RETURN THE S3 LINK store it as invoiceLink in a attribute of invoice
       return await this.uploadService.upload(fileName, pdfBuffer);
@@ -66,16 +65,6 @@ export class PdfController {
       } else {
         throw new InternalServerErrorException('Internal server error');
       }
-    } finally {
-      // This will attempt to delete the file regardless of the outcome of the upload.
-      try {
-        await unlinkAsync(fileName);
-      } catch (deleteError) {
-        console.error(
-          `Failed to delete local PDF file: ${deleteError.message}`,
-        );
-        // Handle the case where the file deletion fails (e.g., file might not have been created due to an error earlier)
-      }
-    }
+    } 
   }
 }

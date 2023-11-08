@@ -12,6 +12,9 @@ import { JobApplication } from '../entities/jobApplication.entity';
 import { Repository } from 'typeorm';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
 
 @Injectable()
 export class InvoiceService {
@@ -24,6 +27,8 @@ export class InvoiceService {
     private readonly administratorRepository: Repository<Administrator>,
     @InjectRepository(JobApplication)
     private readonly jobApplicationRepository: Repository<JobApplication>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
   async create(createInvoiceDto: CreateInvoiceDto) {
     try {
@@ -68,6 +73,11 @@ export class InvoiceService {
         jobApplications: jobApplications,
       });
       return await this.invoiceRepository.save(invoice);
+      // if(corporate.notificationMode === NotificationModeEnum.EMAIL) {
+      //   this.emailService.notifyCorporateOfInvoice(corporate,invoice);
+      // } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
+      //   this.twilioService.notifyCorporateOfInvoice(corporate,invoice);
+      // }
     } catch (err) {
       throw new HttpException(
         'Failed to create new invoice',

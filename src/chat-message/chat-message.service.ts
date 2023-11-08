@@ -50,15 +50,4 @@ export class ChatMessageService {
     return await this.chatMessageRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chatMessage`;
-  }
-
-  update(id: number, updateChatMessageDto: UpdateChatMessageDto) {
-    return `This action updates a #${id} chatMessage`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chatMessage`;
-  }
 }

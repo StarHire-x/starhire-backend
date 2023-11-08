@@ -1,5 +1,5 @@
-import { CreateDocumentDto } from 'src/document/dto/create-document.dto';
-import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import { CreateDocumentDto } from '../../document/dto/create-document.dto';
+import TicketCategoryEnum from '../../enums/ticketCategory.enum';
 
 export class CreateTicketDto {
   corporateId: string; // parent relationship

@@ -1,15 +1,14 @@
-import ForumCategoryEnum from 'src/enums/forumCategory.enum';
-import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
-import StarCategoryEnum from 'src/enums/starCategory.enum';
-import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import UserStatusEnum from 'src/enums/userStatus.enum';
-import VisibilityEnum from 'src/enums/visibility.enum';
-import CorporatePromotionStatusEnum from 'src/enums/corporatePromotionStatus.enum';
+import ForumCategoryEnum from '../enums/forumCategory.enum';
+import HighestEducationStatusEnum from '../enums/highestEducationStatus.enum';
+import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
+import EventListingStatusEnum from '../enums/eventListingStatus.enum';
+import TicketCategoryEnum from '../enums/ticketCategory.enum';
+import UserRoleEnum from '../enums/userRole.enum';
+import UserStatusEnum from '../enums/userStatus.enum';
+import VisibilityEnum from '../enums/visibility.enum';
+import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
 
 export function mapForumCategoryToEnum(status: string): ForumCategoryEnum {
   switch (status) {
@@ -105,21 +104,6 @@ export function mapEventListingStatusToEnum(
       return EventListingStatusEnum.EXPIRED;
     default:
       return EventListingStatusEnum.UPCOMING;
-  }
-}
-
-export function mapStarCategoryToEnum(status: string): StarCategoryEnum {
-  switch (status) {
-    case 'ONE_STAR':
-      return StarCategoryEnum.ONE_STAR;
-    case 'TWO_STAR':
-      return StarCategoryEnum.TWO_STAR;
-    case 'THREE_STAR':
-      return StarCategoryEnum.THREE_STAR;
-    case 'FOUR_STAR':
-      return StarCategoryEnum.FOUR_STAR;
-    default:
-      return StarCategoryEnum.FIVE_STAR;
   }
 }
 

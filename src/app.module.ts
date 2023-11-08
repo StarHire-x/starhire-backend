@@ -21,7 +21,6 @@ import { EventRegistrationModule } from './event-registration/event-registration
 import { RecruiterModule } from './recruiter/recruiter.module';
 import { CorporateModule } from './corporate/corporate.module';
 import { TicketModule } from './ticket/ticket.module';
-import { ReviewModule } from './review/review.module';
 import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
@@ -34,6 +33,9 @@ import { TwilioController } from './twilio/twilio.controller';
 import { TwilioService } from './twilio/twilio.service';
 import { TwilioModule } from './twilio/twilio.module';
 import { TypeformModule } from './typeform/typeform.module';
+import { PaymentModule } from './payment/payment.module';
+import { CommissionRateModule } from './commission-rate/commission-rate.module';
+import { PdfModule } from './pdf/pdf.module';
 
 require('dotenv').config();
 
@@ -48,6 +50,7 @@ require('dotenv').config();
       database: process.env.DB_NAME,
       entities: entityList,
       synchronize: true,
+      timezone: '+08:00',
     }),
     UsersModule,
     JobApplicationModule,
@@ -68,7 +71,6 @@ require('dotenv').config();
     RecruiterModule,
     CorporateModule,
     TicketModule,
-    ReviewModule,
     UploadModule,
     ConfigModule.forRoot({ isGlobal: true }),
     EmailModule,
@@ -79,6 +81,9 @@ require('dotenv').config();
     ForumCategoriesModule,
     TwilioModule,
     TypeformModule,
+    PaymentModule,
+    CommissionRateModule,
+    PdfModule,
   ],
   controllers: [AppController, TwilioController],
   providers: [AppService, TwilioService],

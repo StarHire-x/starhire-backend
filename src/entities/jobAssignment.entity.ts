@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'jobAssignment' })
 export class JobAssignment {
-
   @PrimaryGeneratedColumn()
   jobAssignmentId: number;
 
@@ -14,7 +13,10 @@ export class JobAssignment {
   @Column()
   recruiterId: string;
 
-  // constructor(entity: Partial<JobAssignment>) {
-  //   Object.assign(this, entity);
-  // }
+  @Column()
+  assignedTime: Date;
+
+  constructor(entity: Partial<JobAssignment>) {
+    Object.assign(this, entity);
+  }
 }

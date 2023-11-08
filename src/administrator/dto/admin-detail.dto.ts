@@ -1,5 +1,5 @@
-import UserStatusEnum from "src/enums/userStatus.enum";
-import NotificationModeEnum from "src/enums/notificationMode.enum";
+import UserStatusEnum from '../../enums/userStatus.enum';
+import NotificationModeEnum from '../../enums/notificationMode.enum';
 
 export class AdministratorDetailDto {
   userName: string;

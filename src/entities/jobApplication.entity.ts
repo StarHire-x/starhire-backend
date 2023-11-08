@@ -1,11 +1,9 @@
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
+import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Document } from './document.entity';
@@ -14,7 +12,6 @@ import { JobSeeker } from './jobSeeker.entity';
 import { Commission } from './commission.entity';
 import { Recruiter } from './recruiter.entity';
 import { Invoice } from './invoice.entity';
-import { Interview } from './interview.entity';
 
 @Entity({ name: 'jobApplications' })
 export class JobApplication {
@@ -64,10 +61,6 @@ export class JobApplication {
     nullable: true,
   })
   invoice: Invoice;
-  /*
-  @OneToMany(() => Interview, (interview) => interview.jobApplication)
-  interviews: Interview[];
-  */
 
   constructor(entity: Partial<JobApplication>) {
     Object.assign(this, entity);

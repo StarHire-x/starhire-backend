@@ -1,7 +1,7 @@
 import { Column, JoinTable, ManyToMany, OneToMany, OneToOne } from 'typeorm';
 import { Entity } from 'typeorm';
 import { User } from './user.entity';
-import HighestEducationStatusEnum from 'src/enums/highestEducationStatus.enum';
+import HighestEducationStatusEnum from '../enums/highestEducationStatus.enum';
 import { IsEnum, IsOptional } from 'class-validator';
 import { ForumComment } from './forumComment.entity';
 import { JobApplication } from './jobApplication.entity';
@@ -9,13 +9,12 @@ import { ForumPost } from './forumPost.entity';
 import { Chat } from './chat.entity';
 import { JobPreference } from './jobPreference.entity';
 import { Ticket } from './ticket.entity';
-import { Review } from './review.entity';
 import { JobExperience } from './jobExperience.entity';
 import { JobListing } from './jobListing.entity';
 import { SavedJobListing } from './savedJobListing.entity';
-import VisibilityEnum from 'src/enums/visibility.enum';
+import VisibilityEnum from '../enums/visibility.enum';
 import { Corporate } from './corporate.entity';
-import { Interview } from './interview.entity';
+import { EventRegistration } from './eventRegistration.entity';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -54,6 +53,51 @@ export class JobSeeker extends User {
   @Column()
   dateOfGraduation: Date;
 
+  @Column()
+  country: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  proficientLanguages: string;
+
+  @Column()
+  experience: string;
+
+  @Column()
+  certifications: string;
+
+  @Column()
+  recentRole: string;
+
+  @Column()
+  resume: string;
+
+  @Column()
+  startDate: Date;
+
+  @Column()
+  preferredRegions: string;
+
+  @Column()
+  preferredJobType: string;
+
+  @Column()
+  preferredSchedule: string;
+
+  @Column()
+  payRange: string;
+
+  @Column()
+  visaRequirements: string;
+
+  @Column()
+  ranking: string;
+
+  @Column()
+  otherInfo: string;
+
   @OneToMany(() => ForumComment, (forumComment) => forumComment.jobSeeker, {
     cascade: true,
   })
@@ -67,6 +111,15 @@ export class JobSeeker extends User {
     },
   )
   jobApplications: JobApplication[];
+
+  @OneToMany(
+    () => EventRegistration,
+    (eventRegistration) => eventRegistration.jobSeeker,
+    {
+      cascade: true,
+    },
+  )
+  eventRegistrations: EventRegistration[];
 
   @OneToMany(() => ForumPost, (forumPost) => forumPost.jobSeeker, {
     cascade: true,
@@ -94,11 +147,6 @@ export class JobSeeker extends User {
   })
   tickets: Ticket[];
 
-  @OneToMany(() => Review, (review) => review.jobSeeker, {
-    cascade: true,
-  })
-  reviews: Review[];
-
   @ManyToMany(() => JobListing, (jobListing) => jobListing.jobSeekers, {
     cascade: true,
     nullable: true, // optional
@@ -118,10 +166,6 @@ export class JobSeeker extends User {
   @ManyToMany(() => Corporate, (corporate) => corporate.followers, {
     nullable: true,
   })
-  /*
-  @OneToMany(() => Interview, (interview) => interview.jobSeeker)
-  interviews: Interview[];
-  */
   @JoinTable({ name: 'jobseeker_corporate' })
   following: Corporate[];
 

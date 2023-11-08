@@ -15,7 +15,7 @@ import {
 import { JobSeekerService } from './job-seeker.service';
 import { CreateJobSeekerDto } from './dto/create-job-seeker.dto';
 import { UpdateJobSeekerDto } from './dto/update-job-seeker.dto';
-import { Public } from 'src/users/public.decorator';
+import { Public } from '../users/public.decorator';
 
 @Controller('job-seeker')
 export class JobSeekerController {
@@ -36,7 +36,7 @@ export class JobSeekerController {
 
   @Public()
   @Get('/similarity/:id')
-  findAllJobSeeker(@Param('id') id: number) {
+  findAllJobSeekerSimilarity(@Param('id') id: number) {
     try {
       return this.jobSeekerService.findAllWithSimilarity(id);
     } catch (error) {

@@ -1,24 +1,22 @@
-import { Recruiter } from 'src/entities/recruiter.entity';
+import { Recruiter } from '../entities/recruiter.entity';
 import { CreateRecruiterDto } from './dto/create-recruiter.dto';
 import { UpdateRecruiterDto } from './dto/update-recruiter.dto';
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { QueryFailedError, Repository } from 'typeorm';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   mapNotificationModeToEnum,
   mapUserRoleToEnum,
   mapUserStatusToEnum,
-} from 'src/common/mapStringToEnum';
-import { EmailService } from 'src/email/email.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import { TwilioService } from 'src/twilio/twilio.service';
+} from '../common/mapStringToEnum';
+import { EmailService } from '../email/email.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import UserRoleEnum from '../enums/userRole.enum';
+import { TwilioService } from '../twilio/twilio.service';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
 
 @Injectable()
 export class RecruiterService {
@@ -27,6 +25,14 @@ export class RecruiterService {
     private readonly recruiterRepository: Repository<Recruiter>,
     private emailService: EmailService,
     private twilioService: TwilioService,
+    @InjectRepository(JobAssignment)
+    private readonly jobAssignmentRepository: Repository<JobAssignment>,
+    @InjectRepository(JobSeeker)
+    private readonly jobSeekerRepository: Repository<JobSeeker>,
+    @InjectRepository(JobListing)
+    private readonly jobListingRepository: Repository<JobListing>,
+    @InjectRepository(JobApplication)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
   ) {}
 
   async create(createRecruiterDto: CreateRecruiterDto) {
@@ -48,18 +54,11 @@ export class RecruiterService {
 
       await this.recruiterRepository.save(recruiter);
 
-      if (recruiter) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Recruiter created',
-          data: recruiter,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Recruiter failed to be created',
-        };
-      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Recruiter created',
+        data: recruiter,
+      };
     } catch (err) {
       throw new HttpException(
         'Failed to create recruiter',
@@ -70,7 +69,11 @@ export class RecruiterService {
 
   async findAll() {
     try {
-      const recruiters = await this.recruiterRepository.find();
+      const recruiters = await this.recruiterRepository.find({
+        relations: {
+          jobApplications: { commission: true },
+        },
+      });
       if (recruiters.length > 0) {
         return {
           statusCode: HttpStatus.OK,
@@ -89,6 +92,141 @@ export class RecruiterService {
         'Failed to find recruiter',
         HttpStatus.BAD_REQUEST,
       );
+    }
+  }
+
+  async findRecruiterMatchingStatistics(userId: string) {
+    try {
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId },
+        relations: [
+          'jobApplications',
+          'jobApplications.jobSeeker',
+          'jobApplications.jobListing',
+        ],
+      });
+
+      const jobAssignments = await this.jobAssignmentRepository.find({
+        where: { recruiterId: userId },
+      });
+
+      console.log(jobAssignments);
+
+      let acceptanceRate;
+
+      if (jobAssignments.length === 0) {
+        acceptanceRate = 0;
+      } else {
+        acceptanceRate =
+          (recruiter.jobApplications.length / jobAssignments.length) * 100;
+      }
+
+      const pendingResponse = jobAssignments.filter((jobAssignment) => {
+        return !recruiter.jobApplications.some((jobApplication) => {
+          return (
+            jobApplication.jobListing.jobListingId ===
+              jobAssignment.jobListingId &&
+            jobApplication.jobSeeker.userId === jobAssignment.jobSeekerId
+          );
+        });
+      });
+
+      const acceptedResponse = jobAssignments.filter((jobAssignment) => {
+        return recruiter.jobApplications.some((jobApplication) => {
+          return (
+            jobApplication.jobListing.jobListingId ===
+              jobAssignment.jobListingId &&
+            jobApplication.jobSeeker.userId === jobAssignment.jobSeekerId
+          );
+        });
+      });
+
+      let totalDuration = 0; // in milliseconds
+      let count = acceptedResponse.length;
+
+      acceptedResponse.forEach((jobAssignment) => {
+        const correspondingJobApplication = recruiter.jobApplications.find(
+          (jobApplication) => {
+            return (
+              jobApplication.jobListing.jobListingId ===
+                jobAssignment.jobListingId &&
+              jobApplication.jobSeeker.userId === jobAssignment.jobSeekerId
+            );
+          },
+        );
+
+        if (correspondingJobApplication) {
+          console.log(correspondingJobApplication.submissionDate);
+          console.log(jobAssignment.assignedTime);
+          const duration =
+            correspondingJobApplication.submissionDate.getTime() -
+            jobAssignment.assignedTime.getTime();
+          console.log(duration);
+          totalDuration += duration;
+        }
+      });
+
+      let duration;
+
+      if (count === 0) {
+        duration = 0;
+      } else {
+        duration = totalDuration / count;
+      }
+
+      const hours = Math.floor(duration / (1000 * 60 * 60));
+      const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((duration % (1000 * 60)) / 1000);
+
+      let formattedDuration = `${hours}hrs ${minutes}mins`;
+      if (formattedDuration === '0hrs 0mins') {
+        formattedDuration = 'N.A';
+      }
+
+      const formatResponse = await Promise.all(
+        pendingResponse.map(async (jobAssignment) => {
+          const jobSeeker = await this.jobSeekerRepository.findOne({
+            where: { userId: jobAssignment.jobSeekerId },
+          });
+
+          const jobListing = await this.jobListingRepository.findOne({
+            where: { jobListingId: jobAssignment.jobListingId },
+            relations: ['corporate'],
+          });
+
+          return {
+            jobAssignmentId: jobAssignment.jobAssignmentId,
+            jobSeekerId: jobSeeker.userId,
+            jobSeekerName: jobSeeker.fullName,
+            jobSeekerProfilePic: jobSeeker.profilePictureUrl,
+            corporateId: jobListing.corporate.userId,
+            corporateName: jobListing.corporate.companyName,
+            corporateProfilePic: jobListing.corporate.profilePictureUrl,
+            jobListingId: jobListing.jobListingId,
+            jobListingTitle: jobListing.title,
+          };
+        }),
+      );
+
+      const result = {
+        stats: {
+          duration: formattedDuration,
+          matched: jobAssignments.length,
+          acceptanceRate: acceptanceRate.toFixed(2),
+        },
+        response: formatResponse,
+      };
+
+      console.log(result.stats);
+      console.log(result.response);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Statistics found',
+        data: result,
+      };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -154,10 +292,87 @@ export class RecruiterService {
           commissions: true,
           jobApplications: true,
           chats: true,
-          tickets: true,
         },
       });
       return recruiter;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getJobApplicationsForRecruiter(recruiterId: string) {
+    try {
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId: recruiterId },
+        relations: {
+          jobApplications: true,
+        },
+      });
+
+      if (!recruiter) {
+        throw new HttpException('Recruiter Id not found', HttpStatus.NOT_FOUND);
+      }
+
+      const predefinedStatuses = {
+        Total: recruiter.jobApplications.length,
+        Submitted: 0,
+        Processing: 0,
+        To_Be_Submitted: 0,
+        Waiting_For_Interview: 0,
+        Offer_Rejected: 0,
+        Offer_Accepted: 0,
+        Rejected: 0,
+        Offered: 0,
+      };
+
+      const statusCount = recruiter.jobApplications.reduce(
+        (acc, item) => {
+          if (acc.hasOwnProperty(item.jobApplicationStatus)) {
+            acc[item.jobApplicationStatus]++;
+          }
+          // Note: If the status doesn't match any predefined status, it's ignored.
+          return acc;
+        },
+        { ...predefinedStatuses },
+      );
+
+      const formatResponse = await Promise.all(
+        recruiter.jobApplications.map(async (jobApplication) => {
+          const jobApplicationRef = await this.jobApplicationRepository.findOne(
+            {
+              where: { jobApplicationId: jobApplication.jobApplicationId },
+              relations: ['jobSeeker', 'jobListing'],
+            },
+          );
+
+          const jobListing = await this.jobListingRepository.findOne({
+            where: { jobListingId: jobApplicationRef.jobListing.jobListingId },
+            relations: ['corporate'],
+          });
+
+          return {
+            jobApplicationId: jobApplication.jobApplicationId,
+            jobApplicationStatus: jobApplication.jobApplicationStatus,
+            jobSeekerId: jobApplicationRef.jobSeeker.userId,
+            jobSeekerName: jobApplicationRef.jobSeeker.fullName,
+            jobSeekerProfilePic: jobApplicationRef.jobSeeker.profilePictureUrl,
+            corporateId: jobListing.corporate.userId,
+            corporateName: jobListing.corporate.companyName,
+            corporateProfilePic: jobListing.corporate.profilePictureUrl,
+            jobListingId: jobListing.jobListingId,
+            jobListingTitle: jobListing.title,
+          };
+        }),
+      );
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Statistics found',
+        data: {
+          statusCount,
+          formatResponse,
+        },
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
@@ -228,12 +443,13 @@ export class RecruiterService {
 
   async remove(id: string) {
     try {
-      return await this.recruiterRepository.delete({ userId: id });
+      const result = await this.recruiterRepository.delete({ userId: id });
+      if (result.affected === 0) {
+        throw new HttpException('Recruiter id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (err) {
-      throw new HttpException(
-        'Failed to delete a recruiter',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

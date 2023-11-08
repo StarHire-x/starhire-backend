@@ -7,17 +7,19 @@ import {
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { Repository } from 'typeorm';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { mapJobApplicationStatusToEnum } from 'src/common/mapStringToEnum';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
-import { Document } from 'src/entities/document.entity';
-import { EmailService } from 'src/email/email.service';
-import { TwilioService } from 'src/twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { IsNull, Repository } from 'typeorm';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { mapJobApplicationStatusToEnum } from '../common/mapStringToEnum';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { Document } from '../entities/document.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
+import CommissionStatusEnum from '../enums/commissionStatus.enum';
 
 @Injectable()
 export class JobApplicationService {
@@ -156,6 +158,39 @@ export class JobApplicationService {
     return await this.jobApplicationRepository.find();
   }
 
+  async findAllYetCommissionedSuccessfulJobAppsByRecruiterId(userId: string) {
+    try {
+      const jobApplications = await this.jobApplicationRepository.find({
+        where: {
+          recruiter: { userId: userId },
+          jobApplicationStatus: JobApplicationStatusEnum.OFFER_ACCEPTED,
+          commission: IsNull(),
+        },
+        relations: {
+          jobListing: true,
+        },
+      });
+
+      if (jobApplications.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Existing job applications are found',
+          data: jobApplications,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'No job applications is found for recruiters',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to find job application',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   // Only the child entity (document) is eagerly loaded
   async findOne(id: number) {
     try {
@@ -204,6 +239,8 @@ export class JobApplicationService {
         where: { jobApplicationId: id },
         relations: { jobSeeker: true, recruiter: true, jobListing: true },
       });
+
+      const originalStatus = jobApplication.jobApplicationStatus;
 
       const jobListing = await this.jobListingRepository.findOne({
         where: { jobListingId: jobApplication.jobListing.jobListingId },
@@ -276,21 +313,57 @@ export class JobApplicationService {
       }
 
       if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
-        this.emailService.notifyCorporateOnApplicationStatus(
-          corporate,
-          jobSeeker,
-          jobApplication,
-          jobListing,
-          recruiter,
-        );
+        if (
+          jobApplication.jobApplicationStatus ===
+            JobApplicationStatusEnum.PROCESSING
+        ) {
+          this.emailService.notifyCorporateOnNewApplication(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        } else if (
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.SUBMITTED &&
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.TO_BE_SUBMITTED
+        ) {
+          this.emailService.notifyCorporateOnApplicationStatus(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        }
       } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
-        this.twilioService.notifyCorporateOnApplicationStatus(
-          corporate,
-          jobSeeker,
-          jobApplication,
-          jobListing,
-          recruiter,
-        );
+        if (
+          jobApplication.jobApplicationStatus ===
+            JobApplicationStatusEnum.PROCESSING
+        ) {
+          this.twilioService.notifyCorporateOnNewApplication(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        } else if (
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.SUBMITTED &&
+          jobApplication.jobApplicationStatus !==
+            JobApplicationStatusEnum.TO_BE_SUBMITTED
+        ) {
+          this.twilioService.notifyCorporateOnApplicationStatus(
+            corporate,
+            jobSeeker,
+            jobApplication,
+            jobListing,
+            recruiter,
+          );
+        }
       }
 
       return {
@@ -359,7 +432,7 @@ export class JobApplicationService {
         },
         relations: { jobSeeker: true, jobListing: true },
       });
-    
+
       if (jobApplication) {
         return {
           statusCode: HttpStatus.OK,

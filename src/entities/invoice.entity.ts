@@ -8,7 +8,7 @@ import {
 import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
 import { JobApplication } from './jobApplication.entity';
-import InvoiceStatusEnum from 'src/enums/invoiceStatus.enum';
+import InvoiceStatusEnum from '../enums/invoiceStatus.enum';
 
 @Entity({ name: 'invoices' })
 export class Invoice {
@@ -29,6 +29,9 @@ export class Invoice {
 
   @Column()
   totalAmount: number;
+
+  @Column()
+  invoiceLink: string;
 
   @ManyToOne(() => Administrator, (administrator) => administrator.invoices, {
     nullable: false,

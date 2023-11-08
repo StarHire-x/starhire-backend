@@ -7,9 +7,9 @@ import {
 import { CreateJobExperienceDto } from './dto/create-job-experience.dto';
 import { UpdateJobExperienceDto } from './dto/update-job-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobExperience } from 'src/entities/jobExperience.entity';
+import { JobExperience } from '../entities/jobExperience.entity';
 import { Repository } from 'typeorm';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 
 @Injectable()
 export class JobExperienceService {
@@ -22,7 +22,7 @@ export class JobExperienceService {
 
   async create(createJobExperienceDto: CreateJobExperienceDto) {
     try {
-      console.log("Hello")
+      console.log('Hello');
       const { jobSeekerId, ...dtoExcludeRelationship } = createJobExperienceDto;
       const jobSeeker = await this.jobSeekerRepository.findOneBy({
         userId: jobSeekerId,
@@ -48,7 +48,15 @@ export class JobExperienceService {
   }
 
   async findAll() {
-    return await this.jobExperienceRepository.find();
+    try {
+      const jobExperiences = await this.jobExperienceRepository.find();
+      return jobExperiences;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to fetch job experiences',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findOne(id: number) {
@@ -111,11 +119,11 @@ export class JobExperienceService {
 
   async remove(id: number) {
     try {
-      await this.jobExperienceRepository.delete({ jobExperienceId: id });
-      return {
-        statusCode: 200,
-        message: 'Job experience is deleted',
-      };
+      const result = await this.jobExperienceRepository.delete({ jobExperienceId: id });
+      if (result.affected === 0) {
+        throw new HttpException('Job experience id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

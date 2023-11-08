@@ -7,11 +7,11 @@ import {
 import { CreateEventListingDto } from './dto/create-event-listing.dto';
 import { UpdateEventListingDto } from './dto/update-event-listing.dto';
 import { Repository } from 'typeorm';
-import { EventListing } from 'src/entities/eventListing.entity';
+import { EventListing } from '../entities/eventListing.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventRegistration } from 'src/entities/eventRegistration.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { mapEventListingStatusToEnum } from 'src/common/mapStringToEnum';
+import { EventRegistration } from '../entities/eventRegistration.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { mapEventListingStatusToEnum } from '../common/mapStringToEnum';
 
 @Injectable()
 export class EventListingService {
@@ -114,6 +114,36 @@ export class EventListingService {
     }
   }
 
+  async findAllEventRegistrationsByEventListingId(eventListingId: number) {
+    try {
+      const eventListing = await this.eventListingRepository.findOne({
+        where: { eventListingId: eventListingId },
+        relations: { eventRegistrations: { jobSeeker: true } },
+      });
+
+      console.log('Event Registrations: ', eventListing);
+
+      if (eventListing) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Event Registrations found',
+          data: eventListing.eventRegistrations,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Unable to find event registrations',
+        };
+      }
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(
+        'Failed to find event listings',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     try {
       // For this part, we want the relationship with other entities to show, at most 1 level, no need to be too detail
@@ -136,12 +166,23 @@ export class EventListingService {
 
   async update(id: number, updateEventListingDto: UpdateEventListingDto) {
     try {
-      const eventListing = await this.eventListingRepository.findOneBy({
-        eventListingId: id,
+      const eventListing = await this.eventListingRepository.findOne({
+        where: { eventListingId: id },
+        relations: { corporate: true },
       });
 
       if (!eventListing) {
         throw new NotFoundException('Event Listing Id provided is not valid');
+      }
+
+      const corporate = eventListing.corporate;
+
+      // If eventListingStatus is to be updated, ensure it is a valid enum
+      if (updateEventListingDto.eventListingStatus) {
+        const mappedStatus = mapEventListingStatusToEnum(
+          updateEventListingDto.eventListingStatus,
+        );
+        updateEventListingDto.eventListingStatus = mappedStatus;
       }
 
       Object.assign(eventListing, updateEventListingDto);

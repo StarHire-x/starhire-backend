@@ -17,7 +17,7 @@ import {
 import { CorporateService } from './corporate.service';
 import { CreateCorporateDto } from './dto/create-corporate.dto';
 import { UpdateCorporateDto } from './dto/update-corporate.dto';
-import { Public } from 'src/users/public.decorator';
+import { Public } from '../users/public.decorator';
 
 @Controller('corporate')
 export class CorporateController {
@@ -42,9 +42,15 @@ export class CorporateController {
   }
 
   @Public() //rmb to remove this, only for testing convinence
-  @Get('/PromotionRequests')
-  getRequestedCorporates() {
-    return this.corporateService.getAllPromotionRequest();
+  @Get('/premium-users')
+  getAllPremiumUsers() {
+    return this.corporateService.getAllPremimumUsers();
+  }
+
+  @Public() //rmb to remove this, only for testing convinence
+  @Get('/non-premium-users')
+  getAllNonPremiumUsers() {
+    return this.corporateService.getAllNonPremiumUsers();
   }
 
   @Public()
@@ -66,6 +72,37 @@ export class CorporateController {
   async getAllCorporateJobListingBreakdown() {
     try {
       return await this.corporateService.findBreakdownJobStatistics();
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/getSingleBreakdown/:id')
+  async getACorporateJobListingBreakdown(@Param('id') corporateId: string) {
+    try {
+      return await this.corporateService.findBreakdownJobStatisticsOneCorporate(
+        corporateId,
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Public()
+  @Get('/jobListingStats/:id')
+  async getAllCorporateJobListingStatistics(@Param('id') corporateId: string) {
+    try {
+      return await this.corporateService.findAllJobListingStatsByCorporate(
+        corporateId,
+      );
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -149,6 +186,19 @@ export class CorporateController {
     }
   }
 
+  @Get('/jobApplications/:id')
+  getJobApplicationForCorporate(@Param('id') id: string) {
+    try {
+      return this.corporateService.getJobApplicationsForCorporate(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Put(':id')
   updateCorporate(
     @Param('id') id: string,
@@ -181,64 +231,3 @@ export class CorporateController {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-// import { CorporateService } from './corporate.service';
-// import { CreateCorporateDto } from './dto/create-corporate.dto';
-// import { UpdateCorporateDto } from './dto/update-corporate.dto';
-
-// @Controller('corporate')
-// export class CorporateController {
-//   constructor(private readonly corporateService: CorporateService) {}
-
-//   @Post()
-//   create(@Body() createCorporateDto: CreateCorporateDto) {
-//     return this.corporateService.create(createCorporateDto);
-//   }
-
-//   @Get()
-//   findAll() {
-//     return this.corporateService.findAll();
-//   }
-
-//   @Get(':id')
-//   findOne(@Param('id') id: string) {
-//     return this.corporateService.findOne(+id);
-//   }
-
-//   @Patch(':id')
-//   update(@Param('id') id: string, @Body() updateCorporateDto: UpdateCorporateDto) {
-//     return this.corporateService.update(+id, updateCorporateDto);
-//   }
-
-//   @Delete(':id')
-//   remove(@Param('id') id: string) {
-//     return this.corporateService.remove(+id);
-//   }
-// }

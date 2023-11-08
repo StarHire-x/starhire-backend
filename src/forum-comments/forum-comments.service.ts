@@ -8,9 +8,9 @@ import { CreateForumCommentDto } from './dto/create-forum-comment.dto';
 import { UpdateForumCommentDto } from './dto/update-forum-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ForumComment } from 'src/entities/forumComment.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { ForumPost } from 'src/entities/forumPost.entity';
+import { ForumComment } from '../entities/forumComment.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { ForumPost } from '../entities/forumPost.entity';
 
 @Injectable()
 export class ForumCommentsService {
@@ -57,24 +57,31 @@ export class ForumCommentsService {
       };
     } catch (err) {
       throw new HttpException(
-        'Failed to create new forum comment',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
   }
 
   async findAll() {
-    return await this.forumCommentRepository.find();
+    try {
+      return await this.forumCommentRepository.find();
+    } catch (err) {
+      throw new HttpException(
+        'Failed to retrieve forum comments',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findCommentsByForumPostId(forumPostId: number) {
     try {
       const comments = await this.forumCommentRepository.find({
-        where: {forumPost: {forumPostId: forumPostId}},
+        where: { forumPost: { forumPostId: forumPostId } },
         order: {
           createdAt: 'DESC',
         },
-        relations: {jobSeeker: true}
+        relations: { jobSeeker: true },
       });
 
       return comments;
@@ -117,7 +124,7 @@ export class ForumCommentsService {
       return await this.forumCommentRepository.save(forumComment);
     } catch (err) {
       throw new HttpException(
-        'Failed to update forum comment',
+        err.message,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -125,14 +132,18 @@ export class ForumCommentsService {
 
   async remove(id: number) {
     try {
-      return await this.forumCommentRepository.delete({
+      const result = await this.forumCommentRepository.delete({
         forumCommentId: id,
       });
+      if (result.affected === 0) {
+        throw new HttpException(
+          'Forum comment id not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return result;
     } catch (err) {
-      throw new HttpException(
-        'Failed to delete forum comment',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

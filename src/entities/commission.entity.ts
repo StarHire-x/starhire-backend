@@ -9,7 +9,7 @@ import {
 import { JobApplication } from './jobApplication.entity';
 import { Recruiter } from './recruiter.entity';
 import { Administrator } from './administrator.entity';
-import CommissionStatusEnum from 'src/enums/commissionStatus.enum';
+import CommissionStatusEnum from '../enums/commissionStatus.enum';
 
 @Entity({ name: 'commissions' })
 export class Commission {
@@ -22,8 +22,14 @@ export class Commission {
   @Column()
   commissionStatus: CommissionStatusEnum;
 
+  @Column('float')
+  commissionRate: number; //  e.g. 10% commission rate will be stored as 10
+
   @Column()
   commissionAmount: number;
+
+  @Column()
+  paymentDocumentURL: string;
 
   // @OneToOne(() => Invoice, { nullable: true })
   // @JoinColumn()
@@ -33,7 +39,7 @@ export class Commission {
     () => Administrator,
     (administrator) => administrator.commissions,
     {
-      nullable: true,
+      nullable: false,
     },
   )
   administrator: Administrator;

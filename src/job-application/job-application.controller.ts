@@ -59,12 +59,31 @@ export class JobApplicationController {
     }
   }
 
-  @Get('/jobSeeker/:jobSeekerId')
-  async findJobApplicationsByJobSeeker(
-    @Param('jobSeekerId') jobSeekerId: string
+  @Get('/yet-commission/:recruiterId')
+  async findYetCommissionedSuccessfulJobApplicationsByRecruiterId(
+    @Param('recruiterId') recruiterId: string,
   ) {
     try {
-      return await this.jobApplicationService.getJobApplicationByJobSeeker(jobSeekerId);
+      return await this.jobApplicationService.findAllYetCommissionedSuccessfulJobAppsByRecruiterId(
+        recruiterId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/jobSeeker/:jobSeekerId')
+  async findJobApplicationsByJobSeeker(
+    @Param('jobSeekerId') jobSeekerId: string,
+  ) {
+    try {
+      return await this.jobApplicationService.getJobApplicationByJobSeeker(
+        jobSeekerId,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -83,7 +102,7 @@ export class JobApplicationController {
     try {
       return await this.jobApplicationService.getJobApplicationByJobSeekerJobListing(
         jobSeekerId,
-        jobListingId
+        jobListingId,
       );
     } catch (error) {
       if (error instanceof HttpException) {

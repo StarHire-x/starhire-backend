@@ -7,11 +7,11 @@ import {
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Chat } from 'src/entities/chat.entity';
+import { Chat } from '../entities/chat.entity';
 import { Repository } from 'typeorm';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
 
 @Injectable()
 export class ChatService {
@@ -48,25 +48,6 @@ export class ChatService {
           },
         });
 
-        // const chatFound = await this.chatRepository.findOne({
-        //   where: { recruiter: recruiter,
-        //   corporate: corporate},
-        //   relations: {corporate: true, recruiter: true},
-        // });
-
-        // if (chatFound) {
-        //   throw new NotFoundException('Chat already exists');
-        // }
-        // let chatFound = [];
-
-        // const allChats = await this.chatRepository.find({
-        //   relations: {corporate: true, recruiter: true},
-        // });
-
-        // if (allChats) {
-        //   chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.corporate.userId === corporateId);
-        // }
-
         if (chatFound) {
           throw new NotFoundException('Chat already exists');
         }
@@ -102,24 +83,6 @@ export class ChatService {
           },
         });
 
-        // const chatFound = await this.chatRepository.findOne({
-        //   where: { recruiter: recruiter,
-        //   jobSeeker: jobSeeker},
-        //   relations: {jobSeeker: true, recruiter: true},
-        // });
-        // if (chatFound) {
-        //   throw new NotFoundException('Chat already exists');
-        // }
-        // let chatFound = [];
-
-        // const allChats = await this.chatRepository.find({
-        //   relations: {jobSeeker: true, recruiter: true},
-        // });
-
-        // if (allChats) {
-        //   chatFound = allChats.filter((chat) => chat.recruiter.userId === recruiterId && chat.jobSeeker.userId === jobSeekerId);
-        // }
-
         if (chatFound) {
           throw new NotFoundException('Chat already exists');
         }
@@ -140,14 +103,6 @@ export class ChatService {
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
-  }
-
-  findAll() {
-    return `This action returns all chat`;
-  }
-
-  async findOne(id: number) {
-    return `This action returns a chat hello`;
   }
 
   async findUserChats(userId: string) {
@@ -181,7 +136,7 @@ export class ChatService {
     try {
       const currentChat = await this.chatRepository.findOne({
         where: {
-          chatId: chatId
+          chatId: chatId,
         },
         relations: {
           chatMessages: true,
@@ -194,10 +149,6 @@ export class ChatService {
         HttpStatus.BAD_REQUEST,
       );
     }
-  }
-
-  update(id: number, updateChatDto: UpdateChatDto) {
-    return `This action updates a #${id} chat`;
   }
 
   async remove(id: number) {

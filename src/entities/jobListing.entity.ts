@@ -1,4 +1,4 @@
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
 import {
   Column,
   CreateDateColumn,
@@ -12,7 +12,6 @@ import {
 import { JobApplication } from './jobApplication.entity';
 import { Corporate } from './corporate.entity';
 import { JobSeeker } from './jobSeeker.entity';
-import { Recruiter } from './recruiter.entity';
 import { SavedJobListing } from './savedJobListing.entity';
 
 @Entity({ name: 'jobListings' })
@@ -49,6 +48,33 @@ export class JobListing {
 
   @Column()
   jobListingStatus: JobListingStatusEnum;
+
+  @Column()
+  payRange: string;
+
+  @Column()
+  jobType: string;
+
+  @Column()
+  schedule: string;
+
+  @Column()
+  supplementalPay: string;
+
+  @Column()
+  otherBenefits: string;
+
+  @Column()
+  certificationsRequired: string;
+
+  @Column()
+  typeOfWorkers: string;
+
+  @Column()
+  requiredLanguages: string;
+
+  @Column()
+  otherConsiderations: string;
 
   @ManyToOne(() => Corporate, (corporate) => corporate.jobListings, {
     nullable: false,

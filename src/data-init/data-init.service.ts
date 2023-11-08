@@ -1,37 +1,40 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Administrator } from 'src/entities/administrator.entity';
-import UserRoleEnum from 'src/enums/userRole.enum';
+import { Administrator } from '../entities/administrator.entity';
+import UserRoleEnum from '../enums/userRole.enum';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateAdministratorDto } from '../administrator/dto/create-admin.dto';
 import { AdministratorService } from '../administrator/admin.service';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { RecruiterService } from 'src/recruiter/recruiter.service';
-import { Corporate } from 'src/entities/corporate.entity';
-import { CorporateService } from 'src/corporate/corporate.service';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
-import { CreateRecruiterDto } from 'src/recruiter/dto/create-recruiter.dto';
-import { CreateCorporateDto } from 'src/corporate/dto/create-corporate.dto';
-import { CreateJobSeekerDto } from 'src/job-seeker/dto/create-job-seeker.dto';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { JobListingService } from 'src/job-listing/job-listing.service';
-import { CreateJobListingDto } from 'src/job-listing/dto/create-job-listing.dto';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import { ForumCategory } from 'src/entities/forumCategory.entity';
-import { ForumCategoriesService } from 'src/forum-categories/forum-categories.service';
-import { CreateForumCategoryDto } from 'src/forum-categories/dto/create-forum-category.dto';
-import { Ticket } from 'src/entities/ticket.entity';
-import { TicketService } from 'src/ticket/ticket.service';
-import { CreateTicketDto } from 'src/ticket/dto/create-ticket.dto';
-import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
-import { JobPreference } from 'src/entities/jobPreference.entity';
-import { JobPreferenceService } from 'src/job-preference/job-preference.service';
-import { CreateJobPreferenceDto } from 'src/job-preference/dto/create-job-preference.dto';
-import { ForumPost } from 'src/entities/forumPost.entity';
-import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
-import ForumPostEnum from 'src/enums/forumPost.enum';
+import { Recruiter } from '../entities/recruiter.entity';
+import { RecruiterService } from '../recruiter/recruiter.service';
+import { Corporate } from '../entities/corporate.entity';
+import { CorporateService } from '../corporate/corporate.service';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { JobSeekerService } from '../job-seeker/job-seeker.service';
+import { CreateRecruiterDto } from '../recruiter/dto/create-recruiter.dto';
+import { CreateCorporateDto } from '../corporate/dto/create-corporate.dto';
+import { CreateJobSeekerDto } from '../job-seeker/dto/create-job-seeker.dto';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobListingService } from '../job-listing/job-listing.service';
+import { CreateJobListingDto } from '../job-listing/dto/create-job-listing.dto';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
+import { ForumCategory } from '../entities/forumCategory.entity';
+import { ForumCategoriesService } from '../forum-categories/forum-categories.service';
+import { CreateForumCategoryDto } from '../forum-categories/dto/create-forum-category.dto';
+import { Ticket } from '../entities/ticket.entity';
+import { TicketService } from '../ticket/ticket.service';
+import { CreateTicketDto } from '../ticket/dto/create-ticket.dto';
+import TicketCategoryEnum from '../enums/ticketCategory.enum';
+import { JobPreference } from '../entities/jobPreference.entity';
+import { JobPreferenceService } from '../job-preference/job-preference.service';
+import { CreateJobPreferenceDto } from '../job-preference/dto/create-job-preference.dto';
+import { ForumPost } from '../entities/forumPost.entity';
+import { ForumPostsService } from '../forum-posts/forum-posts.service';
+import ForumPostEnum from '../enums/forumPost.enum';
+import { CommissionRate } from '../entities/commissionRate.entity';
+import { CommissionRateService } from '../commission-rate/commission-rate.service';
+import { CreateCommissionRateDto } from '../commission-rate/dto/create-commission-rate.dto';
 
 require('dotenv').config();
 
@@ -65,6 +68,9 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(JobPreference)
     private readonly jobPreferenceRepository: Repository<JobPreference>,
     private readonly jobPreferenceService: JobPreferenceService,
+    @InjectRepository(CommissionRate)
+    private readonly commissionRateRepository: Repository<CommissionRate>,
+    private readonly commissionRateService: CommissionRateService,
   ) {}
 
   async onModuleInit() {
@@ -72,6 +78,20 @@ export class DataInitService implements OnModuleInit {
   }
 
   async initializeData() {
+    // if there's any existing commission rate, don't data init commission rate
+    const existingCommissionRates = await this.commissionRateService.findAll();
+    if (existingCommissionRates.length == 0) {
+      // 10% commission rate creation
+      const createCommissionRateDto: CreateCommissionRateDto =
+        new CreateCommissionRateDto();
+      createCommissionRateDto.commissionRate = 10;
+
+      await this.commissionRateService.create(createCommissionRateDto);
+      console.log(
+        `Commission Rate of ${createCommissionRateDto.commissionRate}% is created.`,
+      );
+    }
+
     // Admin account creation
     const hashedAdminPassword = await bcrypt.hash(process.env.ADMIN_PW, 5);
     const createAdministratorDto: CreateAdministratorDto =

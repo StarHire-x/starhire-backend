@@ -28,7 +28,7 @@ export class ChatMessage {
   @Column()
   fileURL: string;
 
-  @ManyToOne(() => Chat, (chat) => chat.chatMessages) // Establish many-to-one relationship
+  @ManyToOne(() => Chat, (chat) => chat.chatMessages)
   chat: Chat;
 
   constructor(entity: Partial<ChatMessage>) {

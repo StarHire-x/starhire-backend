@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
+import EventListingStatusEnum from '../../enums/eventListingStatus.enum';
 
 class UpdateDto {
   eventName: string;

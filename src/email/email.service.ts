@@ -4,19 +4,21 @@ import { CreateEmailDto } from './dto/create-email.dto';
 
 import { JobListingService } from '../job-listing/job-listing.service';
 import UserRoleEnum from '../enums/userRole.enum';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { Administrator } from 'src/entities/administrator.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { JobListing } from '../entities/jobListing.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { Administrator } from '../entities/administrator.entity';
+import { Ticket } from '../entities/ticket.entity';
+import { Invoice } from '../entities/invoice.entity';
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService, // We should not be calling other service classes to avoid cyclic dependency
-  ) // private readonly jobListingService: JobListingService,
-  {}
+    // private readonly jobListingService: JobListingService,
+  ) {}
 
   async resetPassword(createEmailDto: CreateEmailDto) {
     try {
@@ -177,6 +179,37 @@ export class EmailService {
     }
   }
 
+  async notifyTicketResolution(user: any, ticket: Ticket) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject: `Ticket Status ${ticket.ticketId} Update for User: ${user.userName}`,
+        html: `Dear <Strong>${user.userName}</Strong>,<br><br>
+             Administrator has resolved your ticket with the title ${ticket.ticketName} of the category 
+             ${ticket.ticketCategory} with the description ${ticket.ticketDescription}<br>
+
+             Please <a href="${loginLink}">Login</a> to your account to see the changes <br><br>
+
+             For further enquiries, please contact our Admin support staff <br><br>
+             Thank you for using our service!<br><br>
+             Best regards,<br>
+             StarHire`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: user,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   // inform job seeker of job application status - havent add to method yet
   async notifyJobSeekerOnApplicationStatus(
     jobSeeker: JobSeeker,
@@ -260,7 +293,7 @@ export class EmailService {
     jobListing: JobListing,
     recruiter: Recruiter,
   ) {
-    let loginLink = 'http://www.localhost:3000/login';
+    let loginLink = 'http://www.localhost:3001/login';
 
     try {
       await this.mailerService.sendMail({
@@ -291,4 +324,115 @@ export class EmailService {
       );
     }
   }
+
+  async notifyCorporateOnNewApplication(
+    corporate: Corporate,
+    jobSeeker: JobSeeker,
+    jobApplication: JobApplication,
+    jobListing: JobListing,
+    recruiter: Recruiter,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: corporate.email,
+        subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.fullName}`,
+        html: `Dear <strong>${corporate.companyName}</strong>,<br><br>
+         
+         We want to inform you that there is a new job application status of ${jobSeeker.fullName} for the position of ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName}
+
+         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
+         
+         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
+
+         Thank you for choosing StarHire.<br><br>
+
+         Warm regards,<br>
+         The StarHire Team`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: corporate,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async notifyJobSeekerOnMatchedJobListing(
+    jobSeeker: JobSeeker,
+    jobListing: JobListing,
+    recruiter: Recruiter,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: jobSeeker.email,
+        subject: `Congratulation you have been matched!`,
+        html: `Dear <strong>${jobSeeker.fullName}</strong>,<br><br>
+         
+         We want to inform you that you have been matched by recruiter ${recruiter.fullName} for the position of ${jobListing.title}
+
+         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
+         
+         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
+
+         Thank you for choosing StarHire.<br><br>
+
+         Warm regards,<br>
+         The StarHire Team`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: jobSeeker,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // async notifyCorporateOfInvoice(corporate: Corporate, invoice: Invoice) {
+  //   let loginLink = 'http://www.localhost:3001/login';
+
+  //   try {
+  //     await this.mailerService.sendMail({
+  //       to: corporate.email,
+  //       subject: `Incoming invoice ID: ${invoice.invoiceId}`,
+  //       html: `Dear <Strong>${corporate.companyName}</Strong>,<br><br>
+  //              We want to inform you about an incoming invoice with regards to job application.<br>
+
+  //              Your Job Listing ID: <strong>${
+  //                jobListing.jobListingId
+  //              }</strong>, <strong>${jobListing.title}</strong><br><br>
+  //              has been <strong>${jobListing.jobListingStatus.toUpperCase()}</strong> <br><br>
+
+  //              Please <a href="http://www.localhost:3001/login">Login</a> to your account to see the changes <br><br>
+
+  //              For further enquiries please contact our Admin support staff <br><br>
+  //              Thank you for using our service!<br><br>
+  //              Best regards,<br>
+  //              StarHire`,
+  //     });
+  //     return {
+  //       statusCode: HttpStatus.OK,
+  //       message: 'Notification status email sent successfully',
+  //       data: corporate,
+  //     };
+  //   } catch (err) {
+  //     throw new HttpException(
+  //       'Failed to send Notification status email',
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
 }

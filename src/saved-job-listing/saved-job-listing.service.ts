@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { CreateSavedJobListingDto } from './dto/create-saved-job-listing.dto';
 import { UpdateSavedJobListingDto } from './dto/update-saved-job-listing.dto';
-import { JobListing } from 'src/entities/jobListing.entity';
+import { JobListing } from '../entities/jobListing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { SavedJobListing } from 'src/entities/savedJobListing.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { SavedJobListing } from '../entities/savedJobListing.entity';
 
 @Injectable()
 export class SavedJobListingService {

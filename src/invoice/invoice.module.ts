@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Administrator } from 'src/entities/administrator.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Invoice } from 'src/entities/invoice.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
+import { Administrator } from '../entities/administrator.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Invoice } from '../entities/invoice.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
 import { InvoiceController } from './invoice.controller';
 import { InvoiceService } from './invoice.service';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import { UploadService } from '../upload/upload.service';
+import { PdfService } from '../pdf/pdf.service';
 
 @Module({
   imports: [
@@ -17,6 +21,6 @@ import { InvoiceService } from './invoice.service';
     ]),
   ],
   controllers: [InvoiceController],
-  providers: [InvoiceService],
+  providers: [InvoiceService, EmailService, TwilioService, UploadService, PdfService],
 })
 export class InvoiceModule {}

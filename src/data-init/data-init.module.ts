@@ -2,29 +2,31 @@ import { Module } from '@nestjs/common';
 import { AdministratorService } from '../administrator/admin.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Administrator } from '../entities/administrator.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { JobListing } from 'src/entities/jobListing.entity';
-import { RecruiterService } from 'src/recruiter/recruiter.service';
-import { CorporateService } from 'src/corporate/corporate.service';
-import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { JobListing } from '../entities/jobListing.entity';
+import { RecruiterService } from '../recruiter/recruiter.service';
+import { CorporateService } from '../corporate/corporate.service';
+import { JobSeekerService } from '../job-seeker/job-seeker.service';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Recruiter } from '../entities/recruiter.entity';
 import { DataInitService } from './data-init.service';
-import { JobListingService } from 'src/job-listing/job-listing.service';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
-import { EmailModule } from 'src/email/email.module';
-import { TwilioModule } from 'src/twilio/twilio.module';
-import { ForumCategory } from 'src/entities/forumCategory.entity';
-import { ForumCategoriesService } from 'src/forum-categories/forum-categories.service';
-import { ForumPostsService } from 'src/forum-posts/forum-posts.service';
-import { ForumPost } from 'src/entities/forumPost.entity';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { Ticket } from 'src/entities/ticket.entity';
-import { TicketService } from 'src/ticket/ticket.service';
-import { Document } from 'src/entities/document.entity';
-import { DocumentService } from 'src/document/document.service';
-import { JobPreference } from 'src/entities/jobPreference.entity';
-import { JobPreferenceService } from 'src/job-preference/job-preference.service';
+import { JobListingService } from '../job-listing/job-listing.service';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { EmailModule } from '../email/email.module';
+import { TwilioModule } from '../twilio/twilio.module';
+import { ForumCategory } from '../entities/forumCategory.entity';
+import { ForumCategoriesService } from '../forum-categories/forum-categories.service';
+import { ForumPostsService } from '../forum-posts/forum-posts.service';
+import { ForumPost } from '../entities/forumPost.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { Ticket } from '../entities/ticket.entity';
+import { TicketService } from '../ticket/ticket.service';
+import { Document } from '../entities/document.entity';
+import { DocumentService } from '../document/document.service';
+import { JobPreference } from '../entities/jobPreference.entity';
+import { JobPreferenceService } from '../job-preference/job-preference.service';
+import { CommissionRate } from '../entities/commissionRate.entity';
+import { CommissionRateService } from '../commission-rate/commission-rate.service';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { JobPreferenceService } from 'src/job-preference/job-preference.service'
       Ticket,
       Document,
       JobPreference,
+      CommissionRate,
     ]),
     EmailModule,
     TwilioModule,
@@ -58,6 +61,7 @@ import { JobPreferenceService } from 'src/job-preference/job-preference.service'
     TicketService,
     DocumentService,
     JobPreferenceService,
+    CommissionRateService,
   ],
 })
 export class DataInitModule {}

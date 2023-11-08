@@ -38,22 +38,4 @@ export class ChatMessageController {
   findAll() {
     return this.chatMessageService.findAll();
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.chatMessageService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateChatMessageDto: UpdateChatMessageDto,
-  ) {
-    return this.chatMessageService.update(+id, updateChatMessageDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chatMessageService.remove(+id);
-  }
 }

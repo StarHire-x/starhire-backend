@@ -7,13 +7,16 @@ import {
 import { CreateAdministratorDto } from './dto/create-admin.dto';
 import { UpdateAdministratorDto } from './dto/update-admin.dto';
 import { Repository } from 'typeorm';
-import { Administrator } from 'src/entities/administrator.entity';
+import { Administrator } from '../entities/administrator.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmailService } from 'src/email/email.service';
-import { mapNotificationModeToEnum, mapUserStatusToEnum } from 'src/common/mapStringToEnum';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import UserRoleEnum from 'src/enums/userRole.enum';
-import { TwilioService } from 'src/twilio/twilio.service';
+import { EmailService } from '../email/email.service';
+import {
+  mapNotificationModeToEnum,
+  mapUserStatusToEnum,
+} from '../common/mapStringToEnum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import UserRoleEnum from '../enums/userRole.enum';
+import { TwilioService } from '../twilio/twilio.service';
 
 @Injectable()
 export class AdministratorService {
@@ -28,18 +31,11 @@ export class AdministratorService {
     try {
       const admin = new Administrator({ ...createAdministratorDto });
       await this.administratorRepository.save(admin);
-      if (admin) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'Admin created',
-          data: admin,
-        };
-      } else {
-        return {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Admin not created',
-        };
-      }
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Admin created',
+        data: admin,
+      };
     } catch (error) {
       throw new HttpException(
         'Failed to create new administrator',
@@ -204,14 +200,15 @@ export class AdministratorService {
 
   async remove(id: string) {
     try {
-      return await this.administratorRepository.delete({
+      const result = await this.administratorRepository.delete({
         userId: id,
       });
+      if (result.affected === 0) {
+        throw new HttpException('Admin id not found', HttpStatus.NOT_FOUND);
+      }
+      return result;
     } catch (error) {
-      throw new HttpException(
-        'Failed to delete administrator',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

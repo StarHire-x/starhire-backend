@@ -20,11 +20,6 @@ export class ChatController {
     return this.chatService.create(createChatDto);
   }
 
-  @Get()
-  findAll() {
-    return this.chatService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') chatId: number) {
     return this.chatService.findChatMessagesByChatId(chatId);
@@ -33,11 +28,6 @@ export class ChatController {
   @Get('/user-chats/:id')
   findUserChats(@Param('id') userId: string) {
     return this.chatService.findUserChats(userId);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChatDto: UpdateChatDto) {
-    return this.chatService.update(+id, updateChatDto);
   }
 
   @Delete(':id')

@@ -1,5 +1,5 @@
-import { CreateEventRegistrationDto } from 'src/event-registration/dto/create-event-registration.dto';
-import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
+import { CreateEventRegistrationDto } from '../../event-registration/dto/create-event-registration.dto';
+import EventListingStatusEnum from '../../enums/eventListingStatus.enum';
 
 export class CreateEventListingDto {
   corporateId: string; // Parent relationship

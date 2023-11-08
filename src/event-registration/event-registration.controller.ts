@@ -3,17 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Put,
-  Query,
   Param,
   Delete,
-  ConflictException,
   HttpException,
   InternalServerErrorException,
-  NotFoundException,
   HttpStatus,
-  ParseIntPipe
 } from '@nestjs/common';
 import { EventRegistrationService } from './event-registration.service';
 import { CreateEventRegistrationDto } from './dto/create-event-registration.dto';
@@ -38,7 +33,7 @@ export class EventRegistrationController {
     }
   }
 
-  @Get('/all')
+  @Get()
   findAllEventRegistrations() {
     try {
       return this.eventRegistrationService.findAll();
@@ -50,6 +45,43 @@ export class EventRegistrationController {
       }
     }
   }
+
+  @Get('/existing/:jobSeekerId/:eventListingId')
+  // Check whether an existing event registration has already been created
+  async findExistingEventRegistration(
+    @Param('jobSeekerId') jobSeekerId: string,
+    @Param('eventListingId') eventListingId: number,
+  ) {
+    try {
+      return await this.eventRegistrationService.findEventRegistrationByJobSeekerEventListing(
+        jobSeekerId,
+        eventListingId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  // @Get('event-listing/:eventlistingId')
+  // findAllEventRegistrationsByEventListingId(
+  //   @Param('eventlistingId') eventListingId: number,
+  // ) {
+  //   try {
+  //     return this.eventRegistrationService.findAllByEventListingId(
+  //       eventListingId,
+  //     );
+  //   } catch (error) {
+  //     if (error instanceof HttpException) {
+  //       throw new HttpException(error.message, HttpStatus.CONFLICT);
+  //     } else {
+  //       throw new InternalServerErrorException('Internal server error');
+  //     }
+  //   }
+  // }
 
   // GET /event-registration/:id
   @Get(':id')
@@ -71,7 +103,10 @@ export class EventRegistrationController {
     @Body() updateEventRegistrationDto: UpdateEventRegistrationDto,
   ) {
     try {
-      return this.eventRegistrationService.update(id, updateEventRegistrationDto);
+      return this.eventRegistrationService.update(
+        id,
+        updateEventRegistrationDto,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

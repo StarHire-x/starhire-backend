@@ -9,14 +9,11 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Put,
-  Req,
-  UseGuards,
-  NotFoundException,
 } from '@nestjs/common';
 import { JobListingService } from './job-listing.service';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
-import { JobListing } from 'src/entities/jobListing.entity';
+import { JobListing } from '../entities/jobListing.entity';
 
 @Controller('job-listing')
 export class JobListingController {

@@ -7,10 +7,12 @@ import {
 import { CreateCommissionDto } from './dto/create-commission.dto';
 import { UpdateCommissionDto } from './dto/update-commission.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Commission } from 'src/entities/commission.entity';
+import { Commission } from '../entities/commission.entity';
 import { Repository } from 'typeorm';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { Administrator } from '../entities/administrator.entity';
+import CommissionStatusEnum from '../enums/commissionStatus.enum';
 
 @Injectable()
 export class CommissionService {
@@ -22,12 +24,18 @@ export class CommissionService {
     private readonly jobApplicationRepository: Repository<JobApplication>,
     @InjectRepository(Recruiter)
     private readonly recruiterRepository: Repository<Recruiter>,
+    @InjectRepository(Administrator)
+    private readonly adminRepository: Repository<Administrator>,
   ) {}
 
   async create(createCommissionDto: CreateCommissionDto) {
     try {
-      const { jobApplicationIds, recruiterId, ...dtoExcludingParentIds } =
-        createCommissionDto;
+      const {
+        jobApplicationIds,
+        recruiterId,
+        administratorId,
+        ...dtoExcludingParentIds
+      } = createCommissionDto;
 
       const jobApplications = [];
       for (let id of jobApplicationIds) {
@@ -49,11 +57,21 @@ export class CommissionService {
         throw new NotFoundException('Invalid Recruiter Id provided');
       }
 
+      const administrator = await this.adminRepository.findOne({
+        where: { userId: administratorId },
+      });
+      if (!administrator) {
+        throw new NotFoundException('Invalid Admin Id provided');
+      }
+
       const commission = new Commission({
         ...dtoExcludingParentIds,
         jobApplications,
         recruiter,
+        administrator,
       });
+
+      commission.commissionStatus = CommissionStatusEnum.INDICATED_PAID;
       return await this.commissionRepository.save(commission);
     } catch (err) {
       throw new HttpException(
@@ -70,10 +88,44 @@ export class CommissionService {
     });
   }
 
+  async findAllByRecruiterIdAndAdminId(recruiterId: string, adminId: string) {
+    try {
+      const commissions = await this.commissionRepository.find({
+        where: {
+          recruiter: { userId: recruiterId },
+          administrator: { userId: adminId },
+        },
+        relations: { jobApplications: { jobListing: true } },
+      });
+
+      if (commissions.length > 0) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Retrieved commissions',
+          data: commissions,
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'No commission is found for recruiter and admin',
+        };
+      }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to retrieve commmissions by recruiter id',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     return await this.commissionRepository.findOne({
       where: { commissionId: id },
-      relations: { recruiter: true, jobApplications: true },
+      relations: {
+        recruiter: true,
+        administrator: true,
+        jobApplications: { commission: true },
+      },
     });
   }
 
@@ -97,6 +149,13 @@ export class CommissionService {
 
   async remove(id: number) {
     try {
+      const commissionToDelete = await this.findOne(id);
+      const jobApplications = commissionToDelete.jobApplications;
+      for (let i = 0; i < jobApplications.length; i++) {
+        const jobApplication = jobApplications[i];
+        jobApplication.commission = null;
+        await this.jobApplicationRepository.save(jobApplication);
+      }
       return await this.commissionRepository.delete({ commissionId: id });
     } catch (err) {
       throw new HttpException(

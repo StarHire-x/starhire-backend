@@ -3,23 +3,24 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
-import { JobSeekerService } from 'src/job-seeker/job-seeker.service';
-import { RecruiterService } from 'src/recruiter/recruiter.service';
-import { CorporateService } from 'src/corporate/corporate.service';
-import { AdministratorService } from 'src/administrator/admin.service';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { Corporate } from 'src/entities/corporate.entity';
-import { Administrator } from 'src/entities/administrator.entity';
+import { JobSeekerService } from '../job-seeker/job-seeker.service';
+import { RecruiterService } from '../recruiter/recruiter.service';
+import { CorporateService } from '../corporate/corporate.service';
+import { AdministratorService } from '../administrator/admin.service';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { Corporate } from '../entities/corporate.entity';
+import { Administrator } from '../entities/administrator.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
-import { EmailModule } from 'src/email/email.module';
-import { TwilioModule } from 'src/twilio/twilio.module';
-import { JobListing } from 'src/entities/jobListing.entity';
+import { EmailModule } from '../email/email.module';
+import { TwilioModule } from '../twilio/twilio.module';
+import { JobListing } from '../entities/jobListing.entity';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { JobApplication } from '../entities/jobApplication.entity';
 
-
-require("dotenv").config();
+require('dotenv').config();
 
 @Module({
   imports: [
@@ -30,6 +31,8 @@ require("dotenv").config();
       Corporate,
       Administrator,
       JobListing,
+      JobAssignment,
+      JobApplication,
     ]),
     JwtModule.register({
       global: true,
@@ -49,8 +52,7 @@ require("dotenv").config();
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    }
+    },
   ],
 })
 export class UsersModule {}
-

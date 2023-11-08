@@ -8,12 +8,12 @@ import {
   Delete,
   InternalServerErrorException,
   HttpException,
-  NotFoundException,
   HttpStatus,
 } from '@nestjs/common';
 import { EventListingService } from './event-listing.service';
 import { CreateEventListingDto } from './dto/create-event-listing.dto';
 import { UpdateEventListingDto } from './dto/update-event-listing.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('event-listing')
 export class EventListingController {
@@ -33,6 +33,7 @@ export class EventListingController {
     }
   }
 
+  //@Public()
   @Get()
   findAllEventListings() {
     try {
@@ -60,7 +61,21 @@ export class EventListingController {
     }
   }
 
-  // GET /event-listing/:id
+  @Get('/corporate/eventRegistrations/:id')
+  findAllEventRegistrationsByEventListing(@Param('id') id: number) {
+    try {
+      return this.eventListingService.findAllEventRegistrationsByEventListingId(
+        id,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     try {

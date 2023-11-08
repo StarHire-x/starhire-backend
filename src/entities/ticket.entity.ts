@@ -7,13 +7,11 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { IsEnum } from 'class-validator';
-import TicketCategoryEnum from 'src/enums/ticketCategory.enum';
+import TicketCategoryEnum from '../enums/ticketCategory.enum';
 import { Administrator } from './administrator.entity';
 import { Corporate } from './corporate.entity';
-import { Recruiter } from './recruiter.entity';
 import { JobSeeker } from './jobSeeker.entity';
 import { Document } from './document.entity';
-import { ForumPost } from './forumPost.entity';
 
 @Entity({ name: 'tickets' })
 export class Ticket {
@@ -50,9 +48,6 @@ export class Ticket {
 
   @ManyToOne(() => Corporate, (corporate) => corporate.tickets)
   corporate: Corporate;
-
-  @ManyToOne(() => Recruiter, (recruiter) => recruiter.tickets)
-  recruiter: Recruiter;
 
   @ManyToOne(() => JobSeeker, (jobSeeker) => jobSeeker.tickets)
   jobSeeker: JobSeeker;

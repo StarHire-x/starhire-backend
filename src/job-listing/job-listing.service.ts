@@ -6,21 +6,21 @@ import {
 } from '@nestjs/common';
 import { CreateJobListingDto } from './dto/create-job-listing.dto';
 import { UpdateJobListingDto } from './dto/update-job-listing.dto';
-import { JobListing } from 'src/entities/jobListing.entity';
+import { JobListing } from '../entities/jobListing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import JobListingStatusEnum from 'src/enums/jobListingStatus.enum';
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
-import { Corporate } from 'src/entities/corporate.entity';
-import { mapJobListingStatusToEnum } from 'src/common/mapStringToEnum';
-import { JobApplication } from 'src/entities/jobApplication.entity';
-import { JobSeeker } from 'src/entities/jobSeeker.entity';
-import { Recruiter } from 'src/entities/recruiter.entity';
-import { JobAssignment } from 'src/entities/jobAssignment.entity';
-import { EmailService } from 'src/email/email.service';
-import { TwilioService } from 'src/twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import { Administrator } from 'src/entities/administrator.entity';
+import JobListingStatusEnum from '../enums/jobListingStatus.enum';
+import JobApplicationStatusEnum from '../enums/jobApplicationStatus.enum';
+import { Corporate } from '../entities/corporate.entity';
+import { mapJobListingStatusToEnum } from '../common/mapStringToEnum';
+import { JobApplication } from '../entities/jobApplication.entity';
+import { JobSeeker } from '../entities/jobSeeker.entity';
+import { Recruiter } from '../entities/recruiter.entity';
+import { JobAssignment } from '../entities/jobAssignment.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import { Administrator } from '../entities/administrator.entity';
 
 @Injectable()
 export class JobListingService {
@@ -123,7 +123,6 @@ export class JobListingService {
         jobSeekers: true,
       },
     });
-    //console.log(t);
     return t;
   }
 
@@ -132,7 +131,7 @@ export class JobListingService {
     try {
       const corporate = await this.corporateRepository.findOne({
         where: { userId: id },
-        relations: { jobListings: true },
+        relations: { jobListings: { jobApplications: true } },
       });
 
       if (!corporate) {
@@ -284,11 +283,26 @@ export class JobListingService {
       jobSeeker.jobListings.push(jobListing);
       await this.jobSeekerRepository.save(jobSeeker);
 
-      const jobAssignment = new JobAssignment();
+      const jobAssignment = new JobAssignment({});
       jobAssignment.jobListingId = jobListingId;
       jobAssignment.jobSeekerId = jobSeekerId;
       jobAssignment.recruiterId = recruiterId;
+      jobAssignment.assignedTime = new Date();
       await this.jobAssignmentRepository.save(jobAssignment);
+
+      if (jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyJobSeekerOnMatchedJobListing(
+          jobSeeker,
+          jobListing,
+          recruiter,
+        );
+      } else if (jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyJobSeekerOnMatchedJobListing(
+          jobSeeker,
+          jobListing,
+          recruiter,
+        );
+      }
 
       if (jobListing && jobSeeker && recruiter) {
         return {
@@ -436,12 +450,6 @@ export class JobListingService {
       });
 
       if (jobListing) {
-        /*
-        const processingJobApplications = jobListing.jobApplications.filter(
-          (jobApplication) =>
-            jobApplication.jobApplicationStatus === 'Processing',
-        );
-        */
         const processingJobApplications = jobListing.jobApplications.filter(
           (jobApplication) =>
             jobApplication.jobApplicationStatus !==
@@ -461,7 +469,7 @@ export class JobListingService {
     } catch (err) {
       console.log(err);
       throw new HttpException(
-        'Failed to find job Listing',
+        'Failed to find job listing',
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -3,12 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailService } from './email.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailController } from './email.controller';
-import { JobListingService } from 'src/job-listing/job-listing.service';
-import { JobListingController } from 'src/job-listing/job-listing.controller';
-import { JobListingModule } from 'src/job-listing/job-listing.module';
-import { Corporate } from 'src/entities/corporate.entity';
+import { JobListingService } from '../job-listing/job-listing.service';
+import { JobListingController } from '../job-listing/job-listing.controller';
+import { JobListingModule } from '../job-listing/job-listing.module';
+import { Corporate } from '../entities/corporate.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JobListing } from 'src/entities/jobListing.entity';
+import { JobListing } from '../entities/jobListing.entity';
 
 @Module({
   imports: [
@@ -35,6 +35,6 @@ import { JobListing } from 'src/entities/jobListing.entity';
   ],
   controllers: [EmailController],
   providers: [EmailService],
-  exports: [EmailService]
+  exports: [EmailService],
 })
 export class EmailModule {}

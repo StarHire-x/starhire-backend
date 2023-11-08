@@ -23,7 +23,7 @@ import { QueryFailedError } from 'typeorm';
 import { AuthGuard } from './auth.guard';
 import { Public } from './public.decorator';
 import { Roles } from './roles.decorator';
-import UserRoleEnum from 'src/enums/userRole.enum';
+import UserRoleEnum from '../enums/userRole.enum';
 import { RolesGuard } from './roles.guard';
 
 @Controller('users')

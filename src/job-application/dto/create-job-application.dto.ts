@@ -1,5 +1,5 @@
-import { CreateDocumentDto } from 'src/document/dto/create-document.dto';
-import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
+import { CreateDocumentDto } from '../../document/dto/create-document.dto';
+import JobApplicationStatusEnum from '../../enums/jobApplicationStatus.enum';
 
 export class CreateJobApplicationDto {
   jobApplicationStatus: JobApplicationStatusEnum;

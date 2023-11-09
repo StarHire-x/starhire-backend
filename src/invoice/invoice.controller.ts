@@ -44,6 +44,32 @@ export class InvoiceController {
     }
   }
 
+  @Get('corporate-id/:corporateId')
+  findAllByCorporateId(@Param('id') corporateId: string) {
+    try {
+      return this.invoiceService.findAllByCorporateId(corporateId);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/allCorporate')
+  async findAllCorporateInvoice() {
+    try {
+      return await this.invoiceService.getAllCorporateInvoices();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     try {

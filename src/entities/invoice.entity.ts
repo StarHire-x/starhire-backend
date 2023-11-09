@@ -30,6 +30,9 @@ export class Invoice {
   @Column()
   totalAmount: number;
 
+  @Column()
+  invoiceLink: string;
+
   @ManyToOne(() => Administrator, (administrator) => administrator.invoices, {
     nullable: false,
   })

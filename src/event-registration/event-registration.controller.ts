@@ -13,6 +13,7 @@ import {
 import { EventRegistrationService } from './event-registration.service';
 import { CreateEventRegistrationDto } from './dto/create-event-registration.dto';
 import { UpdateEventRegistrationDto } from './dto/update-event-registration.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('event-registration')
 export class EventRegistrationController {
@@ -37,6 +38,20 @@ export class EventRegistrationController {
   findAllEventRegistrations() {
     try {
       return this.eventRegistrationService.findAll();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  //@Public()
+  @Get('/existing-events/:jobSeekerId')
+  findAllRegisteredEvent(@Param('jobSeekerId') jobSeekerId: string) {
+    try {
+      return this.eventRegistrationService.findRegisteredEvents(jobSeekerId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

@@ -6,6 +6,10 @@ import { Invoice } from '../entities/invoice.entity';
 import { JobApplication } from '../entities/jobApplication.entity';
 import { InvoiceController } from './invoice.controller';
 import { InvoiceService } from './invoice.service';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import { UploadService } from '../upload/upload.service';
+import { PdfService } from '../pdf/pdf.service';
 
 @Module({
   imports: [
@@ -17,6 +21,6 @@ import { InvoiceService } from './invoice.service';
     ]),
   ],
   controllers: [InvoiceController],
-  providers: [InvoiceService],
+  providers: [InvoiceService, EmailService, TwilioService, UploadService, PdfService],
 })
 export class InvoiceModule {}

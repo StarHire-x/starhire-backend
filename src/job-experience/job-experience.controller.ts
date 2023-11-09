@@ -13,7 +13,6 @@ import {
 import { JobExperienceService } from './job-experience.service';
 import { CreateJobExperienceDto } from './dto/create-job-experience.dto';
 import { UpdateJobExperienceDto } from './dto/update-job-experience.dto';
-import { Public } from '../users/public.decorator';
 
 @Controller('job-experience')
 export class JobExperienceController {

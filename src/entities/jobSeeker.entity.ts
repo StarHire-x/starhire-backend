@@ -22,15 +22,24 @@ export class JobSeeker extends User {
   @IsOptional()
   resumePdf: string;
 
-  @Column()
-  fullName: string;
+  // @Column()
+  // fullName: string;
 
-  @Column()
-  dateOfBirth: Date;
+  // @Column()
+  // dateOfBirth: Date;
 
   @Column()
   @IsEnum(HighestEducationStatusEnum)
   highestEducationStatus: HighestEducationStatusEnum;
+
+  // @Column()
+  // homeAddress: string;
+
+  // @Column()
+  // instituteName: string;
+
+  // @Column()
+  // dateOfGraduation: Date;
 
   @Column({
     type: 'enum',
@@ -45,13 +54,7 @@ export class JobSeeker extends User {
   profilePictureUrl: string;
 
   @Column()
-  homeAddress: string;
-
-  @Column()
-  instituteName: string;
-
-  @Column()
-  dateOfGraduation: Date;
+  firstName: string;
 
   @Column()
   country: string;

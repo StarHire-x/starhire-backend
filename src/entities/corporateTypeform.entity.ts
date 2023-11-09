@@ -15,6 +15,9 @@ export class CorporateTypeform {
   schoolName: string;
 
   @Column()
+  schoolCategory: string;
+
+  @Column()
   address: string;
 
   @Column()

@@ -258,14 +258,28 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.userName = 'jobseeker';
     createJobSeekerDto.password = hashedJobSeekerPassword;
     createJobSeekerDto.email = 'jobseeker@gmail.com';
-    createJobSeekerDto.contactNo = '65415524';
+    createJobSeekerDto.contactNo = '91212121';
     createJobSeekerDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerDto.createdAt = new Date();
-    createJobSeekerDto.fullName = 'David Tan';
-    createJobSeekerDto.dateOfBirth = new Date('2000-10-09');
-    createJobSeekerDto.homeAddress = '123 King St';
+    createJobSeekerDto.firstName = 'David';
     createJobSeekerDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker1.jpg';
+    createJobSeekerDto.country = 'Singapore';
+    createJobSeekerDto.description = 'Fun, Enthusiastic, Helpful';
+    createJobSeekerDto.proficientLanguages = 'English_Mandarin';
+    createJobSeekerDto.experience = '2-5 years';
+    createJobSeekerDto.certifications = 'EY1_EY2';
+    createJobSeekerDto.recentRole = 'Assistant Teacher at Early Enablers';
+    createJobSeekerDto.startDate = new Date('2024-10-09');
+    createJobSeekerDto.preferredRegions = 'Central Region';
+    createJobSeekerDto.preferredJobType = 'Full Time';
+    createJobSeekerDto.preferredSchedule = 'Monday to Friday';
+    createJobSeekerDto.payRange = '$3500 - $4500';
+    createJobSeekerDto.visaRequirements = 'No';
+    createJobSeekerDto.ranking = 'Salary_Working culture_Benefits_Location';
+    createJobSeekerDto.otherInfo = 'I am hardworking';
+    createJobSeekerDto.resume =
+      'I am a dedicated profesional with 2 years of Early Childhood Experience';
 
     let existingJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
@@ -293,14 +307,27 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.userName = 'jobseeker2';
     createJobSeekerTwoDto.password = hashedJobSeekerTwoPassword;
     createJobSeekerTwoDto.email = 'jobseeker2@gmail.com';
-    createJobSeekerTwoDto.contactNo = '92345678';
+    createJobSeekerTwoDto.contactNo = '91111222';
     createJobSeekerTwoDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerTwoDto.createdAt = new Date();
-    createJobSeekerTwoDto.fullName = 'George Tan';
-    createJobSeekerTwoDto.dateOfBirth = new Date('2000-10-09');
-    createJobSeekerTwoDto.homeAddress = '123 King St';
+    createJobSeekerTwoDto.firstName = 'George';
     createJobSeekerTwoDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker2.jpg';
+    createJobSeekerTwoDto.country = 'Singapore';
+    createJobSeekerTwoDto.description = 'Engaging, Professional, Exciting';
+    createJobSeekerTwoDto.proficientLanguages = 'English_Malay';
+    createJobSeekerTwoDto.experience = '2-5 years';
+    createJobSeekerTwoDto.certifications = 'L1_L2';
+    createJobSeekerTwoDto.recentRole = 'Montessori Teacher at MyWorld';
+    createJobSeekerTwoDto.startDate = new Date('2024-10-09');
+    createJobSeekerTwoDto.preferredRegions = 'Central Region_North Region';
+    createJobSeekerTwoDto.preferredJobType = 'Full Time_Part Time';
+    createJobSeekerTwoDto.payRange = '$3500 - $4500_$4500 - $5500';
+    createJobSeekerTwoDto.visaRequirements = 'No';
+    createJobSeekerTwoDto.ranking = 'Salary_Working culture_Benefits_Location';
+    createJobSeekerTwoDto.otherInfo = 'I am a dedicated teacher';
+    createJobSeekerTwoDto.resume =
+      'I have a deep passion for early chilhood and bring a wealth of';
 
     let existingJobSeekerTwo = await this.jobSeekerRepository.findOne({
       where: {
@@ -332,11 +359,25 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerThreeDto.contactNo = '92445638';
     createJobSeekerThreeDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerThreeDto.createdAt = new Date();
-    createJobSeekerThreeDto.fullName = 'Patrick Tan';
-    createJobSeekerThreeDto.dateOfBirth = new Date('2000-10-09');
-    createJobSeekerThreeDto.homeAddress = '123 King St';
+    createJobSeekerThreeDto.firstName = 'Kenny';
     createJobSeekerThreeDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker3.jpg';
+    createJobSeekerThreeDto.country = 'Singapore';
+    createJobSeekerThreeDto.description = 'Insightful, Cheerful, Thoughful';
+    createJobSeekerThreeDto.proficientLanguages = 'English';
+    createJobSeekerThreeDto.experience = '1-2 years';
+    createJobSeekerThreeDto.certifications = 'L1';
+    createJobSeekerThreeDto.recentRole = 'Assistance Teacher at Elton House';
+    createJobSeekerThreeDto.startDate = new Date('2024-10-09');
+    createJobSeekerThreeDto.preferredRegions = 'South Region_North Region';
+    createJobSeekerThreeDto.preferredJobType = 'Full Time';
+    createJobSeekerThreeDto.payRange = '$2500 - $3500';
+    createJobSeekerThreeDto.visaRequirements = 'No';
+    createJobSeekerThreeDto.ranking =
+      'Salary_Working culture_Benefits_Location';
+    createJobSeekerThreeDto.otherInfo = 'I am a dedicated teacher';
+    createJobSeekerThreeDto.resume =
+      'I have a deep passion for early chilhood and bring a wealth of';
 
     let existingJobSeekerThree = await this.jobSeekerRepository.findOne({
       where: {

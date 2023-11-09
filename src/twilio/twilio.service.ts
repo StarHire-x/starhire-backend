@@ -199,7 +199,7 @@ Log in to view the changes: ${loginLink}`;
       return;
     }
 
-    const message = `Dear ${jobSeeker.fullName},
+    const message = `Dear ${jobSeeker.firstName},
 Your job application status for ${jobListing.title} at ${
       corporate.companyName
     } handled by recruiter ${
@@ -238,7 +238,7 @@ Log in for details: ${loginLink}`;
     }
 
     const message = `Hi ${recruiter.userName},
-The job application status of ${jobSeeker.fullName} for ${
+The job application status of ${jobSeeker.firstName} for ${
       jobListing.title
     } at ${
       corporate.companyName
@@ -276,7 +276,7 @@ Log in for details: ${loginLink}`;
     }
 
     const message = `Hi ${corporate.companyName},
-The job application status of ${jobSeeker.fullName} for ${
+The job application status of ${jobSeeker.firstName} for ${
       jobListing.title
     } handled by recruiter ${
       recruiter.fullName
@@ -314,7 +314,7 @@ Log in for details: ${loginLink}`;
     }
 
     const message = `Hi ${corporate.companyName},
-There is a new job application by ${jobSeeker.fullName} for ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName} 
+There is a new job application by ${jobSeeker.firstName} for ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName} 
 Log in for details: ${loginLink}`;
 
     try {
@@ -345,7 +345,7 @@ Log in for details: ${loginLink}`;
       return;
     }
 
-    const message = `Hi ${jobSeeker.fullName},
+    const message = `Hi ${jobSeeker.firstName},
 You have been matched by recruiter ${recruiter.fullName} for the role of ${jobListing.title}
 Log in for details: ${loginLink}`;
 

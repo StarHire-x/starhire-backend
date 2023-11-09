@@ -230,11 +230,11 @@ export class TypeformService {
     if ('schoolName' in accountInfo) {
       corporateAccount.companyName = accountInfo['schoolName'];
     }
-    if ('address' in accountInfo) {
-      corporateAccount.companyAddress = accountInfo['address'];
-    }
     if ('schoolCategory' in accountInfo) {
       corporateAccount.schoolCategory = accountInfo['schoolCategory'];
+    }
+    if ('address' in accountInfo) {
+      corporateAccount.companyAddress = accountInfo['address'];
     }
     if ('postalCode' in accountInfo) {
       corporateAccount.postalCode = accountInfo['postalCode'];
@@ -367,6 +367,9 @@ export class TypeformService {
     });
 
     // Check whether the following fields are present in account info & update them in jobseeker info
+    if ('firstName' in accountInfo) {
+      jobseekerAccount.firstName = accountInfo['firstName'];
+    }
     if ('country' in accountInfo) {
       jobseekerAccount.country = accountInfo['country'];
     }
@@ -410,7 +413,7 @@ export class TypeformService {
       jobseekerAccount.ranking = accountInfo['ranking'];
     }
     if ('otherInfo' in accountInfo) {
-      jobseekerAccount.otherInfo = accountInfo['preferotherInforedJobType'];
+      jobseekerAccount.otherInfo = accountInfo['otherInfo'];
     }
     await this.jobseekerRepository.save(jobseekerAccount);
     return jobseekerAccount;

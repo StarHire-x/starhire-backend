@@ -197,7 +197,7 @@ export class RecruiterService {
           return {
             jobAssignmentId: jobAssignment.jobAssignmentId,
             jobSeekerId: jobSeeker.userId,
-            jobSeekerName: jobSeeker.fullName,
+            jobSeekerName: jobSeeker.firstName,
             jobSeekerProfilePic: jobSeeker.profilePictureUrl,
             corporateId: jobListing.corporate.userId,
             corporateName: jobListing.corporate.companyName,
@@ -354,7 +354,7 @@ export class RecruiterService {
             jobApplicationId: jobApplication.jobApplicationId,
             jobApplicationStatus: jobApplication.jobApplicationStatus,
             jobSeekerId: jobApplicationRef.jobSeeker.userId,
-            jobSeekerName: jobApplicationRef.jobSeeker.fullName,
+            jobSeekerName: jobApplicationRef.jobSeeker.firstName,
             jobSeekerProfilePic: jobApplicationRef.jobSeeker.profilePictureUrl,
             corporateId: jobListing.corporate.userId,
             corporateName: jobListing.corporate.companyName,

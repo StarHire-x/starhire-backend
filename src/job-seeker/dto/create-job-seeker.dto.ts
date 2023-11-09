@@ -5,12 +5,23 @@ import VisibilityEnum from '../../enums/visibility.enum';
 
 export class CreateJobSeekerDto extends PartialType(CreateUserDto) {
   resumePdf: string;
-  fullName: string;
-  dateOfBirth: Date;
+  firstName: string;
   highestEducationStatus: HighestEducationStatusEnum;
   profilePictureUrl: string;
-  homeAddress: string;
-  instituteName: string;
-  dateOfGraduation: Date;
   visibility: VisibilityEnum;
+  country: string;
+  description: string;
+  proficientLanguages: string;
+  experience: string;
+  certifications: string;
+  recentRole: string;
+  startDate: Date;
+  preferredRegions: string;
+  preferredJobType: string;
+  preferredSchedule: string;
+  payRange: string;
+  visaRequirements: string;
+  ranking: string;
+  otherInfo: string;
+  resume: string;
 }

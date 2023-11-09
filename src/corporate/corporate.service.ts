@@ -608,7 +608,7 @@ export class CorporateService {
                 jobApplicationId: ja.jobApplicationId,
                 jobApplicationStatus: ja.jobApplicationStatus,
                 jobSeekerId: ja.jobSeeker.userId,
-                jobSeekerName: ja.jobSeeker.fullName,
+                jobSeekerName: ja.jobSeeker.firstName,
                 jobSeekerProfilePic: ja.jobSeeker.profilePictureUrl,
                 recruiterId: ja.recruiter.userId,
                 recruiterName: ja.recruiter.fullName,

@@ -34,6 +34,34 @@ export class EventListingController {
   }
 
   //@Public()
+  @Get('/premium-events')
+  getAllPremiumUsersEvents() {
+    try {
+      return this.eventListingService.getAllPremiumUsersEvents();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  //@Public()
+  @Get('non-premium-events')
+  getAllNonPremiumUsersEvents() {
+    try {
+      return this.eventListingService.getAllNonPremiumUsersEvents();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  //@Public()
   @Get()
   findAllEventListings() {
     try {

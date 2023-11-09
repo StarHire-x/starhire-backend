@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EventRegistration } from '../entities/eventRegistration.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { mapEventListingStatusToEnum } from '../common/mapStringToEnum';
+import CorporatePromotionStatus from '../enums/corporatePromotionStatus.enum';
 
 @Injectable()
 export class EventListingService {
@@ -206,5 +207,39 @@ export class EventListingService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async getAllPremiumUsersEvents() {
+    const allPremiumUsers = await this.corporateRepository.find({
+      where: {
+        corporatePromotionStatus: CorporatePromotionStatus.PREMIUM,
+      },
+      relations: ['eventListings'],
+    });
+
+    const eventListings = allPremiumUsers.map((user) => user.eventListings);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Premium Users events found!',
+      data: eventListings,
+    };
+  }
+
+  async getAllNonPremiumUsersEvents() {
+    const allPremiumUsers = await this.corporateRepository.find({
+      where: {
+        corporatePromotionStatus: CorporatePromotionStatus.REGULAR,
+      },
+      relations: ['eventListings'],
+    });
+
+    const eventListings = allPremiumUsers.map((user) => user.eventListings);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Non Premium Users events found!',
+      data: eventListings,
+    };
   }
 }

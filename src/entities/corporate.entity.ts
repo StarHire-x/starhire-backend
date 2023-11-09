@@ -18,7 +18,10 @@ export class Corporate extends User {
   }
 
   @Column()
-  companyName: string;
+  firstName: string;
+
+  @Column()
+  schoolName: string;
 
   @Column()
   schoolCategory: string;

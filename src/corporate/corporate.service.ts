@@ -126,7 +126,7 @@ export class CorporateService {
 
       for (const data of corporates) {
         const jobListings = data.jobListings;
-        statistics[data.companyName] = jobListings.length;
+        statistics[data.schoolName] = jobListings.length;
       }
 
       const labels = Object.keys(statistics);
@@ -192,7 +192,7 @@ export class CorporateService {
         rejectedCount += breakdown.rejected;
         unverifiedCount += breakdown.unverified;
         archivedCount += breakdown.archived;
-        statistics[data.companyName] = breakdown;
+        statistics[data.schoolName] = breakdown;
       }
 
       statistics['total'] = {

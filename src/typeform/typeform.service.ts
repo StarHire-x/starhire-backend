@@ -228,7 +228,7 @@ export class TypeformService {
 
     // Check whether the following fields are present in account info & update them in corporate info
     if ('schoolName' in accountInfo) {
-      corporateAccount.companyName = accountInfo['schoolName'];
+      corporateAccount.schoolName = accountInfo['schoolName'];
     }
     if ('schoolCategory' in accountInfo) {
       corporateAccount.schoolCategory = accountInfo['schoolCategory'];

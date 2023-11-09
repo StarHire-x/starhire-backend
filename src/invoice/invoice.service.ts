@@ -235,7 +235,7 @@ export class InvoiceService {
               totalAmount: invoice.totalAmount,
               invoiceLink: invoice.invoiceLink,
               corporateId: corporate.userId,
-              companyName: corporate.companyName,
+              schoolName: corporate.schoolName,
               profilePictureUrl: corporate.profilePictureUrl,
             };
           });
@@ -249,7 +249,7 @@ export class InvoiceService {
 
           return {
             corporateId: corporate.userId,
-            companyName: corporate.companyName,
+            schoolName: corporate.schoolName,
             invoices: formattedInvoice,
             statistics,
           };

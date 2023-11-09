@@ -91,7 +91,7 @@ export class EmailService {
         to: corporate.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${recruiter.fullName}</Strong>,<br><br>
-               We want to inform you that a new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName} has been approved<br>
+               We want to inform you that a new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.schoolName} has been approved<br>
 
                Please <a href="http://www.localhost:3000/login">Login</a> to your account to perform job matching <br><br>
 
@@ -123,7 +123,7 @@ export class EmailService {
         to: corporate.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${admin.fullName}</Strong>,<br><br>
-               Please vet this Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName}<br>
+               Please vet this Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.schoolName}<br>
 
                Thank you for using our service!<br><br>
                Best regards,<br>
@@ -226,7 +226,7 @@ export class EmailService {
         subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.firstName}`,
         html: `Dear <strong>${jobSeeker.firstName}</strong>,<br><br>
          
-         We want to inform you that your job application status for the position of ${jobListing.title} at ${corporate.companyName} that is handled by recruiter ${recruiter.fullName} has been updated. Your current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
+         We want to inform you that your job application status for the position of ${jobListing.title} at ${corporate.schoolName} that is handled by recruiter ${recruiter.fullName} has been updated. Your current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
 
          Kindly <a href="${loginLink}">log in</a> to your account to view the details.<br><br>
 
@@ -266,7 +266,7 @@ export class EmailService {
         subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.firstName}`,
         html: `Dear <strong>${recruiter.fullName}</strong>,<br><br>
          
-         We want to inform you that the job application status of ${jobSeeker.firstName} for the position of ${jobListing.title} at ${corporate.companyName} has been updated. Their current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
+         We want to inform you that the job application status of ${jobSeeker.firstName} for the position of ${jobListing.title} at ${corporate.schoolName} has been updated. Their current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
 
          Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
          
@@ -299,7 +299,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: corporate.email,
         subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.firstName}`,
-        html: `Dear <strong>${corporate.companyName}</strong>,<br><br>
+        html: `Dear <strong>${corporate.schoolName}</strong>,<br><br>
          
          We want to inform you that the job application status of ${jobSeeker.firstName} for the position of ${jobListing.title} that is handled by recruiter ${recruiter.fullName} has been updated. Their current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
 
@@ -338,7 +338,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: corporate.email,
         subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.firstName}`,
-        html: `Dear <strong>${corporate.companyName}</strong>,<br><br>
+        html: `Dear <strong>${corporate.schoolName}</strong>,<br><br>
          
          We want to inform you that there is a new job application status of ${jobSeeker.firstName} for the position of ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName}
 
@@ -408,7 +408,7 @@ export class EmailService {
   //     await this.mailerService.sendMail({
   //       to: corporate.email,
   //       subject: `Incoming invoice ID: ${invoice.invoiceId}`,
-  //       html: `Dear <Strong>${corporate.companyName}</Strong>,<br><br>
+  //       html: `Dear <Strong>${corporate.schoolName}</Strong>,<br><br>
   //              We want to inform you about an incoming invoice with regards to job application.<br>
 
   //              Your Job Listing ID: <strong>${

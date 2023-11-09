@@ -284,7 +284,7 @@ describe('RecruiterService', () => {
 
       const corporate = new Corporate({
         userId: 'testCorporate',
-        companyName: 'Test User',
+        schoolName: 'Test User',
         profilePictureUrl: 'test-profile.jpg',
       });
 
@@ -366,7 +366,7 @@ describe('RecruiterService', () => {
 
     //   const corporate = new Corporate({
     //     userId: 'testCorporate',
-    //     companyName: 'Test Corp',
+    //     schoolName: 'Test Corp',
     //     profilePictureUrl: 'test-profile.jpg',
     //   });
 
@@ -551,7 +551,7 @@ describe('RecruiterService', () => {
       });
       const corporate = new Corporate({
         userId: '91011',
-        companyName: 'Test Company',
+        schoolName: 'Test Company',
         profilePictureUrl: 'corporate.jpg',
       });
       const jobListing = new JobListing({

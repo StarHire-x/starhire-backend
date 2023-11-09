@@ -107,7 +107,7 @@ describe('CorporateService', () => {
         notificationMode: NotificationModeEnum.EMAIL,
         createdAt: new Date(),
         role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
+        schoolName: 'corporateTest Pte Ltd',
         companyRegistrationId: 1234567890,
         profilePictureUrl: 'https://example.com/profile-picture.jpg',
         companyAddress: '123 Main St, Anytown, USA',
@@ -125,7 +125,7 @@ describe('CorporateService', () => {
         role: UserRoleEnum.CORPORATE,
       });
 
-      corporate.companyName = 'corporateTest Pte Ltd';
+      corporate.schoolName = 'corporateTest Pte Ltd';
       corporate.companyRegistrationId = 1234567890;
       corporate.profilePictureUrl = 'https://example.com/profile-picture.jpg';
       corporate.companyAddress = '123 Main St, Anytown, USA';
@@ -151,7 +151,7 @@ describe('CorporateService', () => {
         notificationMode: NotificationModeEnum.EMAIL,
         createdAt: new Date(),
         role: UserRoleEnum.CORPORATE,
-        companyName: 'corporateTest Pte Ltd',
+        schoolName: 'corporateTest Pte Ltd',
         companyRegistrationId: 1234567890,
         profilePictureUrl: 'https://example.com/profile-picture.jpg',
         companyAddress: '123 Main St, Anytown, USA',
@@ -219,8 +219,8 @@ describe('CorporateService', () => {
         }),
       ];
 
-      corporates[0].companyName = 'corporateTest Pte Ltd';
-      corporates[1].companyName = 'corporateTest2 Pte Ltd';
+      corporates[0].schoolName = 'corporateTest Pte Ltd';
+      corporates[1].schoolName = 'corporateTest2 Pte Ltd';
 
       corporates[0].jobListings = [jobListing];
       corporates[1].jobListings = [];
@@ -282,8 +282,8 @@ describe('CorporateService', () => {
         }),
       ];
 
-      corporates[0].companyName = 'corporateTest Pte Ltd';
-      corporates[1].companyName = 'corporateTest2 Pte Ltd';
+      corporates[0].schoolName = 'corporateTest Pte Ltd';
+      corporates[1].schoolName = 'corporateTest2 Pte Ltd';
 
       corporates[0].jobListings = [jobListing3, jobListing4];
       corporates[1].jobListings = [jobListing, jobListing2];
@@ -341,7 +341,7 @@ describe('CorporateService', () => {
         userId: 'corporateTest',
       });
 
-      corporate.companyName = 'corporateTest Pte Ltd';
+      corporate.schoolName = 'corporateTest Pte Ltd';
       corporate.jobListings = [jobListing3, jobListing4];
 
       const calculation = {

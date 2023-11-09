@@ -167,7 +167,12 @@ export class DataInitService implements OnModuleInit {
     createCorporateDto.companyRegistrationId = 177452096;
     createCorporateDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png';
-    createCorporateDto.companyName = 'Corporate Pte Ltd';
+    createCorporateDto.firstName = 'John';
+    createCorporateDto.schoolName = 'Corporate Pte Ltd';
+    createCorporateDto.schoolCategory = 'Preschool';
+    createCorporateDto.companyAddress = '123 Hillview Road';
+    createCorporateDto.postalCode = '123123';
+    createCorporateDto.regions = 'North Region';
 
     const existingCorporate = await this.corporateRepository.findOne({
       where: {
@@ -199,7 +204,12 @@ export class DataInitService implements OnModuleInit {
     createCorporateTwoDto.companyRegistrationId = 177452074;
     createCorporateTwoDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/Scenery+8.jpg';
-    createCorporateTwoDto.companyName = 'Pawfect Pte Ltd';
+    createCorporateTwoDto.schoolName = 'Pawfect Pte Ltd';
+    createCorporateTwoDto.firstName = 'Mary';
+    createCorporateTwoDto.schoolCategory = 'Kindergarten';
+    createCorporateTwoDto.companyAddress = '14 North Bridge Road';
+    createCorporateTwoDto.postalCode = '672123';
+    createCorporateTwoDto.regions = 'North Region_Central Region';
 
     const existingCorporateTwo = await this.corporateRepository.findOne({
       where: {
@@ -232,7 +242,12 @@ export class DataInitService implements OnModuleInit {
     createCorporateThreeDto.companyRegistrationId = 177452082;
     createCorporateThreeDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/MapleBearLogo.png';
-    createCorporateThreeDto.companyName = 'Maple Bear Pte Ltd';
+    createCorporateThreeDto.schoolName = 'Maple Bear Pte Ltd';
+    createCorporateThreeDto.firstName = 'Kim';
+    createCorporateThreeDto.schoolCategory = 'Kindergarten';
+    createCorporateThreeDto.companyAddress = '26 East Coast Road';
+    createCorporateThreeDto.postalCode = '150111';
+    createCorporateThreeDto.regions = 'East Region_Central Region';
 
     const existingCorporateThree = await this.corporateRepository.findOne({
       where: {

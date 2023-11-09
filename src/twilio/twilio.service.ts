@@ -31,7 +31,7 @@ export class TwilioService {
       return;
     }
 
-    const message = `Hello ${corporate.companyName},
+    const message = `Hello ${corporate.schoolName},
 Your status on Job Listing ID: ${jobListing.jobListingId}, ${
       jobListing.title
     } have been updated to: ${jobListing.jobListingStatus.toUpperCase()}.
@@ -67,7 +67,7 @@ Log in to view the changes: ${loginLink}`;
     }
 
     const message = `Hello ${recruiter.fullName},
-We want to inform you that a new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName} has been approved
+We want to inform you that a new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.schoolName} has been approved
 Log in to perform job matching: ${loginLink}`;
 
     try {
@@ -101,7 +101,7 @@ Log in to perform job matching: ${loginLink}`;
     }
 
     const message = `Hello ${admin.fullName},
-Please vet new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName}`;
+Please vet new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.schoolName}`;
 
     try {
       await this.client.messages.create({
@@ -201,7 +201,7 @@ Log in to view the changes: ${loginLink}`;
 
     const message = `Dear ${jobSeeker.firstName},
 Your job application status for ${jobListing.title} at ${
-      corporate.companyName
+      corporate.schoolName
     } handled by recruiter ${
       recruiter.fullName
     } is now ${jobApplication.jobApplicationStatus.toUpperCase()}.
@@ -241,7 +241,7 @@ Log in for details: ${loginLink}`;
 The job application status of ${jobSeeker.firstName} for ${
       jobListing.title
     } at ${
-      corporate.companyName
+      corporate.schoolName
     } is now ${jobApplication.jobApplicationStatus.toUpperCase()}.
 Log in for details: ${loginLink}`;
 
@@ -275,7 +275,7 @@ Log in for details: ${loginLink}`;
       return;
     }
 
-    const message = `Hi ${corporate.companyName},
+    const message = `Hi ${corporate.schoolName},
 The job application status of ${jobSeeker.firstName} for ${
       jobListing.title
     } handled by recruiter ${
@@ -313,7 +313,7 @@ Log in for details: ${loginLink}`;
       return;
     }
 
-    const message = `Hi ${corporate.companyName},
+    const message = `Hi ${corporate.schoolName},
 There is a new job application by ${jobSeeker.firstName} for ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName} 
 Log in for details: ${loginLink}`;
 

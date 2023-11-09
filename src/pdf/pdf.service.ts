@@ -1,13 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePdfDto } from './dto/create-pdf.dto';
-import { UpdatePdfDto } from './dto/update-pdf.dto';
 import * as PDFDocument from 'pdfkit';
-import * as fs from 'fs';
-import * as path from 'path';
+
+export type buyerDetails = {
+  name: string;
+  address?: string;
+};
+
+export type jobApplication = {
+  jobApplicationId: number;
+  jobListingTitle: string;
+  amount: number;
+};
+
+export type TInvoiceData = {
+  shipping: buyerDetails;
+  items: jobApplication[];
+  subtotal: number;
+  paid: number;
+  invoice_nr: number;
+};
 
 @Injectable()
 export class PdfService {
-  async createInvoice(invoice): Promise<Buffer> {
+  async createInvoice(invoice: TInvoiceData): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const doc = new PDFDocument({ size: 'A4', margin: 50 });
       let buffers: Buffer[] = [];
@@ -32,21 +47,11 @@ export class PdfService {
     });
   }
 
-
   // Currently got issue handling images, i want to add star hire logo but cmi
   private generateHeader(doc) {
-    // const logoPath = path.join(__dirname, 'images', 'StarHire_black.png');
-    // console.log(logoPath);
     doc
-      // .image(
-      //   logoPath,
-      //   50,
-      //   45,
-      //   { width: 50 },
-      // )
+      .image('src/images/StarHire_black.png', 30, 35, { width: 200 })
       .fillColor('#444444')
-      .fontSize(20)
-      .text('StarHire Inc.', 110, 57, {align: 'left'})
       .fontSize(10)
       .text('StarHire Inc.', 200, 50, { align: 'right' })
       .text('123 Heng Mui Keng Terrace', 200, 65, { align: 'right' })
@@ -79,16 +84,7 @@ export class PdfService {
       .font('Helvetica-Bold')
       .text(invoice.shipping.name, 300, customerInformationTop)
       .font('Helvetica')
-      .text(invoice.shipping.address, 300, customerInformationTop + 15)
-      .text(
-        invoice.shipping.city +
-          ', ' +
-          invoice.shipping.state +
-          ', ' +
-          invoice.shipping.country,
-        300,
-        customerInformationTop + 30,
-      )
+      .text(invoice.shipping.address || '', 300, customerInformationTop + 15)
       .moveDown();
 
     this.generateHr(doc, 252);
@@ -102,9 +98,9 @@ export class PdfService {
     this.generateTableRow(
       doc,
       invoiceTableTop,
-      'Item',
-      'Description',
-      'Unit Cost',
+      'Job Application ID',
+      'Job Listing Title',
+      'Amount',
       'Quantity',
       'Line Total',
     );
@@ -112,16 +108,16 @@ export class PdfService {
     doc.font('Helvetica');
 
     for (i = 0; i < invoice.items.length; i++) {
-      const item = invoice.items[i];
+      const jobApplication = invoice.items[i];
       const position = invoiceTableTop + (i + 1) * 30;
       this.generateTableRow(
         doc,
         position,
-        item.item,
-        item.description,
-        this.formatCurrency(item.amount / item.quantity),
-        item.quantity,
-        this.formatCurrency(item.amount),
+        jobApplication.jobApplicationId,
+        jobApplication.jobListingTitle,
+        this.formatCurrency(jobApplication.amount),
+        1,
+        this.formatCurrency(jobApplication.amount),
       );
 
       this.generateHr(doc, position + 20);
@@ -201,8 +197,8 @@ export class PdfService {
       .stroke();
   }
 
-  private formatCurrency(cents) {
-    return '$' + (cents / 100).toFixed(2);
+  private formatCurrency(dollars) {
+    return '$' + dollars.toFixed(2);
   }
 
   private formatDate(date) {

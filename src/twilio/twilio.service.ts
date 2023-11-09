@@ -9,7 +9,7 @@ import { Recruiter } from '../entities/recruiter.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
-import { EventListing } from 'src/entities/eventListing.entity';
+import { EventListing } from '../entities/eventListing.entity';
 
 @Injectable()
 export class TwilioService {

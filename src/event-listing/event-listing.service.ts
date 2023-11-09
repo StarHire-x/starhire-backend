@@ -15,7 +15,7 @@ import { mapEventListingStatusToEnum } from '../common/mapStringToEnum';
 import CorporatePromotionStatus from '../enums/corporatePromotionStatus.enum';
 import { EmailService } from '../email/email.service';
 import { TwilioService } from '../twilio/twilio.service';
-import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import NotificationModeEnum from '../enums/notificationMode.enum';
 
 @Injectable()
 export class EventListingService {

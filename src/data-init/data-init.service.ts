@@ -337,6 +337,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.startDate = new Date('2024-10-09');
     createJobSeekerTwoDto.preferredRegions = 'Central Region_North Region';
     createJobSeekerTwoDto.preferredJobType = 'Full Time_Part Time';
+    createJobSeekerTwoDto.preferredSchedule = 'Monday to Friday';
     createJobSeekerTwoDto.payRange = '$3500 - $4500_$4500 - $5500';
     createJobSeekerTwoDto.visaRequirements = 'No';
     createJobSeekerTwoDto.ranking = 'Salary_Working culture_Benefits_Location';
@@ -386,6 +387,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerThreeDto.startDate = new Date('2024-10-09');
     createJobSeekerThreeDto.preferredRegions = 'South Region_North Region';
     createJobSeekerThreeDto.preferredJobType = 'Full Time';
+    createJobSeekerThreeDto.preferredSchedule = 'Monday to Friday';
     createJobSeekerThreeDto.payRange = '$2500 - $3500';
     createJobSeekerThreeDto.visaRequirements = 'No';
     createJobSeekerThreeDto.ranking =

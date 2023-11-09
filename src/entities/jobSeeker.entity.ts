@@ -34,7 +34,7 @@ export class JobSeeker extends User {
 
   // @Column()
   // homeAddress: string;
-
+ 
   // @Column()
   // instituteName: string;
 

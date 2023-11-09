@@ -13,6 +13,9 @@ import { EventRegistration } from '../entities/eventRegistration.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { mapEventListingStatusToEnum } from '../common/mapStringToEnum';
 import CorporatePromotionStatus from '../enums/corporatePromotionStatus.enum';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
 
 @Injectable()
 export class EventListingService {
@@ -22,6 +25,8 @@ export class EventListingService {
     // Parent Entity
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createEventListingDto: CreateEventListingDto) {
@@ -31,6 +36,7 @@ export class EventListingService {
 
       const corporate = await this.corporateRepository.findOne({
         where: { userId: corporateId },
+        relations: { followers: true },
       });
 
       if (!corporate) {
@@ -57,6 +63,22 @@ export class EventListingService {
         corporate,
       });
       await this.eventListingRepository.save(eventListing);
+
+      corporate.followers.map((jobSeeker) => {
+        if (jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+          this.emailService.notifyJobSeekerNewEvent(
+            corporate,
+            eventListing,
+            jobSeeker,
+          );
+        } else if (jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+          this.twilioService.notifyJobSeekerNewEvent(
+            corporate,
+            eventListing,
+            jobSeeker,
+          );
+        }
+      });
 
       if (eventListing) {
         return {

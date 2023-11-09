@@ -4,10 +4,12 @@ import { EventListingController } from './event-listing.controller';
 import { EventListing } from '../entities/eventListing.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Corporate } from '../entities/corporate.entity';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([EventListing, Corporate])],
   controllers: [EventListingController],
-  providers: [EventListingService],
+  providers: [EventListingService, EmailService, TwilioService],
 })
 export class EventListingModule {}

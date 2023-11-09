@@ -96,6 +96,22 @@ export class InvoiceController {
     }
   }
 
+  @Put('invoice-payment/:id')
+  invoicePayment(
+    @Param('id') id: number,
+    @Body() updateInvoiceDto: UpdateInvoiceDto,
+  ) {
+    try {
+      return this.invoiceService.invoicePayment(id, updateInvoiceDto);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Delete(':id')
   remove(@Param('id') id: number) {
     try {

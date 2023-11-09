@@ -15,7 +15,7 @@ import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { EmailService } from '../email/email.service';
 import { TwilioService } from '../twilio/twilio.service';
 import NotificationModeEnum from '../enums/notificationMode.enum';
-import { PdfService } from '../pdf/pdf.service';
+import { PdfService, TInvoiceData, jobApplication } from '../pdf/pdf.service';
 import { UploadService } from '../upload/upload.service';
 import InvoiceStatusEnum from '../enums/invoiceStatus.enum';
 
@@ -164,6 +164,57 @@ export class InvoiceService {
     }
   }
 
+  async invoicePayment(id: number, updateInvoiceDto: UpdateInvoiceDto) {
+    try {
+      const invoice = await this.invoiceRepository.findOne({
+        where: { invoiceId: id },
+        relations: {
+          administrator: true,
+          corporate: true,
+          jobApplications: { jobListing: true },
+        },
+      });
+      if (!invoice) {
+        throw new NotFoundException('Invoice Id provided is not valid');
+      }
+
+      // make pdf here
+      const invoiceJobApplications: jobApplication[] = [];
+      invoice.jobApplications?.forEach((application) =>
+        invoiceJobApplications.push({
+          jobApplicationId: application.jobApplicationId,
+          jobListingTitle: application.jobListing?.title,
+          amount: application.jobListing?.averageSalary,
+        }),
+      );
+
+      const invoiceData: TInvoiceData = {
+        shipping: {
+          name: invoice.corporate?.companyName,
+          address: invoice.corporate?.companyAddress,
+        },
+        items: invoiceJobApplications,
+        subtotal: invoice.totalAmount,
+        paid: invoice.totalAmount, // should be paid in full
+        invoice_nr: invoice.invoiceId,
+      };
+      const invoicePdfBuffer = await this.pdfService.createInvoice(invoiceData);
+      const pdfLink = await this.uploadService.upload(
+        `${invoice.invoiceId}_${invoice?.corporate?.companyName}`,
+        invoicePdfBuffer,
+      );
+      updateInvoiceDto = { ...updateInvoiceDto, invoiceLink: pdfLink?.url };
+
+      Object.assign(invoice, updateInvoiceDto);
+      return await this.invoiceRepository.save(invoice);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update Invoice',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async remove(id: number) {
     try {
       const invoiceToDelete = await this.findOne(id);
@@ -186,13 +237,13 @@ export class InvoiceService {
   async getAllCorporateInvoices() {
     try {
       const allCorporate = await this.corporateRepository.find({
-        relations: {invoices: true}
+        relations: { invoices: true },
       });
 
       const allInvoices = await this.invoiceRepository.find({
-        relations: {corporate: true}
-      })
-      
+        relations: { corporate: true },
+      });
+
       const overallStatistics = {
         notPaidSum: 0,
         notPaidCount: 0,
@@ -216,13 +267,17 @@ export class InvoiceService {
           };
 
           const formattedInvoice = invoices.map((invoice) => {
-            if(invoice.invoiceStatus === InvoiceStatusEnum.NOT_PAID) {
+            if (invoice.invoiceStatus === InvoiceStatusEnum.NOT_PAID) {
               statistics.notPaidCount += 1;
               statistics.notPaidSum += invoice.totalAmount;
-            } else if (invoice.invoiceStatus === InvoiceStatusEnum.INDICATED_PAID) {
+            } else if (
+              invoice.invoiceStatus === InvoiceStatusEnum.INDICATED_PAID
+            ) {
               statistics.indicatedPaidCount += 1;
               statistics.indicatedPaidSum += invoice.totalAmount;
-            } else if (invoice.invoiceStatus === InvoiceStatusEnum.CONFIRMED_PAID) {
+            } else if (
+              invoice.invoiceStatus === InvoiceStatusEnum.CONFIRMED_PAID
+            ) {
               statistics.confirmedPaidCount += 1;
               statistics.confirmedPaidSum += invoice.totalAmount;
             }
@@ -253,15 +308,15 @@ export class InvoiceService {
             invoices: formattedInvoice,
             statistics,
           };
-        }
-      ))
+        }),
+      );
       return {
         statusCode: HttpStatus.OK,
         message: 'User statistics retrieved',
         data: {
           overallStatistics: overallStatistics,
           formattedResponse: formattedResponse,
-        }
+        },
       };
     } catch (err) {
       throw new HttpException('Error in Database', HttpStatus.BAD_REQUEST);

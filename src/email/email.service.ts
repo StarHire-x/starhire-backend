@@ -12,13 +12,14 @@ import { Recruiter } from '../entities/recruiter.entity';
 import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
 import { Invoice } from '../entities/invoice.entity';
+import { EventListing } from '../entities/eventListing.entity';
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService, // We should not be calling other service classes to avoid cyclic dependency
-    // private readonly jobListingService: JobListingService,
-  ) {}
+  ) // private readonly jobListingService: JobListingService,
+  {}
 
   async resetPassword(createEmailDto: CreateEmailDto) {
     try {
@@ -435,4 +436,35 @@ export class EmailService {
   //     );
   //   }
   // }
+
+  async notifyJobSeekerNewEvent(
+    corporate: Corporate,
+    eventListing: EventListing,
+    jobSeeker: JobSeeker,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: jobSeeker.email,
+        subject: `New event posted by ${corporate.companyName}`,
+        html: `Dear <Strong>${jobSeeker.fullName}</Strong>,<br><br>
+               We want to inform you that a new event ${eventListing.eventName} happening at ${eventListing.location} has been posted by ${corporate.companyName}<br>
+
+               Please <a href="${loginLink}">Login</a> to your account to view more details about the event<br><br>
+               Best regards,<br>
+               StarHire`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: jobSeeker,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

@@ -9,6 +9,7 @@ import { Recruiter } from '../entities/recruiter.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
+import { EventListing } from '../entities/eventListing.entity';
 
 @Injectable()
 export class TwilioService {
@@ -158,7 +159,7 @@ Log in to view the changes: ${loginLink}`;
 
   async notifyTicketResolution(user: any, ticket: Ticket) {
     let loginLink = 'http://www.localhost:3001/login';
-    
+
     if (!user.contactNo) {
       return;
     }
@@ -347,6 +348,38 @@ Log in for details: ${loginLink}`;
 
     const message = `Hi ${jobSeeker.fullName},
 You have been matched by recruiter ${recruiter.fullName} for the role of ${jobListing.title}
+Log in for details: ${loginLink}`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${jobSeeker.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: jobSeeker,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyJobSeekerNewEvent(
+    corporate: Corporate,
+    eventListing: EventListing,
+    jobSeeker: JobSeeker,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!jobSeeker.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${jobSeeker.fullName},
+There is a new event ${eventListing.eventName} happening at ${eventListing.location} has been posted by ${corporate.companyName}
 Log in for details: ${loginLink}`;
 
     try {

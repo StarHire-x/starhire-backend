@@ -9,12 +9,9 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Req,
-  Patch,
   NotFoundException,
 } from '@nestjs/common';
 import { SavedJobListingService } from './saved-job-listing.service';
-import { CreateSavedJobListingDto } from './dto/create-saved-job-listing.dto';
-import { UpdateSavedJobListingDto } from './dto/update-saved-job-listing.dto';
 
 @Controller('saved-job-listing')
 export class SavedJobListingController {
@@ -22,27 +19,9 @@ export class SavedJobListingController {
     private readonly savedJobListingService: SavedJobListingService,
   ) {}
 
-  @Post()
-  create(@Body() createSavedJobListingDto: CreateSavedJobListingDto) {
-    return this.savedJobListingService.create(createSavedJobListingDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.savedJobListingService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.savedJobListingService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateSavedJobListingDto: UpdateSavedJobListingDto,
-  ) {
-    return this.savedJobListingService.update(+id, updateSavedJobListingDto);
   }
 
   @Delete(':id')

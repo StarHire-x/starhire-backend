@@ -4,8 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateSavedJobListingDto } from './dto/create-saved-job-listing.dto';
-import { UpdateSavedJobListingDto } from './dto/update-saved-job-listing.dto';
 import { JobListing } from '../entities/jobListing.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,20 +21,8 @@ export class SavedJobListingService {
     private readonly jobSeekerRepository: Repository<JobSeeker>,
   ) {}
 
-  create(createSavedJobListingDto: CreateSavedJobListingDto) {
-    return 'This action adds a new savedJobListing';
-  }
-
-  findAll() {
-    return `This action returns all savedJobListing`;
-  }
-
   findOne(id: number) {
     return `This action returns a #${id} savedJobListing`;
-  }
-
-  update(id: number, updateSavedJobListingDto: UpdateSavedJobListingDto) {
-    return `This action updates a #${id} savedJobListing`;
   }
 
   remove(id: number) {

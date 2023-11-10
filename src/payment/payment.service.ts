@@ -9,7 +9,6 @@ import { Repository } from 'typeorm';
 import { CorporateService } from '../corporate/corporate.service';
 import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
 import { UpdateCorporateDto } from '../corporate/dto/update-corporate.dto';
-import { CreateStripeInvoiceDto } from './dto/create-stripe-invoice.dto';
 
 @Injectable()
 export class PaymentService {
@@ -22,47 +21,6 @@ export class PaymentService {
       apiVersion: '2022-11-15',
     });
     this.corporateService = corporateService;
-  }
-
-  async createInvoiceForCorporate(
-    createStripeInvoiceDto: CreateStripeInvoiceDto,
-  ) {
-    try {
-      const corporateResponse = await this.corporateService.findByUserId(
-        createStripeInvoiceDto.userId,
-      );
-
-      if (corporateResponse && corporateResponse.data) {
-        if (!corporateResponse.data.stripeCustId) {
-          const customer = await this.stripe.customers.create({
-            email: createStripeInvoiceDto.email,
-            name: createStripeInvoiceDto.companyName,
-            metadata: {
-              userId: createStripeInvoiceDto.userId,
-            },
-          });
-
-          if (customer) {
-            const stripeCustId = customer.id;
-            const corporateUpdateDto = new UpdateCorporateDto();
-            corporateUpdateDto.stripeCustId = stripeCustId;
-
-            await this.corporateService.update(
-              createStripeInvoiceDto.userId,
-              corporateUpdateDto,
-            );
-          } else {
-            throw new Error('Corporate not found for the given user ID');
-          }
-        } else {
-          // means corporate got existing stripe customer id, just use it
-          const stripeCustId = corporateResponse.data.stripeCustId;
-        }
-      }
-    } catch (error) {
-      console.error('Error creating of invoice:', error);
-      throw new Error('Error creating of invoice');
-    }
   }
 
   async createCheckoutSession(clientReferenceId) {

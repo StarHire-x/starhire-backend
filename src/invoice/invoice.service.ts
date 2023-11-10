@@ -106,24 +106,25 @@ export class InvoiceService {
             customer: stripeCustId,
             collection_method: 'send_invoice',
             days_until_due: 14,
-            currency: 'sgd'
+            currency: 'sgd',
+            auto_advance: false,
           });
 
-          // Create an Invoice Item with the Price, and Customer you want to charge
-          jobApplications.forEach(async (jobApp) => {
-            console.log("job listing avg salary: " + jobApp.jobListing.averageSalary);
+          // create individual invoice item for each job listing
+          for (const jobApp of jobApplications) {
             const invoiceItem = await this.stripe.invoiceItems.create({
               customer: stripeCustId,
-              amount: (jobApp.jobListing.averageSalary) * 100, // because amount takes in cents
+              amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
               invoice: stripeInvoice.id,
-              description: `${jobApp.jobListing.title} for job seeker user ${jobApp.jobSeeker.userName}, handled by recruiter user ${jobApp.recruiter.userName}`,
-              currency: 'sgd'
+              description: jobApp.jobListing.title,
+              currency: 'sgd',
             });
-          });
+          }
 
           // Send the Invoice
-          const sentInvoice = await this.stripe.invoices.sendInvoice(stripeInvoice.id);
-
+          const sentInvoice = await this.stripe.invoices.sendInvoice(
+            stripeInvoice.id,
+          );
           invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
           invoice.stripeInvoiceId = sentInvoice.id;
         } else {
@@ -138,22 +139,24 @@ export class InvoiceService {
           customer: stripeCustId,
           collection_method: 'send_invoice',
           days_until_due: 14,
-          currency: 'sgd'
+          currency: 'sgd',
         });
 
-        // Create an Invoice Item with the Price, and Customer you want to charge
-        jobApplications.forEach(async (jobApp) => {
+        // create individual invoice item for each job listing
+        for (const jobApp of jobApplications) {
           const invoiceItem = await this.stripe.invoiceItems.create({
             customer: stripeCustId,
-            amount: (jobApp.jobListing.averageSalary) * 100, // because amount takes in cents
+            amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
             invoice: stripeInvoice.id,
-            description: `${jobApp.jobListing.title} for job seeker user ${jobApp.jobSeeker.userName}, handled by recruiter user ${jobApp.recruiter.userName}`,
-            currency: 'sgd'
+            description: jobApp.jobListing.title,
+            currency: 'sgd',
           });
-        });
+        }
 
         // Send the Invoice
-        const sentInvoice = await this.stripe.invoices.sendInvoice(stripeInvoice.id);
+        const sentInvoice = await this.stripe.invoices.sendInvoice(
+          stripeInvoice.id,
+        );
 
         invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
         invoice.stripeInvoiceId = sentInvoice.id;
@@ -167,10 +170,10 @@ export class InvoiceService {
       // invoice.invoiceLink = s3Link.url;
 
       //Notification
-      if(corporate.notificationMode === NotificationModeEnum.EMAIL) {
-        this.emailService.notifyCorporateOfInvoice(corporate,invoice);
+      if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyCorporateOfInvoice(corporate, invoice);
       } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
-        this.twilioService.notifyCorporateOfInvoice(corporate,invoice);
+        this.twilioService.notifyCorporateOfInvoice(corporate, invoice);
       }
 
       return await this.invoiceRepository.save(invoice);
@@ -232,7 +235,7 @@ export class InvoiceService {
   async updateInvoiceStatusForStripePayment(stripeInvoiceId: string) {
     try {
       const invoice = await this.invoiceRepository.findOneBy({
-        stripeInvoiceId: stripeInvoiceId
+        stripeInvoiceId: stripeInvoiceId,
       });
 
       if (!invoice) {

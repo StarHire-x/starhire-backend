@@ -239,7 +239,7 @@ export class EventListingService {
       relations: ['eventListings'],
     });
 
-    const eventListings = allPremiumUsers.map((user) => user.eventListings);
+    const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);
 
     return {
       statusCode: HttpStatus.OK,
@@ -256,7 +256,7 @@ export class EventListingService {
       relations: ['eventListings'],
     });
 
-    const eventListings = allPremiumUsers.map((user) => user.eventListings);
+    const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);
 
     return {
       statusCode: HttpStatus.OK,

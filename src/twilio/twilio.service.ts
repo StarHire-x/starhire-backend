@@ -10,6 +10,7 @@ import { Corporate } from '../entities/corporate.entity';
 import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
 import { EventListing } from '../entities/eventListing.entity';
+import { Invoice } from '../entities/invoice.entity';
 
 @Injectable()
 export class TwilioService {
@@ -361,6 +362,37 @@ Log in for details: ${loginLink}`;
         statusCode: HttpStatus.OK,
         message: 'SMS successfully sent',
         data: jobSeeker,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyCorporateOfInvoice(
+    corporate: Corporate,
+    invoice: Invoice,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!corporate.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${corporate.companyName},
+We want to inform you about an incoming invoice of invoice ID: ${invoice.invoiceId} that would be issued shortly 
+Log in for details: ${loginLink}`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${corporate.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: corporate,
       };
     } catch (error) {
       throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);

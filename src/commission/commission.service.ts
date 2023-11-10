@@ -164,4 +164,90 @@ export class CommissionService {
       );
     }
   }
+
+  async getAllRecruiterCommissions() {
+    try {
+      const allRecruiters = await this.recruiterRepository.find({
+        relations: {commissions: true},
+      });
+
+      const overallStatistics = {
+        notPaidSum: 0,
+        notPaidCount: 0,
+        indicatedPaidSum: 0,
+        indicatedPaidCount: 0,
+        confirmedPaidSum: 0,
+        confirmedPaidCount: 0,
+      };
+
+      const formattedResponse = await Promise.all(
+        allRecruiters.map((recruiter) => {
+          const commissions = recruiter.commissions;
+
+          const statistics = {
+            notPaidSum: 0,
+            notPaidCount: 0,
+            indicatedPaidSum: 0,
+            indicatedPaidCount: 0,
+            confirmedPaidSum: 0,
+            confirmedPaidCount: 0,
+          };
+
+          const formattedCommissions = commissions.map((commission) => {
+            if (commission.commissionStatus === CommissionStatusEnum.NOT_PAID) {
+              statistics.notPaidCount += 1;
+              statistics.notPaidSum += commission.commissionAmount;
+            } else if (
+              commission.commissionStatus ===
+              CommissionStatusEnum.INDICATED_PAID
+            ) {
+              statistics.indicatedPaidCount += 1;
+              statistics.indicatedPaidSum += commission.commissionAmount;
+            } else if (
+              commission.commissionStatus ===
+              CommissionStatusEnum.CONFIRMED_PAID
+            ) {
+              statistics.confirmedPaidCount += 1;
+              statistics.confirmedPaidSum += commission.commissionAmount;
+            }
+            return {
+              commissionId: commission.commissionId,
+              commissionDate: commission.commissionDate,
+              commissionStatus: commission.commissionStatus,
+              commissionRate: commission.commissionRate,
+              commissionAmount: commission.commissionAmount,
+              paymentDocumentURL: commission.paymentDocumentURL,
+              recruiterId: recruiter.userId,
+              recruiterName: recruiter.fullName,
+              profilePictureUrl: recruiter.profilePictureUrl,
+            };
+          });
+
+          overallStatistics.notPaidSum += statistics.notPaidSum;
+          overallStatistics.notPaidCount += statistics.notPaidCount;
+          overallStatistics.indicatedPaidCount += statistics.indicatedPaidCount;
+          overallStatistics.indicatedPaidSum += statistics.indicatedPaidSum;
+          overallStatistics.confirmedPaidCount += statistics.confirmedPaidCount;
+          overallStatistics.confirmedPaidSum += statistics.confirmedPaidSum;
+
+          return {
+            recruiterId: recruiter.userId,
+            recruiterName: recruiter.fullName,
+            commissions: formattedCommissions,
+            statistics,
+          };
+        }),
+      )
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Commission statistics retrieved',
+        data: {
+          overallStatistics: overallStatistics,
+          formattedResponse: formattedResponse,
+        },
+      };
+    } catch (err) {
+      throw new HttpException('Error in Database', HttpStatus.BAD_REQUEST);
+    }
+  }
 }

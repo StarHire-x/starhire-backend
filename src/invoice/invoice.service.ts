@@ -86,7 +86,9 @@ export class InvoiceService {
         jobApplications: jobApplications,
       });
 
-      if (!corporate.stripeCustId) {
+      var stripeCustId = corporate.stripeCustId;
+
+      if (!stripeCustId) {
         const customer = await this.stripe.customers.create({
           email: corporate.email,
           name: corporate.companyName,
@@ -96,71 +98,41 @@ export class InvoiceService {
         });
 
         if (customer) {
-          const stripeCustId = customer.id;
+          stripeCustId = customer.id;
           corporate.stripeCustId = stripeCustId;
 
           await this.corporateRepository.save(corporate);
-
-          // Create an Invoice
-          const stripeInvoice = await this.stripe.invoices.create({
-            customer: stripeCustId,
-            collection_method: 'send_invoice',
-            days_until_due: 14,
-            currency: 'sgd',
-            auto_advance: false,
-          });
-
-          // create individual invoice item for each job listing
-          for (const jobApp of jobApplications) {
-            const invoiceItem = await this.stripe.invoiceItems.create({
-              customer: stripeCustId,
-              amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
-              invoice: stripeInvoice.id,
-              description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
-              currency: 'sgd',
-            });
-          }
-
-          // Send the Invoice
-          const sentInvoice = await this.stripe.invoices.sendInvoice(
-            stripeInvoice.id,
-          );
-          invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
-          invoice.stripeInvoiceId = sentInvoice.id;
         } else {
           throw new Error('Corporate not found for the given user ID');
         }
-      } else {
-        // corporate got existing stripe customer id
-        const stripeCustId = corporate.stripeCustId;
+      }
 
-        // Create an Invoice
-        const stripeInvoice = await this.stripe.invoices.create({
+      // Create an Invoice
+      const stripeInvoice = await this.stripe.invoices.create({
+        customer: stripeCustId,
+        collection_method: 'send_invoice',
+        days_until_due: 14,
+        currency: 'sgd',
+      });
+
+      // create individual invoice item for each job listing
+      for (const jobApp of jobApplications) {
+        const invoiceItem = await this.stripe.invoiceItems.create({
           customer: stripeCustId,
-          collection_method: 'send_invoice',
-          days_until_due: 14,
+          amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
+          invoice: stripeInvoice.id,
+          description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
           currency: 'sgd',
         });
-
-        // create individual invoice item for each job listing
-        for (const jobApp of jobApplications) {
-          const invoiceItem = await this.stripe.invoiceItems.create({
-            customer: stripeCustId,
-            amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
-            invoice: stripeInvoice.id,
-            description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
-            currency: 'sgd',
-          });
-        }
-
-        // Send the Invoice
-        const sentInvoice = await this.stripe.invoices.sendInvoice(
-          stripeInvoice.id,
-        );
-
-        invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
-        invoice.stripeInvoiceId = sentInvoice.id;
       }
+
+      // Send the Invoice
+      const sentInvoice = await this.stripe.invoices.sendInvoice(
+        stripeInvoice.id,
+      );
+
+      invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
+      invoice.stripeInvoiceId = sentInvoice.id;
 
       //Generate the pdf invoice
       // await this.invoiceRepository.save(invoice);

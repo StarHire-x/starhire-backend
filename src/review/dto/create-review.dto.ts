@@ -6,6 +6,7 @@ export class CreateReviewDto {
   description: string;
   startDate: Date;
   endDate: Date;
+  submissionDate: Date;
   reviewType: ReviewTypeEnum;
   attitudeJS: number;
   professionalismJS: number;

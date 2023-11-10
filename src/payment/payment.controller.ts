@@ -3,10 +3,11 @@ import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment-dto';
 import { Stripe } from 'stripe';
 import { Public } from '../users/public.decorator';
+import { InvoiceService } from 'src/invoice/invoice.service';
 
 @Controller('payment')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(private readonly paymentService: PaymentService, private readonly invoiceService: InvoiceService) {}
 
   @Public()
   @Post('create-checkout-session')
@@ -33,12 +34,23 @@ export class PaymentController {
             stripeCustId,
           );
           return 'Webhook received and processed';
+          // break;
 
         case 'customer.subscription.deleted':
           const stripeCustomerId = event.data.object.customer as string;
           console.log('I am the delete web hook ' + stripeCustomerId);
           await this.paymentService.deleteSubscription(stripeCustomerId);
           return 'Webhook received and processed';
+          // break;
+
+        case 'invoice.payment_succeeded':
+          const stripeInvoiceId = event.data.object.id as string;
+          console.log(`stripe invoice id: ${stripeInvoiceId}`);
+
+          await this.invoiceService.updateInvoiceStatusForStripePayment(stripeInvoiceId);
+
+          return "webhook received and processed";
+          // break;
         default:
           return 'Webhook received but not processed';
       }

@@ -18,9 +18,11 @@ import NotificationModeEnum from '../enums/notificationMode.enum';
 import { PdfService, TInvoiceData, jobApplication } from '../pdf/pdf.service';
 import { UploadService } from '../upload/upload.service';
 import InvoiceStatusEnum from '../enums/invoiceStatus.enum';
+import Stripe from 'stripe';
 
 @Injectable()
 export class InvoiceService {
+  private readonly stripe: Stripe;
   constructor(
     @InjectRepository(Invoice)
     private readonly invoiceRepository: Repository<Invoice>,
@@ -34,7 +36,12 @@ export class InvoiceService {
     private twilioService: TwilioService,
     private pdfService: PdfService,
     private uploadService: UploadService,
-  ) {}
+  ) {
+    this.stripe = new Stripe(process.env.STRIPE_API_KEY, {
+      //@ts-ignore
+      apiVersion: '2022-11-15',
+    });
+  }
   async create(createInvoiceDto: CreateInvoiceDto) {
     try {
       const {
@@ -62,6 +69,7 @@ export class InvoiceService {
       for (let id of jobApplicationIds) {
         const jobApplication = await this.jobApplicationRepository.findOne({
           where: { jobApplicationId: id },
+          relations: { jobListing: true, jobSeeker: true },
         });
         if (!jobApplication) {
           throw new NotFoundException(
@@ -78,6 +86,82 @@ export class InvoiceService {
         jobApplications: jobApplications,
       });
 
+      if (!corporate.stripeCustId) {
+        const customer = await this.stripe.customers.create({
+          email: corporate.email,
+          name: corporate.companyName,
+          metadata: {
+            userId: corporate.userId,
+          },
+        });
+
+        if (customer) {
+          const stripeCustId = customer.id;
+          corporate.stripeCustId = stripeCustId;
+
+          await this.corporateRepository.save(corporate);
+
+          // Create an Invoice
+          const stripeInvoice = await this.stripe.invoices.create({
+            customer: stripeCustId,
+            collection_method: 'send_invoice',
+            days_until_due: 14,
+            currency: 'sgd',
+            auto_advance: false,
+          });
+
+          // create individual invoice item for each job listing
+          for (const jobApp of jobApplications) {
+            const invoiceItem = await this.stripe.invoiceItems.create({
+              customer: stripeCustId,
+              amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
+              invoice: stripeInvoice.id,
+              description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
+              currency: 'sgd',
+            });
+          }
+
+          // Send the Invoice
+          const sentInvoice = await this.stripe.invoices.sendInvoice(
+            stripeInvoice.id,
+          );
+          invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
+          invoice.stripeInvoiceId = sentInvoice.id;
+        } else {
+          throw new Error('Corporate not found for the given user ID');
+        }
+      } else {
+        // corporate got existing stripe customer id
+        const stripeCustId = corporate.stripeCustId;
+
+        // Create an Invoice
+        const stripeInvoice = await this.stripe.invoices.create({
+          customer: stripeCustId,
+          collection_method: 'send_invoice',
+          days_until_due: 14,
+          currency: 'sgd',
+        });
+
+        // create individual invoice item for each job listing
+        for (const jobApp of jobApplications) {
+          const invoiceItem = await this.stripe.invoiceItems.create({
+            customer: stripeCustId,
+            amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
+            invoice: stripeInvoice.id,
+            description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
+            currency: 'sgd',
+          });
+        }
+
+        // Send the Invoice
+        const sentInvoice = await this.stripe.invoices.sendInvoice(
+          stripeInvoice.id,
+        );
+
+        invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
+        invoice.stripeInvoiceId = sentInvoice.id;
+      }
+
       //Generate the pdf invoice
       // await this.invoiceRepository.save(invoice);
       // const fileName = `invoice${invoice.invoiceId}.pdf`;
@@ -86,14 +170,15 @@ export class InvoiceService {
       // invoice.invoiceLink = s3Link.url;
 
       //Notification
-      if(corporate.notificationMode === NotificationModeEnum.EMAIL) {
-        this.emailService.notifyCorporateOfInvoice(corporate,invoice);
+      if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyCorporateOfInvoice(corporate, invoice);
       } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
-        this.twilioService.notifyCorporateOfInvoice(corporate,invoice);
+        this.twilioService.notifyCorporateOfInvoice(corporate, invoice);
       }
 
       return await this.invoiceRepository.save(invoice);
     } catch (err) {
+      console.log('errata: ' + err);
       throw new HttpException(
         'Failed to create new invoice',
         HttpStatus.BAD_REQUEST,
@@ -144,6 +229,26 @@ export class InvoiceService {
       });
     } catch (err) {
       throw new HttpException('Failed to find invoice', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateInvoiceStatusForStripePayment(stripeInvoiceId: string) {
+    try {
+      const invoice = await this.invoiceRepository.findOneBy({
+        stripeInvoiceId: stripeInvoiceId,
+      });
+
+      if (!invoice) {
+        throw new NotFoundException('Invoice Id provided is not valid');
+      }
+
+      invoice.invoiceStatus = InvoiceStatusEnum.INDICATED_PAID;
+      return await this.invoiceRepository.save(invoice);
+    } catch (err) {
+      throw new HttpException(
+        'Failed to update Invoice for stripe payment',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

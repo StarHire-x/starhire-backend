@@ -234,8 +234,13 @@ export class PaymentService {
         (invoice) => invoice.hosted_invoice_url,
       );
 
-      const subscriptionInvoices = invoices?.data?.filter(invoice => invoice?.billing_reason === 'subscription_create' || invoice?.billing_reason === 'subscription_update' || invoice?.billing_reason === 'subscription_cycle');
-      
+      const subscriptionInvoices = invoices?.data?.filter(
+        (invoice) =>
+          invoice?.billing_reason === 'subscription_create' ||
+          invoice?.billing_reason === 'subscription_update' ||
+          invoice?.billing_reason === 'subscription_cycle',
+      );
+
       // console.log(invoiceUrls);
       return { statusCode: 200, data: subscriptionInvoices };
     } catch (error) {

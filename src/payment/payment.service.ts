@@ -28,27 +28,52 @@ export class PaymentService {
       await this.corporateService.findByUserId(clientReferenceId);
 
     if (corporateResponse && corporateResponse.data) {
-      const session = await this.stripe.checkout.sessions.create({
-        line_items: [
-          {
-            price: 'price_1O52FfHN833uAyuLXi83NFEv',
-            quantity: 1,
-          },
-        ],
-        client_reference_id: clientReferenceId,
-        mode: 'subscription',
-        //success_url: 'http://localhost:3001/payment/success',
-        //cancel_url: 'http://localhost:3001/payment/failure',
-        success_url: `${process.env.FRONTEND_CLIENT}/payment/success`,
-        cancel_url: `${process.env.FRONTEND_CLIENT}/payment/failure`,
-      });
+      if (corporateResponse?.data?.stripeCustId) {
+        const session = await this.stripe.checkout.sessions.create({
+          line_items: [
+            {
+              price: 'price_1O52FfHN833uAyuLXi83NFEv',
+              quantity: 1,
+            },
+          ],
+          customer: corporateResponse?.data?.stripeCustId,
+          client_reference_id: clientReferenceId,
+          mode: 'subscription',
+          //success_url: 'http://localhost:3001/payment/success',
+          //cancel_url: 'http://localhost:3001/payment/failure',
+          success_url: `${process.env.FRONTEND_CLIENT}/payment/success`,
+          cancel_url: `${process.env.FRONTEND_CLIENT}/payment/failure`,
+        });
 
-      //return session;
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Checkout session created',
-        data: session.url,
-      };
+        //return session;
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Checkout session created',
+          data: session.url,
+        };
+      } else {
+        const session = await this.stripe.checkout.sessions.create({
+          line_items: [
+            {
+              price: 'price_1O52FfHN833uAyuLXi83NFEv',
+              quantity: 1,
+            },
+          ],
+          client_reference_id: clientReferenceId,
+          mode: 'subscription',
+          //success_url: 'http://localhost:3001/payment/success',
+          //cancel_url: 'http://localhost:3001/payment/failure',
+          success_url: `${process.env.FRONTEND_CLIENT}/payment/success`,
+          cancel_url: `${process.env.FRONTEND_CLIENT}/payment/failure`,
+        });
+
+        //return session;
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Checkout session created',
+          data: session.url,
+        };
+      }
     }
     return {
       statusCode: HttpStatus.BAD_REQUEST,
@@ -150,7 +175,7 @@ export class PaymentService {
           CorporatePromotionStatusEnum.REGULAR;
 
         corporateUpdateDto.stripeSubId = null;
-        corporateUpdateDto.stripeCustId = null;
+        // corporateUpdateDto.stripeCustId = null;
 
         await this.corporateService.update(
           corporate.userId,
@@ -199,16 +224,23 @@ export class PaymentService {
 
   async getAllInvoiceFromACustomer(customerId: string) {
     try {
-      const invoices = await this.stripe.invoices.list({
-        customer: customerId,
-      });
+      const corporate =
+        await this.corporateService.findCorporateByStripeCustId(customerId);
+      if (corporate && corporate.data) {
+        const invoices = await this.stripe.invoices.list({
+          // customer: customerId,
+          subscription: corporate.data.stripeSubId,
+        });
 
-      const invoiceUrls = invoices.data.map(
-        (invoice) => invoice.hosted_invoice_url,
-      );
+        console.log(invoices);
 
-      console.log(invoiceUrls);
-      return { statusCode: 200, data: invoices };
+        const invoiceUrls = invoices.data.map(
+          (invoice) => invoice.hosted_invoice_url,
+        );
+
+        console.log(invoiceUrls);
+        return { statusCode: 200, data: invoices };
+      }
     } catch (error) {
       throw new Error(`Error listing invoices: ${error.message}`);
     }

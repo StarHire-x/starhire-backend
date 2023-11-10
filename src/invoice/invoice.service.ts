@@ -116,7 +116,7 @@ export class InvoiceService {
               customer: stripeCustId,
               amount: (jobApp.jobListing.averageSalary) * 100, // because amount takes in cents
               invoice: stripeInvoice.id,
-              description: jobApp.jobListing.title,
+              description: `${jobApp.jobListing.title} for job seeker user ${jobApp.jobSeeker.userName}, handled by recruiter user ${jobApp.recruiter.userName}`,
               currency: 'sgd'
             });
           });
@@ -147,7 +147,7 @@ export class InvoiceService {
             customer: stripeCustId,
             amount: (jobApp.jobListing.averageSalary) * 100, // because amount takes in cents
             invoice: stripeInvoice.id,
-            description: jobApp.jobListing.title,
+            description: `${jobApp.jobListing.title} for job seeker user ${jobApp.jobSeeker.userName}, handled by recruiter user ${jobApp.recruiter.userName}`,
             currency: 'sgd'
           });
         });
@@ -239,7 +239,7 @@ export class InvoiceService {
         throw new NotFoundException('Invoice Id provided is not valid');
       }
 
-      invoice.invoiceStatus = InvoiceStatusEnum.CONFIRMED_PAID;
+      invoice.invoiceStatus = InvoiceStatusEnum.INDICATED_PAID;
       return await this.invoiceRepository.save(invoice);
     } catch (err) {
       throw new HttpException(

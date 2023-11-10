@@ -85,11 +85,12 @@ export class InvoiceService {
       // const s3Link = await this.uploadService.upload(fileName, pdfBuffer);
       // invoice.invoiceLink = s3Link.url;
 
-      // if(corporate.notificationMode === NotificationModeEnum.EMAIL) {
-      //   this.emailService.notifyCorporateOfInvoice(corporate,invoice);
-      // } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
-      //   this.twilioService.notifyCorporateOfInvoice(corporate,invoice);
-      // }
+      //Notification
+      if(corporate.notificationMode === NotificationModeEnum.EMAIL) {
+        this.emailService.notifyCorporateOfInvoice(corporate,invoice);
+      } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
+        this.twilioService.notifyCorporateOfInvoice(corporate,invoice);
+      }
 
       return await this.invoiceRepository.save(invoice);
     } catch (err) {

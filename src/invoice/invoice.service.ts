@@ -313,7 +313,7 @@ export class InvoiceService {
       );
       return {
         statusCode: HttpStatus.OK,
-        message: 'User statistics retrieved',
+        message: 'Invoice statistics retrieved',
         data: {
           overallStatistics: overallStatistics,
           formattedResponse: formattedResponse,

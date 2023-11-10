@@ -69,7 +69,7 @@ export class InvoiceService {
       for (let id of jobApplicationIds) {
         const jobApplication = await this.jobApplicationRepository.findOne({
           where: { jobApplicationId: id },
-          relations: { jobListing: true },
+          relations: { jobListing: true, jobSeeker: true },
         });
         if (!jobApplication) {
           throw new NotFoundException(
@@ -116,7 +116,7 @@ export class InvoiceService {
               customer: stripeCustId,
               amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
               invoice: stripeInvoice.id,
-              description: jobApp.jobListing.title,
+              description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
               currency: 'sgd',
             });
           }
@@ -148,7 +148,7 @@ export class InvoiceService {
             customer: stripeCustId,
             amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
             invoice: stripeInvoice.id,
-            description: jobApp.jobListing.title,
+            description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
             currency: 'sgd',
           });
         }

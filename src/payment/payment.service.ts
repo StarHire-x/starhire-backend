@@ -224,23 +224,20 @@ export class PaymentService {
 
   async getAllInvoiceFromACustomer(customerId: string) {
     try {
-      const corporate =
-        await this.corporateService.findCorporateByStripeCustId(customerId);
-      if (corporate && corporate.data) {
-        const invoices = await this.stripe.invoices.list({
-          // customer: customerId,
-          subscription: corporate.data.stripeSubId,
-        });
+      const invoices = await this.stripe.invoices.list({
+        customer: customerId,
+      });
 
-        console.log(invoices);
+      console.log(invoices);
 
-        const invoiceUrls = invoices.data.map(
-          (invoice) => invoice.hosted_invoice_url,
-        );
+      const invoiceUrls = invoices.data.map(
+        (invoice) => invoice.hosted_invoice_url,
+      );
 
-        console.log(invoiceUrls);
-        return { statusCode: 200, data: invoices };
-      }
+      const subscriptionInvoices = invoices?.data?.filter(invoice => invoice?.billing_reason === 'subscription_create' || invoice?.billing_reason === 'subscription_update' || invoice?.billing_reason === 'subscription_cycle');
+      
+      // console.log(invoiceUrls);
+      return { statusCode: 200, data: subscriptionInvoices };
     } catch (error) {
       throw new Error(`Error listing invoices: ${error.message}`);
     }

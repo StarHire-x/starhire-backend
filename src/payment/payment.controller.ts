@@ -56,6 +56,15 @@ export class PaymentController {
 
           return 'webhook received and processed';
         // break;
+
+        case 'customer.deleted':
+          console.log("customer deleted triggered!");
+          const deletedStripeCustId = event.data.object.id as string;
+          console.log(`deleted striped cust id: ${deletedStripeCustId}`);
+          const response = await this.paymentService.removeStripeDataFromCustomer(deletedStripeCustId);
+          console.log(response);
+          return 'webhook received and processed';
+
         default:
           return 'Webhook received but not processed';
       }

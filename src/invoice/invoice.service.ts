@@ -278,7 +278,7 @@ export class InvoiceService {
         throw new NotFoundException('Invoice Id provided is not valid');
       }
 
-      // make pdf here
+      // update invoice payment to pay in full
       const invoiceJobApplications: jobApplication[] = [];
       invoice.jobApplications?.forEach((application) =>
         invoiceJobApplications.push({
@@ -300,9 +300,10 @@ export class InvoiceService {
       };
       const invoicePdfBuffer = await this.pdfService.createInvoice(invoiceData);
       const pdfLink = await this.uploadService.upload(
-        `${invoice.invoiceId}_${invoice?.corporate?.companyName}`,
+        `invoice${invoice.invoiceId}_${invoice?.corporate?.companyName}.pdf`,
         invoicePdfBuffer,
       );
+
       updateInvoiceDto = { ...updateInvoiceDto, invoiceLink: pdfLink?.url };
 
       Object.assign(invoice, updateInvoiceDto);

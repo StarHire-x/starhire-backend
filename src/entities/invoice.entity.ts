@@ -39,6 +39,9 @@ export class Invoice {
   @Column()
   stripeInvoiceId: string;
 
+  @Column()
+  proofOfPaymentLink: string; // only present when other payment is made
+
   @ManyToOne(() => Administrator, (administrator) => administrator.invoices, {
     nullable: false,
   })

@@ -11,6 +11,8 @@ import { TwilioService } from '../twilio/twilio.service';
 import { UploadService } from '../upload/upload.service';
 import { PdfService } from '../pdf/pdf.service';
 
+require('dotenv').config();
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([

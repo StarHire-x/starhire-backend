@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, NotFoundException, Put } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
@@ -7,9 +7,25 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
-  @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
+  @Post('/newReview/:role')
+  async create(
+    @Param('role') role: string,
+    @Body() createReviewDto: CreateReviewDto,
+  ) {
+    try {
+      const result = await this.reviewService.create(createReviewDto, role);
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 
   @Get()
@@ -22,13 +38,80 @@ export class ReviewController {
     return this.reviewService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+  @Get('/users/:id/:role')
+  async findUserListDropdown(
+    @Param('id') id: string,
+    @Param('role') role: string,
+  ) {
+    try {
+      const result = await this.reviewService.findUserListDropdown(id, role);
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  @Get('/retrieve/:id/:role')
+  async retrieveReviews(@Param('id') id: string, @Param('role') role: string) {
+    try {
+      const result = await this.reviewService.findByUserIdRole(id, role);
+      console.log(result);
+      return result;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateReviewDto: UpdateReviewDto,
+  ) {
+    try {
+      return await this.reviewService.update(id, updateReviewDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+  async remove(@Param('id') id: number) {
+    try {
+      return await this.reviewService.remove(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(
+          `Review with ID ${id} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 }

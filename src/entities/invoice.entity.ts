@@ -33,6 +33,12 @@ export class Invoice {
   @Column()
   invoiceLink: string;
 
+  @Column()
+  stripePaymentLink: string;
+
+  @Column()
+  stripeInvoiceId: string;
+
   @ManyToOne(() => Administrator, (administrator) => administrator.invoices, {
     nullable: false,
   })

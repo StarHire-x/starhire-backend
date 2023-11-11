@@ -56,6 +56,9 @@ export class Review {
   @JoinColumn()
   corporate: Corporate;
 
+  @Column({ nullable: true })
+  submissionDate: Date;
+
   constructor(entity: Partial<Review>) {
     Object.assign(this, entity);
   }

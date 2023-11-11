@@ -118,6 +118,45 @@ export class CommissionService {
     }
   }
 
+  async findAllByRecruiterId(recruiterId: string) {
+    try {
+      const recruiter = await this.recruiterRepository.findOne({
+        where: { userId: recruiterId },
+      });
+      if (!recruiter) {
+        throw new NotFoundException('Recruiter Id provided is not valid');
+      }
+
+      return await this.commissionRepository.find({
+        where: {
+          recruiter: recruiter,
+        },
+        relations: {
+          jobApplications: { jobListing: true, jobSeeker: true },
+          administrator: true,
+        },
+      });
+
+      // if (commissions.length > 0) {
+      //   return {
+      //     statusCode: HttpStatus.OK,
+      //     message: 'Retrieved commissions',
+      //     data: commissions,
+      //   };
+      // } else {
+      //   return {
+      //     statusCode: HttpStatus.NOT_FOUND,
+      //     message: 'No commission is found for recruiter and admin',
+      //   };
+      // }
+    } catch (err) {
+      throw new HttpException(
+        'Failed to retrieve commmissions by Recruiter Id',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async findOne(id: number) {
     return await this.commissionRepository.findOne({
       where: { commissionId: id },
@@ -168,7 +207,7 @@ export class CommissionService {
   async getAllRecruiterCommissions() {
     try {
       const allRecruiters = await this.recruiterRepository.find({
-        relations: {commissions: true},
+        relations: { commissions: true },
       });
 
       const overallStatistics = {
@@ -237,7 +276,7 @@ export class CommissionService {
             statistics,
           };
         }),
-      )
+      );
       return {
         statusCode: HttpStatus.OK,
         message: 'Commission statistics retrieved',

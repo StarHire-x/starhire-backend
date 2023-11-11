@@ -247,4 +247,48 @@ export class PaymentService {
       throw new Error(`Error listing invoices: ${error.message}`);
     }
   }
+
+  async removeStripeDataFromCustomer(deletedStripeCustId: string) {
+    try {
+      const corporateResponse =
+        await this.corporateService.findCorporateByStripeCustId(
+          deletedStripeCustId,
+        );
+
+      if (corporateResponse && corporateResponse.data) {
+        const corporate = corporateResponse.data;
+        const corporateUpdateDto = new UpdateCorporateDto();
+
+        corporateUpdateDto.corporatePromotionStatus =
+          CorporatePromotionStatusEnum.REGULAR;
+
+        corporateUpdateDto.stripeSubId = null;
+        corporateUpdateDto.stripeCustId = null;
+
+        await this.corporateService.update(
+          corporate.userId,
+          corporateUpdateDto,
+        );
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Successfully removed stripe data from customer',
+        };
+      } else {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          error: 'Corporate provided is invalid to remove stripe data!',
+        };
+      }
+    } catch (error) {
+      console.error(
+        'Error removing stripe data from customer in our DB:',
+        error,
+      );
+      //throw new Error('Failed to cancel subscription');
+      return {
+        status: 500,
+        error: 'Failed to remove stripe data from customer in our DB',
+      };
+    }
+  }
 }

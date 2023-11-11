@@ -65,7 +65,7 @@ export class InvoiceService {
         throw new NotFoundException('Administrator Id provided is not valid');
       }
 
-      const jobApplications = [];
+      const jobApplications: JobApplication[] = [];
       for (let id of jobApplicationIds) {
         const jobApplication = await this.jobApplicationRepository.findOne({
           where: { jobApplicationId: id },
@@ -134,12 +134,34 @@ export class InvoiceService {
       invoice.stripePaymentLink = sentInvoice.hosted_invoice_url;
       invoice.stripeInvoiceId = sentInvoice.id;
 
-      //Generate the pdf invoice
-      // await this.invoiceRepository.save(invoice);
-      // const fileName = `invoice${invoice.invoiceId}.pdf`;
-      // const pdfBuffer = await this.pdfService.createInvoice(invoice);
-      // const s3Link = await this.uploadService.upload(fileName, pdfBuffer);
-      // invoice.invoiceLink = s3Link.url;
+      // Generate the pdf invoice
+      // Save invoice to retrieve invoice ID
+      const savedInvoice = await this.invoiceRepository.save(invoice);
+      const fileName = `invoice${invoice.invoiceId}_${corporate.userName}.pdf`;
+
+      const invoiceJobApplications: jobApplication[] = [];
+      jobApplications.forEach((application: JobApplication) => {
+        invoiceJobApplications.push({
+          jobApplicationId: application?.jobApplicationId,
+          jobListingTitle: application?.jobListing?.title,
+          amount: application?.jobListing?.averageSalary,
+        });
+      });
+
+      const invoiceData: TInvoiceData = {
+        shipping: {
+          name: corporate?.userName,
+          address: corporate?.companyAddress,
+        },
+        items: invoiceJobApplications,
+        subtotal: dtoExcludingParentId?.totalAmount,
+        paid: 0,
+        invoice_nr: savedInvoice?.invoiceId,
+      };
+
+      const pdfBuffer = await this.pdfService.createInvoice(invoiceData);
+      const s3Link = await this.uploadService.upload(fileName, pdfBuffer);
+      invoice.invoiceLink = s3Link.url;
 
       //Notification
       if (corporate.notificationMode === NotificationModeEnum.EMAIL) {

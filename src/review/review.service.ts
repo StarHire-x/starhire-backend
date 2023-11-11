@@ -26,7 +26,7 @@ export class ReviewService {
     private readonly corporateRepository: Repository<Corporate>,
   ) {}
 
-  async create(createReviewDto: CreateReviewDto): Promise<any> {
+  async create(createReviewDto: CreateReviewDto, role: string): Promise<any> {
     try {
       const {
         jobSeekerId,
@@ -49,27 +49,41 @@ export class ReviewService {
         throw new NotFoundException('Corporate Id provided is not valid');
       }
 
-      const existingReview = await this.reviewRepository.findOne({
-        where: {
-          jobSeeker: { userId: jobSeekerId },
-          corporate: { userId: corporateId },
-          reviewType: ReviewTypeEnum.JOBSEEKER,
-        },
-        relations: { jobSeeker: true, corporate: true },
-        order: { submissionDate: 'DESC' },
-      });
+      let existingReview;
+
+      if(role === UserRoleEnum.CORPORATE) {
+        existingReview = await this.reviewRepository.findOne({
+          where: {
+            jobSeeker: { userId: jobSeekerId },
+            corporate: { userId: corporateId },
+            reviewType: ReviewTypeEnum.JOBSEEKER,
+          },
+          relations: { jobSeeker: true, corporate: true },
+          order: { submissionDate: 'DESC' },
+        });
+      } else if(role === UserRoleEnum.JOBSEEKER) {
+        existingReview = await this.reviewRepository.findOne({
+          where: {
+            jobSeeker: { userId: jobSeekerId },
+            corporate: { userId: corporateId },
+            reviewType: ReviewTypeEnum.CORPORATE,
+          },
+          relations: { jobSeeker: true, corporate: true },
+          order: { submissionDate: 'DESC' },
+        });
+      }
 
       if (
         existingReview &&
         new Date(submissionDate) <
           new Date(
             new Date(existingReview.submissionDate).setMonth(
-              new Date(existingReview.submissionDate).getMonth() + 6,
+              new Date(existingReview.submissionDate).getMonth() + 1,
             ),
           )
       ) {
         throw new BadRequestException(
-          'You cannot submit a review for the same jobseeker within 6 months of the last review',
+          'You cannot submit a review for the same jobseeker within 1 months of the last review',
         );
       }
 
@@ -149,7 +163,7 @@ export class ReviewService {
       if (role === UserRoleEnum.JOBSEEKER) {
         const jobSeeker = await this.jobSeekerRepository.findOne({
           where: { userId: userId },
-          relations: ['reviews', 'reviews.corporate'],
+          relations: ['reviews', 'reviews.corporate', 'reviews.jobSeeker'],
         });
 
         if (!jobSeeker) {
@@ -164,7 +178,7 @@ export class ReviewService {
       } else if (role === UserRoleEnum.CORPORATE) {
         const corporate = await this.corporateRepository.findOne({
           where: { userId: userId },
-          relations: ['reviews', 'reviews.jobSeeker'],
+          relations: ['reviews', 'reviews.jobSeeker', 'reviews.corporate'],
         });
 
         if (!corporate) {
@@ -238,7 +252,10 @@ export class ReviewService {
       if (result.affected === 0) {
         throw new HttpException('Review id not found', HttpStatus.NOT_FOUND);
       }
-      return result;
+      return {
+        statusCode: 200,
+        message: 'Review deleted',
+      };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

@@ -7,10 +7,13 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
-  @Post()
-  async create(@Body() createReviewDto: CreateReviewDto) {
+  @Post('/newReview/:role')
+  async create(
+    @Param('role') role: string,
+    @Body() createReviewDto: CreateReviewDto,
+  ) {
     try {
-      const result = await this.reviewService.create(createReviewDto);
+      const result = await this.reviewService.create(createReviewDto, role);
       console.log(result);
       return result;
     } catch (error) {
@@ -57,10 +60,7 @@ export class ReviewController {
   }
 
   @Get('/retrieve/:id/:role')
-  async retrieveReviews(
-    @Param('id') id: string,
-    @Param('role') role: string,
-  ) {
+  async retrieveReviews(@Param('id') id: string, @Param('role') role: string) {
     try {
       const result = await this.reviewService.findByUserIdRole(id, role);
       console.log(result);
@@ -97,9 +97,9 @@ export class ReviewController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  async remove(@Param('id') id: number) {
     try {
-      return this.reviewService.remove(id);
+      return await this.reviewService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(

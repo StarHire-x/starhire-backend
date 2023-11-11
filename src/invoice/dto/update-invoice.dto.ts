@@ -8,6 +8,9 @@ class UpdateDto {
   billingAddress: string;
   totalAmount: number;
   invoiceLink: string;
+  proofOfPaymentLink: string;
+  stripePaymentLink: string;
+  stripeInvoiceId: string;
 }
 
 export class UpdateInvoiceDto extends PartialType(UpdateDto) {}

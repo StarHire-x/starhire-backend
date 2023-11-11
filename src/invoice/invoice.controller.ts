@@ -45,7 +45,7 @@ export class InvoiceController {
   }
 
   @Get('corporate-id/:corporateId')
-  findAllByCorporateId(@Param('id') corporateId: string) {
+  findAllByCorporateId(@Param('corporateId') corporateId: string) {
     try {
       return this.invoiceService.findAllByCorporateId(corporateId);
     } catch (error) {

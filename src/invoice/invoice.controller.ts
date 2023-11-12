@@ -71,7 +71,6 @@ export class InvoiceController {
     }
   }
 
-  @Public()
   @Get('oneCorporate/:id')
   async findOneCorporateInvoice(@Param('id') id: string) {
     try {

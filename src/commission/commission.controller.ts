@@ -76,6 +76,19 @@ export class CommissionController {
     }
   }
 
+  @Get('oneRecruiter/:id')
+  async findOneRecruiterCommission(@Param('id') id: string) {
+    try {
+      return await this.commissionService.getOneRecruiterCommissions(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Get('/recruiter/:recruiterId')
   async findAllByRecruiterId(@Param('recruiterId') recruiterId: string) {
     try {

@@ -197,7 +197,7 @@ export class InvoiceService {
         order: {
           invoiceId: 'ASC',
         },
-        where: { corporate: {userId: corporate.userId} },
+        where: { corporate: { userId: corporate.userId } },
         relations: {
           administrator: true,
           jobApplications: { jobListing: true, jobSeeker: true },
@@ -418,6 +418,265 @@ export class InvoiceService {
           overallStatistics: overallStatistics,
           formattedResponse: formattedResponse,
         },
+      };
+    } catch (err) {
+      throw new HttpException('Error in Database', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private obtainDateByDayWeeksMonth() {
+    const startDate = new Date('2023-08-27');
+    const today = new Date();
+
+    // Array for days
+    const dateArrayInDays = [];
+    let currentDate = new Date(startDate);
+    while (currentDate <= today) {
+      const day = currentDate.getDate().toString().padStart(2, '0');
+      const month = currentDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const year = currentDate.getFullYear().toString().slice(-2);
+      dateArrayInDays.push(`${day}-${month}-${year}`);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Array for weeks
+    const dateArrayByWeek = [];
+    currentDate = new Date(startDate);
+    while (currentDate <= today) {
+      const startDay = currentDate.getDate().toString().padStart(2, '0');
+      const startMonth = currentDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const startYear = currentDate.getFullYear().toString().slice(-2);
+
+      // Calculate the end date of the week
+      let endDate = new Date(currentDate);
+      endDate.setDate(endDate.getDate() + 6);
+      if (endDate > today) {
+        endDate = today;
+      }
+
+      const endDay = endDate.getDate().toString().padStart(2, '0');
+      const endMonth = endDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const endYear = endDate.getFullYear().toString().slice(-2);
+
+      // Add the week to the array
+      dateArrayByWeek.push(
+        `${startDay}-${startMonth}-${startYear} to ${endDay}-${endMonth}-${endYear}`,
+      );
+
+      // Increment the date
+      currentDate.setDate(currentDate.getDate() + 7);
+    }
+
+    // Array for months
+    const dateArrayInMonths = [];
+    currentDate = new Date(startDate);
+    while (currentDate <= today) {
+      const month = currentDate
+        .toLocaleString('en-us', { month: 'short' })
+        .toUpperCase();
+      const year = currentDate.getFullYear().toString().slice(-2);
+      const monthYear = `${month}-${year}`;
+      if (!dateArrayInMonths.includes(monthYear)) {
+        dateArrayInMonths.push(monthYear);
+      }
+      currentDate.setDate(1); // Set to the 1st to prevent rollover
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+
+    return {
+      dateArrayInDays,
+      dateArrayByWeek,
+      dateArrayInMonths,
+    };
+  }
+
+  private formatDateByMonth(isoString) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const date = new Date(isoString);
+    const month = months[date.getMonth()].toUpperCase();
+    const year = date.getFullYear().toString().slice(-2);
+    return `${month}-${year}`;
+  }
+
+  private formatDateByDay(isoString) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const date = new Date(isoString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = months[date.getMonth()].toUpperCase();
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}-${month}-${year}`;
+  }
+
+  private formatDateByWeek(isoString, reference) {
+    const targetDate = new Date(isoString);
+
+    for (let range of reference) {
+      const [start, end] = range.split(' to ');
+      const startDate = this.parseDate(start);
+      const endDate = this.parseDate(end);
+
+      if (targetDate >= startDate && targetDate <= endDate) {
+        return range;
+      }
+    }
+
+    return 'Date out of range';
+  }
+
+  private parseDate(dateString) {
+    const [day, month, year] = dateString.split('-');
+    const months = {
+      JAN: 0,
+      FEB: 1,
+      MAR: 2,
+      APR: 3,
+      MAY: 4,
+      JUN: 5,
+      JUL: 6,
+      AUG: 7,
+      SEP: 8,
+      OCT: 9,
+      NOV: 10,
+      DEC: 11,
+    };
+    return new Date(
+      global.Number(`20${year}`),
+      months[month],
+      global.Number(day),
+    );
+  }
+
+  async getOneCorporateInvoices(userId: string) {
+    try {
+      const corporate = await this.corporateRepository.findOne({
+        where: { userId: userId },
+        relations: ['invoices'],
+      });
+
+      const statisticsMetrics = {
+        notPaidSum: 0,
+        notPaidCount: 0,
+        indicatedPaidSum: 0,
+        indicatedPaidCount: 0,
+        confirmedPaidSum: 0,
+        confirmedPaidCount: 0,
+      };
+
+      let statistics = {
+        Not_Paid: {},
+        Indicated_Paid: {},
+        Confirmed_Paid: {},
+      };
+
+      const result = this.obtainDateByDayWeeksMonth();
+      const month = result.dateArrayInMonths;
+      const day = result.dateArrayInDays;
+      const weeks = result.dateArrayByWeek;
+
+      for(const invoice of corporate.invoices) {
+
+        const monthSum = this.formatDateByMonth(invoice.invoiceDate);
+        const daySum = this.formatDateByDay(invoice.invoiceDate);
+        const weekSum = this.formatDateByWeek(invoice.invoiceDate, weeks);
+
+        const status = invoice.invoiceStatus;
+
+        if (invoice.invoiceStatus === InvoiceStatusEnum.NOT_PAID) {
+          statisticsMetrics.notPaidCount += 1;
+          statisticsMetrics.notPaidSum += invoice.totalAmount;
+        } else if (invoice.invoiceStatus === InvoiceStatusEnum.INDICATED_PAID) {
+          statisticsMetrics.indicatedPaidCount += 1;
+          statisticsMetrics.indicatedPaidSum += invoice.totalAmount;
+        } else if (invoice.invoiceStatus === InvoiceStatusEnum.CONFIRMED_PAID) {
+          statisticsMetrics.confirmedPaidCount += 1;
+          statisticsMetrics.confirmedPaidSum += invoice.totalAmount;
+        }
+
+        statistics[status][monthSum] = (statistics[status][monthSum] || 0) + invoice.totalAmount;
+        statistics[status][daySum] =
+          (statistics[status][daySum] || 0) + invoice.totalAmount;
+          statistics[status][weekSum] =
+            (statistics[status][weekSum] || 0) + invoice.totalAmount;
+      }
+
+      const overallStatistics = {
+        overall: statisticsMetrics,
+        month: {
+          label: month,
+          dataNotPaid: month.map(
+            (label: string) => statistics.Not_Paid[label] || 0,
+          ),
+          dataIndicatedPaid: month.map(
+            (label: string) => statistics.Indicated_Paid[label] || 0,
+          ),
+          dataConfirmedPaid: month.map(
+            (label: string) => statistics.Confirmed_Paid[label] || 0,
+          ),
+        },
+        day: {
+          label: day,
+          dataNotPaid: day.map(
+            (label: string) => statistics.Not_Paid[label] || 0,
+          ),
+          dataIndicatedPaid: day.map(
+            (label: string) => statistics.Indicated_Paid[label] || 0,
+          ),
+          dataConfirmedPaid: day.map(
+            (label: string) => statistics.Confirmed_Paid[label] || 0,
+          ),
+        },
+        week: {
+          label: weeks,
+          dataNotPaid: weeks.map(
+            (label: string) => statistics.Not_Paid[label] || 0,
+          ),
+          dataIndicatedPaid: weeks.map(
+            (label: string) => statistics.Indicated_Paid[label] || 0,
+          ),
+          dataConfirmedPaid: weeks.map(
+            (label: string) => statistics.Confirmed_Paid[label] || 0,
+          ),
+        },
+      };
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Invocie detailed statistics retrieved',
+        data: overallStatistics,
       };
     } catch (err) {
       throw new HttpException('Error in Database', HttpStatus.BAD_REQUEST);

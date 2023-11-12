@@ -128,6 +128,7 @@ export class JobSeekerService {
           chats: true,
           tickets: true,
           jobListings: true,
+          jobExperiences: true,
           // reviews: true,
         },
       });

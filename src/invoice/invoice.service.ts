@@ -197,7 +197,7 @@ export class InvoiceService {
         order: {
           invoiceId: 'ASC',
         },
-        where: { corporate: corporate },
+        where: { corporate: {userId: corporate.userId} },
         relations: {
           administrator: true,
           jobApplications: { jobListing: true, jobSeeker: true },

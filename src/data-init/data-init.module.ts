@@ -27,6 +27,8 @@ import { JobPreference } from '../entities/jobPreference.entity';
 import { JobPreferenceService } from '../job-preference/job-preference.service';
 import { CommissionRate } from '../entities/commissionRate.entity';
 import { CommissionRateService } from '../commission-rate/commission-rate.service';
+import { JobApplicationService } from 'src/job-application/job-application.service';
+import { JobAssignmentService } from 'src/job-assignment/job-assignment.service';
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { CommissionRateService } from '../commission-rate/commission-rate.servic
       Document,
       JobPreference,
       CommissionRate,
+      JobApplication,
+      JobAssignment,
     ]),
     EmailModule,
     TwilioModule,
@@ -62,6 +66,8 @@ import { CommissionRateService } from '../commission-rate/commission-rate.servic
     DocumentService,
     JobPreferenceService,
     CommissionRateService,
+    JobApplicationService,
+    JobAssignmentService,
   ],
 })
 export class DataInitModule {}

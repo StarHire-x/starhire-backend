@@ -35,6 +35,14 @@ import ForumPostEnum from '../enums/forumPost.enum';
 import { CommissionRate } from '../entities/commissionRate.entity';
 import { CommissionRateService } from '../commission-rate/commission-rate.service';
 import { CreateCommissionRateDto } from '../commission-rate/dto/create-commission-rate.dto';
+import { CreateJobApplicationDto } from 'src/job-application/dto/create-job-application.dto';
+import JobApplicationStatusEnum from 'src/enums/jobApplicationStatus.enum';
+import { JobApplication } from 'src/entities/jobApplication.entity';
+import { JobApplicationService } from 'src/job-application/job-application.service';
+import { CreateDocumentDto } from 'src/document/dto/create-document.dto';
+import { CreateJobAssignmentDto } from 'src/job-assignment/dto/create-job-assignment.dto';
+import { JobAssignment } from 'src/entities/jobAssignment.entity';
+import { JobAssignmentService } from 'src/job-assignment/job-assignment.service';
 
 require('dotenv').config();
 
@@ -71,6 +79,12 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(CommissionRate)
     private readonly commissionRateRepository: Repository<CommissionRate>,
     private readonly commissionRateService: CommissionRateService,
+    @InjectRepository(JobApplication)
+    private readonly jobApplicationRepository: Repository<JobApplication>,
+    private readonly jobApplicationService: JobApplicationService,
+    @InjectRepository(JobAssignment)
+    private readonly jobAssignmentRepository: Repository<JobAssignment>,
+    private readonly jobAssignmentService: JobAssignmentService,
   ) {}
 
   async onModuleInit() {
@@ -254,8 +268,7 @@ export class DataInitService implements OnModuleInit {
       process.env.CORPORATE_PW,
       5,
     );
-    const createCorporateFourDto: CreateCorporateDto =
-      new CreateCorporateDto();
+    const createCorporateFourDto: CreateCorporateDto = new CreateCorporateDto();
     createCorporateFourDto.userName = 'GrowingMinds';
     createCorporateFourDto.password = hashedCorporateFourPassword;
     createCorporateFourDto.email = 'growingminds@gmail.com';
@@ -884,5 +897,100 @@ export class DataInitService implements OnModuleInit {
     console.log(
       `ticket ${createTicketThreeDto.ticketName} is created by email ${createTicketThreeDto.email}`,
     );
+
+    // jobApplication 1 creation
+    const jobListingOne = await this.jobListingRepository.findOne({
+      where: { jobListingId: 1 },
+    });
+    const jobSeeker = await this.jobSeekerRepository.findOne({
+      where: { email: 'jobseeker@gmail.com' },
+    });
+    const recruiter = await this.recruiterRepository.findOne({
+      where: { email: 'recruiter@gmail.com' },
+    });
+
+    const createJobAssignmentDto: CreateJobAssignmentDto =
+      new CreateJobAssignmentDto();
+    createJobAssignmentDto.jobSeekerId = jobSeeker.userId;
+    createJobAssignmentDto.jobListingId = jobListingOne.jobListingId;
+    createJobAssignmentDto.recruiterId = recruiter.userId;
+    await this.jobAssignmentService.create(createJobAssignmentDto);
+    console.log('Job assignment one created.');
+
+    const createJobApplicationDto: CreateJobApplicationDto =
+      new CreateJobApplicationDto();
+    createJobApplicationDto.jobApplicationStatus =
+      JobApplicationStatusEnum.OFFER_ACCEPTED;
+    createJobApplicationDto.availableStartDate = new Date();
+    createJobApplicationDto.remarks = 'This is Job Application 1 used in SR4';
+    createJobApplicationDto.submissionDate = new Date();
+    createJobApplicationDto.jobListingId = jobListingOne.jobListingId;
+    createJobApplicationDto.jobSeekerId = jobSeeker.userId;
+    createJobApplicationDto.recruiterId = recruiter.userId;
+    createJobApplicationDto.documents = null;
+
+    await this.jobApplicationService.create(createJobApplicationDto);
+    console.log(`Job Application 1 is created.`);
+
+    // jobApplication 2 creation
+    const jobListingTwo = await this.jobListingRepository.findOne({
+      where: { jobListingId: 2 },
+    });
+    const jobSeekerTwo = await this.jobSeekerRepository.findOne({
+      where: { email: 'jobseeker2@gmail.com' },
+    });
+
+    const createJobAssignmentTwoDto: CreateJobAssignmentDto =
+      new CreateJobAssignmentDto();
+    createJobAssignmentTwoDto.jobSeekerId = jobSeekerTwo.userId;
+    createJobAssignmentTwoDto.jobListingId = jobListingTwo.jobListingId;
+    createJobAssignmentTwoDto.recruiterId = recruiter.userId;
+    await this.jobAssignmentService.create(createJobAssignmentTwoDto);
+    console.log('Job assignment two created.');
+
+    const createJobApplicationTwoDto: CreateJobApplicationDto =
+      new CreateJobApplicationDto();
+    createJobApplicationTwoDto.jobApplicationStatus =
+      JobApplicationStatusEnum.OFFER_ACCEPTED;
+    createJobApplicationTwoDto.availableStartDate = new Date();
+    createJobApplicationTwoDto.remarks =
+      'This is Job Application 2 used in SR4';
+    createJobApplicationTwoDto.submissionDate = new Date();
+    createJobApplicationTwoDto.jobListingId = jobListingTwo.jobListingId;
+    createJobApplicationTwoDto.jobSeekerId = jobSeekerTwo.userId;
+    createJobApplicationTwoDto.recruiterId = recruiter.userId;
+    createJobApplicationTwoDto.documents = null;
+
+    await this.jobApplicationService.create(createJobApplicationTwoDto);
+    console.log(`Job Application 2 is created.`);
+
+    // jobApplication 2 creation
+    const jobSeekerThree = await this.jobSeekerRepository.findOne({
+      where: { email: 'jobseeker3@gmail.com' },
+    });
+
+    const createJobAssignmentThreeDto: CreateJobAssignmentDto =
+      new CreateJobAssignmentDto();
+    createJobAssignmentThreeDto.jobSeekerId = jobSeekerThree.userId;
+    createJobAssignmentThreeDto.jobListingId = jobListingTwo.jobListingId;
+    createJobAssignmentThreeDto.recruiterId = recruiter.userId;
+    await this.jobAssignmentService.create(createJobAssignmentThreeDto);
+    console.log('Job assignment three created.');
+
+    const createJobApplicationThreeDto: CreateJobApplicationDto =
+      new CreateJobApplicationDto();
+    createJobApplicationThreeDto.jobApplicationStatus =
+      JobApplicationStatusEnum.OFFER_ACCEPTED;
+    createJobApplicationThreeDto.availableStartDate = new Date();
+    createJobApplicationThreeDto.remarks =
+      'This is Job Application 3 used in SR4';
+    createJobApplicationThreeDto.submissionDate = new Date();
+    createJobApplicationThreeDto.jobListingId = jobListingTwo.jobListingId;
+    createJobApplicationThreeDto.jobSeekerId = jobSeekerThree.userId;
+    createJobApplicationThreeDto.recruiterId = recruiter.userId;
+    createJobApplicationThreeDto.documents = null;
+
+    await this.jobApplicationService.create(createJobApplicationThreeDto);
+    console.log(`Job Application 3 is created.`);
   }
 }

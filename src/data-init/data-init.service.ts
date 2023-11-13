@@ -249,6 +249,39 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
+    // Corporate account Growing Minds Preschool growingminds@gmail.com creation
+    const hashedCorporateFourPassword = await bcrypt.hash(
+      process.env.CORPORATE_PW,
+      5,
+    );
+    const createCorporateFourDto: CreateCorporateDto =
+      new CreateCorporateDto();
+    createCorporateFourDto.userName = 'GrowingMinds';
+    createCorporateFourDto.password = hashedCorporateFourPassword;
+    createCorporateFourDto.email = 'growingminds@gmail.com';
+    createCorporateFourDto.contactNo = '66816712';
+    createCorporateFourDto.role = UserRoleEnum.CORPORATE;
+    createCorporateFourDto.createdAt = new Date();
+    createCorporateFourDto.companyRegistrationId = 177452083;
+    createCorporateFourDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/growingminds.png';
+    createCorporateFourDto.companyName = 'Growing Minds Preschool Pte Ltd';
+
+    const existingCorporateFour = await this.corporateRepository.findOne({
+      where: {
+        userName: createCorporateFourDto.userName,
+        email: createCorporateFourDto.email,
+      },
+    });
+
+    // if data init corporate does not exist, means we can create the data init corporate
+    if (!existingCorporateFour) {
+      await this.corporateService.create(createCorporateFourDto);
+      console.log(
+        `Data initialized this corporate account ${createCorporateFourDto.email} successfully!`,
+      );
+    }
+
     // Job Seeker account jobseeker jobseeker@gmail.com creation
     const hashedJobSeekerPassword = await bcrypt.hash(
       process.env.JOBSEEKER_PW,
@@ -391,6 +424,13 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdCorporateFour = await this.corporateRepository.findOne({
+      where: {
+        userName: createCorporateFourDto.userName,
+        email: createCorporateFourDto.email,
+      },
+    });
+
     const createdJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
         userName: createJobSeekerDto.userName,
@@ -419,6 +459,7 @@ export class DataInitService implements OnModuleInit {
       !createdCorporate ||
       !createdCorporateTwo ||
       !createdCorporateThree ||
+      !createdCorporateFour ||
       !createdJobSeeker ||
       !createdJobSeekerTwo ||
       !createdJobSeekerThree

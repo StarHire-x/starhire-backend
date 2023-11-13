@@ -49,6 +49,7 @@ export class JobSeekerController {
   }
 
   // GET /job-seeker/:id
+  @Public()
   @Get(':id')
   findOneJobSeeker(@Param('id') id: string) {
     try {

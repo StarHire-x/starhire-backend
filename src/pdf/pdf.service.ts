@@ -77,15 +77,15 @@ export class PdfService {
     doc
       .fillColor('#444444')
       .fontSize(30)
-      .text(jobSeeker.fullName, 75, 50, { align: 'center' })
+      .text(jobSeeker?.fullName, 75, 50, { align: 'center' })
       .fontSize(10) // Adjust font size for these details if needed
-      .text('Contact No: ' + jobSeeker.contactNo, 50, 80, {
+      .text('Contact No: ' + jobSeeker?.contactNo, 50, 80, {
         align: 'left',
       })
-      .text('Address: ' + jobSeeker.homeAddress, 75, 80, {
+      .text('Address: ' + jobSeeker?.homeAddress, 75, 80, {
         align: 'center',
       })
-      .text('Email: ' + jobSeeker.email, 300, 80, {
+      .text('Email: ' + jobSeeker?.email, 300, 80, {
         align: 'right',
       })
       .fontSize(15)
@@ -105,12 +105,12 @@ export class PdfService {
       .font('Helvetica')
       .text('Name of Institution: ', 50, customerInformationTop)
       .font('Helvetica-Bold')
-      .text(jobSeeker.instituteName, 150, customerInformationTop)
+      .text(jobSeeker?.instituteName, 150, customerInformationTop)
       .font('Helvetica')
 
       .text('Date of Graduation', 400, customerInformationTop)
       .text(
-        this.formatDateString(jobSeeker.dateOfGraduation),
+        this.formatDateString(jobSeeker?.dateOfGraduation),
         400,
         customerInformationTop,
         { align: 'right' },
@@ -118,45 +118,22 @@ export class PdfService {
 
       .text('Highest Education Status: ', 50, customerInformationTop + 15)
       .font('Helvetica-Bold')
-      .text(jobSeeker.highestEducationStatus, 200, customerInformationTop + 15)
+      .text(jobSeeker?.highestEducationStatus, 200, customerInformationTop + 15)
       .font('Helvetica')
       .moveDown();
     this.generateHr(doc, 245);
   }
 
-  // private generateSkill(doc, jobSeeker: any) {
-  //   doc.fillColor('#444444').fontSize(20).text('Skills & Professional Certificates', 50, 300);
-
-  //   this.generateHr(doc, 320);
-
-  //   const customerInformationTop = 330;
-
-  //   doc
-  //     .fontSize(10)
-  //     .font('Helvetica')
-  //     .text('Proficient Languages: ', 50, customerInformationTop)
-  //     .font('Helvetica-Bold')
-  //     .text(jobSeeker.proficientLanguages, 150, customerInformationTop)
-  //     .font('Helvetica')
-  //     .text('Teaching Experience ', 50, customerInformationTop + 15)
-  //     .font('Helvetica-Bold')
-  //     .text(jobSeeker.experience, 150, customerInformationTop + 15)
-  //     .font('Helvetica')
-  //     .text('Certifications ', 50, customerInformationTop + 30)
-  //     .font('Helvetica-Bold')
-  //     .text(jobSeeker.certifications, 150, customerInformationTop + 30)
-  //     .moveDown();
-  //   this.generateHr(doc, 375);
-  // }
   private generateSkill(doc, jobSeeker: any) {
+    const startPt = 275;
     doc
       .fillColor('#444444')
       .fontSize(20)
-      .text('Skills & Professional Certificates', 50, 300);
+      .text('Skills & Professional Certificates', 50, startPt);
 
-    this.generateHr(doc, 320);
+    this.generateHr(doc, startPt + 20);
 
-    const customerInformationTop = 330;
+    const customerInformationTop = startPt + 30;
 
     doc
       .fontSize(10)
@@ -165,59 +142,73 @@ export class PdfService {
       .font('Helvetica-Bold')
       // Replace '_' with ',' in proficientLanguages
       .text(
-        jobSeeker.proficientLanguages.replace(/_/g, ', '),
+        jobSeeker?.proficientLanguages.replace(/_/g, ', '),
         150,
         customerInformationTop,
       )
       .font('Helvetica')
       .text('Teaching Experience ', 50, customerInformationTop + 15)
       .font('Helvetica-Bold')
-      .text(jobSeeker.experience, 150, customerInformationTop + 15)
+      .text(jobSeeker?.experience, 150, customerInformationTop + 15)
       .font('Helvetica')
       .text('Certifications ', 50, customerInformationTop + 30)
       .font('Helvetica-Bold')
       // Replace '_' with ',' in certifications
       .text(
-        jobSeeker.certifications.replace(/_/g, ', '),
+        jobSeeker?.certifications.replace(/_/g, ', '),
         150,
         customerInformationTop + 30,
       )
       .moveDown();
-    this.generateHr(doc, 375);
+    this.generateHr(doc, startPt + 75);
   }
 
   private generateWorkExperience(doc, jobSeeker: any) {
+    const startPt = 380
     doc
       .font('Helvetica')
       .fillColor('#444444')
       .fontSize(20)
-      .text('Work Experience', 50, 410);
+      .text('Work Experience', 50, startPt);
 
-    this.generateHr(doc, 430);
+    this.generateHr(doc, startPt+ 20);
 
-    let i;
-    const invoiceTableTop = 440;
-
+    const invoiceTableTop = startPt + 30;
     let position = invoiceTableTop;
 
-    for (let i = 0; i < jobSeeker.jobExperiences.length; i++) {
-      const jobExperience = jobSeeker.jobExperiences[i];
+    const entrySpacing = 60;
 
-      this.generateJobExperienceRow(
-        doc,
-        position,
-        jobExperience.jobTitle,
-        jobExperience.jobDescription,
-        jobExperience.employerName,
-        this.formatDateString(jobExperience.startDate),
-        this.formatDateString(jobExperience.endDate),
-      );
-      // this.generateHr(doc, position + 40);
+    // Check if job experiences exist and is not empty
+    if (jobSeeker.jobExperiences && jobSeeker.jobExperiences.length > 0) {
+      // Convert startDate to a Date object and sort the array
+      jobSeeker.jobExperiences.forEach((job) => {
+        job.startDateObj = new Date(job.startDate);
+      });
 
-      position += 50; // Increment position by 50 for each job experience
+      jobSeeker.jobExperiences.sort((a, b) => b.startDateObj - a.startDateObj);
+
+      // Iterate over the sorted array
+      for (let i = 0; i < jobSeeker.jobExperiences.length; i++) {
+        const jobExperience = jobSeeker.jobExperiences[i];
+
+        this.generateJobExperienceRow(
+          doc,
+          position,
+          jobExperience.jobTitle,
+          jobExperience.jobDescription,
+          jobExperience.employerName,
+          this.formatDateString(jobExperience.startDate),
+          this.formatDateString(jobExperience.endDate),
+        );
+
+        position += entrySpacing; // Increment position by 50 for each job experience
+      }
+
+      this.generateHr(doc, position);
+    } else {
+      // Handle the case where there are no job experiences
+      doc.text('No job experience available.', 50, position);
     }
-
-    this.generateHr(doc, position);
   }
 
   // Currently got issue handling images, i want to add star hire logo but cmi
@@ -376,7 +367,7 @@ export class PdfService {
       .fontSize(10)
       .text(formattedText, 50, y)
       .text(dateRange, 370, y, { align: 'right' })
-      .text(jobDescription, 50, y + 15);
+      .text(jobDescription, 50, y + 15, { width: 465, align: 'left' });
   }
 
   private generateHr(doc, y) {
@@ -405,6 +396,11 @@ export class PdfService {
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
+
+    // Check if the date is 1/1/1970
+    if (day === 1 && month === 1 && year === 1970) {
+      return 'Present';
+    }
 
     return `${day}/${month}/${year}`;
   }

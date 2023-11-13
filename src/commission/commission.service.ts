@@ -129,26 +129,13 @@ export class CommissionService {
 
       return await this.commissionRepository.find({
         where: {
-          recruiter: recruiter,
+          recruiter: { userId: recruiterId },
         },
         relations: {
           jobApplications: { jobListing: true, jobSeeker: true },
           administrator: true,
         },
       });
-
-      // if (commissions.length > 0) {
-      //   return {
-      //     statusCode: HttpStatus.OK,
-      //     message: 'Retrieved commissions',
-      //     data: commissions,
-      //   };
-      // } else {
-      //   return {
-      //     statusCode: HttpStatus.NOT_FOUND,
-      //     message: 'No commission is found for recruiter and admin',
-      //   };
-      // }
     } catch (err) {
       throw new HttpException(
         'Failed to retrieve commmissions by Recruiter Id',
@@ -473,7 +460,7 @@ export class CommissionService {
       const day = result.dateArrayInDays;
       const weeks = result.dateArrayByWeek;
 
-      for(const commission of recruiter.commissions) {
+      for (const commission of recruiter.commissions) {
         const monthSum = this.formatDateByMonth(commission.commissionDate);
         const daySum = this.formatDateByDay(commission.commissionDate);
         const weekSum = this.formatDateByWeek(commission.commissionDate, weeks);

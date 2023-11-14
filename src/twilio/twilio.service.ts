@@ -11,6 +11,8 @@ import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
 import { EventListing } from '../entities/eventListing.entity';
 import { Invoice } from '../entities/invoice.entity';
+import { User } from 'src/entities/user.entity';
+import { ChatMessage } from 'src/entities/chatMessage.entity';
 
 @Injectable()
 export class TwilioService {
@@ -429,5 +431,38 @@ Log in for details: ${loginLink}`;
     } catch (error) {
       throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async notifyChatRecipientImportantMessage(
+    sender: User,
+    recipient: User,
+    chatMessage: ChatMessage,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!recipient.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${recipient.userName}, you have an important message sent by ${sender.userName}. Message content: ${chatMessage.message}. Login for details: ${loginLink}}`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${recipient.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      console.log("SMS whatsapp sent");
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: recipient,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  
   }
 }

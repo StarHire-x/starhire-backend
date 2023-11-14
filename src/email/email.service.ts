@@ -13,6 +13,8 @@ import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
 import { Invoice } from '../entities/invoice.entity';
 import { EventListing } from '../entities/eventListing.entity';
+import { User } from 'src/entities/user.entity';
+import { ChatMessage } from 'src/entities/chatMessage.entity';
 
 @Injectable()
 export class EmailService {
@@ -454,6 +456,40 @@ export class EmailService {
         statusCode: HttpStatus.OK,
         message: 'Notification status email sent successfully',
         data: jobSeeker,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+    async notifyChatRecipientImportantMessage(
+    sender: User,
+    recipient: User,
+    chatMessage: ChatMessage,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    try {
+      await this.mailerService.sendMail({
+        to: recipient.email,
+        subject: `New important message sent by ${sender.userName}`,
+        html: `Dear <Strong>${recipient.userName}</Strong>,<br><br>
+               ${sender.userName} has sent you an important message.<br><br>
+
+               Important message content:<br>
+               ${chatMessage.message}<br><br>
+               
+               Please <a href="${loginLink}">Login</a> to your account to view the important message<br><br>
+               Best regards,<br>
+               StarHire`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: recipient,
       };
     } catch (err) {
       throw new HttpException(

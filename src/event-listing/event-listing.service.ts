@@ -236,7 +236,7 @@ export class EventListingService {
       where: {
         corporatePromotionStatus: CorporatePromotionStatus.PREMIUM,
       },
-      relations: ['eventListings'],
+      relations: ['eventListings', 'eventListings.corporate'],
     });
 
     const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);
@@ -253,7 +253,7 @@ export class EventListingService {
       where: {
         corporatePromotionStatus: CorporatePromotionStatus.REGULAR,
       },
-      relations: ['eventListings'],
+      relations: ['eventListings', 'eventListings.corporate'],
     });
 
     const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);

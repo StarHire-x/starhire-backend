@@ -102,6 +102,8 @@ export function mapEventListingStatusToEnum(
   switch (status) {
     case 'Expired':
       return EventListingStatusEnum.EXPIRED;
+    case 'Cancelled':
+      return EventListingStatusEnum.CANCELLED;
     default:
       return EventListingStatusEnum.UPCOMING;
   }

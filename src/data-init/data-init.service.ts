@@ -43,6 +43,7 @@ import { CreateDocumentDto } from 'src/document/dto/create-document.dto';
 import { CreateJobAssignmentDto } from 'src/job-assignment/dto/create-job-assignment.dto';
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { JobAssignmentService } from 'src/job-assignment/job-assignment.service';
+import NotificationModeEnum from 'src/enums/notificationMode.enum';
 
 require('dotenv').config();
 
@@ -135,6 +136,44 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
+    // Admin with working email account creation
+    const hashedAdminWorkingEmailPassword = await bcrypt.hash(
+      process.env.ADMIN_PW,
+      5,
+    );
+    const createAdministratorWorkingEmailDto: CreateAdministratorDto =
+      new CreateAdministratorDto();
+    createAdministratorWorkingEmailDto.userName = 'workingAdmin';
+    createAdministratorWorkingEmailDto.password =
+      hashedAdminWorkingEmailPassword;
+    createAdministratorWorkingEmailDto.email = 'dragonplatoon1@gmail.com';
+    createAdministratorWorkingEmailDto.contactNo = '36747489';
+    createAdministratorWorkingEmailDto.role = UserRoleEnum.ADMINISTRATOR;
+    createAdministratorWorkingEmailDto.createdAt = new Date();
+    createAdministratorWorkingEmailDto.fullName = 'Working Admin';
+    createAdministratorWorkingEmailDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/admin1.jpg';
+    createAdministratorWorkingEmailDto.notificationMode =
+      NotificationModeEnum.EMAIL;
+
+    const existingWorkingEmailAdmin =
+      await this.administratorRepository.findOne({
+        where: {
+          userName: createAdministratorWorkingEmailDto.userName,
+          email: createAdministratorWorkingEmailDto.email,
+        },
+      });
+
+    // if data init admin does not exist, means we can create the data init admin
+    if (!existingWorkingEmailAdmin) {
+      await this.administratorService.create(
+        createAdministratorWorkingEmailDto,
+      );
+      console.log(
+        `Data initialized this admin account ${createAdministratorWorkingEmailDto.email} successfully!`,
+      );
+    }
+
     // Recruiter account creation
     const hashedRecruiterPassword = await bcrypt.hash(
       process.env.RECRUITER_PW,
@@ -163,6 +202,42 @@ export class DataInitService implements OnModuleInit {
       await this.recruiterService.create(createRecruiterDto);
       console.log(
         `Data initialized this recruiter account ${createRecruiterDto.email} successfully!`,
+      );
+    }
+
+    // Recruiter account creation with working email
+    const hashedRecruiterWorkingEmailPassword = await bcrypt.hash(
+      process.env.RECRUITER_PW,
+      5,
+    );
+    const createRecruiterWorkingEmailDto: CreateRecruiterDto =
+      new CreateRecruiterDto();
+    createRecruiterWorkingEmailDto.userName = 'workingRecruiter';
+    createRecruiterWorkingEmailDto.password =
+      hashedRecruiterWorkingEmailPassword;
+    createRecruiterWorkingEmailDto.email = 'dragonplatoon2@gmail.com';
+    createRecruiterWorkingEmailDto.contactNo = '34536673';
+    createRecruiterWorkingEmailDto.role = UserRoleEnum.RECRUITER;
+    createRecruiterWorkingEmailDto.createdAt = new Date();
+    createRecruiterWorkingEmailDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/recruiter1.jpg';
+    createRecruiterWorkingEmailDto.fullName = 'Working Recruiter';
+    createRecruiterWorkingEmailDto.notificationMode =
+      NotificationModeEnum.EMAIL;
+
+    const existingWorkingEmailRecruiter =
+      await this.recruiterRepository.findOne({
+        where: {
+          userName: createRecruiterWorkingEmailDto.userName,
+          email: createRecruiterWorkingEmailDto.email,
+        },
+      });
+
+    // if data init recruiter does not exist, means we can create the data init recruiter
+    if (!existingWorkingEmailRecruiter) {
+      await this.recruiterService.create(createRecruiterWorkingEmailDto);
+      console.log(
+        `Data initialized this recruiter account ${createRecruiterWorkingEmailDto.email} successfully!`,
       );
     }
 
@@ -295,6 +370,42 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
+    // Corporate account creation with working email
+    const hashedCorporateWorkingEmailPassword = await bcrypt.hash(
+      process.env.CORPORATE_PW,
+      5,
+    );
+    const createCorporateWorkingEmailDto: CreateCorporateDto =
+      new CreateCorporateDto();
+    createCorporateWorkingEmailDto.userName = 'workingCorporate';
+    createCorporateWorkingEmailDto.password =
+      hashedCorporateWorkingEmailPassword;
+    createCorporateWorkingEmailDto.email = 'dragonplatoon3@gmail.com';
+    createCorporateWorkingEmailDto.contactNo = '84568580';
+    createCorporateWorkingEmailDto.role = UserRoleEnum.CORPORATE;
+    createCorporateWorkingEmailDto.createdAt = new Date();
+    createCorporateWorkingEmailDto.companyRegistrationId = 177452099;
+    createCorporateWorkingEmailDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png';
+    createCorporateWorkingEmailDto.companyName = 'Working Corporate Pte Ltd';
+    createCorporateWorkingEmailDto.notificationMode =
+      NotificationModeEnum.EMAIL;
+
+    const existingWorkingCorporate = await this.corporateRepository.findOne({
+      where: {
+        userName: createCorporateWorkingEmailDto.userName,
+        email: createCorporateWorkingEmailDto.email,
+      },
+    });
+
+    // if data init corporate does not exist, means we can create the data init corporate
+    if (!existingWorkingCorporate) {
+      await this.corporateService.create(createCorporateWorkingEmailDto);
+      console.log(
+        `Data initialized this corporate account ${createCorporateWorkingEmailDto.email} successfully!`,
+      );
+    }
+
     // Job Seeker account jobseeker jobseeker@gmail.com creation
     const hashedJobSeekerPassword = await bcrypt.hash(
       process.env.JOBSEEKER_PW,
@@ -401,6 +512,43 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
+    // Job Seeker account create working email 
+    const hashedJobSeekerWorkingEmailPassword = await bcrypt.hash(
+      process.env.JOBSEEKER_PW,
+      5,
+    );
+    const createJobSeekerWorkingEmailDto: CreateJobSeekerDto = new CreateJobSeekerDto();
+    createJobSeekerWorkingEmailDto.userName = 'workingJobSeeker';
+    createJobSeekerWorkingEmailDto.password =
+      hashedJobSeekerWorkingEmailPassword;
+    createJobSeekerWorkingEmailDto.email = 'dragonplatoon4@gmail.com';
+    createJobSeekerWorkingEmailDto.contactNo = '87548769';
+    createJobSeekerWorkingEmailDto.role = UserRoleEnum.JOBSEEKER;
+    createJobSeekerWorkingEmailDto.createdAt = new Date();
+    createJobSeekerWorkingEmailDto.fullName = 'Desmond Leong';
+    createJobSeekerWorkingEmailDto.dateOfBirth = new Date('1970-10-09');
+    createJobSeekerWorkingEmailDto.homeAddress = '123 King St';
+    createJobSeekerWorkingEmailDto.profilePictureUrl =
+      'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker1.jpg';
+    createJobSeekerWorkingEmailDto.notificationMode = NotificationModeEnum.EMAIL;
+
+    let existingJobSeekerWorkingEmail = await this.jobSeekerRepository.findOne({
+      where: {
+        userName: createJobSeekerWorkingEmailDto.userName,
+        email: createJobSeekerWorkingEmailDto.email,
+      },
+    });
+
+    // if data init job seeker does not exist, means we can create the data init job seeker
+    if (!existingJobSeekerWorkingEmail) {
+      existingJobSeekerWorkingEmail = (
+        await this.jobSeekerService.create(createJobSeekerWorkingEmailDto)
+      )?.data;
+      console.log(
+        `Data initialized this job seeker account ${createJobSeekerWorkingEmailDto.email} successfully!`,
+      );
+    }
+
     // at here, all 4 types of accounts will be valid, use them to link up with other entities
     const createdAdmin = await this.administratorRepository.findOne({
       where: {
@@ -409,12 +557,30 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdAdminWorkingEmail = await this.administratorRepository.findOne(
+      {
+        where: {
+          userName: createAdministratorWorkingEmailDto.userName,
+          email: createAdministratorWorkingEmailDto.email,
+        },
+      },
+    );
+
     const createdRecruiter = await this.recruiterRepository.findOne({
       where: {
         userName: createRecruiterDto.userName,
         email: createRecruiterDto.email,
       },
     });
+
+    const createdRecruiterWorkingEmail = await this.recruiterRepository.findOne(
+      {
+        where: {
+          userName: createRecruiterWorkingEmailDto.userName,
+          email: createRecruiterWorkingEmailDto.email,
+        },
+      },
+    );
 
     const createdCorporate = await this.corporateRepository.findOne({
       where: {
@@ -444,6 +610,15 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdCorporateWorkingEmail = await this.corporateRepository.findOne(
+      {
+        where: {
+          userName: createCorporateWorkingEmailDto.userName,
+          email: createCorporateWorkingEmailDto.email,
+        },
+      },
+    );
+
     const createdJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
         userName: createJobSeekerDto.userName,
@@ -465,17 +640,30 @@ export class DataInitService implements OnModuleInit {
       },
     });
 
+    const createdJobSeekerWorkingEmail = await this.jobSeekerRepository.findOne(
+      {
+        where: {
+          userName: createJobSeekerWorkingEmailDto.userName,
+          email: createJobSeekerWorkingEmailDto.email,
+        },
+      },
+    );
+
     // if any of the accounts not valid, don't proceed data init
     if (
       !createdAdmin ||
+      !createdAdminWorkingEmail ||
       !createdRecruiter ||
+      !createdRecruiterWorkingEmail ||
       !createdCorporate ||
       !createdCorporateTwo ||
       !createdCorporateThree ||
       !createdCorporateFour ||
+      !createdCorporateWorkingEmail ||
       !createdJobSeeker ||
       !createdJobSeekerTwo ||
-      !createdJobSeekerThree
+      !createdJobSeekerThree ||
+      !createdJobSeekerWorkingEmail 
     ) {
       return;
     }
@@ -557,6 +745,31 @@ export class DataInitService implements OnModuleInit {
     await this.jobPreferenceService.create(createJobPreferenceSixDto);
     console.log(
       `job preference is created by jobseeker username ${createdJobSeekerThree.userName}`,
+    );
+
+    const createJobPreferenceSevenDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
+    createJobPreferenceSevenDto.benefitPreference = 3;
+    createJobPreferenceSevenDto.salaryPreference = 2;
+    createJobPreferenceSevenDto.workLifeBalancePreference = 5;
+    createJobPreferenceSevenDto.jobSeekerId = createdJobSeekerWorkingEmail.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceSevenDto);
+    console.log(
+      `job preference is created by jobseeker username ${createdJobSeekerWorkingEmail.userName}`,
+    );
+
+    const createJobPreferenceEightDto: CreateJobPreferenceDto =
+      new CreateJobPreferenceDto();
+    createJobPreferenceEightDto.benefitPreference = 3;
+    createJobPreferenceEightDto.salaryPreference = 2;
+    createJobPreferenceEightDto.workLifeBalancePreference = 5;
+    createJobPreferenceEightDto.corporateId =
+      createdCorporateWorkingEmail.userId;
+
+    await this.jobPreferenceService.create(createJobPreferenceEightDto);
+    console.log(
+      `job preference is created by corporate username ${createdCorporateWorkingEmail.userName}`,
     );
 
     // if there's any existing job listings, don't data init job listings

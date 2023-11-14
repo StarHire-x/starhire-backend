@@ -226,6 +226,17 @@ export class JobListingService {
             );
           }
         });
+        if (corporate.notificationMode === NotificationModeEnum.EMAIL) {
+          this.emailService.notifyCorporateOnJobListingStatus(
+            corporate,
+            jobListing,
+          );
+        } else if (corporate.notificationMode === NotificationModeEnum.SMS) {
+          this.twilioService.notifyCorporateOnJobListingStatus(
+            corporate,
+            jobListing,
+          );
+        }
       }
 
       if (jobListing) {
@@ -289,7 +300,7 @@ export class JobListingService {
       jobAssignment.recruiterId = recruiterId;
       jobAssignment.assignedTime = new Date();
       await this.jobAssignmentRepository.save(jobAssignment);
-
+      console.log("Hello there");
       if (jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
         this.emailService.notifyJobSeekerOnMatchedJobListing(
           jobSeeker,

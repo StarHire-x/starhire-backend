@@ -89,7 +89,7 @@ export class EmailService {
   ) {
     try {
       await this.mailerService.sendMail({
-        to: corporate.email,
+        to: recruiter.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${recruiter.fullName}</Strong>,<br><br>
                We want to inform you that a new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName} has been approved<br>
@@ -121,7 +121,7 @@ export class EmailService {
   ) {
     try {
       await this.mailerService.sendMail({
-        to: corporate.email,
+        to: admin.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${admin.fullName}</Strong>,<br><br>
                Please vet this Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName}<br>

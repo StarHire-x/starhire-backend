@@ -240,11 +240,15 @@ export class EventListingService {
     });
 
     const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);
+    
+    const nonExpiredEvents = eventListings.filter(
+      (event) => event.eventListingStatus !== 'Expired',
+    );
 
     return {
       statusCode: HttpStatus.OK,
       message: 'Premium Users events found!',
-      data: eventListings,
+      data: nonExpiredEvents,
     };
   }
 
@@ -258,10 +262,14 @@ export class EventListingService {
 
     const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);
 
+    const nonExpiredEvents = eventListings.filter(
+      (event) => event.eventListingStatus !== 'Expired',
+    );
+
     return {
       statusCode: HttpStatus.OK,
       message: 'Non Premium Users events found!',
-      data: eventListings,
+      data: nonExpiredEvents,
     };
   }
 }

@@ -16,6 +16,7 @@ import CorporatePromotionStatus from '../enums/corporatePromotionStatus.enum';
 import { EmailService } from '../email/email.service';
 import { TwilioService } from '../twilio/twilio.service';
 import NotificationModeEnum from '../enums/notificationMode.enum';
+import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
 
 @Injectable()
 export class EventListingService {
@@ -229,6 +230,20 @@ export class EventListingService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async cancel(id: number): Promise<EventListing> {
+    const eventListing = await this.eventListingRepository.findOne({
+      where: { eventListingId: id },
+      relations: { corporate: true },
+    });
+
+    if (!eventListing) {
+      throw new NotFoundException('Event Listing Id provided is not valid');
+    }
+
+    eventListing.eventListingStatus = EventListingStatusEnum.CANCELLED;
+    return this.eventListingRepository.save(eventListing);
   }
 
   async getAllPremiumUsersEvents() {

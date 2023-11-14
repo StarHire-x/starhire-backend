@@ -133,6 +133,19 @@ export class EventListingController {
     }
   }
 
+  @Put(':id/cancel')
+  cancelEventListing(@Param('id') id: number) {
+    try {
+      return this.eventListingService.cancel(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
   @Delete(':id')
   remove(@Param('id') id: number) {
     try {

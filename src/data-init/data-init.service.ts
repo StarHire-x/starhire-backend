@@ -1130,24 +1130,31 @@ export class DataInitService implements OnModuleInit {
     console.log(response?.message);
 
 
-    // jobApplication 1 creation
-    const jobListingOne = await this.jobListingRepository.findOne({
+    // jobApplication 1 creation - assign job listing id 1 to jobseeker@gmail.com from recruiter@gmail.com
+     const jobListingOne = await this.jobListingRepository.findOne({
       where: { jobListingId: 1 },
     });
-    const jobSeeker = await this.jobSeekerRepository.findOne({
-      where: { email: 'jobseeker@gmail.com' },
-    });
-    const recruiter = await this.recruiterRepository.findOne({
-      where: { email: 'recruiter@gmail.com' },
-    });
 
-    const createJobAssignmentDto: CreateJobAssignmentDto =
-      new CreateJobAssignmentDto();
-    createJobAssignmentDto.jobSeekerId = jobSeeker.userId;
-    createJobAssignmentDto.jobListingId = jobListingOne.jobListingId;
-    createJobAssignmentDto.recruiterId = recruiter.userId;
-    await this.jobAssignmentService.create(createJobAssignmentDto);
-    console.log('Job assignment one created.');
+    const jobAssignmentOneResponse = await this.jobListingService.assignJobListing(createdJobSeeker?.userId, jobListingOne?.jobListingId, createdRecruiter?.userId);
+    console.log(jobAssignmentOneResponse?.message);
+    
+    // const jobListingOne = await this.jobListingRepository.findOne({
+    //   where: { jobListingId: 1 },
+    // });
+    // const jobSeeker = await this.jobSeekerRepository.findOne({
+    //   where: { email: 'jobseeker@gmail.com' },
+    // });
+    // const recruiter = await this.recruiterRepository.findOne({
+    //   where: { email: 'recruiter@gmail.com' },
+    // });
+
+    // const createJobAssignmentDto: CreateJobAssignmentDto =
+    //   new CreateJobAssignmentDto();
+    // createJobAssignmentDto.jobSeekerId = jobSeeker.userId;
+    // createJobAssignmentDto.jobListingId = jobListingOne.jobListingId;
+    // createJobAssignmentDto.recruiterId = recruiter.userId;
+    // await this.jobAssignmentService.create(createJobAssignmentDto);
+    // console.log('Job assignment one created.');
 
     const createJobApplicationDto: CreateJobApplicationDto =
       new CreateJobApplicationDto();
@@ -1157,28 +1164,32 @@ export class DataInitService implements OnModuleInit {
     createJobApplicationDto.remarks = 'This is Job Application 1 used in SR4';
     createJobApplicationDto.submissionDate = new Date();
     createJobApplicationDto.jobListingId = jobListingOne.jobListingId;
-    createJobApplicationDto.jobSeekerId = jobSeeker.userId;
-    createJobApplicationDto.recruiterId = recruiter.userId;
+    createJobApplicationDto.jobSeekerId = createdJobSeeker.userId;
+    createJobApplicationDto.recruiterId = createdRecruiter.userId;
     createJobApplicationDto.documents = null;
 
     await this.jobApplicationService.create(createJobApplicationDto);
     console.log(`Job Application 1 is created.`);
 
-    // jobApplication 2 creation
+    // jobApplication 2 creation - assign job listing id 2 to jobseeker2@gmail.com from recruiter@gmail.com
     const jobListingTwo = await this.jobListingRepository.findOne({
       where: { jobListingId: 2 },
     });
-    const jobSeekerTwo = await this.jobSeekerRepository.findOne({
-      where: { email: 'jobseeker2@gmail.com' },
-    });
 
-    const createJobAssignmentTwoDto: CreateJobAssignmentDto =
-      new CreateJobAssignmentDto();
-    createJobAssignmentTwoDto.jobSeekerId = jobSeekerTwo.userId;
-    createJobAssignmentTwoDto.jobListingId = jobListingTwo.jobListingId;
-    createJobAssignmentTwoDto.recruiterId = recruiter.userId;
-    await this.jobAssignmentService.create(createJobAssignmentTwoDto);
-    console.log('Job assignment two created.');
+    const jobAssignmentTwoResponse = await this.jobListingService.assignJobListing(createdJobSeekerTwo?.userId, jobListingTwo?.jobListingId, createdRecruiter?.userId);
+    console.log(jobAssignmentTwoResponse?.message);
+
+    // const jobSeekerTwo = await this.jobSeekerRepository.findOne({
+    //   where: { email: 'jobseeker2@gmail.com' },
+    // });
+
+    // const createJobAssignmentTwoDto: CreateJobAssignmentDto =
+    //   new CreateJobAssignmentDto();
+    // createJobAssignmentTwoDto.jobSeekerId = jobSeekerTwo.userId;
+    // createJobAssignmentTwoDto.jobListingId = jobListingTwo.jobListingId;
+    // createJobAssignmentTwoDto.recruiterId = recruiter.userId;
+    // await this.jobAssignmentService.create(createJobAssignmentTwoDto);
+    // console.log('Job assignment two created.');
 
     const createJobApplicationTwoDto: CreateJobApplicationDto =
       new CreateJobApplicationDto();
@@ -1189,25 +1200,27 @@ export class DataInitService implements OnModuleInit {
       'This is Job Application 2 used in SR4';
     createJobApplicationTwoDto.submissionDate = new Date();
     createJobApplicationTwoDto.jobListingId = jobListingTwo.jobListingId;
-    createJobApplicationTwoDto.jobSeekerId = jobSeekerTwo.userId;
-    createJobApplicationTwoDto.recruiterId = recruiter.userId;
+    createJobApplicationTwoDto.jobSeekerId = createdJobSeekerTwo.userId;
+    createJobApplicationTwoDto.recruiterId = createdRecruiter.userId;
     createJobApplicationTwoDto.documents = null;
 
     await this.jobApplicationService.create(createJobApplicationTwoDto);
     console.log(`Job Application 2 is created.`);
 
-    // jobApplication 3 creation
-    const jobSeekerThree = await this.jobSeekerRepository.findOne({
-      where: { email: 'jobseeker3@gmail.com' },
-    });
+    // jobApplication 3 creation - assign job listing id 2 to jobseeker3@gmail.com from recruiter@gmail.com
+    const jobAssignmentThreeResponse = await this.jobListingService.assignJobListing(createdJobSeekerThree?.userId, jobListingTwo?.jobListingId, createdRecruiter?.userId);
+    console.log(jobAssignmentThreeResponse?.message);
+    // const jobSeekerThree = await this.jobSeekerRepository.findOne({
+    //   where: { email: 'jobseeker3@gmail.com' },
+    // });
 
-    const createJobAssignmentThreeDto: CreateJobAssignmentDto =
-      new CreateJobAssignmentDto();
-    createJobAssignmentThreeDto.jobSeekerId = jobSeekerThree.userId;
-    createJobAssignmentThreeDto.jobListingId = jobListingTwo.jobListingId;
-    createJobAssignmentThreeDto.recruiterId = recruiter.userId;
-    await this.jobAssignmentService.create(createJobAssignmentThreeDto);
-    console.log('Job assignment three created.');
+    // const createJobAssignmentThreeDto: CreateJobAssignmentDto =
+    //   new CreateJobAssignmentDto();
+    // createJobAssignmentThreeDto.jobSeekerId = jobSeekerThree.userId;
+    // createJobAssignmentThreeDto.jobListingId = jobListingTwo.jobListingId;
+    // createJobAssignmentThreeDto.recruiterId = recruiter.userId;
+    // await this.jobAssignmentService.create(createJobAssignmentThreeDto);
+    // console.log('Job assignment three created.');
 
     const createJobApplicationThreeDto: CreateJobApplicationDto =
       new CreateJobApplicationDto();
@@ -1218,8 +1231,8 @@ export class DataInitService implements OnModuleInit {
       'This is Job Application 3 used in SR4';
     createJobApplicationThreeDto.submissionDate = new Date();
     createJobApplicationThreeDto.jobListingId = jobListingTwo.jobListingId;
-    createJobApplicationThreeDto.jobSeekerId = jobSeekerThree.userId;
-    createJobApplicationThreeDto.recruiterId = recruiter.userId;
+    createJobApplicationThreeDto.jobSeekerId = createdJobSeekerThree.userId;
+    createJobApplicationThreeDto.recruiterId = createdRecruiter.userId;
     createJobApplicationThreeDto.documents = null;
 
     await this.jobApplicationService.create(createJobApplicationThreeDto);

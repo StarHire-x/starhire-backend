@@ -453,6 +453,8 @@ Log in for details: ${loginLink}`;
         body: message,
       });
 
+      console.log("Contact No": recipient.contactNo);
+
       console.log("SMS whatsapp sent");
 
       return {

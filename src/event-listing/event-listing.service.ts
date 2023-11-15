@@ -236,13 +236,40 @@ export class EventListingService {
   async cancel(id: number): Promise<EventListing> {
     const eventListing = await this.eventListingRepository.findOne({
       where: { eventListingId: id },
-      relations: { corporate: true },
+      relations: [
+        'corporate',
+        'eventRegistrations',
+        'eventRegistrations.jobSeeker',
+      ],
+      // relations: { corporate: true, eventRegistrations: true },
     });
 
     if (!eventListing) {
       throw new NotFoundException('Event Listing Id provided is not valid');
     }
 
+    const listEventRegistrstion = eventListing.eventRegistrations;
+    listEventRegistrstion.map((registrants) => {
+      console.log('Hello this is the jobseeker');
+      console.log(registrants.jobSeeker);
+      if (
+        registrants.jobSeeker.notificationMode === NotificationModeEnum.EMAIL
+      ) {
+        this.emailService.notifyJobSeekerCancelledEvent(
+          eventListing,
+          registrants.jobSeeker,
+        );
+      } else if (
+        registrants.jobSeeker.notificationMode === NotificationModeEnum.SMS
+      ) {
+        this.twilioService.notifyJobSeekerCancelledEvent(
+          eventListing,
+          registrants.jobSeeker,
+        );
+      }
+    });
+
+    console.log('eventListing:', eventListing);
     eventListing.eventListingStatus = EventListingStatusEnum.CANCELLED;
     return this.eventListingRepository.save(eventListing);
   }

@@ -20,8 +20,8 @@ import { ChatMessage } from 'src/entities/chatMessage.entity';
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService, // We should not be calling other service classes to avoid cyclic dependency
-  ) // private readonly jobListingService: JobListingService,
-  {}
+    // private readonly jobListingService: JobListingService,
+  ) {}
 
   async resetPassword(createEmailDto: CreateEmailDto) {
     try {
@@ -465,7 +465,7 @@ export class EmailService {
     }
   }
 
-    async notifyChatRecipientImportantMessage(
+  async notifyChatRecipientImportantMessage(
     sender: User,
     recipient: User,
     chatMessage: ChatMessage,
@@ -490,6 +490,34 @@ export class EmailService {
         statusCode: HttpStatus.OK,
         message: 'Notification status email sent successfully',
         data: recipient,
+      };
+    } catch (err) {
+      throw new HttpException(
+        'Failed to send Notification status email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async notifyJobSeekerCancelledEvent(
+    eventListing: EventListing,
+    jobSeeker: JobSeeker,
+  ) {
+    try {
+      await this.mailerService.sendMail({
+        to: jobSeeker.email,
+        subject: `Cancellation of event ${eventListing.eventName}`,
+        html: `Dear <Strong>${jobSeeker.fullName}</Strong>,<br><br>
+               We regret to inform you that the event <Strong>${eventListing.eventName}</Strong> happening at ${eventListing.location} has been cancelled.<br>
+
+               <br><br>
+               Best regards,<br>
+               StarHire`,
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Notification status email sent successfully',
+        data: jobSeeker,
       };
     } catch (err) {
       throw new HttpException(

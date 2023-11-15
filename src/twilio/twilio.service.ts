@@ -370,10 +370,7 @@ Log in for details: ${loginLink}`;
     }
   }
 
-  async notifyCorporateOfInvoice(
-    corporate: Corporate,
-    invoice: Invoice,
-  ) {
+  async notifyCorporateOfInvoice(corporate: Corporate, invoice: Invoice) {
     let loginLink = 'http://www.localhost:3001/login';
 
     if (!corporate.contactNo) {
@@ -453,7 +450,7 @@ Log in for details: ${loginLink}`;
         body: message,
       });
 
-      console.log("SMS whatsapp sent");
+      console.log('SMS whatsapp sent');
 
       return {
         statusCode: HttpStatus.OK,
@@ -463,6 +460,36 @@ Log in for details: ${loginLink}`;
     } catch (error) {
       throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
     }
-  
+  }
+
+  async notifyJobSeekerCancelledEvent(
+    eventListing: EventListing,
+    jobSeeker: JobSeeker,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!jobSeeker.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${jobSeeker.fullName},
+    We regret to inform you that the event ${eventListing.eventName} happening at ${eventListing.location} has been cancelled.
+`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${jobSeeker.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: jobSeeker,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
   }
 }

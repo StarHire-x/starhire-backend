@@ -4,8 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Delete,
-  Put,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
@@ -44,9 +42,15 @@ export class JobAssignmentController {
   }
 
   @Get('/:jobListingId/:recruiterId')
-  findByJobListingId(@Param('jobListingId') jobListingId: number, @Param('recruiterId') recruiterId: string) {
+  findByJobListingId(
+    @Param('jobListingId') jobListingId: number,
+    @Param('recruiterId') recruiterId: string,
+  ) {
     try {
-      return this.jobAssignmentService.findByJobListingId(jobListingId, recruiterId);
+      return this.jobAssignmentService.findByJobListingId(
+        jobListingId,
+        recruiterId,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

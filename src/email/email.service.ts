@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { CreateEmailDto } from './dto/create-email.dto';
-
 import { JobListingService } from '../job-listing/job-listing.service';
 import UserRoleEnum from '../enums/userRole.enum';
 import { JobSeeker } from '../entities/jobSeeker.entity';
@@ -20,8 +19,8 @@ import { ChatMessage } from 'src/entities/chatMessage.entity';
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService, // We should not be calling other service classes to avoid cyclic dependency
-    // private readonly jobListingService: JobListingService,
-  ) {}
+  ) // private readonly jobListingService: JobListingService,
+  {}
 
   async resetPassword(createEmailDto: CreateEmailDto) {
     try {
@@ -45,7 +44,6 @@ export class EmailService {
     }
   }
 
-  // inform corporate on job listing status
   async notifyCorporateOnJobListingStatus(
     corporate: Corporate,
     jobListing: JobListing,
@@ -55,20 +53,20 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: corporate.email,
-        subject: `Status Update on Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
+        subject: `Update on Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${corporate.userName}</Strong>,<br><br>
-               We want to inform you about the status of your job listing.<br>
 
                Your Job Listing ID: <strong>${
                  jobListing.jobListingId
                }</strong>, <strong>${jobListing.title}</strong><br><br>
                has been <strong>${jobListing.jobListingStatus.toUpperCase()}</strong> <br><br>
 
-               Please <a href="http://www.localhost:3001/login">Login</a> to your account to see the changes <br><br>
+               You can <a href="${loginLink}">Login</a> to your account to follow up. <br><br>
 
-               For further enquiries please contact our Admin support staff <br><br>
-               Thank you for using our service!<br><br>
-               Best regards,<br>
+               For further enquiries, do send in a ticket and our Administrator will contact you. <br><br>
+
+               Thank you for using our service! <br><br><br>
+               Best regards, <br>
                StarHire`,
       });
       return {
@@ -89,17 +87,18 @@ export class EmailService {
     corporate: Corporate,
     jobListing: JobListing,
   ) {
+    let loginLink = 'http://www.localhost:3000/login';
+
     try {
       await this.mailerService.sendMail({
         to: recruiter.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${recruiter.fullName}</Strong>,<br><br>
-               We want to inform you that a new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName} has been approved<br>
+               A new job listing, ${jobListing.title} created by ${corporate.companyName} has been approved! <br>
 
-               Please <a href="http://www.localhost:3000/login">Login</a> to your account to perform job matching <br><br>
+               You can <a href="${loginLink}">Login</a> to your account to start matching this job listing to suitable job seekers. <br><br><br>
 
-               Thank you for using our service!<br><br>
-               Best regards,<br>
+               Best regards, <br>
                StarHire`,
       });
       return {
@@ -121,15 +120,17 @@ export class EmailService {
     corporate: Corporate,
     jobListing: JobListing,
   ) {
+    let loginLink = 'http://www.localhost:3000/login';
+
     try {
       await this.mailerService.sendMail({
         to: admin.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
         html: `Dear <Strong>${admin.fullName}</Strong>,<br><br>
-               Please vet this Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.companyName}<br>
+               A new job listing ${jobListing.title}, with ID ${jobListing.jobListingId}, has been created by ${corporate.companyName}! <br> 
+               Please <a href="${loginLink}">Login</a> to vet this job listing. <br><br><br>
 
-               Thank you for using our service!<br><br>
-               Best regards,<br>
+               Best regards, <br>
                StarHire`,
       });
       return {
@@ -158,15 +159,16 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: user.email,
-        subject: `Status Update for User: ${user.fullName}`,
-        html: `Dear <Strong>${user.fullName}</Strong> with a role of <Strong>${user.role}</Strong>,<br><br>
-             You have changed your notification settings to ${user.notificationMode}<br>
+        subject: `Change of Notification Mode`,
+        html: `Dear <Strong>${user.fullName}</Strong>, <br><br>
+             This is to confirm that you have changed your notification mode to ${user.notificationMode}. <br>
 
              Please <a href="${loginLink}">Login</a> to your account to see the changes <br><br>
 
-             For further enquiries, please contact our Admin support staff <br><br>
-             Thank you for using our service!<br><br>
-             Best regards,<br>
+             If you did not make this change, send in a ticket immediately and our Administrator will contact you. <br><br>
+
+             Thank you for using our service! <br><br><br>
+             Best regards, <br>
              StarHire`,
       });
       return {
@@ -188,16 +190,15 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: user.email,
-        subject: `Ticket Status ${ticket.ticketId} Update for User: ${user.userName}`,
-        html: `Dear <Strong>${user.userName}</Strong>,<br><br>
-             Administrator has resolved your ticket with the title ${ticket.ticketName} of the category 
-             ${ticket.ticketCategory} with the description ${ticket.ticketDescription}<br>
+        subject: `Update on ticket ${ticket.ticketName}`,
+        html: `Dear <Strong>${user.userName}</Strong>, <br><br>
+             Our Administrator has resolved the ticket ${ticket.ticketName} of the category 
+             ${ticket.ticketCategory} that you sent in. <br>
+             You can <a href="${loginLink}">Login</a> to your account to see the changes. <br><br>
+             If you still encounter difficulties, do send in another ticket and our Administrator will contact you. <br><br>
 
-             Please <a href="${loginLink}">Login</a> to your account to see the changes <br><br>
-
-             For further enquiries, please contact our Admin support staff <br><br>
-             Thank you for using our service!<br><br>
-             Best regards,<br>
+             Thank you for using our service! <br><br><br>
+             Best regards, <br>
              StarHire`,
       });
       return {
@@ -226,19 +227,16 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: jobSeeker.email,
-        subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.fullName}`,
+        subject: `Update on Job Application ID: ${jobApplication.jobApplicationId} for ${jobSeeker.fullName}`,
         html: `Dear <strong>${jobSeeker.fullName}</strong>,<br><br>
          
-         We want to inform you that your job application status for the position of ${jobListing.title} at ${corporate.companyName} that is handled by recruiter ${recruiter.fullName} has been updated. Your current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
+         Your job application status for the position of <strong>${jobListing.title}</strong> at <strong>${corporate.companyName}</strong> has been updated. The current status of your job application is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
+         You can <a href="${loginLink}">Login</a> to your account to follow up. <br><br>
+         For further enquiries, do contact recruiter <strong>${recruiter.fullName}</strong> who is handling your job application. <br><br>
 
-         Kindly <a href="${loginLink}">log in</a> to your account to view the details.<br><br>
-
-         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
-
-         Thank you for choosing StarHire.<br><br>
-         
-         Warm regards,<br>
-         The StarHire Team`,
+         Thank you for using our service! <br><br><br>
+         Best regards, <br>
+         StarHire`,
       });
       return {
         statusCode: HttpStatus.OK,
@@ -253,7 +251,6 @@ export class EmailService {
     }
   }
 
-  // notify recruiter on job application status
   async notifyRecruiterOnApplicationStatus(
     recruiter: Recruiter,
     jobSeeker: JobSeeker,
@@ -266,15 +263,14 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: recruiter.email,
-        subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.fullName}`,
-        html: `Dear <strong>${recruiter.fullName}</strong>,<br><br>
+        subject: `Update on Job Application ID: ${jobApplication.jobApplicationId} for ${jobSeeker.fullName}`,
+        html: `Dear <strong>${recruiter.fullName}</strong>, <br><br>
          
-         We want to inform you that the job application status of ${jobSeeker.fullName} for the position of ${jobListing.title} at ${corporate.companyName} has been updated. Their current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
-
-         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
+         The job application status of ${jobSeeker.fullName} for the position of ${jobListing.title} at ${corporate.companyName} has been updated. The current status of the job application is: <strong>${jobApplication.jobApplicationStatus}</strong>. <br><br>
+         You can <a href="${loginLink}">Login</a> to your account to follow up. <br><br>
          
-         Warm regards,<br>
-         The StarHire Team`,
+         Best regards, <br>
+         StarHire`,
       });
       return {
         statusCode: HttpStatus.OK,
@@ -301,19 +297,16 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: corporate.email,
-        subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.fullName}`,
-        html: `Dear <strong>${corporate.companyName}</strong>,<br><br>
+        subject: `Update on Job Application ID: ${jobApplication.jobApplicationId} for ${jobSeeker.fullName}`,
+        html: `Dear <strong>${corporate.companyName}</strong>, <br><br>
          
-         We want to inform you that the job application status of ${jobSeeker.fullName} for the position of ${jobListing.title} that is handled by recruiter ${recruiter.fullName} has been updated. Their current status is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
+         The job application status of ${jobSeeker.fullName} for the position of ${jobListing.title} has been updated. The current status of the job application is: <strong>${jobApplication.jobApplicationStatus}</strong>. <br><br>
+         You can <a href="${loginLink}">Login</a> to your account to follow up. <br><br>
+         For further enquiries, do contact recruiter <strong>${recruiter.fullName}</strong> who is handling this job application. <br><br>
 
-         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
-         
-         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
-
-         Thank you for choosing StarHire.<br><br>
-
-         Warm regards,<br>
-         The StarHire Team`,
+         Thank you for using our service! <br><br><br>
+         Best regards, <br>
+         StarHire`,
       });
       return {
         statusCode: HttpStatus.OK,
@@ -340,19 +333,16 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: corporate.email,
-        subject: `Job Application ID: ${jobApplication.jobApplicationId} Status Update for ${jobSeeker.fullName}`,
+        subject: `New Job Application ID: ${jobApplication.jobApplicationId} from ${jobSeeker.fullName}`,
         html: `Dear <strong>${corporate.companyName}</strong>,<br><br>
          
-         We want to inform you that there is a new job application status of ${jobSeeker.fullName} for the position of ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName}
+         A job seeker, ${jobSeeker.fullName} applied for the position of ${jobListing.title}! <br><br> 
+         You can <a href="${loginLink}">Login</a> to your account to follow up. <br><br>
+         For further enquiries, do contact recruiter <strong>${recruiter.fullName}</strong> who is handling this job application. <br><br>
 
-         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
-         
-         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
-
-         Thank you for choosing StarHire.<br><br>
-
-         Warm regards,<br>
-         The StarHire Team`,
+         Thank you for using our service! <br><br><br>
+         Best regards, <br>
+         StarHire`,
       });
       return {
         statusCode: HttpStatus.OK,
@@ -377,19 +367,17 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: jobSeeker.email,
-        subject: `Congratulation you have been matched!`,
-        html: `Dear <strong>${jobSeeker.fullName}</strong>,<br><br>
+        subject: `A new job has been matched to you!`,
+        html: `Dear <strong>${jobSeeker.fullName}</strong>, <br><br>
          
-         We want to inform you that you have been matched by recruiter ${recruiter.fullName} for the position of ${jobListing.title}
+         Congratulations! You have a new job ${jobListing.title} matched to you. <br>
+         <a href="${loginLink}">Login</a> to your account to check it out and start applying! <br><br>
 
-         Kindly <a href="${loginLink}">log in</a> to your account for the next course of action.<br><br>
-         
-         Should you have any further questions, please don't hesitate to contact our administrative support team.<br><br>
+         For further enquiries, do contact recruiter <strong>${recruiter.fullName}</strong>. <br><br>
 
-         Thank you for choosing StarHire.<br><br>
-
-         Warm regards,<br>
-         The StarHire Team`,
+         Thank you for using our service! <br><br><br>
+         Best regards, <br>
+         StarHire`,
       });
       return {
         statusCode: HttpStatus.OK,
@@ -410,15 +398,15 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: corporate.email,
-        subject: `Incoming invoice ID: ${invoice.invoiceId}`,
+        subject: `Incoming Invoice ID: ${invoice.invoiceId}`,
         html: `Dear <Strong>${corporate.companyName}</Strong>,<br><br>
-               We want to inform you about an incoming invoice that would be issued shortly<br>
+               This is to inform you about an incoming invoice that would be issued shortly. <br>
+               You can <a href="${loginLink}">Login</a> to your account to check. <br><br>
 
-               Please <a href="${loginLink}">Login</a> to your account to see the changes <br><br>
+               For further enquiries, do send in a ticket and our Administrator will contact you. <br><br>
 
-               For further enquiries please contact our Admin support staff <br><br>
-               Thank you for using our service!<br><br>
-               Best regards,<br>
+               Thank you for using our service! <br><br><br>
+               Best regards, <br>
                StarHire`,
       });
       return {
@@ -444,12 +432,15 @@ export class EmailService {
     try {
       await this.mailerService.sendMail({
         to: jobSeeker.email,
-        subject: `New event posted by ${corporate.companyName}`,
+        subject: `New Event posted by ${corporate.companyName}`,
         html: `Dear <Strong>${jobSeeker.fullName}</Strong>,<br><br>
-               We want to inform you that a new event ${eventListing.eventName} happening at ${eventListing.location} has been posted by ${corporate.companyName}<br>
 
-               Please <a href="${loginLink}">Login</a> to your account to view more details about the event<br><br>
-               Best regards,<br>
+               A new event ${eventListing.eventName} happening at ${eventListing.location} has been posted by ${corporate.companyName}!<br>
+
+               <a href="${loginLink}">Login</a> to your account to check it out! <br><br>
+               
+               Thank you for using our service! <br><br><br>
+               Best regards, <br>
                StarHire`,
       });
       return {
@@ -483,7 +474,9 @@ export class EmailService {
                ${chatMessage.message}<br><br>
                
                Please <a href="${loginLink}">Login</a> to your account to view the important message<br><br>
-               Best regards,<br>
+               
+               Thank you for using our service! <br><br><br>
+               Best regards, <br>
                StarHire`,
       });
       return {
@@ -511,7 +504,7 @@ export class EmailService {
                We regret to inform you that the event <Strong>${eventListing.eventName}</Strong> happening at ${eventListing.location} has been cancelled.<br>
 
                <br><br>
-               Best regards,<br>
+               Best regards, <br>
                StarHire`,
       });
       return {

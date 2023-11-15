@@ -44,13 +44,13 @@ export class EventListingService {
         throw new NotFoundException('Corporate Id provided is not valid');
       }
 
-      // Ensure eventDate is a future date
-      if (createEventListingDto.eventDate <= new Date()) {
-        throw new HttpException(
-          'Event date must be a future date.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      // // Ensure date is a future date
+      // if (createEventListingDto.eventStartDateAndTime <= new Date()) {
+      //   throw new HttpException(
+      //     'Event date must be a future date.',
+      //     HttpStatus.BAD_REQUEST,
+      //   );
+      // }
 
       // Ensure eventListingStatus field is a valid enum
       const mappedStatus = mapEventListingStatusToEnum(
@@ -232,6 +232,7 @@ export class EventListingService {
     }
   }
 
+  //DS please add the notifications to job seekers who registered for the events here
   async cancel(id: number): Promise<EventListing> {
     const eventListing = await this.eventListingRepository.findOne({
       where: { eventListingId: id },

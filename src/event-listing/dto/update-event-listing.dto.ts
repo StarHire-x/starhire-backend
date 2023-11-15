@@ -4,7 +4,8 @@ import EventListingStatusEnum from '../../enums/eventListingStatus.enum';
 class UpdateDto {
   eventName: string;
   location: string;
-  eventDate: Date;
+  eventStartDateAndTime: Date;
+  eventEndDateAndTime: Date;
   details: string;
   image: string;
   listingDate: Date;

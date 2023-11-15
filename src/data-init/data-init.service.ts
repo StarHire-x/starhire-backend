@@ -44,6 +44,10 @@ import { CreateJobAssignmentDto } from 'src/job-assignment/dto/create-job-assign
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { JobAssignmentService } from 'src/job-assignment/job-assignment.service';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
+import { CreateEventListingDto } from 'src/event-listing/dto/create-event-listing.dto';
+import { EventListing } from '../entities/eventListing.entity';
+import { EventListingService } from '../event-listing/event-listing.service';
+import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
 
 require('dotenv').config();
 
@@ -86,6 +90,9 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(JobAssignment)
     private readonly jobAssignmentRepository: Repository<JobAssignment>,
     private readonly jobAssignmentService: JobAssignmentService,
+    @InjectRepository(EventListing)
+    private readonly eventListingRepository: Repository<EventListing>,
+    private readonly eventListingService: EventListingService,
   ) {}
 
   async onModuleInit() {
@@ -512,12 +519,13 @@ export class DataInitService implements OnModuleInit {
       );
     }
 
-    // Job Seeker account create working email 
+    // Job Seeker account create working email
     const hashedJobSeekerWorkingEmailPassword = await bcrypt.hash(
       process.env.JOBSEEKER_PW,
       5,
     );
-    const createJobSeekerWorkingEmailDto: CreateJobSeekerDto = new CreateJobSeekerDto();
+    const createJobSeekerWorkingEmailDto: CreateJobSeekerDto =
+      new CreateJobSeekerDto();
     createJobSeekerWorkingEmailDto.userName = 'workingJobSeeker';
     createJobSeekerWorkingEmailDto.password =
       hashedJobSeekerWorkingEmailPassword;
@@ -530,7 +538,8 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerWorkingEmailDto.homeAddress = '123 King St';
     createJobSeekerWorkingEmailDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker1.jpg';
-    createJobSeekerWorkingEmailDto.notificationMode = NotificationModeEnum.EMAIL;
+    createJobSeekerWorkingEmailDto.notificationMode =
+      NotificationModeEnum.EMAIL;
 
     let existingJobSeekerWorkingEmail = await this.jobSeekerRepository.findOne({
       where: {
@@ -663,7 +672,7 @@ export class DataInitService implements OnModuleInit {
       !createdJobSeeker ||
       !createdJobSeekerTwo ||
       !createdJobSeekerThree ||
-      !createdJobSeekerWorkingEmail 
+      !createdJobSeekerWorkingEmail
     ) {
       return;
     }
@@ -752,7 +761,8 @@ export class DataInitService implements OnModuleInit {
     createJobPreferenceSevenDto.benefitPreference = 3;
     createJobPreferenceSevenDto.salaryPreference = 2;
     createJobPreferenceSevenDto.workLifeBalancePreference = 5;
-    createJobPreferenceSevenDto.jobSeekerId = createdJobSeekerWorkingEmail.userId;
+    createJobPreferenceSevenDto.jobSeekerId =
+      createdJobSeekerWorkingEmail.userId;
 
     await this.jobPreferenceService.create(createJobPreferenceSevenDto);
     console.log(
@@ -1177,7 +1187,7 @@ export class DataInitService implements OnModuleInit {
     await this.jobApplicationService.create(createJobApplicationTwoDto);
     console.log(`Job Application 2 is created.`);
 
-    // jobApplication 2 creation
+    // jobApplication 3 creation
     const jobSeekerThree = await this.jobSeekerRepository.findOne({
       where: { email: 'jobseeker3@gmail.com' },
     });
@@ -1205,5 +1215,24 @@ export class DataInitService implements OnModuleInit {
 
     await this.jobApplicationService.create(createJobApplicationThreeDto);
     console.log(`Job Application 3 is created.`);
+
+    // // event listing 1 creation
+    // const createEventListingDto: CreateEventListingDto =
+    //   new CreateEventListingDto();
+    // createEventListingDto.eventName = 'Maple Bear 40th Anniversary';
+    // createEventListingDto.location = 'To Be Announced';
+    // createEventListingDto.eventStartDateAndTime = new Date(
+    //   '2024-01-06 17:00:00',
+    // );
+    // createEventListingDto.eventEndDateAndTime = new Date('2024-01-06 23:00:00');
+    // createEventListingDto.details = 'This is Event Listing 1 used in SR4';
+    // createEventListingDto.image = '';
+    // createEventListingDto.eventListingStatus = EventListingStatusEnum.UPCOMING;
+    // createEventListingDto.corporateId = createdCorporateThree.userId;
+
+    // await this.eventListingService.create(createEventListingDto);
+    // console.log(
+    //   `Event Listing ${createEventListingDto.eventName} is created by corporate username ${createdCorporateThree.userName}`,
+    // );
   }
 }

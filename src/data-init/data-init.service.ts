@@ -1121,6 +1121,15 @@ export class DataInitService implements OnModuleInit {
       `ticket ${createTicketThreeDto.ticketName} is created by email ${createTicketThreeDto.email}`,
     );
 
+    // Job Assignment 1 creation, assign job listing id 6 to jobseeker@gmail.com
+    const jobListingSix = await this.jobListingRepository.findOne({
+      where: { jobListingId: 6 },
+    });
+
+    const response = await this.jobListingService.assignJobListing(createdJobSeeker?.userId, jobListingSix?.jobListingId, createdRecruiter?.userId);
+    console.log(response?.message);
+
+
     // jobApplication 1 creation
     const jobListingOne = await this.jobListingRepository.findOne({
       where: { jobListingId: 1 },

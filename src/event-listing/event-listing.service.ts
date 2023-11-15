@@ -232,6 +232,7 @@ export class EventListingService {
     }
   }
 
+  //DS please add the notifications to job seekers who registered for the events here
   async cancel(id: number): Promise<EventListing> {
     const eventListing = await this.eventListingRepository.findOne({
       where: { eventListingId: id },

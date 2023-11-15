@@ -441,7 +441,9 @@ Log in for details: ${loginLink}`;
       return;
     }
 
-    const message = `Hi ${recipient.userName}, you have an important message sent by ${sender.userName}. Message content: ${chatMessage.message}. Login for details: ${loginLink}}`;
+    const message = 'Hi';
+
+    //const message = `Hi ${recipient.userName}, you have an important message sent by ${sender.userName}. Message content: ${chatMessage.message}. Login for details: ${loginLink}`;
 
     try {
       await this.client.messages.create({
@@ -449,6 +451,10 @@ Log in for details: ${loginLink}`;
         from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
         body: message,
       });
+
+      console.log('Contact No', recipient.contactNo);
+
+      console.log('Contact No', recipient.contactNo);
 
       console.log('SMS whatsapp sent');
 

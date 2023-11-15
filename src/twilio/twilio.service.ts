@@ -444,7 +444,9 @@ Log in for details: ${loginLink}`;
       return;
     }
 
-    const message = `Hi ${recipient.userName}, you have an important message sent by ${sender.userName}. Message content: ${chatMessage.message}. Login for details: ${loginLink}}`;
+    const message = "Hi";
+
+    //const message = `Hi ${recipient.userName}, you have an important message sent by ${sender.userName}. Message content: ${chatMessage.message}. Login for details: ${loginLink}`;
 
     try {
       await this.client.messages.create({

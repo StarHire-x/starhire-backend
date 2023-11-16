@@ -123,7 +123,7 @@ export class DataInitService implements OnModuleInit {
     createAdministratorDto.email = 'admin@gmail.com';
     createAdministratorDto.contactNo = '05854749';
     createAdministratorDto.role = UserRoleEnum.ADMINISTRATOR;
-    createAdministratorDto.createdAt = new Date();
+    createAdministratorDto.createdAt = new Date('2023-08-27');
     createAdministratorDto.fullName = 'Administrator';
     createAdministratorDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/admin1.jpg';
@@ -156,7 +156,7 @@ export class DataInitService implements OnModuleInit {
     createAdministratorWorkingEmailDto.email = 'dragonplatoon1@gmail.com';
     createAdministratorWorkingEmailDto.contactNo = '36747489';
     createAdministratorWorkingEmailDto.role = UserRoleEnum.ADMINISTRATOR;
-    createAdministratorWorkingEmailDto.createdAt = new Date();
+    createAdministratorWorkingEmailDto.createdAt = new Date('2023-08-28');
     createAdministratorWorkingEmailDto.fullName = 'Working Admin';
     createAdministratorWorkingEmailDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/admin1.jpg';
@@ -192,7 +192,7 @@ export class DataInitService implements OnModuleInit {
     createRecruiterDto.email = 'recruiter@gmail.com';
     createRecruiterDto.contactNo = '65415522';
     createRecruiterDto.role = UserRoleEnum.RECRUITER;
-    createRecruiterDto.createdAt = new Date();
+    createRecruiterDto.createdAt = new Date('2023-09-03');
     createRecruiterDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/recruiter1.jpg';
     createRecruiterDto.fullName = 'Recrutier Lia';
@@ -225,7 +225,7 @@ export class DataInitService implements OnModuleInit {
     createRecruiterWorkingEmailDto.email = 'dragonplatoon2@gmail.com';
     createRecruiterWorkingEmailDto.contactNo = '34536673';
     createRecruiterWorkingEmailDto.role = UserRoleEnum.RECRUITER;
-    createRecruiterWorkingEmailDto.createdAt = new Date();
+    createRecruiterWorkingEmailDto.createdAt = new Date('2023-09-13');
     createRecruiterWorkingEmailDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/recruiter1.jpg';
     createRecruiterWorkingEmailDto.fullName = 'Working Recruiter';
@@ -259,7 +259,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateDto.email = 'corporate@gmail.com';
     createCorporateDto.contactNo = '65415523';
     createCorporateDto.role = UserRoleEnum.CORPORATE;
-    createCorporateDto.createdAt = new Date();
+    createCorporateDto.createdAt = new Date('2023-09-15');
     createCorporateDto.companyRegistrationId = 177452096;
     createCorporateDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png';
@@ -291,7 +291,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateTwoDto.email = 'pawfectis3106@gmail.com';
     createCorporateTwoDto.contactNo = '65415529';
     createCorporateTwoDto.role = UserRoleEnum.CORPORATE;
-    createCorporateTwoDto.createdAt = new Date();
+    createCorporateTwoDto.createdAt = new Date('2023-09-15');
     createCorporateTwoDto.companyRegistrationId = 177452074;
     createCorporateTwoDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/Scenery+8.jpg';
@@ -324,7 +324,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateThreeDto.email = 'maplebear99@gmail.com';
     createCorporateThreeDto.contactNo = '66816711';
     createCorporateThreeDto.role = UserRoleEnum.CORPORATE;
-    createCorporateThreeDto.createdAt = new Date();
+    createCorporateThreeDto.createdAt = new Date('2023-09-17');
     createCorporateThreeDto.companyRegistrationId = 177452082;
     createCorporateThreeDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/MapleBearLogo.png';
@@ -356,7 +356,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateFourDto.email = 'growingminds@gmail.com';
     createCorporateFourDto.contactNo = '66816712';
     createCorporateFourDto.role = UserRoleEnum.CORPORATE;
-    createCorporateFourDto.createdAt = new Date();
+    createCorporateFourDto.createdAt = new Date('2023-09-20');
     createCorporateFourDto.companyRegistrationId = 177452083;
     createCorporateFourDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/growingminds.png';
@@ -390,7 +390,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateWorkingEmailDto.email = 'dragonplatoon3@gmail.com';
     createCorporateWorkingEmailDto.contactNo = '84568580';
     createCorporateWorkingEmailDto.role = UserRoleEnum.CORPORATE;
-    createCorporateWorkingEmailDto.createdAt = new Date();
+    createCorporateWorkingEmailDto.createdAt = new Date('2023-09-28');
     createCorporateWorkingEmailDto.companyRegistrationId = 177452099;
     createCorporateWorkingEmailDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png';
@@ -424,7 +424,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.email = 'jobseeker@gmail.com';
     createJobSeekerDto.contactNo = '65415524';
     createJobSeekerDto.role = UserRoleEnum.JOBSEEKER;
-    createJobSeekerDto.createdAt = new Date();
+    createJobSeekerDto.createdAt = new Date('2023-09-12');
     createJobSeekerDto.fullName = 'David Tan';
     createJobSeekerDto.dateOfBirth = new Date('2000-10-09');
     createJobSeekerDto.homeAddress = '123 King St';
@@ -459,7 +459,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.email = 'jobseeker2@gmail.com';
     createJobSeekerTwoDto.contactNo = '92345678';
     createJobSeekerTwoDto.role = UserRoleEnum.JOBSEEKER;
-    createJobSeekerTwoDto.createdAt = new Date();
+    createJobSeekerTwoDto.createdAt = new Date('2023-09-15');
     createJobSeekerTwoDto.fullName = 'George Tan';
     createJobSeekerTwoDto.dateOfBirth = new Date('2000-10-09');
     createJobSeekerTwoDto.homeAddress = '123 King St';
@@ -495,7 +495,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerThreeDto.email = 'jobseeker3@gmail.com';
     createJobSeekerThreeDto.contactNo = '92445638';
     createJobSeekerThreeDto.role = UserRoleEnum.JOBSEEKER;
-    createJobSeekerThreeDto.createdAt = new Date();
+    createJobSeekerThreeDto.createdAt = new Date('2023-10-15');
     createJobSeekerThreeDto.fullName = 'Patrick Tan';
     createJobSeekerThreeDto.dateOfBirth = new Date('2000-10-09');
     createJobSeekerThreeDto.homeAddress = '123 King St';
@@ -532,7 +532,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerWorkingEmailDto.email = 'dragonplatoon4@gmail.com';
     createJobSeekerWorkingEmailDto.contactNo = '87548769';
     createJobSeekerWorkingEmailDto.role = UserRoleEnum.JOBSEEKER;
-    createJobSeekerWorkingEmailDto.createdAt = new Date();
+    createJobSeekerWorkingEmailDto.createdAt = new Date('2023-11-11');
     createJobSeekerWorkingEmailDto.fullName = 'Desmond Leong';
     createJobSeekerWorkingEmailDto.dateOfBirth = new Date('1970-10-09');
     createJobSeekerWorkingEmailDto.homeAddress = '123 King St';
@@ -799,7 +799,8 @@ export class DataInitService implements OnModuleInit {
       'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
     createJobListingDto.jobLocation = 'Hillview, Singapore';
     createJobListingDto.averageSalary = 3000;
-    createJobListingDto.jobStartDate = new Date('2024-10-09');
+    createJobListingDto.jobStartDate = new Date('2023-12-12');
+    createJobListingDto.listingDate = new Date('2023-10-10')
     createJobListingDto.requiredDocuments =
       'Early Childhood Graduation Cert,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -822,7 +823,8 @@ export class DataInitService implements OnModuleInit {
       'Must have a love for teaching and is passionate about children. Good classroom management skills. Speaks well and is a confident speaker.';
     createJobListingTwoDto.jobLocation = 'Kallang, Singapore';
     createJobListingTwoDto.averageSalary = 2800;
-    createJobListingTwoDto.jobStartDate = new Date('2024-10-16');
+    createJobListingTwoDto.jobStartDate = new Date('2023-12-12');
+    createJobListingTwoDto.listingDate = new Date('2023-10-12');
     createJobListingTwoDto.requiredDocuments =
       'Early Childhood Graduation Cert,Chinese Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingTwoDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -845,7 +847,8 @@ export class DataInitService implements OnModuleInit {
       'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
     createJobListingThreeDto.jobLocation = 'Yishun, Singapore';
     createJobListingThreeDto.averageSalary = 3200;
-    createJobListingThreeDto.jobStartDate = new Date('2024-10-23');
+    createJobListingThreeDto.jobStartDate = new Date('2023-12-12');
+    createJobListingThreeDto.listingDate = new Date('2023-10-22');
     createJobListingThreeDto.requiredDocuments =
       'Early Childhood Graduation Cert,Resume';
     createJobListingThreeDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -867,7 +870,8 @@ export class DataInitService implements OnModuleInit {
       'Passionate in nurturing and educating the young children. Has good communications and interpersonal skills. Accredited L1/L2 / ACEY by ECDA. Has at lease one year of relevant working experience. Students completing ACEY or Diploma may be considered. Singaporean only';
     createJobListingFourDto.jobLocation = 'Sembawang, Singapore';
     createJobListingFourDto.averageSalary = 5200;
-    createJobListingFourDto.jobStartDate = new Date('2024-10-30');
+    createJobListingFourDto.jobStartDate = new Date('2023-12-12');
+    createJobListingFourDto.listingDate = new Date('2023-10-15');
     createJobListingFourDto.requiredDocuments =
       'Early Childhood Graduation Cert,Resume';
     createJobListingFourDto.jobListingStatus = JobListingStatusEnum.UNVERIFIED;
@@ -889,7 +893,8 @@ export class DataInitService implements OnModuleInit {
       'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
     createJobListingFiveDto.jobLocation = 'Tengah, Singapore';
     createJobListingFiveDto.averageSalary = 3000;
-    createJobListingFiveDto.jobStartDate = new Date('2024-10-23');
+    createJobListingFiveDto.jobStartDate = new Date('2023-12-12');
+    createJobListingFiveDto.listingDate = new Date('2023-10-25');
     createJobListingFiveDto.requiredDocuments =
       'Early Childhood Graduation Cert,Resume,Tamil Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingFiveDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -911,7 +916,8 @@ export class DataInitService implements OnModuleInit {
       'Fundamentals Certificate in Early Childhood Care and Education (FECCE) is a bonus. At least 1 year of working experience in a related field.';
     createJobListingSixDto.jobLocation = 'Woodland, Singapore';
     createJobListingSixDto.averageSalary = 2800;
-    createJobListingSixDto.jobStartDate = new Date('2024-10-23');
+    createJobListingSixDto.jobStartDate = new Date('2023-12-12');
+    createJobListingSixDto.listingDate = new Date('2023-11-11');
     createJobListingSixDto.requiredDocuments =
       'Early Childhood Graduation Cert,Resume,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingSixDto.jobListingStatus = JobListingStatusEnum.APPROVED;

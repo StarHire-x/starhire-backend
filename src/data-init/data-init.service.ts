@@ -522,7 +522,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerWorkingEmailDto.password =
       hashedJobSeekerWorkingEmailPassword;
     createJobSeekerWorkingEmailDto.email = 'dragonplatoon4@gmail.com';
-    createJobSeekerWorkingEmailDto.contactNo = '87548769';
+    createJobSeekerWorkingEmailDto.contactNo = '84568580';
     createJobSeekerWorkingEmailDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerWorkingEmailDto.createdAt = new Date('2023-11-11');
     createJobSeekerWorkingEmailDto.fullName = 'Desmond Leong';

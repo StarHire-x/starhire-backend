@@ -91,7 +91,7 @@ export class InvoiceService {
       if (!stripeCustId) {
         const customer = await this.stripe.customers.create({
           email: corporate.email,
-          name: corporate.companyName,
+          name: corporate.schoolName,
           metadata: {
             userId: corporate.userId,
           },
@@ -117,9 +117,16 @@ export class InvoiceService {
 
       // create individual invoice item for each job listing
       for (const jobApp of jobApplications) {
+        // Extract numbers from the string
+        const numbers = jobApp.jobListing.payRange.match(/\d+/g);
+
+        // Parse the first number, if available
+        const firstNumber = numbers ? parseInt(numbers[0], 10) : 0;
+
+        // Now use firstNumber in your invoice item creation
         const invoiceItem = await this.stripe.invoiceItems.create({
           customer: stripeCustId,
-          amount: jobApp.jobListing.averageSalary * 100, // because amount takes in cents
+          amount: firstNumber * 100, // because amount takes in cents
           invoice: stripeInvoice.id,
           description: `${jobApp.jobListing.title} - ${jobApp.jobSeeker.userName}`,
           currency: 'sgd',
@@ -141,10 +148,13 @@ export class InvoiceService {
 
       const invoiceJobApplications: jobApplication[] = [];
       jobApplications.forEach((application: JobApplication) => {
+        const numbers = application?.jobListing?.payRange.match(/\d+/g); // ['3500', '4500']
+        const firstNumber = numbers ? parseInt(numbers[0], 10) : 0; // 3500
+
         invoiceJobApplications.push({
           jobApplicationId: application?.jobApplicationId,
           jobListingTitle: application?.jobListing?.title,
-          amount: application?.jobListing?.averageSalary,
+          amount: firstNumber,
         });
       });
 
@@ -279,18 +289,24 @@ export class InvoiceService {
       }
 
       // update invoice payment to pay in full
-      const invoiceJobApplications: jobApplication[] = [];
-      invoice.jobApplications?.forEach((application) =>
+      const invoiceJobApplications = [];
+      invoice.jobApplications?.forEach((application) => {
+        // Extract numbers from the string
+        const numbers = application.jobListing?.payRange.match(/\d+/g);
+      
+        // Parse the first number, if available
+        const firstNumber = numbers ? parseInt(numbers[0], 10) : 0;
+      
         invoiceJobApplications.push({
           jobApplicationId: application.jobApplicationId,
           jobListingTitle: application.jobListing?.title,
-          amount: application.jobListing?.averageSalary,
-        }),
-      );
+          amount: firstNumber,
+        });
+      });
 
       const invoiceData: TInvoiceData = {
         shipping: {
-          name: invoice.corporate?.companyName,
+          name: invoice.corporate?.schoolName,
           address: invoice.corporate?.companyAddress,
         },
         items: invoiceJobApplications,
@@ -300,7 +316,7 @@ export class InvoiceService {
       };
       const invoicePdfBuffer = await this.pdfService.createInvoice(invoiceData);
       const pdfLink = await this.uploadService.upload(
-        `invoice${invoice.invoiceId}_${invoice?.corporate?.companyName}.pdf`,
+        `invoice${invoice.invoiceId}_${invoice?.corporate?.schoolName}.pdf`,
         invoicePdfBuffer,
       );
 
@@ -607,8 +623,7 @@ export class InvoiceService {
       const day = result.dateArrayInDays;
       const weeks = result.dateArrayByWeek;
 
-      for(const invoice of corporate.invoices) {
-
+      for (const invoice of corporate.invoices) {
         const monthSum = this.formatDateByMonth(invoice.invoiceDate);
         const daySum = this.formatDateByDay(invoice.invoiceDate);
         const weekSum = this.formatDateByWeek(invoice.invoiceDate, weeks);
@@ -626,11 +641,12 @@ export class InvoiceService {
           statisticsMetrics.confirmedPaidSum += invoice.totalAmount;
         }
 
-        statistics[status][monthSum] = (statistics[status][monthSum] || 0) + invoice.totalAmount;
+        statistics[status][monthSum] =
+          (statistics[status][monthSum] || 0) + invoice.totalAmount;
         statistics[status][daySum] =
           (statistics[status][daySum] || 0) + invoice.totalAmount;
-          statistics[status][weekSum] =
-            (statistics[status][weekSum] || 0) + invoice.totalAmount;
+        statistics[status][weekSum] =
+          (statistics[status][weekSum] || 0) + invoice.totalAmount;
       }
 
       const overallStatistics = {

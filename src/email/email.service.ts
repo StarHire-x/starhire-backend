@@ -93,7 +93,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: recruiter.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
-        html: `Dear <Strong>${recruiter.firstName}</Strong>,<br><br>
+        html: `Dear <Strong>${recruiter.fullName}</Strong>,<br><br>
                A new job listing, ${jobListing.title} created by ${corporate.schoolName} has been approved! <br>
 
                You can <a href="${loginLink}">Login</a> to your account to start matching this job listing to suitable job seekers. <br><br><br>
@@ -126,7 +126,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: admin.email,
         subject: `New Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title}`,
-        html: `Dear <Strong>${admin.firstName}</Strong>,<br><br>
+        html: `Dear <Strong>${admin.fullName}</Strong>,<br><br>
                A new job listing ${jobListing.title}, with ID ${jobListing.jobListingId}, has been created by ${corporate.schoolName}! <br> 
                Please <a href="${loginLink}">Login</a> to vet this job listing. <br><br><br>
 
@@ -232,7 +232,7 @@ export class EmailService {
          
          Your job application status for the position of <strong>${jobListing.title}</strong> at <strong>${corporate.schoolName}</strong> has been updated. The current status of your job application is: <strong>${jobApplication.jobApplicationStatus}</strong>.<br><br>
          You can <a href="${loginLink}">Login</a> to your account to follow up. <br><br>
-         For further enquiries, do contact recruiter <strong>${recruiter.firstName}</strong> who is handling your job application. <br><br>
+         For further enquiries, do contact recruiter <strong>${recruiter.fullName}</strong> who is handling your job application. <br><br>
 
          Thank you for using our service! <br><br><br>
          Best regards, <br>
@@ -264,7 +264,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: recruiter.email,
         subject: `Update on Job Application ID: ${jobApplication.jobApplicationId} for ${jobSeeker.firstName}`,
-        html: `Dear <strong>${recruiter.firstName}</strong>, <br><br>
+        html: `Dear <strong>${recruiter.fullName}</strong>, <br><br>
          
          The job application status of ${jobSeeker.firstName} for the position of ${jobListing.title} at ${corporate.schoolName} has been updated. The current status of the job application is: <strong>${jobApplication.jobApplicationStatus}</strong>. <br><br>
          You can <a href="${loginLink}">Login</a> to your account to follow up. <br><br>

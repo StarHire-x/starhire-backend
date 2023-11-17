@@ -10,7 +10,7 @@ class UpdateDto {
   requiredDocuments: string;
   jobLocation: string;
   listingDate: Date;
-  averageSalary: number;
+  payRange: string;
   jobStartDate: Date;
   jobListingStatus: JobListingStatusEnum;
   jobSeekers: [];

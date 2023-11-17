@@ -418,7 +418,7 @@ export class TwilioService {
       return;
     }
 
-    const message = `Hi ${jobSeeker.fullName},
+    const message = `Hi ${jobSeeker.firstName},
     A new event ${eventListing.eventName} happening at ${eventListing.location} has been posted by ${corporate.schoolName}!
     Log in to check it out: ${loginLink}`;
 
@@ -489,7 +489,7 @@ Log in for details: ${loginLink}`;
       return;
     }
 
-    const message = `Hi ${jobSeeker.fullName},
+    const message = `Hi ${jobSeeker.firstName},
     Please take note that the event ${eventListing.eventName} happening at ${eventListing.location} has been cancelled.
 `;
 

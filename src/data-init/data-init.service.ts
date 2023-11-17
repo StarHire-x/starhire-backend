@@ -375,7 +375,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateFourDto.companyRegistrationId = 177452083;
     createCorporateFourDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/growingminds.png';
-    createCorporateFourDto.companyName = 'Growing Minds Preschool Pte Ltd';
+    createCorporateFourDto.schoolName = 'Growing Minds Preschool Pte Ltd';
 
     const existingCorporateFour = await this.corporateRepository.findOne({
       where: {
@@ -409,7 +409,7 @@ export class DataInitService implements OnModuleInit {
     createCorporateWorkingEmailDto.companyRegistrationId = 177452099;
     createCorporateWorkingEmailDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png';
-    createCorporateWorkingEmailDto.companyName = 'Working Corporate Pte Ltd';
+    createCorporateWorkingEmailDto.schoolName = 'Working Corporate Pte Ltd';
     createCorporateWorkingEmailDto.notificationMode =
       NotificationModeEnum.EMAIL;
 
@@ -593,9 +593,7 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerWorkingEmailDto.contactNo = '87548769';
     createJobSeekerWorkingEmailDto.role = UserRoleEnum.JOBSEEKER;
     createJobSeekerWorkingEmailDto.createdAt = new Date('2023-11-11');
-    createJobSeekerWorkingEmailDto.fullName = 'Desmond Leong';
-    createJobSeekerWorkingEmailDto.dateOfBirth = new Date('1970-10-09');
-    createJobSeekerWorkingEmailDto.homeAddress = '123 King St';
+    createJobSeekerWorkingEmailDto.firstName = 'Desmond';
     createJobSeekerWorkingEmailDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/jobseeker1.jpg';
     createJobSeekerWorkingEmailDto.notificationMode =
@@ -1193,18 +1191,26 @@ export class DataInitService implements OnModuleInit {
       where: { jobListingId: 6 },
     });
 
-    const response = await this.jobListingService.assignJobListing(createdJobSeeker?.userId, jobListingSix?.jobListingId, createdRecruiter?.userId);
+    const response = await this.jobListingService.assignJobListing(
+      createdJobSeeker?.userId,
+      jobListingSix?.jobListingId,
+      createdRecruiter?.userId,
+    );
     console.log(response?.message);
 
-
     // jobApplication 1 creation - assign job listing id 1 to jobseeker@gmail.com from recruiter@gmail.com
-     const jobListingOne = await this.jobListingRepository.findOne({
+    const jobListingOne = await this.jobListingRepository.findOne({
       where: { jobListingId: 1 },
     });
 
-    const jobAssignmentOneResponse = await this.jobListingService.assignJobListing(createdJobSeeker?.userId, jobListingOne?.jobListingId, createdRecruiter?.userId);
+    const jobAssignmentOneResponse =
+      await this.jobListingService.assignJobListing(
+        createdJobSeeker?.userId,
+        jobListingOne?.jobListingId,
+        createdRecruiter?.userId,
+      );
     console.log(jobAssignmentOneResponse?.message);
-    
+
     // const jobListingOne = await this.jobListingRepository.findOne({
     //   where: { jobListingId: 1 },
     // });
@@ -1243,7 +1249,12 @@ export class DataInitService implements OnModuleInit {
       where: { jobListingId: 2 },
     });
 
-    const jobAssignmentTwoResponse = await this.jobListingService.assignJobListing(createdJobSeekerTwo?.userId, jobListingTwo?.jobListingId, createdRecruiter?.userId);
+    const jobAssignmentTwoResponse =
+      await this.jobListingService.assignJobListing(
+        createdJobSeekerTwo?.userId,
+        jobListingTwo?.jobListingId,
+        createdRecruiter?.userId,
+      );
     console.log(jobAssignmentTwoResponse?.message);
 
     // const jobSeekerTwo = await this.jobSeekerRepository.findOne({
@@ -1275,7 +1286,12 @@ export class DataInitService implements OnModuleInit {
     console.log(`Job Application 2 is created.`);
 
     // jobApplication 3 creation - assign job listing id 2 to jobseeker3@gmail.com from recruiter@gmail.com
-    const jobAssignmentThreeResponse = await this.jobListingService.assignJobListing(createdJobSeekerThree?.userId, jobListingTwo?.jobListingId, createdRecruiter?.userId);
+    const jobAssignmentThreeResponse =
+      await this.jobListingService.assignJobListing(
+        createdJobSeekerThree?.userId,
+        jobListingTwo?.jobListingId,
+        createdRecruiter?.userId,
+      );
     console.log(jobAssignmentThreeResponse?.message);
     // const jobSeekerThree = await this.jobSeekerRepository.findOne({
     //   where: { email: 'jobseeker3@gmail.com' },

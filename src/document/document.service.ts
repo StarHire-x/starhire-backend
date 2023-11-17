@@ -10,7 +10,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from '../entities/document.entity';
 import { Repository } from 'typeorm';
 import { JobApplication } from '../entities/jobApplication.entity';
-import { Ticket } from '../entities/ticket.entity';
 
 @Injectable()
 export class DocumentService {
@@ -19,8 +18,6 @@ export class DocumentService {
     private readonly documentRepository: Repository<Document>,
     @InjectRepository(JobApplication)
     private readonly jobApplicationRepository: Repository<JobApplication>,
-    @InjectRepository(Ticket)
-    private readonly ticketRepository: Repository<Ticket>,
   ) {}
 
   async create(createDocumentDto: CreateDocumentDto) {

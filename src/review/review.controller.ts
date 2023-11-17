@@ -1,27 +1,21 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  NotFoundException,
-  HttpException,
-  HttpStatus,
-  Put,
-} from '@nestjs/common';
-import { JobExperienceService } from './job-experience.service';
-import { CreateJobExperienceDto } from './dto/create-job-experience.dto';
-import { UpdateJobExperienceDto } from './dto/update-job-experience.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, NotFoundException, Put } from '@nestjs/common';
+import { ReviewService } from './review.service';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { UpdateReviewDto } from './dto/update-review.dto';
 
-@Controller('job-experience')
-export class JobExperienceController {
-  constructor(private readonly jobExperienceService: JobExperienceService) {}
+@Controller('review')
+export class ReviewController {
+  constructor(private readonly reviewService: ReviewService) {}
 
-  @Post()
-  async create(@Body() createJobExperienceDto: CreateJobExperienceDto) {
+  @Post('/newReview/:role')
+  async create(
+    @Param('role') role: string,
+    @Body() createReviewDto: CreateReviewDto,
+  ) {
     try {
-      return await this.jobExperienceService.create(createJobExperienceDto);
+      const result = await this.reviewService.create(createReviewDto, role);
+      console.log(result);
+      return result;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -34,16 +28,25 @@ export class JobExperienceController {
     }
   }
 
-  @Get('/all')
+  @Get()
   findAll() {
-    return this.jobExperienceService.findAll();
+    return this.reviewService.findAll();
   }
 
-  // GET /job-experience/:id
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
+    return this.reviewService.findOne(+id);
+  }
+
+  @Get('/users/:id/:role')
+  async findUserListDropdown(
+    @Param('id') id: string,
+    @Param('role') role: string,
+  ) {
     try {
-      return this.jobExperienceService.findOne(id);
+      const result = await this.reviewService.findUserListDropdown(id, role);
+      console.log(result);
+      return result;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(error.message, HttpStatus.NOT_FOUND);
@@ -56,10 +59,10 @@ export class JobExperienceController {
     }
   }
 
-  @Get('/job-seeker/:id')
-  async findByJobSeekerId(@Param('id') id: string) {
+  @Get('/retrieve/:id/:role')
+  async retrieveReviews(@Param('id') id: string, @Param('role') role: string) {
     try {
-      const result = await this.jobExperienceService.findByJobSeekerId(id);
+      const result = await this.reviewService.findByUserIdRole(id, role);
       console.log(result);
       return result;
     } catch (error) {
@@ -77,10 +80,10 @@ export class JobExperienceController {
   @Put(':id')
   async update(
     @Param('id') id: number,
-    @Body() updateJobExperienceDto: UpdateJobExperienceDto,
+    @Body() updateReviewDto: UpdateReviewDto,
   ) {
     try {
-      return await this.jobExperienceService.update(id, updateJobExperienceDto);
+      return await this.reviewService.update(id, updateReviewDto);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);
@@ -94,13 +97,13 @@ export class JobExperienceController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  async remove(@Param('id') id: number) {
     try {
-      return this.jobExperienceService.remove(id);
+      return await this.reviewService.remove(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new HttpException(
-          `Job Experience with ID ${id} not found`,
+          `Review with ID ${id} not found`,
           HttpStatus.NOT_FOUND,
         );
       } else {

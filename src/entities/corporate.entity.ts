@@ -9,6 +9,7 @@ import { JobPreference } from './jobPreference.entity';
 import { Invoice } from './invoice.entity';
 import CorporatePromotionStatusEnum from '../enums/corporatePromotionStatus.enum';
 import { IsEnum } from 'class-validator';
+import { Review } from './review.entity';
 
 @Entity({ name: 'corporates' })
 export class Corporate extends User {
@@ -80,6 +81,12 @@ export class Corporate extends User {
     nullable: true, // one-to-one optional
   })
   jobPreference: JobPreference;
+
+  @OneToMany(() => Review, (review) => review.corporate, {
+    cascade: true,
+    nullable: true,
+  })
+  reviews: Review[];
 
   @ManyToMany(() => JobSeeker, (jobSeeker) => jobSeeker.following, {
     nullable: true,

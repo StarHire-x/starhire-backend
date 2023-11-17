@@ -9,6 +9,10 @@ import { Recruiter } from '../entities/recruiter.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { Administrator } from '../entities/administrator.entity';
 import { Ticket } from '../entities/ticket.entity';
+import { EventListing } from '../entities/eventListing.entity';
+import { Invoice } from '../entities/invoice.entity';
+import { User } from 'src/entities/user.entity';
+import { ChatMessage } from 'src/entities/chatMessage.entity';
 
 @Injectable()
 export class TwilioService {
@@ -31,11 +35,11 @@ export class TwilioService {
       return;
     }
 
-    const message = `Hello ${corporate.schoolName},
-Your status on Job Listing ID: ${jobListing.jobListingId}, ${
+    const message = `Hi ${corporate.schoolName},
+    Your Job Listing ID: ${jobListing.jobListingId}, ${
       jobListing.title
-    } have been updated to: ${jobListing.jobListingStatus.toUpperCase()}.
-Log in to view the changes: ${loginLink}`;
+    } have been: ${jobListing.jobListingStatus.toUpperCase()}.
+    Log in to follow up: ${loginLink}`;
 
     try {
       //to refers to the whatsapp number , body refer to message
@@ -66,9 +70,9 @@ Log in to view the changes: ${loginLink}`;
       return;
     }
 
-    const message = `Hello ${recruiter.fullName},
-We want to inform you that a new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.schoolName} has been approved
-Log in to perform job matching: ${loginLink}`;
+    const message = `Hi ${recruiter.fullName},
+    A new job listing, ${jobListing.title} created by ${corporate.schoolName} has been approved!
+    You can login to start matching this job listing to suitable job seekers. ${loginLink}`;
 
     try {
       //to refers to the whatsapp number , body refer to message
@@ -94,14 +98,13 @@ Log in to perform job matching: ${loginLink}`;
     corporate: Corporate,
     jobListing: JobListing,
   ) {
-    let loginLink = 'http://www.localhost:3000/login';
-
     if (!admin.contactNo) {
       return;
     }
 
-    const message = `Hello ${admin.fullName},
-Please vet new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} by ${corporate.schoolName}`;
+    const message = `Hi ${admin.fullName},
+    A new job listing ${jobListing.title}, with ID ${jobListing.jobListingId}, has been created by ${corporate.schoolName}!
+    Log in to vet job listing.`;
 
     try {
       await this.client.messages.create({
@@ -134,9 +137,10 @@ Please vet new Job Listing ID: ${jobListing.jobListingId}, ${jobListing.title} b
       return;
     }
 
-    const message = `Hello ${user.fullName},
-Your notification settings have been updated to: ${user.notificationMode}.
-Log in to view the changes: ${loginLink}`;
+    const message = `Hi ${user.fullName},
+    This is to confirm that you have changed your notification mode to ${user.notificationMode}.
+    Log in to see the changes: ${loginLink}
+    If you did not make this change, send in a ticket immediately and our Administrator will contact you.`;
 
     try {
       //to refers to the whatsapp number , body refer to message
@@ -158,15 +162,16 @@ Log in to view the changes: ${loginLink}`;
 
   async notifyTicketResolution(user: any, ticket: Ticket) {
     let loginLink = 'http://www.localhost:3001/login';
-    
+
     if (!user.contactNo) {
       return;
     }
 
-    const message = `Hello ${user.userName},
-Administrator has resolved your ticket with the title ${ticket.ticketName} of the category 
-${ticket.ticketCategory} with the description ${ticket.ticketDescription}
-Log in to view the changes: ${loginLink}`;
+    const message = `Hi ${user.userName},
+  Our Administrator has resolved the ticket ${ticket.ticketName} of the category 
+  ${ticket.ticketCategory} that you sent in.
+  Log in to see the changes: ${loginLink}
+  If you still encounter difficulties, do send in another ticket and our Administrator will contact you.`;
 
     try {
       //to refers to the whatsapp number , body refer to message
@@ -199,13 +204,15 @@ Log in to view the changes: ${loginLink}`;
       return;
     }
 
-    const message = `Dear ${jobSeeker.firstName},
-Your job application status for ${jobListing.title} at ${
+    const message = `Hi ${jobSeeker.firstName},
+    Your job application status for the position of ${jobListing.title} at ${
       corporate.schoolName
-    } handled by recruiter ${
+    } has been updated.
+    The current status of your job application is: ${jobApplication.jobApplicationStatus.toUpperCase()}.
+    Log in to follow up: ${loginLink}
+    For further enquiries, do contact recruiter ${
       recruiter.fullName
-    } is now ${jobApplication.jobApplicationStatus.toUpperCase()}.
-Log in for details: ${loginLink}`;
+    } who is handling your job application.`;
 
     try {
       await this.client.messages.create({
@@ -238,12 +245,12 @@ Log in for details: ${loginLink}`;
     }
 
     const message = `Hi ${recruiter.userName},
-The job application status of ${jobSeeker.firstName} for ${
+    The job application status of ${jobSeeker.firstName} for the position of ${
       jobListing.title
     } at ${
       corporate.schoolName
-    } is now ${jobApplication.jobApplicationStatus.toUpperCase()}.
-Log in for details: ${loginLink}`;
+    } has been updated. The current status of the job application is: ${jobApplication.jobApplicationStatus.toUpperCase()}.
+    Log in to follow up: ${loginLink}`;
 
     try {
       await this.client.messages.create({
@@ -276,12 +283,14 @@ Log in for details: ${loginLink}`;
     }
 
     const message = `Hi ${corporate.schoolName},
-The job application status of ${jobSeeker.firstName} for ${
+    The job application status of ${jobSeeker.firstName} for the position of ${
       jobListing.title
-    } handled by recruiter ${
+    } has been updated. 
+    The current status of the job application is: ${jobApplication.jobApplicationStatus.toUpperCase()}.
+    Log in to follow up: ${loginLink}
+    For further enquiries, do contact recruiter ${
       recruiter.fullName
-    } is now ${jobApplication.jobApplicationStatus.toUpperCase()}.
-Log in for details: ${loginLink}`;
+    } who is handling this job application.`;
 
     try {
       await this.client.messages.create({
@@ -314,8 +323,9 @@ Log in for details: ${loginLink}`;
     }
 
     const message = `Hi ${corporate.schoolName},
-There is a new job application by ${jobSeeker.firstName} for ${jobListing.title} that is forwarded by recruiter ${recruiter.fullName} 
-Log in for details: ${loginLink}`;
+    A job seeker, ${jobSeeker.firstName} applied for the position of ${jobListing.title}.
+    Log in to follow up: ${loginLink}
+    For further enquiries, do contact recruiter ${recruiter.fullName} who is handling this job application.`;
 
     try {
       await this.client.messages.create({
@@ -346,8 +356,142 @@ Log in for details: ${loginLink}`;
     }
 
     const message = `Hi ${jobSeeker.firstName},
-You have been matched by recruiter ${recruiter.fullName} for the role of ${jobListing.title}
+    Congratulations! You have a new job ${jobListing.title} matched to you.
+    Log in to check it out and start applying! ${loginLink}
+    For further enquiries, do contact recruiter ${recruiter.fullName}.`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${jobSeeker.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: jobSeeker,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyCorporateOfInvoice(corporate: Corporate, invoice: Invoice) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!corporate.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${corporate.schoolName},
+    This is to inform you about an incoming invoice that would be issued shortly.
+    The Invoice ID is: ${invoice.invoiceId}.
+    Log in to check: ${loginLink}
+    For further enquiries, do send in a ticket and our Administrator will contact you.`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${corporate.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: corporate,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyJobSeekerNewEvent(
+    corporate: Corporate,
+    eventListing: EventListing,
+    jobSeeker: JobSeeker,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!jobSeeker.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${jobSeeker.fullName},
+    A new event ${eventListing.eventName} happening at ${eventListing.location} has been posted by ${corporate.schoolName}!
+    Log in to check it out: ${loginLink}`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${jobSeeker.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: jobSeeker,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyChatRecipientImportantMessage(
+    sender: User,
+    recipient: User,
+    chatMessage: ChatMessage,
+  ) {
+    let loginLink = 'http://www.localhost:3001/login';
+
+    if (!recipient.contactNo) {
+      return;
+    }
+
+    //     const message = `Hi ${recipient.userName},
+    // You have an important message from ${sender.userName}.
+    // Message: ${chatMessage.message}
+    // Log in for details: ${loginLink}`;
+
+    const message = `Hi ${recipient.userName},
+You have an important message from ${sender.userName}.
+
+Message: \"${chatMessage.message}\"
+
+Regards, StarHire
+
 Log in for details: ${loginLink}`;
+
+    try {
+      await this.client.messages.create({
+        to: `whatsapp:+65${recipient.contactNo}`,
+        from: this.configService.get<string>('TWILIO_PHONE_NUMBER'),
+        body: message,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'SMS successfully sent',
+        data: recipient,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to send SMS', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async notifyJobSeekerCancelledEvent(
+    eventListing: EventListing,
+    jobSeeker: JobSeeker,
+  ) {
+    if (!jobSeeker.contactNo) {
+      return;
+    }
+
+    const message = `Hi ${jobSeeker.fullName},
+    Please take note that the event ${eventListing.eventName} happening at ${eventListing.location} has been cancelled.
+`;
 
     try {
       await this.client.messages.create({

@@ -13,6 +13,7 @@ import {
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { Public } from 'src/users/public.decorator';
 
 @Controller('invoice')
 export class InvoiceController {
@@ -45,7 +46,7 @@ export class InvoiceController {
   }
 
   @Get('corporate-id/:corporateId')
-  findAllByCorporateId(@Param('id') corporateId: string) {
+  findAllByCorporateId(@Param('corporateId') corporateId: string) {
     try {
       return this.invoiceService.findAllByCorporateId(corporateId);
     } catch (error) {
@@ -61,6 +62,19 @@ export class InvoiceController {
   async findAllCorporateInvoice() {
     try {
       return await this.invoiceService.getAllCorporateInvoices();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('oneCorporate/:id')
+  async findOneCorporateInvoice(@Param('id') id: string) {
+    try {
+      return await this.invoiceService.getOneCorporateInvoices(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
@@ -87,6 +101,22 @@ export class InvoiceController {
   update(@Param('id') id: number, @Body() updateInvoiceDto: UpdateInvoiceDto) {
     try {
       return this.invoiceService.update(id, updateInvoiceDto);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Put('invoice-payment/:id')
+  invoicePayment(
+    @Param('id') id: number,
+    @Body() updateInvoiceDto: UpdateInvoiceDto,
+  ) {
+    try {
+      return this.invoiceService.invoicePayment(id, updateInvoiceDto);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

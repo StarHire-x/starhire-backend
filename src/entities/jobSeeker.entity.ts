@@ -15,6 +15,7 @@ import { SavedJobListing } from './savedJobListing.entity';
 import VisibilityEnum from '../enums/visibility.enum';
 import { Corporate } from './corporate.entity';
 import { EventRegistration } from './eventRegistration.entity';
+import { Review } from './review.entity';
 
 @Entity({ name: 'jobSeekers' })
 export class JobSeeker extends User {
@@ -144,6 +145,12 @@ export class JobSeeker extends User {
     cascade: true,
   })
   jobExperiences: JobExperience[];
+
+  @OneToMany(() => Review, (review) => review.jobSeeker, {
+    cascade: true,
+    nullable: true,
+  })
+  reviews: Review[];
 
   @OneToMany(() => Ticket, (ticket) => ticket.jobSeeker, {
     cascade: true,

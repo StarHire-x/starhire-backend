@@ -919,6 +919,8 @@ describe('CorporateService', () => {
                 {
                   jobApplicationId: 1,
                   jobApplicationStatus: 'Offered',
+                  jobListingId: 1,
+                  jobListingTitle: "Software Engineer",
                   jobSeekerId: 'jobseeker',
                   jobSeekerName: 'jobseeker',
                   jobSeekerProfilePic: 'profile.jpg',

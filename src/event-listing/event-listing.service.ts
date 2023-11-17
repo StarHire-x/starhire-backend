@@ -12,6 +12,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EventRegistration } from '../entities/eventRegistration.entity';
 import { Corporate } from '../entities/corporate.entity';
 import { mapEventListingStatusToEnum } from '../common/mapStringToEnum';
+import CorporatePromotionStatus from '../enums/corporatePromotionStatus.enum';
+import { EmailService } from '../email/email.service';
+import { TwilioService } from '../twilio/twilio.service';
+import NotificationModeEnum from '../enums/notificationMode.enum';
+import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
 
 @Injectable()
 export class EventListingService {
@@ -21,6 +26,8 @@ export class EventListingService {
     // Parent Entity
     @InjectRepository(Corporate)
     private readonly corporateRepository: Repository<Corporate>,
+    private emailService: EmailService,
+    private twilioService: TwilioService,
   ) {}
 
   async create(createEventListingDto: CreateEventListingDto) {
@@ -30,19 +37,20 @@ export class EventListingService {
 
       const corporate = await this.corporateRepository.findOne({
         where: { userId: corporateId },
+        relations: { followers: true },
       });
 
       if (!corporate) {
         throw new NotFoundException('Corporate Id provided is not valid');
       }
 
-      // Ensure eventDate is a future date
-      if (createEventListingDto.eventDate <= new Date()) {
-        throw new HttpException(
-          'Event date must be a future date.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      // // Ensure date is a future date
+      // if (createEventListingDto.eventStartDateAndTime <= new Date()) {
+      //   throw new HttpException(
+      //     'Event date must be a future date.',
+      //     HttpStatus.BAD_REQUEST,
+      //   );
+      // }
 
       // Ensure eventListingStatus field is a valid enum
       const mappedStatus = mapEventListingStatusToEnum(
@@ -56,6 +64,22 @@ export class EventListingService {
         corporate,
       });
       await this.eventListingRepository.save(eventListing);
+
+      corporate.followers.map((jobSeeker) => {
+        if (jobSeeker.notificationMode === NotificationModeEnum.EMAIL) {
+          this.emailService.notifyJobSeekerNewEvent(
+            corporate,
+            eventListing,
+            jobSeeker,
+          );
+        } else if (jobSeeker.notificationMode === NotificationModeEnum.SMS) {
+          this.twilioService.notifyJobSeekerNewEvent(
+            corporate,
+            eventListing,
+            jobSeeker,
+          );
+        }
+      });
 
       if (eventListing) {
         return {
@@ -87,7 +111,6 @@ export class EventListingService {
   }
 
   async findAllByCorporate(id: string) {
-    // Find the corporate using the provided user ID
     try {
       const corporate = await this.corporateRepository.findOne({
         where: { userId: id },
@@ -206,5 +229,88 @@ export class EventListingService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async cancel(id: number): Promise<EventListing> {
+    const eventListing = await this.eventListingRepository.findOne({
+      where: { eventListingId: id },
+      relations: [
+        'corporate',
+        'eventRegistrations',
+        'eventRegistrations.jobSeeker',
+      ],
+      // relations: { corporate: true, eventRegistrations: true },
+    });
+
+    if (!eventListing) {
+      throw new NotFoundException('Event Listing Id provided is not valid');
+    }
+
+    const listEventRegistrstion = eventListing.eventRegistrations;
+    listEventRegistrstion.map((registrants) => {
+      console.log('Hello this is the jobseeker');
+      console.log(registrants.jobSeeker);
+      if (
+        registrants.jobSeeker.notificationMode === NotificationModeEnum.EMAIL
+      ) {
+        this.emailService.notifyJobSeekerCancelledEvent(
+          eventListing,
+          registrants.jobSeeker,
+        );
+      } else if (
+        registrants.jobSeeker.notificationMode === NotificationModeEnum.SMS
+      ) {
+        this.twilioService.notifyJobSeekerCancelledEvent(
+          eventListing,
+          registrants.jobSeeker,
+        );
+      }
+    });
+
+    console.log('eventListing:', eventListing);
+    eventListing.eventListingStatus = EventListingStatusEnum.CANCELLED;
+    return this.eventListingRepository.save(eventListing);
+  }
+
+  async getAllPremiumUsersEvents() {
+    const allPremiumUsers = await this.corporateRepository.find({
+      where: {
+        corporatePromotionStatus: CorporatePromotionStatus.PREMIUM,
+      },
+      relations: ['eventListings', 'eventListings.corporate'],
+    });
+
+    const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);
+
+    const upcomingEvents = eventListings.filter(
+      (event) => event.eventListingStatus === 'Upcoming',
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Premium Users events found!',
+      data: upcomingEvents,
+    };
+  }
+
+  async getAllNonPremiumUsersEvents() {
+    const allPremiumUsers = await this.corporateRepository.find({
+      where: {
+        corporatePromotionStatus: CorporatePromotionStatus.REGULAR,
+      },
+      relations: ['eventListings', 'eventListings.corporate'],
+    });
+
+    const eventListings = allPremiumUsers.flatMap((user) => user.eventListings);
+
+    const upcomingEvents = eventListings.filter(
+      (event) => event.eventListingStatus === 'Upcoming',
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Non Premium Users events found!',
+      data: upcomingEvents,
+    };
   }
 }

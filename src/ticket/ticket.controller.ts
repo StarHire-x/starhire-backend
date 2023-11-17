@@ -49,21 +49,6 @@ export class TicketController {
     }
   }
 
-  // GET /ticket?id=1
-  // @Get()
-  // getNinjas(@Query('id') id: number) {
-  //   try {
-  //     return this.ticketService.findOne(id);
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-  //     } else {
-  //       throw new InternalServerErrorException('Internal server error');
-  //     }
-  //   }
-  // }
-
-  // GET /ticket/:id
   @Get(':id')
   findOneTicket(@Param('id', ParseIntPipe) id: number) {
     try {

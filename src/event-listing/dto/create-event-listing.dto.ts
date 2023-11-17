@@ -5,7 +5,8 @@ export class CreateEventListingDto {
   corporateId: string; // Parent relationship
   eventName: string;
   location: string;
-  eventDate: Date;
+  eventStartDateAndTime: Date;
+  eventEndDateAndTime: Date;
   details: string;
   image: string;
   listingDate: Date;

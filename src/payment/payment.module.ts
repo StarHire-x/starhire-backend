@@ -9,6 +9,11 @@ import { EmailService } from '../email/email.service';
 import { JobSeeker } from '../entities/jobSeeker.entity';
 import { JobListing } from '../entities/jobListing.entity';
 import { JobApplication } from '../entities/jobApplication.entity';
+import { InvoiceService } from 'src/invoice/invoice.service';
+import { Invoice } from 'src/entities/invoice.entity';
+import { Administrator } from 'src/entities/administrator.entity';
+import { PdfService } from 'src/pdf/pdf.service';
+import { UploadService } from 'src/upload/upload.service';
 
 @Module({
   imports: [
@@ -17,9 +22,11 @@ import { JobApplication } from '../entities/jobApplication.entity';
       JobSeeker,
       JobListing,
       JobApplication,
+      Invoice,
+      Administrator,
     ]),
   ],
   controllers: [PaymentController],
-  providers: [PaymentService, CorporateService, EmailService, TwilioService],
+  providers: [PaymentService, CorporateService, EmailService, TwilioService, PdfService, UploadService, InvoiceService],
 })
 export class PaymentModule {}

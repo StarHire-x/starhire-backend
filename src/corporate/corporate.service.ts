@@ -613,6 +613,8 @@ export class CorporateService {
                 recruiterId: ja.recruiter.userId,
                 recruiterName: ja.recruiter.fullName,
                 recruiterProfilePic: ja.recruiter.profilePictureUrl,
+                jobListingId: jobListing.jobListingId,
+                jobListingTitle: jobListing.title,
               };
             }),
           );

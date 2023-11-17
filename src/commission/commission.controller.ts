@@ -45,9 +45,54 @@ export class CommissionController {
   }
 
   @Get('/recruiter/:recruiterId/admin/:adminId')
-  findAllByRecruiterIdAndAdminId(@Param('recruiterId') recruiterId: string, @Param('adminId') adminId: string) {
+  findAllByRecruiterIdAndAdminId(
+    @Param('recruiterId') recruiterId: string,
+    @Param('adminId') adminId: string,
+  ) {
     try {
-      return this.commissionService.findAllByRecruiterIdAndAdminId(recruiterId, adminId);
+      return this.commissionService.findAllByRecruiterIdAndAdminId(
+        recruiterId,
+        adminId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/allRecruiter')
+  async findAllRecruiterCommissions() {
+    try {
+      return await this.commissionService.getAllRecruiterCommissions();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('oneRecruiter/:id')
+  async findOneRecruiterCommission(@Param('id') id: string) {
+    try {
+      return await this.commissionService.getOneRecruiterCommissions(id);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      } else {
+        throw new InternalServerErrorException('Internal server error');
+      }
+    }
+  }
+
+  @Get('/recruiter/:recruiterId')
+  async findAllByRecruiterId(@Param('recruiterId') recruiterId: string) {
+    try {
+      return this.commissionService.findAllByRecruiterId(recruiterId);
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, HttpStatus.CONFLICT);

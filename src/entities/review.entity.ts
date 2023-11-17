@@ -1,8 +1,14 @@
-import { IsOptional } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { JobSeeker } from "./jobSeeker.entity";
-import { Corporate } from "./corporate.entity";
-import ReviewTypeEnum from "../enums/reviewType.enum";
+import { IsOptional } from 'class-validator';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { JobSeeker } from './jobSeeker.entity';
+import { Corporate } from './corporate.entity';
+import ReviewTypeEnum from '../enums/reviewType.enum';
 
 @Entity({ name: 'reviews' })
 export class Review {

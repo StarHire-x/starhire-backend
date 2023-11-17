@@ -44,11 +44,6 @@ import { CreateJobAssignmentDto } from 'src/job-assignment/dto/create-job-assign
 import { JobAssignment } from 'src/entities/jobAssignment.entity';
 import { JobAssignmentService } from 'src/job-assignment/job-assignment.service';
 import NotificationModeEnum from 'src/enums/notificationMode.enum';
-import { CreateEventListingDto } from 'src/event-listing/dto/create-event-listing.dto';
-import { EventListing } from '../entities/eventListing.entity';
-import { EventListingService } from '../event-listing/event-listing.service';
-import EventListingStatusEnum from 'src/enums/eventListingStatus.enum';
-
 require('dotenv').config();
 
 @Injectable()
@@ -90,9 +85,6 @@ export class DataInitService implements OnModuleInit {
     @InjectRepository(JobAssignment)
     private readonly jobAssignmentRepository: Repository<JobAssignment>,
     private readonly jobAssignmentService: JobAssignmentService,
-    @InjectRepository(EventListing)
-    private readonly eventListingRepository: Repository<EventListing>,
-    private readonly eventListingService: EventListingService,
   ) {}
 
   async onModuleInit() {
@@ -800,7 +792,7 @@ export class DataInitService implements OnModuleInit {
     createJobListingDto.jobLocation = 'Hillview, Singapore';
     createJobListingDto.averageSalary = 3000;
     createJobListingDto.jobStartDate = new Date('2023-12-12');
-    createJobListingDto.listingDate = new Date('2023-10-10')
+    createJobListingDto.listingDate = new Date('2023-10-10');
     createJobListingDto.requiredDocuments =
       'Early Childhood Graduation Cert,English Language Proficiency Cert,L1 Level Cert,L2 Level Cert';
     createJobListingDto.jobListingStatus = JobListingStatusEnum.APPROVED;
@@ -1132,18 +1124,26 @@ export class DataInitService implements OnModuleInit {
       where: { jobListingId: 6 },
     });
 
-    const response = await this.jobListingService.assignJobListing(createdJobSeeker?.userId, jobListingSix?.jobListingId, createdRecruiter?.userId);
+    const response = await this.jobListingService.assignJobListing(
+      createdJobSeeker?.userId,
+      jobListingSix?.jobListingId,
+      createdRecruiter?.userId,
+    );
     console.log(response?.message);
 
-
     // jobApplication 1 creation - assign job listing id 1 to jobseeker@gmail.com from recruiter@gmail.com
-     const jobListingOne = await this.jobListingRepository.findOne({
+    const jobListingOne = await this.jobListingRepository.findOne({
       where: { jobListingId: 1 },
     });
 
-    const jobAssignmentOneResponse = await this.jobListingService.assignJobListing(createdJobSeeker?.userId, jobListingOne?.jobListingId, createdRecruiter?.userId);
+    const jobAssignmentOneResponse =
+      await this.jobListingService.assignJobListing(
+        createdJobSeeker?.userId,
+        jobListingOne?.jobListingId,
+        createdRecruiter?.userId,
+      );
     console.log(jobAssignmentOneResponse?.message);
-    
+
     // const jobListingOne = await this.jobListingRepository.findOne({
     //   where: { jobListingId: 1 },
     // });
@@ -1182,7 +1182,12 @@ export class DataInitService implements OnModuleInit {
       where: { jobListingId: 2 },
     });
 
-    const jobAssignmentTwoResponse = await this.jobListingService.assignJobListing(createdJobSeekerTwo?.userId, jobListingTwo?.jobListingId, createdRecruiter?.userId);
+    const jobAssignmentTwoResponse =
+      await this.jobListingService.assignJobListing(
+        createdJobSeekerTwo?.userId,
+        jobListingTwo?.jobListingId,
+        createdRecruiter?.userId,
+      );
     console.log(jobAssignmentTwoResponse?.message);
 
     // const jobSeekerTwo = await this.jobSeekerRepository.findOne({
@@ -1214,7 +1219,12 @@ export class DataInitService implements OnModuleInit {
     console.log(`Job Application 2 is created.`);
 
     // jobApplication 3 creation - assign job listing id 2 to jobseeker3@gmail.com from recruiter@gmail.com
-    const jobAssignmentThreeResponse = await this.jobListingService.assignJobListing(createdJobSeekerThree?.userId, jobListingTwo?.jobListingId, createdRecruiter?.userId);
+    const jobAssignmentThreeResponse =
+      await this.jobListingService.assignJobListing(
+        createdJobSeekerThree?.userId,
+        jobListingTwo?.jobListingId,
+        createdRecruiter?.userId,
+      );
     console.log(jobAssignmentThreeResponse?.message);
     // const jobSeekerThree = await this.jobSeekerRepository.findOne({
     //   where: { email: 'jobseeker3@gmail.com' },
@@ -1243,24 +1253,5 @@ export class DataInitService implements OnModuleInit {
 
     await this.jobApplicationService.create(createJobApplicationThreeDto);
     console.log(`Job Application 3 is created.`);
-
-    // // event listing 1 creation
-    // const createEventListingDto: CreateEventListingDto =
-    //   new CreateEventListingDto();
-    // createEventListingDto.eventName = 'Maple Bear 40th Anniversary';
-    // createEventListingDto.location = 'To Be Announced';
-    // createEventListingDto.eventStartDateAndTime = new Date(
-    //   '2024-01-06 17:00:00',
-    // );
-    // createEventListingDto.eventEndDateAndTime = new Date('2024-01-06 23:00:00');
-    // createEventListingDto.details = 'This is Event Listing 1 used in SR4';
-    // createEventListingDto.image = '';
-    // createEventListingDto.eventListingStatus = EventListingStatusEnum.UPCOMING;
-    // createEventListingDto.corporateId = createdCorporateThree.userId;
-
-    // await this.eventListingService.create(createEventListingDto);
-    // console.log(
-    //   `Event Listing ${createEventListingDto.eventName} is created by corporate username ${createdCorporateThree.userName}`,
-    // );
   }
 }

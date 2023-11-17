@@ -29,8 +29,6 @@ import { CommissionRate } from '../entities/commissionRate.entity';
 import { CommissionRateService } from '../commission-rate/commission-rate.service';
 import { JobApplicationService } from 'src/job-application/job-application.service';
 import { JobAssignmentService } from 'src/job-assignment/job-assignment.service';
-import { EventListing } from 'src/entities/eventListing.entity';
-import { EventListingService } from 'src/event-listing/event-listing.service';
 
 @Module({
   imports: [
@@ -50,7 +48,6 @@ import { EventListingService } from 'src/event-listing/event-listing.service';
       CommissionRate,
       JobApplication,
       JobAssignment,
-      EventListing,
     ]),
     EmailModule,
     TwilioModule,
@@ -71,7 +68,6 @@ import { EventListingService } from 'src/event-listing/event-listing.service';
     CommissionRateService,
     JobApplicationService,
     JobAssignmentService,
-    EventListingService,
   ],
 })
 export class DataInitModule {}

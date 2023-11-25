@@ -119,6 +119,7 @@ export class DataInitService implements OnModuleInit {
     createAdministratorDto.fullName = 'Administrator';
     createAdministratorDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/admin1.jpg';
+    createAdministratorDto.notificationMode = NotificationModeEnum.SMS;
     // check if this data init admin exists in db or not
     const existingAdmin = await this.administratorRepository.findOne({
       where: {
@@ -153,7 +154,7 @@ export class DataInitService implements OnModuleInit {
     createAdministratorWorkingEmailDto.profilePictureUrl =
       'https://starhire-uploader.s3.ap-southeast-2.amazonaws.com/admin1.jpg';
     createAdministratorWorkingEmailDto.notificationMode =
-      NotificationModeEnum.EMAIL;
+      NotificationModeEnum.SMS;
 
     const existingWorkingEmailAdmin =
       await this.administratorRepository.findOne({
@@ -858,11 +859,11 @@ export class DataInitService implements OnModuleInit {
     createJobListingDto.typeOfWorkers = 'Local Employee';
     createJobListingDto.requiredLanguages = 'English';
     createJobListingDto.otherConsiderations = '';
-    createJobListingDto.corporateId = createdCorporateThree.userId;
+    createJobListingDto.corporateId = createdCorporate.userId;
 
     await this.jobListingService.create(createJobListingDto);
     console.log(
-      `job listing ${createJobListingDto.title} is created by corporate username ${createdCorporateThree.userName}`,
+      `job listing ${createJobListingDto.title} is created by corporate username ${createdCorporate.userName}`,
     );
 
     // job listing 2 creation
@@ -886,11 +887,11 @@ export class DataInitService implements OnModuleInit {
     createJobListingTwoDto.typeOfWorkers = 'Local Employee';
     createJobListingTwoDto.requiredLanguages = 'English_Mandarin';
     createJobListingTwoDto.otherConsiderations = '';
-    createJobListingTwoDto.corporateId = createdCorporateThree.userId;
+    createJobListingTwoDto.corporateId = createdCorporate.userId;
 
     await this.jobListingService.create(createJobListingTwoDto);
     console.log(
-      `job listing ${createJobListingTwoDto.title} is created by corporate username ${createdCorporateThree.userName}`,
+      `job listing ${createJobListingTwoDto.title} is created by corporate username ${createdCorporate.userName}`,
     );
 
     // job listing 3 creation
@@ -915,11 +916,11 @@ export class DataInitService implements OnModuleInit {
     createJobListingThreeDto.typeOfWorkers = 'Local Employee';
     createJobListingThreeDto.requiredLanguages = 'English_Mandarin';
     createJobListingThreeDto.otherConsiderations = '';
-    createJobListingThreeDto.corporateId = createdCorporateThree.userId;
+    createJobListingThreeDto.corporateId = createdCorporateTwo.userId;
 
     await this.jobListingService.create(createJobListingThreeDto);
     console.log(
-      `job listing ${createJobListingThreeDto.title} is created by corporate username ${createdCorporateThree.userName}`,
+      `job listing ${createJobListingThreeDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
     );
 
     // job listing 4 creation, unverified job listing for pawfectis3106@gmail.com email demo
@@ -948,7 +949,7 @@ export class DataInitService implements OnModuleInit {
 
     await this.jobListingService.create(createJobListingFourDto);
     console.log(
-      `job listing ${createJobListingFourDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
+      `job listing ${createJobListingFourDto.title} is created by corporate username ${createdCorporateThree.userName}`,
     );
 
     const createJobListingFiveDto: CreateJobListingDto =
@@ -972,11 +973,11 @@ export class DataInitService implements OnModuleInit {
     createJobListingFiveDto.typeOfWorkers = 'Local Employee';
     createJobListingFiveDto.requiredLanguages = 'English_Mandarin';
     createJobListingFiveDto.otherConsiderations = '';
-    createJobListingFiveDto.corporateId = createdCorporateThree.userId;
+    createJobListingFiveDto.corporateId = createdCorporateFour.userId;
 
     await this.jobListingService.create(createJobListingFiveDto);
     console.log(
-      `job listing ${createJobListingFiveDto.title} is created by corporate username ${createdCorporateTwo.userName}`,
+      `job listing ${createJobListingFiveDto.title} is created by corporate username ${createdCorporateFour.userName}`,
     );
 
     // if there's any existing forum categories, don't data init forum categories

@@ -102,6 +102,9 @@ export class JobSeeker extends User {
   @Column()
   otherInfo: string;
 
+  @Column('varchar', { length: 4000 })
+  candidateNotes: string;
+
   @OneToMany(() => ForumComment, (forumComment) => forumComment.jobSeeker, {
     cascade: true,
   })

@@ -453,6 +453,8 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerDto.otherInfo = 'I am hardworking';
     createJobSeekerDto.resume =
       'I am a dedicated profesional with 2 years of Early Childhood Experience';
+    createJobSeekerDto.candidateNotes =
+      'RecruiterX: An excellent candidate with exceptional experience';
 
     let existingJobSeeker = await this.jobSeekerRepository.findOne({
       where: {
@@ -503,6 +505,8 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerTwoDto.otherInfo = 'I am a dedicated teacher';
     createJobSeekerTwoDto.resume =
       'I have a deep passion for early chilhood and bring a wealth of';
+    createJobSeekerTwoDto.candidateNotes =
+      'RecruiterX: An average candidate with good potential for hire';
 
     let existingJobSeekerTwo = await this.jobSeekerRepository.findOne({
       where: {
@@ -554,6 +558,8 @@ export class DataInitService implements OnModuleInit {
     createJobSeekerThreeDto.otherInfo = 'I am a dedicated teacher';
     createJobSeekerThreeDto.resume =
       'I have a deep passion for early chilhood and bring a wealth of';
+    createJobSeekerThreeDto.candidateNotes =
+      'RecruiterX: This candidate lacks the ability to communicate effectively';
 
     let existingJobSeekerThree = await this.jobSeekerRepository.findOne({
       where: {

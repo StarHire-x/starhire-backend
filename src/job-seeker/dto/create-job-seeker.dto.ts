@@ -24,4 +24,5 @@ export class CreateJobSeekerDto extends PartialType(CreateUserDto) {
   ranking: string;
   otherInfo: string;
   resume: string;
+  candidateNotes: string;
 }

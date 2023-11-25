@@ -51,7 +51,7 @@ export class ReviewService {
 
       let existingReview;
 
-      if(role === UserRoleEnum.CORPORATE) {
+      if (role === UserRoleEnum.CORPORATE) {
         existingReview = await this.reviewRepository.findOne({
           where: {
             jobSeeker: { userId: jobSeekerId },
@@ -61,7 +61,7 @@ export class ReviewService {
           relations: { jobSeeker: true, corporate: true },
           order: { submissionDate: 'DESC' },
         });
-      } else if(role === UserRoleEnum.JOBSEEKER) {
+      } else if (role === UserRoleEnum.JOBSEEKER) {
         existingReview = await this.reviewRepository.findOne({
           where: {
             jobSeeker: { userId: jobSeekerId },
@@ -83,7 +83,7 @@ export class ReviewService {
           )
       ) {
         throw new BadRequestException(
-          'You cannot submit a review for the same jobseeker within 1 months of the last review',
+          'You cannot submit a review for the same corporate within 1 month of your last review for this corporate',
         );
       }
 

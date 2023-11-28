@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config/dist';
 
+require('dotenv').config();
+
 @Injectable()
 export class UploadService {
   private readonly s3Client = new S3Client({
-    region: this.configService.getOrThrow('AWS_S3_REGION'),
+    region: process.env.AWS_S3_REGION,
   });
 
   constructor(private readonly configService: ConfigService) {}
@@ -13,18 +15,18 @@ export class UploadService {
   async upload(fileName: string, file: Buffer) {
     const contentType = this.getContentTypeByFile(fileName);
 
+    console.log(contentType);
+    
     await this.s3Client.send(
       new PutObjectCommand({
-        Bucket: 'starhire-uploader',
+        Bucket: process.env.S3_BUCKET,
         Key: fileName,
         Body: file,
-        ContentType: contentType
+        ContentType: contentType,
       }),
     );
 
-    const s3Url = `https://starhire-uploader.s3.${this.configService.getOrThrow(
-      'AWS_S3_REGION',
-    )}.amazonaws.com/${fileName}`;
+    const s3Url = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${fileName}`;
 
     console.log(s3Url);
 
